@@ -1,0 +1,21 @@
+
+9
+	build.sbt,7\4\74b95601c3a6d9d565cd312fac64094ec0f9d847
+C
+project/plugins.sbt,9\4\94cef6f41fc73ccebe945d2b889292615a09dddb
+Y
+)src/main/java/io/sorne/tlang/TLang.interp,c\2\c2dc1764b4b10231e5adb11f0fd7c511467dcbb7
+G
+src/main/antlr/TLang.g4,1\b\1b1c66141990204e40b4f657ad632812eff0741c
+]
+-src/main/java/io/sorne/tlang/TLangParser.java,d\d\dd96f991bb3a348feda5e65637c661d1b7b22d4b
+_
+/src/main/java/io/sorne/tlang/TLangListener.java,a\3\a387b40950ec6ef6c18a0ca2c36617ca8ea8d09f
+^
+.src/main/java/io/sorne/tlang/TLangVisitor.java,7\7\7702e079f8a3e824ba0ca8214c224dee66476979
+\
+,src/main/java/io/sorne/tlang/TLangLexer.java,e\6\e674ab87f3d37372205db9b5f9db173d3e0ba0e8
+]
+-src/test/scala/io/sorne/tlang/FirstTest.scala,c\f\cfd5d9f7e2428981420b3f95c1468282fc121c6e
+k
+;src/main/scala/io/sorne/tlang/TLangInterpreterVisitor.scala,1\9\1916fb79941102f7a9bf7859ff09d79e85665e1e
