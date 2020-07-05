@@ -1,5 +1,7 @@
 grammar TLang;
 
+import TLangModel;
+
 /*
  * Domain Model
  * This is the entry point of the language
@@ -25,6 +27,9 @@ lang: 'lang' name=STRING;
 file:
 	'file' name=STRING;
 
+LANG: 'lang';
+FILE: 'file';
+
 	/*
  * Helper block
  * The helper is interpreted and therefore, offers dynamic results for the template
@@ -38,6 +43,9 @@ helperFunc:
 	'func' name=ANY_ID '{'
 	'}';
 
+
+HELPER: 'helper';
+FUNC: 'func';
 
 	/*
  * Tmpl block (Template block)
@@ -93,33 +101,6 @@ tmplVal:
 tmplVar:
 	'var' name=ANY_ID (':' type=tmplType)? ('=' value=tmplExpression)?;
 
-	/*
- * Model Block
- * Set the data model and the entities to personalize the generated template
- */
-modelBlock:
-	'model' '{'
-	modelEntities+=modelNewEntity*
-	'}';
-
-modelNewEntity:
-	type=ID ('(' ((attrs+=modelAttribut) (',' attrs+=modelAttribut)*) ')')? '{'
-	decl+=modelValueType*
-	'}';
-
-modelValueType:
-	(modelAttribut | modelEntityAsAttribut | modelTbl);
-
-modelTbl:
-	attr=ID? ('[')
-	((elms+=modelValueType) (',' elms+=modelValueType)*)
-	']';
-
-modelEntityAsAttribut:
-	(attr=ID? value=modelNewEntity);
-
-modelAttribut:
-	(attr=ID? value=STRING);
 
 TEXT:
 	'"""' '"""';
