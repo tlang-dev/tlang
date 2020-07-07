@@ -5,20 +5,18 @@ import org.scalatest.funsuite.AnyFunSuite
 
 class FirstTest extends AnyFunSuite {
 
-  test("Just a first attempt") {
-    val lexer = new TLangLexer(CharStreams.fromString("lang \"5\\\".5:!$é\"file \"MyFile.scala\""))
-
+  test("Get lang") {
+    val lexer = new TLangLexer(CharStreams.fromString("lang \"5\\\".5:!$é\""))
     val tokens = new CommonTokenStream(lexer)
-
     val parser = new TLangParser(tokens)
-    val interpreter = new TLangInterpreterVisitor
-
-    val lang = interpreter.visitLang(parser.lang())
-    println("----------->"+lang)
+    val lang = parser.lang().name.getText;
     assert("\"5\\\".5:!$é\"".equals(lang))
+  }
 
-    val file = interpreter.visitFile(parser.file())
-    println("----------->"+file)
-    assert("\"MyFile.scala\"".equals(file))
+  test("Get file") {
+    val lexer = new TLangLexer(CharStreams.fromString("file \"MyFile.scala\""))
+    val tokens = new CommonTokenStream(lexer)
+    val parser = new TLangParser(tokens)
+    assert("\"MyFile.scala\"".equals(parser.file().name.getText))
   }
 }

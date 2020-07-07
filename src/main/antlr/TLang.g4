@@ -1,24 +1,19 @@
 grammar TLang;
 
+import TLangModel;
+
 /*
  * Domain Model
  * This is the entry point of the language
  *
  */
-domainmodel:
+domainModel:
 	lang?
 	file?
-	/*(helperBlocks+=HelperBlock)*
-	(tmplBlocks+=TmplBlock)*
-	(modelBlocks+=ModelBlock)*
-	*/	;
-
-
-WS : ( ' ' | '\t' | '\r' | '\n' )+ -> channel(HIDDEN);
-fragment ESCAPED_QUOTE : '\\"';
-STRING :   '"' ( ESCAPED_QUOTE | ~('\n'|'\r') )*? '"';
-
-NUMBER     : '0'..'9'+ ('.' '0'..'9'+)?;
+	(helperBlocks+=helperBlock)*
+	(tmplBlocks+=tmplBlock)*
+	(modelBlocks+=modelBlock)*
+		;
 
 	/*
  * Defines the language for the tl file
@@ -32,98 +27,80 @@ lang: 'lang' name=STRING;
 file:
 	'file' name=STRING;
 
+LANG: 'lang';
+FILE: 'file';
+
 	/*
  * Helper block
  * The helper is interpreted and therefore, offers dynamic results for the template
  */
-/*HelperBlock:
-	{HelperBlock} 'helper' '{'
-	(helperFuncs+=HelperFunc)*
+helperBlock:
+	'helper' '{'
+	(helperFuncs+=helperFunc)*
 	'}';
 
-HelperFunc:
-	'func' name=AnyID '{'
+helperFunc:
+	'func' name=ANY_ID '{'
 	'}';
+
+
+HELPER: 'helper';
+FUNC: 'func';
 
 	/*
  * Tmpl block (Template block)
  * The content of this block will be translated in the final language as it is
  */
-/*TmplBlock:
-	{TmplBlock} 'tmpl' '{'
-	(tmplPkg=TmplPkg)?
-	(tmplUses+=TmplUse)*
-	(tmplImpls+=TmplImpl)*
-	(tmplFuncs+=TmplFunc)*
+tmplBlock:
+	'tmpl' '{'
+	(tmplPakage=tmplPkg)?
+	(tmplUses+=tmplUse)*
+	(tmplImpls+=tmplImpl)*
+	(tmplFuncs+=tmplFunc)*
 	'}';
 
-TmplPkg:
+tmplPkg:
 	'pkg' name=STRING;
 
-TmplUse:
+tmplUse:
 	'use' name=STRING;
 
-TmplImpl:
-	'impl' name=AnyID (('for' forName=AnyID) (',' forNames+=AnyID)*)? '{'
-	(tmplExprs+=TmplExpression)*
-	(tmplFuncs+=TmplFunc)*
+tmplImpl:
+	'impl' name=ANY_ID (('for' forName=ANY_ID) (',' forNames+=ANY_ID)*)? '{'
+	(tmplImplContents+=tmplImplContent)*
 	'}';
 
-TmplFunc:
-	'func' name=AnyID curries+=TmplCurrying* (':' types+=TmplType (',' types+=TmplType)*)? ('{' exprs+=TmplExpression*
+tmplImplContent:
+    tmplExpression | tmplFunc;
+
+tmplFunc:
+	'func' name=ANY_ID curries+=tmplCurrying* (':' types+=tmplType (',' types+=tmplType)*)? ('{' exprs+=tmplExpression*
 	'}')?;
 
-TmplCurrying:
-	'(' params+=TmplCurryingParam ')';
+tmplCurrying:
+	'(' param=tmplCurryingParam ')';
 
-TmplCurryingParam:
-	{TmplCurryingParam} ((params+=TmplParam) (',' params+=TmplParam)*)?;
+tmplCurryingParam:
+	((params+=tmplParam) (',' params+=tmplParam)*)?;
 
-TmplParam:
-	accessor=ID? name=AnyID (':' type=AnyID)?;
+tmplParam:
+	accessor=ANY_ID? name=ANY_ID (':' type=tmplType)?;
 
-TmplType:
-	type=ID ('<' (generic=TmplGeneric) '>')? (array='[' ']')?;
+tmplType:
+	type=ANY_ID ('<' (generic=tmplGeneric) '>')? (array='[' ']')?;
 
-TmplGeneric:
-	(types+=TmplType (',' types+=TmplType)*);
+tmplGeneric:
+	(types+=tmplType (',' types+=tmplType)*);
 
-TmplExpression:
-	TmplVal | TmplVar;
+tmplExpression:
+	tmplVal | tmplVar;
 
-TmplVal:
-	'val' name=AnyID (':' type=TmplType)? ('=' value=TmplExpression)?;
+tmplVal:
+	'val' name=ANY_ID (':' type=tmplType)? ('=' value=tmplExpression)?;
 
-TmplVar:
-	'var' name=AnyID (':' type=TmplType)? ('=' value=TmplExpression)?;
+tmplVar:
+	'var' name=ANY_ID (':' type=tmplType)? ('=' value=tmplExpression)?;
 
-	/*
- * Model Block
- * Set the data model and the entities to personalize the generated template
- */
-/*ModelBlock:
-	{ModelBlock} 'model' '{'
-	modelEntities+=ModelNewEntity*
-	'}';
-
-ModelNewEntity:
-	type=ID ('(' ((attrs+=ModelAttribut) (',' attrs+=ModelAttribut)*) ')')? '{'
-	decl+=ModelValueType*
-	'}';
-
-ModelValueType:
-	(ModelAttribut | ModelEntityAsAttribut | ModelTbl);
-
-ModelTbl:
-	attr=ID? value=('[')
-	((elms+=ModelValueType) (',' elms+=ModelValueType)*)
-	']';
-
-ModelEntityAsAttribut:
-	(attr=ID? value=ModelNewEntity);
-
-ModelAttribut:
-	(attr=ID? value=STRING);*/
 
 TEXT:
 	'"""' '"""';
@@ -135,6 +112,13 @@ ID:
 	'^'? ('a'..'z' | 'A'..'Z' | '_' | '-') ('a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '-')*;
 ID_RPL:
 	'^'? ('a'..'z' | 'A'..'Z' | '_' | '-' | '${') ('a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '-' | '${' | '}')*;
+
+WS : ( ' ' | '\t' | '\r' | '\n' )+ -> channel(HIDDEN);
+
+ESCAPED_QUOTE : '\\"';
+STRING :   '"' ( ESCAPED_QUOTE | ~('\n'|'\r') )*? '"';
+
+NUMBER     : '0'..'9'+ ('.' '0'..'9'+)?;
 
 
 
