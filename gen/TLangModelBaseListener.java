@@ -147,13 +147,13 @@ public class TLangModelBaseListener implements TLangModelListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterTmplGeneric(TLangModelParser.TmplGenericContext ctx) { }
+	@Override public void enterModelGeneric(TLangModelParser.ModelGenericContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitTmplGeneric(TLangModelParser.TmplGenericContext ctx) { }
+	@Override public void exitModelGeneric(TLangModelParser.ModelGenericContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

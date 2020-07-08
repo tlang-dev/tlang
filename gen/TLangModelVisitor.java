@@ -76,11 +76,11 @@ public interface TLangModelVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitModelSetType(TLangModelParser.ModelSetTypeContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link TLangModelParser#tmplGeneric}.
+	 * Visit a parse tree produced by {@link TLangModelParser#modelGeneric}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitTmplGeneric(TLangModelParser.TmplGenericContext ctx);
+	T visitModelGeneric(TLangModelParser.ModelGenericContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link TLangModelParser#modelSetFuncDef}.
 	 * @param ctx the parse tree

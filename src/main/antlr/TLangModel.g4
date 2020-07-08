@@ -1,5 +1,7 @@
 grammar TLangModel;
 
+import CommonLexer;
+
 	/*
  * Model Block
  * Set the data model and the entities to personalize the generated template
@@ -9,7 +11,7 @@ modelBlock:
 	modelContents+=modelContent*
 	'}';
 
-MODEL: 'model';
+//MODEL: 'model';
 
 modelContent: modelNewEntity | modelSetEntity;
 
@@ -17,7 +19,7 @@ modelContent: modelNewEntity | modelSetEntity;
 * Create new Entity
 */
 modelNewEntity:
-	type=ID ('(' ((attrs+=modelAttribut) (',' attrs+=modelAttribut)*) ')')? '{'
+	'let' type=ID ('(' ((attrs+=modelAttribut) (',' attrs+=modelAttribut)*) ')')? '{'
 	decl+=modelValueType*
 	'}';
 
@@ -45,6 +47,8 @@ modelSetEntity:
     '}'
 ;
 
+//SET: 'set';
+
 modelSetAttribute:
     attr=ID? value=modelSetValueType;
 
@@ -52,10 +56,10 @@ modelSetValueType:
     modelSetType | modelSetFuncDef | modelSetRef;
 
 modelSetType:
-    type=ID ('<' (generic=tmplGeneric) '>')? (array='[' ']')?;
+    type=ID ('<' (generic=modelGeneric) '>')? (array='[' ']')?;
 
-    tmplGeneric:
-        (types+=modelSetType (',' types+=modelSetType)*);
+modelGeneric:
+    (types+=modelSetType (',' types+=modelSetType)*);
 
 modelSetFuncDef: '('  ')' ('->' retTypes+=modelSetType (',' retTypes+=modelSetType)*)?;
 

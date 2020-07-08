@@ -1,5 +1,7 @@
 package io.sorne.tlang.astbuilder
 
+import org.antlr.v4.runtime.Token
+
 object Utils {
 
   def extraString(withQuotes: String): String = {
@@ -9,6 +11,10 @@ object Utils {
     } else {
       ""
     }
+  }
+
+  def getText(token: Token): Option[String] = {
+    if (token != null) Some(token.getText) else None
   }
 
 }

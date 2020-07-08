@@ -376,6 +376,18 @@ public class TLangBaseListener implements TLangListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterModelGeneric(TLangParser.ModelGenericContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitModelGeneric(TLangParser.ModelGenericContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterModelSetFuncDef(TLangParser.ModelSetFuncDefContext ctx) { }
 	/**
 	 * {@inheritDoc}

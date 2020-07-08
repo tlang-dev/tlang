@@ -1,6 +1,7 @@
 grammar TLang;
 
-import TLangModel;
+import TLangModel, CommonLexer;
+
 
 /*
  * Domain Model
@@ -27,8 +28,8 @@ lang: 'lang' name=STRING;
 file:
 	'file' name=STRING;
 
-LANG: 'lang';
-FILE: 'file';
+//LANG: 'lang';
+//FILE: 'file';
 
 	/*
  * Helper block
@@ -40,12 +41,12 @@ helperBlock:
 	'}';
 
 helperFunc:
-	'func' name=ANY_ID '{'
+	'func' name=ID '{'
 	'}';
 
 
-HELPER: 'helper';
-FUNC: 'func';
+//HELPER: 'helper';
+//FUNC: 'func';
 
 	/*
  * Tmpl block (Template block)
@@ -66,7 +67,7 @@ tmplUse:
 	'use' name=STRING;
 
 tmplImpl:
-	'impl' name=ANY_ID (('for' forName=ANY_ID) (',' forNames+=ANY_ID)*)? '{'
+	'impl' name=ID (('for' forName=ID) (',' forNames+=ID)*)? '{'
 	(tmplImplContents+=tmplImplContent)*
 	'}';
 
@@ -74,7 +75,7 @@ tmplImplContent:
     tmplExpression | tmplFunc;
 
 tmplFunc:
-	'func' name=ANY_ID curries+=tmplCurrying* (':' types+=tmplType (',' types+=tmplType)*)? ('{' exprs+=tmplExpression*
+	'func' name=ID curries+=tmplCurrying* (':' types+=tmplType (',' types+=tmplType)*)? ('{' exprs+=tmplExpression*
 	'}')?;
 
 tmplCurrying:
@@ -84,10 +85,10 @@ tmplCurryingParam:
 	((params+=tmplParam) (',' params+=tmplParam)*)?;
 
 tmplParam:
-	accessor=ANY_ID? name=ANY_ID (':' type=tmplType)?;
+	accessor=ID? name=ID (':' type=tmplType)?;
 
 tmplType:
-	type=ANY_ID ('<' (generic=tmplGeneric) '>')? (array='[' ']')?;
+	type=ID ('<' (generic=tmplGeneric) '>')? (array='[' ']')?;
 
 tmplGeneric:
 	(types+=tmplType (',' types+=tmplType)*);
@@ -96,34 +97,7 @@ tmplExpression:
 	tmplVal | tmplVar;
 
 tmplVal:
-	'val' name=ANY_ID (':' type=tmplType)? ('=' value=tmplExpression)?;
+	'val' name=ID (':' type=tmplType)? ('=' value=tmplExpression)?;
 
 tmplVar:
-	'var' name=ANY_ID (':' type=tmplType)? ('=' value=tmplExpression)?;
-
-
-TEXT:
-	'"""' '"""';
-
-ANY_ID:
-	ID | ID_RPL;
-
-ID:
-	'^'? ('a'..'z' | 'A'..'Z' | '_' | '-') ('a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '-')*;
-ID_RPL:
-	'^'? ('a'..'z' | 'A'..'Z' | '_' | '-' | '${') ('a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '-' | '${' | '}')*;
-
-WS : ( ' ' | '\t' | '\r' | '\n' )+ -> channel(HIDDEN);
-
-ESCAPED_QUOTE : '\\"';
-STRING :   '"' ( ESCAPED_QUOTE | ~('\n'|'\r') )*? '"';
-
-NUMBER     : '0'..'9'+ ('.' '0'..'9'+)?;
-
-
-
-//ML_COMMENT : '/*' -> '*/';
-//SL_COMMENT : '//' !('\n'|'\r')* ('\r'? '\n')?;
-
-//WS         : (' '|'\t'|'\r'|'\n')+ -> skip;
-//WS     : [ \t\r\n]+ -> channel(HIDDEN);
+	'var' name=ID (':' type=tmplType)? ('=' value=tmplExpression)?;

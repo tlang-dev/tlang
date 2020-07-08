@@ -21,16 +21,16 @@ object BuildModelBlock {
 
   def buildSetEntity(setEntity: ModelSetEntityContext): ModelSetEntity = {
     val content = setEntity.params.asScala.map(attr => attr.modelSetValueType() match {
-      case content@_ if content.modelSetType() != null => ModelSetAttribute(Option(attr.attr.getText), buildType(content.modelSetType()))
-      case content@_ if content.modelSetFuncDef() != null => ModelSetAttribute(Option(attr.attr.getText), buildFuncDef(content.modelSetFuncDef()))
-      case content@_ if content.modelSetRef() != null => ModelSetAttribute(Option(attr.attr.getText), buildRef(content.modelSetRef()))
+      case content@_ if content.modelSetType() != null => ModelSetAttribute(Utils.getText(attr.attr), buildType(content.modelSetType()))
+      case content@_ if content.modelSetFuncDef() != null => ModelSetAttribute(Utils.getText(attr.attr), buildFuncDef(content.modelSetFuncDef()))
+      case content@_ if content.modelSetRef() != null => ModelSetAttribute(Utils.getText(attr.attr), buildRef(content.modelSetRef()))
     }).toList
     ModelSetEntity(setEntity.name.getText, if (content.nonEmpty) Some(content) else None)
   }
 
 
   def buildType(setType: ModelSetTypeContext): ModelSetType = {
-    ModelSetType()
+    ModelSetType(setType.`type`.getText, None)
   }
 
   def buildFuncDef(funcDef: ModelSetFuncDefContext): ModelSetFuncDef = {
@@ -38,6 +38,7 @@ object BuildModelBlock {
   }
 
   def buildRef(ref: ModelSetRefContext): ModelSetRef = {
-    ModelSetRef()
+    ModelSetRef(ref.ref.getText)
   }
+
 }

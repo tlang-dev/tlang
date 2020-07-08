@@ -117,15 +117,15 @@ public interface TLangModelListener extends ParseTreeListener {
 	 */
 	void exitModelSetType(TLangModelParser.ModelSetTypeContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link TLangModelParser#tmplGeneric}.
+	 * Enter a parse tree produced by {@link TLangModelParser#modelGeneric}.
 	 * @param ctx the parse tree
 	 */
-	void enterTmplGeneric(TLangModelParser.TmplGenericContext ctx);
+	void enterModelGeneric(TLangModelParser.ModelGenericContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link TLangModelParser#tmplGeneric}.
+	 * Exit a parse tree produced by {@link TLangModelParser#modelGeneric}.
 	 * @param ctx the parse tree
 	 */
-	void exitTmplGeneric(TLangModelParser.TmplGenericContext ctx);
+	void exitModelGeneric(TLangModelParser.ModelGenericContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link TLangModelParser#modelSetFuncDef}.
 	 * @param ctx the parse tree
