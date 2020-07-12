@@ -1,4 +1,4 @@
-package io.sorne.tlang.ast.model
+package io.sorne.tlang.ast.model.set
 
 import io.sorne.tlang.ast.tmpl.TmplGeneric
 

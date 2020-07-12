@@ -1,4 +1,4 @@
-// Generated from C:/Users/joel/sorne_io/io.sorne.tlang/src/main/antlr\TLangModel.g4 by ANTLR 4.8
+// Generated from /home/joel/sorne_io/io.sorne.tlang/src/main/antlr/TLangModel.g4 by ANTLR 4.8
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
@@ -57,25 +57,25 @@ public interface TLangModelListener extends ParseTreeListener {
 	 */
 	void exitModelTbl(TLangModelParser.ModelTblContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link TLangModelParser#modelEntityAsAttribut}.
+	 * Enter a parse tree produced by {@link TLangModelParser#modelEntityAsAttribute}.
 	 * @param ctx the parse tree
 	 */
-	void enterModelEntityAsAttribut(TLangModelParser.ModelEntityAsAttributContext ctx);
+	void enterModelEntityAsAttribute(TLangModelParser.ModelEntityAsAttributeContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link TLangModelParser#modelEntityAsAttribut}.
+	 * Exit a parse tree produced by {@link TLangModelParser#modelEntityAsAttribute}.
 	 * @param ctx the parse tree
 	 */
-	void exitModelEntityAsAttribut(TLangModelParser.ModelEntityAsAttributContext ctx);
+	void exitModelEntityAsAttribute(TLangModelParser.ModelEntityAsAttributeContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link TLangModelParser#modelAttribut}.
+	 * Enter a parse tree produced by {@link TLangModelParser#modelAttribute}.
 	 * @param ctx the parse tree
 	 */
-	void enterModelAttribut(TLangModelParser.ModelAttributContext ctx);
+	void enterModelAttribute(TLangModelParser.ModelAttributeContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link TLangModelParser#modelAttribut}.
+	 * Exit a parse tree produced by {@link TLangModelParser#modelAttribute}.
 	 * @param ctx the parse tree
 	 */
-	void exitModelAttribut(TLangModelParser.ModelAttributContext ctx);
+	void exitModelAttribute(TLangModelParser.ModelAttributeContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link TLangModelParser#modelSetEntity}.
 	 * @param ctx the parse tree

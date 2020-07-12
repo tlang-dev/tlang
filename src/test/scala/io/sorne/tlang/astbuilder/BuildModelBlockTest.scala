@@ -1,6 +1,7 @@
 package io.sorne.tlang.astbuilder
 
-import io.sorne.tlang.ast.model.{ModelSetEntity, ModelSetType}
+import io.sorne.tlang.ast.model.ModelSetType
+import io.sorne.tlang.ast.model.set.{ModelSetEntity, ModelSetType}
 import io.sorne.tlang.{TLangLexer, TLangParser}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite

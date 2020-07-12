@@ -1,4 +1,4 @@
-// Generated from C:/Users/joel/sorne_io/io.sorne.tlang/src/main/antlr\TLangModel.g4 by ANTLR 4.8
+// Generated from /home/joel/sorne_io/io.sorne.tlang/src/main/antlr/TLangModel.g4 by ANTLR 4.8
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
 /**
@@ -51,14 +51,14 @@ public class TLangModelBaseVisitor<T> extends AbstractParseTreeVisitor<T> implem
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitModelEntityAsAttribut(TLangModelParser.ModelEntityAsAttributContext ctx) { return visitChildren(ctx); }
+	@Override public T visitModelEntityAsAttribute(TLangModelParser.ModelEntityAsAttributeContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitModelAttribut(TLangModelParser.ModelAttributContext ctx) { return visitChildren(ctx); }
+	@Override public T visitModelAttribute(TLangModelParser.ModelAttributeContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

@@ -1,4 +1,4 @@
-// Generated from C:/Users/joel/sorne_io/io.sorne.tlang/src/main/antlr\TLangModel.g4 by ANTLR 4.8
+// Generated from /home/joel/sorne_io/io.sorne.tlang/src/main/antlr/TLangModel.g4 by ANTLR 4.8
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
@@ -75,25 +75,25 @@ public class TLangModelBaseListener implements TLangModelListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterModelEntityAsAttribut(TLangModelParser.ModelEntityAsAttributContext ctx) { }
+	@Override public void enterModelEntityAsAttribute(TLangModelParser.ModelEntityAsAttributeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitModelEntityAsAttribut(TLangModelParser.ModelEntityAsAttributContext ctx) { }
+	@Override public void exitModelEntityAsAttribute(TLangModelParser.ModelEntityAsAttributeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterModelAttribut(TLangModelParser.ModelAttributContext ctx) { }
+	@Override public void enterModelAttribute(TLangModelParser.ModelAttributeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitModelAttribut(TLangModelParser.ModelAttributContext ctx) { }
+	@Override public void exitModelAttribute(TLangModelParser.ModelAttributeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
