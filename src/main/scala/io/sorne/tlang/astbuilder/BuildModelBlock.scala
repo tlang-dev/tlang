@@ -1,7 +1,9 @@
 package io.sorne.tlang.astbuilder
 
 import io.sorne.tlang.TLangParser._
-import io.sorne.tlang.ast.model._
+import io.sorne.tlang.ast.model.`new`.ModelNewEntity
+import io.sorne.tlang.ast.model.{set, _}
+import io.sorne.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetFuncDef, ModelSetRef, ModelSetType}
 
 import scala.jdk.CollectionConverters._
 
@@ -22,8 +24,8 @@ object BuildModelBlock {
   def buildSetEntity(setEntity: ModelSetEntityContext): ModelSetEntity = {
     val content = setEntity.params.asScala.map(attr => attr.modelSetValueType() match {
       case content@_ if content.modelSetType() != null => ModelSetAttribute(Utils.getText(attr.attr), buildType(content.modelSetType()))
-      case content@_ if content.modelSetFuncDef() != null => ModelSetAttribute(Utils.getText(attr.attr), buildFuncDef(content.modelSetFuncDef()))
-      case content@_ if content.modelSetRef() != null => ModelSetAttribute(Utils.getText(attr.attr), buildRef(content.modelSetRef()))
+      case content@_ if content.modelSetFuncDef() != null => set.ModelSetAttribute(Utils.getText(attr.attr), buildFuncDef(content.modelSetFuncDef()))
+      case content@_ if content.modelSetRef() != null => set.ModelSetAttribute(Utils.getText(attr.attr), buildRef(content.modelSetRef()))
     }).toList
     ModelSetEntity(setEntity.name.getText, if (content.nonEmpty) Some(content) else None)
   }

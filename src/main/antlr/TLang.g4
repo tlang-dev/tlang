@@ -31,19 +31,6 @@ file:
 //LANG: 'lang';
 //FILE: 'file';
 
-	/*
- * Helper block
- * The helper is interpreted and therefore, offers dynamic results for the template
- */
-helperBlock:
-	'helper' '{'
-	(helperFuncs+=helperFunc)*
-	'}';
-
-helperFunc:
-	'func' name=ID '{'
-	'}';
-
 
 //HELPER: 'helper';
 //FUNC: 'func';

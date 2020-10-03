@@ -1,4 +1,4 @@
-// Generated from C:/Users/joel/sorne_io/io.sorne.tlang/src/main/antlr\TLangModel.g4 by ANTLR 4.8
+// Generated from /home/joel/sorne_io/io.sorne.tlang/src/main/antlr/TLangModel.g4 by ANTLR 4.8
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
 /**
@@ -40,17 +40,17 @@ public interface TLangModelVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitModelTbl(TLangModelParser.ModelTblContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link TLangModelParser#modelEntityAsAttribut}.
+	 * Visit a parse tree produced by {@link TLangModelParser#modelEntityAsAttribute}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitModelEntityAsAttribut(TLangModelParser.ModelEntityAsAttributContext ctx);
+	T visitModelEntityAsAttribute(TLangModelParser.ModelEntityAsAttributeContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link TLangModelParser#modelAttribut}.
+	 * Visit a parse tree produced by {@link TLangModelParser#modelAttribute}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitModelAttribut(TLangModelParser.ModelAttributContext ctx);
+	T visitModelAttribute(TLangModelParser.ModelAttributeContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link TLangModelParser#modelSetEntity}.
 	 * @param ctx the parse tree

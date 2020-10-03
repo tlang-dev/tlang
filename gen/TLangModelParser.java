@@ -1,4 +1,4 @@
-// Generated from C:/Users/joel/sorne_io/io.sorne.tlang/src/main/antlr\TLangModel.g4 by ANTLR 4.8
+// Generated from /home/joel/sorne_io/io.sorne.tlang/src/main/antlr/TLangModel.g4 by ANTLR 4.8
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
@@ -17,18 +17,18 @@ public class TLangModelParser extends Parser {
 		new PredictionContextCache();
 	public static final int
 		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, T__7=8, T__8=9, 
-		T__9=10, T__10=11, T__11=12, T__12=13, TEXT=14, WS=15, STRING=16, NUMBER=17, 
-		ID=18;
+		T__9=10, T__10=11, T__11=12, T__12=13, TEXT=14, ID=15, WS=16, STRING=17, 
+		NUMBER=18;
 	public static final int
 		RULE_modelBlock = 0, RULE_modelContent = 1, RULE_modelNewEntity = 2, RULE_modelValueType = 3, 
-		RULE_modelTbl = 4, RULE_modelEntityAsAttribut = 5, RULE_modelAttribut = 6, 
+		RULE_modelTbl = 4, RULE_modelEntityAsAttribute = 5, RULE_modelAttribute = 6, 
 		RULE_modelSetEntity = 7, RULE_modelSetAttribute = 8, RULE_modelSetValueType = 9, 
 		RULE_modelSetType = 10, RULE_modelGeneric = 11, RULE_modelSetFuncDef = 12, 
 		RULE_modelSetRef = 13;
 	private static String[] makeRuleNames() {
 		return new String[] {
 			"modelBlock", "modelContent", "modelNewEntity", "modelValueType", "modelTbl", 
-			"modelEntityAsAttribut", "modelAttribut", "modelSetEntity", "modelSetAttribute", 
+			"modelEntityAsAttribute", "modelAttribute", "modelSetEntity", "modelSetAttribute", 
 			"modelSetValueType", "modelSetType", "modelGeneric", "modelSetFuncDef", 
 			"modelSetRef"
 		};
@@ -45,7 +45,7 @@ public class TLangModelParser extends Parser {
 	private static String[] makeSymbolicNames() {
 		return new String[] {
 			null, null, null, null, null, null, null, null, null, null, null, null, 
-			null, null, "TEXT", "WS", "STRING", "NUMBER", "ID"
+			null, null, "TEXT", "ID", "WS", "STRING", "NUMBER"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -232,8 +232,8 @@ public class TLangModelParser extends Parser {
 
 	public static class ModelNewEntityContext extends ParserRuleContext {
 		public Token type;
-		public ModelAttributContext modelAttribut;
-		public List<ModelAttributContext> attrs = new ArrayList<ModelAttributContext>();
+		public ModelAttributeContext modelAttribute;
+		public List<ModelAttributeContext> attrs = new ArrayList<ModelAttributeContext>();
 		public ModelValueTypeContext modelValueType;
 		public List<ModelValueTypeContext> decl = new ArrayList<ModelValueTypeContext>();
 		public TerminalNode ID() { return getToken(TLangModelParser.ID, 0); }
@@ -243,11 +243,11 @@ public class TLangModelParser extends Parser {
 		public ModelValueTypeContext modelValueType(int i) {
 			return getRuleContext(ModelValueTypeContext.class,i);
 		}
-		public List<ModelAttributContext> modelAttribut() {
-			return getRuleContexts(ModelAttributContext.class);
+		public List<ModelAttributeContext> modelAttribute() {
+			return getRuleContexts(ModelAttributeContext.class);
 		}
-		public ModelAttributContext modelAttribut(int i) {
-			return getRuleContext(ModelAttributContext.class,i);
+		public ModelAttributeContext modelAttribute(int i) {
+			return getRuleContext(ModelAttributeContext.class,i);
 		}
 		public ModelNewEntityContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -289,8 +289,8 @@ public class TLangModelParser extends Parser {
 				{
 				{
 				setState(45);
-				((ModelNewEntityContext)_localctx).modelAttribut = modelAttribut();
-				((ModelNewEntityContext)_localctx).attrs.add(((ModelNewEntityContext)_localctx).modelAttribut);
+				((ModelNewEntityContext)_localctx).modelAttribute = modelAttribute();
+				((ModelNewEntityContext)_localctx).attrs.add(((ModelNewEntityContext)_localctx).modelAttribute);
 				}
 				setState(50);
 				_errHandler.sync(this);
@@ -301,8 +301,8 @@ public class TLangModelParser extends Parser {
 					setState(46);
 					match(T__5);
 					setState(47);
-					((ModelNewEntityContext)_localctx).modelAttribut = modelAttribut();
-					((ModelNewEntityContext)_localctx).attrs.add(((ModelNewEntityContext)_localctx).modelAttribut);
+					((ModelNewEntityContext)_localctx).modelAttribute = modelAttribute();
+					((ModelNewEntityContext)_localctx).attrs.add(((ModelNewEntityContext)_localctx).modelAttribute);
 					}
 					}
 					setState(52);
@@ -320,7 +320,7 @@ public class TLangModelParser extends Parser {
 			setState(61);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__3) | (1L << T__7) | (1L << STRING) | (1L << ID))) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__3) | (1L << T__7) | (1L << ID) | (1L << STRING))) != 0)) {
 				{
 				{
 				setState(58);
@@ -348,11 +348,11 @@ public class TLangModelParser extends Parser {
 	}
 
 	public static class ModelValueTypeContext extends ParserRuleContext {
-		public ModelAttributContext modelAttribut() {
-			return getRuleContext(ModelAttributContext.class,0);
+		public ModelAttributeContext modelAttribute() {
+			return getRuleContext(ModelAttributeContext.class,0);
 		}
-		public ModelEntityAsAttributContext modelEntityAsAttribut() {
-			return getRuleContext(ModelEntityAsAttributContext.class,0);
+		public ModelEntityAsAttributeContext modelEntityAsAttribute() {
+			return getRuleContext(ModelEntityAsAttributeContext.class,0);
 		}
 		public ModelTblContext modelTbl() {
 			return getRuleContext(ModelTblContext.class,0);
@@ -388,13 +388,13 @@ public class TLangModelParser extends Parser {
 			case 1:
 				{
 				setState(66);
-				modelAttribut();
+				modelAttribute();
 				}
 				break;
 			case 2:
 				{
 				setState(67);
-				modelEntityAsAttribut();
+				modelEntityAsAttribute();
 				}
 				break;
 			case 3:
@@ -507,35 +507,35 @@ public class TLangModelParser extends Parser {
 		return _localctx;
 	}
 
-	public static class ModelEntityAsAttributContext extends ParserRuleContext {
+	public static class ModelEntityAsAttributeContext extends ParserRuleContext {
 		public Token attr;
 		public ModelNewEntityContext value;
 		public ModelNewEntityContext modelNewEntity() {
 			return getRuleContext(ModelNewEntityContext.class,0);
 		}
 		public TerminalNode ID() { return getToken(TLangModelParser.ID, 0); }
-		public ModelEntityAsAttributContext(ParserRuleContext parent, int invokingState) {
+		public ModelEntityAsAttributeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_modelEntityAsAttribut; }
+		@Override public int getRuleIndex() { return RULE_modelEntityAsAttribute; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof TLangModelListener ) ((TLangModelListener)listener).enterModelEntityAsAttribut(this);
+			if ( listener instanceof TLangModelListener ) ((TLangModelListener)listener).enterModelEntityAsAttribute(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof TLangModelListener ) ((TLangModelListener)listener).exitModelEntityAsAttribut(this);
+			if ( listener instanceof TLangModelListener ) ((TLangModelListener)listener).exitModelEntityAsAttribute(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof TLangModelVisitor ) return ((TLangModelVisitor<? extends T>)visitor).visitModelEntityAsAttribut(this);
+			if ( visitor instanceof TLangModelVisitor ) return ((TLangModelVisitor<? extends T>)visitor).visitModelEntityAsAttribute(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final ModelEntityAsAttributContext modelEntityAsAttribut() throws RecognitionException {
-		ModelEntityAsAttributContext _localctx = new ModelEntityAsAttributContext(_ctx, getState());
-		enterRule(_localctx, 10, RULE_modelEntityAsAttribut);
+	public final ModelEntityAsAttributeContext modelEntityAsAttribute() throws RecognitionException {
+		ModelEntityAsAttributeContext _localctx = new ModelEntityAsAttributeContext(_ctx, getState());
+		enterRule(_localctx, 10, RULE_modelEntityAsAttribute);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
@@ -547,12 +547,12 @@ public class TLangModelParser extends Parser {
 			if (_la==ID) {
 				{
 				setState(85);
-				((ModelEntityAsAttributContext)_localctx).attr = match(ID);
+				((ModelEntityAsAttributeContext)_localctx).attr = match(ID);
 				}
 			}
 
 			setState(88);
-			((ModelEntityAsAttributContext)_localctx).value = modelNewEntity();
+			((ModelEntityAsAttributeContext)_localctx).value = modelNewEntity();
 			}
 			}
 		}
@@ -567,33 +567,33 @@ public class TLangModelParser extends Parser {
 		return _localctx;
 	}
 
-	public static class ModelAttributContext extends ParserRuleContext {
+	public static class ModelAttributeContext extends ParserRuleContext {
 		public Token attr;
 		public Token value;
 		public TerminalNode STRING() { return getToken(TLangModelParser.STRING, 0); }
 		public TerminalNode ID() { return getToken(TLangModelParser.ID, 0); }
-		public ModelAttributContext(ParserRuleContext parent, int invokingState) {
+		public ModelAttributeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_modelAttribut; }
+		@Override public int getRuleIndex() { return RULE_modelAttribute; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof TLangModelListener ) ((TLangModelListener)listener).enterModelAttribut(this);
+			if ( listener instanceof TLangModelListener ) ((TLangModelListener)listener).enterModelAttribute(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof TLangModelListener ) ((TLangModelListener)listener).exitModelAttribut(this);
+			if ( listener instanceof TLangModelListener ) ((TLangModelListener)listener).exitModelAttribute(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof TLangModelVisitor ) return ((TLangModelVisitor<? extends T>)visitor).visitModelAttribut(this);
+			if ( visitor instanceof TLangModelVisitor ) return ((TLangModelVisitor<? extends T>)visitor).visitModelAttribute(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final ModelAttributContext modelAttribut() throws RecognitionException {
-		ModelAttributContext _localctx = new ModelAttributContext(_ctx, getState());
-		enterRule(_localctx, 12, RULE_modelAttribut);
+	public final ModelAttributeContext modelAttribute() throws RecognitionException {
+		ModelAttributeContext _localctx = new ModelAttributeContext(_ctx, getState());
+		enterRule(_localctx, 12, RULE_modelAttribute);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
@@ -605,12 +605,12 @@ public class TLangModelParser extends Parser {
 			if (_la==ID) {
 				{
 				setState(90);
-				((ModelAttributContext)_localctx).attr = match(ID);
+				((ModelAttributeContext)_localctx).attr = match(ID);
 				}
 			}
 
 			setState(93);
-			((ModelAttributContext)_localctx).value = match(STRING);
+			((ModelAttributeContext)_localctx).value = match(STRING);
 			}
 			}
 		}
@@ -1159,23 +1159,23 @@ public class TLangModelParser extends Parser {
 		"\2\32\u0096\3\2\2\2\34\u00a3\3\2\2\2\36\37\7\3\2\2\37#\7\4\2\2 \"\5\4"+
 		"\3\2! \3\2\2\2\"%\3\2\2\2#!\3\2\2\2#$\3\2\2\2$&\3\2\2\2%#\3\2\2\2&\'\7"+
 		"\5\2\2\'\3\3\2\2\2(+\5\6\4\2)+\5\20\t\2*(\3\2\2\2*)\3\2\2\2+\5\3\2\2\2"+
-		",-\7\6\2\2-9\7\24\2\2./\7\7\2\2/\64\5\16\b\2\60\61\7\b\2\2\61\63\5\16"+
+		",-\7\6\2\2-9\7\21\2\2./\7\7\2\2/\64\5\16\b\2\60\61\7\b\2\2\61\63\5\16"+
 		"\b\2\62\60\3\2\2\2\63\66\3\2\2\2\64\62\3\2\2\2\64\65\3\2\2\2\65\67\3\2"+
 		"\2\2\66\64\3\2\2\2\678\7\t\2\28:\3\2\2\29.\3\2\2\29:\3\2\2\2:;\3\2\2\2"+
 		";?\7\4\2\2<>\5\b\5\2=<\3\2\2\2>A\3\2\2\2?=\3\2\2\2?@\3\2\2\2@B\3\2\2\2"+
 		"A?\3\2\2\2BC\7\5\2\2C\7\3\2\2\2DH\5\16\b\2EH\5\f\7\2FH\5\n\6\2GD\3\2\2"+
-		"\2GE\3\2\2\2GF\3\2\2\2H\t\3\2\2\2IK\7\24\2\2JI\3\2\2\2JK\3\2\2\2KL\3\2"+
+		"\2GE\3\2\2\2GF\3\2\2\2H\t\3\2\2\2IK\7\21\2\2JI\3\2\2\2JK\3\2\2\2KL\3\2"+
 		"\2\2LM\7\n\2\2MR\5\b\5\2NO\7\b\2\2OQ\5\b\5\2PN\3\2\2\2QT\3\2\2\2RP\3\2"+
-		"\2\2RS\3\2\2\2SU\3\2\2\2TR\3\2\2\2UV\7\13\2\2V\13\3\2\2\2WY\7\24\2\2X"+
-		"W\3\2\2\2XY\3\2\2\2YZ\3\2\2\2Z[\5\6\4\2[\r\3\2\2\2\\^\7\24\2\2]\\\3\2"+
-		"\2\2]^\3\2\2\2^_\3\2\2\2_`\7\22\2\2`\17\3\2\2\2ab\7\f\2\2bn\7\24\2\2c"+
+		"\2\2RS\3\2\2\2SU\3\2\2\2TR\3\2\2\2UV\7\13\2\2V\13\3\2\2\2WY\7\21\2\2X"+
+		"W\3\2\2\2XY\3\2\2\2YZ\3\2\2\2Z[\5\6\4\2[\r\3\2\2\2\\^\7\21\2\2]\\\3\2"+
+		"\2\2]^\3\2\2\2^_\3\2\2\2_`\7\23\2\2`\17\3\2\2\2ab\7\f\2\2bn\7\21\2\2c"+
 		"d\7\7\2\2di\5\22\n\2ef\7\b\2\2fh\5\22\n\2ge\3\2\2\2hk\3\2\2\2ig\3\2\2"+
 		"\2ij\3\2\2\2jl\3\2\2\2ki\3\2\2\2lm\7\t\2\2mo\3\2\2\2nc\3\2\2\2no\3\2\2"+
 		"\2op\3\2\2\2pt\7\4\2\2qs\5\22\n\2rq\3\2\2\2sv\3\2\2\2tr\3\2\2\2tu\3\2"+
-		"\2\2uw\3\2\2\2vt\3\2\2\2wx\7\5\2\2x\21\3\2\2\2y{\7\24\2\2zy\3\2\2\2z{"+
+		"\2\2uw\3\2\2\2vt\3\2\2\2wx\7\5\2\2x\21\3\2\2\2y{\7\21\2\2zy\3\2\2\2z{"+
 		"\3\2\2\2{|\3\2\2\2|}\5\24\13\2}\23\3\2\2\2~\u0082\5\26\f\2\177\u0082\5"+
 		"\32\16\2\u0080\u0082\5\34\17\2\u0081~\3\2\2\2\u0081\177\3\2\2\2\u0081"+
-		"\u0080\3\2\2\2\u0082\25\3\2\2\2\u0083\u0088\7\24\2\2\u0084\u0085\7\r\2"+
+		"\u0080\3\2\2\2\u0082\25\3\2\2\2\u0083\u0088\7\21\2\2\u0084\u0085\7\r\2"+
 		"\2\u0085\u0086\5\30\r\2\u0086\u0087\7\16\2\2\u0087\u0089\3\2\2\2\u0088"+
 		"\u0084\3\2\2\2\u0088\u0089\3\2\2\2\u0089\u008c\3\2\2\2\u008a\u008b\7\n"+
 		"\2\2\u008b\u008d\7\13\2\2\u008c\u008a\3\2\2\2\u008c\u008d\3\2\2\2\u008d"+
@@ -1186,7 +1186,7 @@ public class TLangModelParser extends Parser {
 		"\u009b\7\b\2\2\u009b\u009d\5\26\f\2\u009c\u009a\3\2\2\2\u009d\u00a0\3"+
 		"\2\2\2\u009e\u009c\3\2\2\2\u009e\u009f\3\2\2\2\u009f\u00a2\3\2\2\2\u00a0"+
 		"\u009e\3\2\2\2\u00a1\u0098\3\2\2\2\u00a1\u00a2\3\2\2\2\u00a2\33\3\2\2"+
-		"\2\u00a3\u00a4\7\17\2\2\u00a4\u00a5\7\24\2\2\u00a5\35\3\2\2\2\26#*\64"+
+		"\2\u00a3\u00a4\7\17\2\2\u00a4\u00a5\7\21\2\2\u00a5\35\3\2\2\2\26#*\64"+
 		"9?GJRX]intz\u0081\u0088\u008c\u0093\u009e\u00a1";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());

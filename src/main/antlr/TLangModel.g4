@@ -19,22 +19,22 @@ modelContent: modelNewEntity | modelSetEntity;
 * Create new Entity
 */
 modelNewEntity:
-	'let' type=ID ('(' ((attrs+=modelAttribut) (',' attrs+=modelAttribut)*) ')')? '{'
+	'let' type=ID ('(' ((attrs+=modelAttribute) (',' attrs+=modelAttribute)*) ')')? '{'
 	decl+=modelValueType*
 	'}';
 
 modelValueType:
-	(modelAttribut | modelEntityAsAttribut | modelTbl);
+	(modelAttribute | modelEntityAsAttribute | modelTbl);
 
 modelTbl:
 	attr=ID? ('[')
 	((elms+=modelValueType) (',' elms+=modelValueType)*)
 	']';
 
-modelEntityAsAttribut:
+modelEntityAsAttribute:
 	(attr=ID? value=modelNewEntity);
 
-modelAttribut:
+modelAttribute:
 	(attr=ID? value=STRING);
 
 /**
