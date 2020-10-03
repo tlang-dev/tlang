@@ -1,6 +1,6 @@
 grammar TLang;
 
-import TLangModel, CommonLexer;
+import TLangModel, TLangHelper, CommonLexer;
 
 
 /*
