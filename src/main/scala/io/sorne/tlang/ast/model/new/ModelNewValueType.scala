@@ -1,3 +1,3 @@
 package io.sorne.tlang.ast.model.`new`
 
-case class ModelNewValueType()
+class ModelNewValueType

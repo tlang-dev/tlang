@@ -1,4 +1,4 @@
-// Generated from C:/Users/joel/sorne_io/io.sorne.tlang/src/main/antlr\TLang.g4 by ANTLR 4.8
+// Generated from /home/joel/sorne_io/io.sorne.tlang/src/main/antlr/TLang.g4 by ANTLR 4.8
 package io.sorne.tlang;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -28,18 +28,6 @@ public interface TLangVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitFile(TLangParser.FileContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link TLangParser#helperBlock}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitHelperBlock(TLangParser.HelperBlockContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link TLangParser#helperFunc}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitHelperFunc(TLangParser.HelperFuncContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link TLangParser#tmplBlock}.
 	 * @param ctx the parse tree
@@ -155,17 +143,17 @@ public interface TLangVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitModelTbl(TLangParser.ModelTblContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link TLangParser#modelEntityAsAttribut}.
+	 * Visit a parse tree produced by {@link TLangParser#modelEntityAsAttribute}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitModelEntityAsAttribut(TLangParser.ModelEntityAsAttributContext ctx);
+	T visitModelEntityAsAttribute(TLangParser.ModelEntityAsAttributeContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link TLangParser#modelAttribut}.
+	 * Visit a parse tree produced by {@link TLangParser#modelAttribute}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitModelAttribut(TLangParser.ModelAttributContext ctx);
+	T visitModelAttribute(TLangParser.ModelAttributeContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link TLangParser#modelSetEntity}.
 	 * @param ctx the parse tree
@@ -208,4 +196,46 @@ public interface TLangVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitModelSetRef(TLangParser.ModelSetRefContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link TLangParser#helperBlock}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitHelperBlock(TLangParser.HelperBlockContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link TLangParser#helperFunc}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitHelperFunc(TLangParser.HelperFuncContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link TLangParser#helperStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitHelperStatement(TLangParser.HelperStatementContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link TLangParser#helperIf}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitHelperIf(TLangParser.HelperIfContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link TLangParser#helperCondition}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitHelperCondition(TLangParser.HelperConditionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link TLangParser#helperFor}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitHelperFor(TLangParser.HelperForContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link TLangParser#helperCallFund}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitHelperCallFund(TLangParser.HelperCallFundContext ctx);
 }

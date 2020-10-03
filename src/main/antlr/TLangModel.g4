@@ -19,7 +19,7 @@ modelContent: modelNewEntity | modelSetEntity;
 * Create new Entity
 */
 modelNewEntity:
-	'let' type=ID ('(' ((attrs+=modelAttribute) (',' attrs+=modelAttribute)*) ')')? '{'
+	'let' name=ID (type=ID)? ('(' ((attrs+=modelAttribute) (',' attrs+=modelAttribute)*) ')')? '{'
 	decl+=modelValueType*
 	'}';
 

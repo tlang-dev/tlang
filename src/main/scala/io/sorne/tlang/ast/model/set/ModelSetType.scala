@@ -1,5 +1,3 @@
 package io.sorne.tlang.ast.model.set
 
-import io.sorne.tlang.ast.tmpl.TmplGeneric
-
-case class ModelSetType(`type`: String, generics: Option[List[TmplGeneric]]) extends ModelSetValueType
+case class ModelSetType(`type`: String, generics: Option[ModelSetGeneric], isArray: Boolean = false) extends ModelSetValueType

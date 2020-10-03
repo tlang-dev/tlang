@@ -2,4 +2,4 @@ package io.sorne.tlang.ast.model.set
 
 import io.sorne.tlang.ast.model.ModelContent
 
-case class ModelSetEntity(name: String, params:Option[List[ModelSetAttribute]]) extends ModelContent
+case class ModelSetEntity(name: String, params: Option[List[ModelSetAttribute]], attrs: Option[List[ModelSetAttribute]]) extends ModelContent

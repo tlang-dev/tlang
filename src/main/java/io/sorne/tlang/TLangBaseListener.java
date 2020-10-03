@@ -1,4 +1,4 @@
-// Generated from C:/Users/joel/sorne_io/io.sorne.tlang/src/main/antlr\TLang.g4 by ANTLR 4.8
+// Generated from /home/joel/sorne_io/io.sorne.tlang/src/main/antlr/TLang.g4 by ANTLR 4.8
 package io.sorne.tlang;
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -47,30 +47,6 @@ public class TLangBaseListener implements TLangListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitFile(TLangParser.FileContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterHelperBlock(TLangParser.HelperBlockContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitHelperBlock(TLangParser.HelperBlockContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterHelperFunc(TLangParser.HelperFuncContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitHelperFunc(TLangParser.HelperFuncContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -304,25 +280,25 @@ public class TLangBaseListener implements TLangListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterModelEntityAsAttribut(TLangParser.ModelEntityAsAttributContext ctx) { }
+	@Override public void enterModelEntityAsAttribute(TLangParser.ModelEntityAsAttributeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitModelEntityAsAttribut(TLangParser.ModelEntityAsAttributContext ctx) { }
+	@Override public void exitModelEntityAsAttribute(TLangParser.ModelEntityAsAttributeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterModelAttribut(TLangParser.ModelAttributContext ctx) { }
+	@Override public void enterModelAttribute(TLangParser.ModelAttributeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitModelAttribut(TLangParser.ModelAttributContext ctx) { }
+	@Override public void exitModelAttribute(TLangParser.ModelAttributeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -407,6 +383,90 @@ public class TLangBaseListener implements TLangListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitModelSetRef(TLangParser.ModelSetRefContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterHelperBlock(TLangParser.HelperBlockContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitHelperBlock(TLangParser.HelperBlockContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterHelperFunc(TLangParser.HelperFuncContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitHelperFunc(TLangParser.HelperFuncContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterHelperStatement(TLangParser.HelperStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitHelperStatement(TLangParser.HelperStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterHelperIf(TLangParser.HelperIfContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitHelperIf(TLangParser.HelperIfContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterHelperCondition(TLangParser.HelperConditionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitHelperCondition(TLangParser.HelperConditionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterHelperFor(TLangParser.HelperForContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitHelperFor(TLangParser.HelperForContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterHelperCallFund(TLangParser.HelperCallFundContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitHelperCallFund(TLangParser.HelperCallFundContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
