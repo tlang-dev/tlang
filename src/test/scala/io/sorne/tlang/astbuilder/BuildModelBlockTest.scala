@@ -34,7 +34,7 @@ class BuildModelBlockTest extends AnyFunSuite {
     assert("String".equals(setEntity.params.get.head.value.asInstanceOf[ModelSetType].`type`))
     assert("Type2".equals(setEntity.params.get(1).value.asInstanceOf[ModelSetType].`type`))
     assert("Type3".equals(setEntity.params.get.last.value.asInstanceOf[ModelSetType].`type`))
-    //assert("Generic1".equals(setEntity.params.get.last.value.asInstanceOf[ModelSetType].generics.get.head.types.head.name))
+    assert("Generic1".equals(setEntity.params.get.last.value.asInstanceOf[ModelSetType].generics.get.head.types.head.name))
   }
 
 }
