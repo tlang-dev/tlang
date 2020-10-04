@@ -1,4 +1,4 @@
-// Generated from /home/joel/sorne_io/io.sorne.tlang/src/main/antlr/TLangModel.g4 by ANTLR 4.8
+// Generated from C:/Users/joel/sorne_io/io.sorne.tlang/src/main/antlr\TLangModel.g4 by ANTLR 4.8
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
@@ -231,23 +231,20 @@ public class TLangModelParser extends Parser {
 	}
 
 	public static class ModelNewEntityContext extends ParserRuleContext {
+		public Token name;
 		public Token type;
-		public ModelAttributeContext modelAttribute;
-		public List<ModelAttributeContext> attrs = new ArrayList<ModelAttributeContext>();
 		public ModelValueTypeContext modelValueType;
+		public List<ModelValueTypeContext> attrs = new ArrayList<ModelValueTypeContext>();
 		public List<ModelValueTypeContext> decl = new ArrayList<ModelValueTypeContext>();
-		public TerminalNode ID() { return getToken(TLangModelParser.ID, 0); }
+		public List<TerminalNode> ID() { return getTokens(TLangModelParser.ID); }
+		public TerminalNode ID(int i) {
+			return getToken(TLangModelParser.ID, i);
+		}
 		public List<ModelValueTypeContext> modelValueType() {
 			return getRuleContexts(ModelValueTypeContext.class);
 		}
 		public ModelValueTypeContext modelValueType(int i) {
 			return getRuleContext(ModelValueTypeContext.class,i);
-		}
-		public List<ModelAttributeContext> modelAttribute() {
-			return getRuleContexts(ModelAttributeContext.class);
-		}
-		public ModelAttributeContext modelAttribute(int i) {
-			return getRuleContext(ModelAttributeContext.class,i);
 		}
 		public ModelNewEntityContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -278,61 +275,71 @@ public class TLangModelParser extends Parser {
 			setState(42);
 			match(T__3);
 			setState(43);
-			((ModelNewEntityContext)_localctx).type = match(ID);
-			setState(55);
+			((ModelNewEntityContext)_localctx).name = match(ID);
+			setState(45);
+			_errHandler.sync(this);
+			_la = _input.LA(1);
+			if (_la==ID) {
+				{
+				setState(44);
+				((ModelNewEntityContext)_localctx).type = match(ID);
+				}
+			}
+
+			setState(58);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==T__4) {
 				{
-				setState(44);
+				setState(47);
 				match(T__4);
 				{
 				{
-				setState(45);
-				((ModelNewEntityContext)_localctx).modelAttribute = modelAttribute();
-				((ModelNewEntityContext)_localctx).attrs.add(((ModelNewEntityContext)_localctx).modelAttribute);
+				setState(48);
+				((ModelNewEntityContext)_localctx).modelValueType = modelValueType();
+				((ModelNewEntityContext)_localctx).attrs.add(((ModelNewEntityContext)_localctx).modelValueType);
 				}
-				setState(50);
+				setState(53);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				while (_la==T__5) {
 					{
 					{
-					setState(46);
+					setState(49);
 					match(T__5);
-					setState(47);
-					((ModelNewEntityContext)_localctx).modelAttribute = modelAttribute();
-					((ModelNewEntityContext)_localctx).attrs.add(((ModelNewEntityContext)_localctx).modelAttribute);
+					setState(50);
+					((ModelNewEntityContext)_localctx).modelValueType = modelValueType();
+					((ModelNewEntityContext)_localctx).attrs.add(((ModelNewEntityContext)_localctx).modelValueType);
 					}
 					}
-					setState(52);
+					setState(55);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
 				}
-				setState(53);
+				setState(56);
 				match(T__6);
 				}
 			}
 
-			setState(57);
+			setState(60);
 			match(T__1);
-			setState(61);
+			setState(64);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__3) | (1L << T__7) | (1L << ID) | (1L << STRING))) != 0)) {
 				{
 				{
-				setState(58);
+				setState(61);
 				((ModelNewEntityContext)_localctx).modelValueType = modelValueType();
 				((ModelNewEntityContext)_localctx).decl.add(((ModelNewEntityContext)_localctx).modelValueType);
 				}
 				}
-				setState(63);
+				setState(66);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(64);
+			setState(67);
 			match(T__2);
 			}
 		}
@@ -382,24 +389,24 @@ public class TLangModelParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(69);
+			setState(72);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,5,_ctx) ) {
+			switch ( getInterpreter().adaptivePredict(_input,6,_ctx) ) {
 			case 1:
 				{
-				setState(66);
+				setState(69);
 				modelAttribute();
 				}
 				break;
 			case 2:
 				{
-				setState(67);
+				setState(70);
 				modelEntityAsAttribute();
 				}
 				break;
 			case 3:
 				{
-				setState(68);
+				setState(71);
 				modelTbl();
 				}
 				break;
@@ -454,45 +461,45 @@ public class TLangModelParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(72);
+			setState(75);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==ID) {
 				{
-				setState(71);
+				setState(74);
 				((ModelTblContext)_localctx).attr = match(ID);
 				}
 			}
 
 			{
-			setState(74);
+			setState(77);
 			match(T__7);
 			}
 			{
 			{
-			setState(75);
+			setState(78);
 			((ModelTblContext)_localctx).modelValueType = modelValueType();
 			((ModelTblContext)_localctx).elms.add(((ModelTblContext)_localctx).modelValueType);
 			}
-			setState(80);
+			setState(83);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__5) {
 				{
 				{
-				setState(76);
+				setState(79);
 				match(T__5);
-				setState(77);
+				setState(80);
 				((ModelTblContext)_localctx).modelValueType = modelValueType();
 				((ModelTblContext)_localctx).elms.add(((ModelTblContext)_localctx).modelValueType);
 				}
 				}
-				setState(82);
+				setState(85);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
 			}
-			setState(83);
+			setState(86);
 			match(T__8);
 			}
 		}
@@ -541,17 +548,17 @@ public class TLangModelParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			{
-			setState(86);
+			setState(89);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==ID) {
 				{
-				setState(85);
+				setState(88);
 				((ModelEntityAsAttributeContext)_localctx).attr = match(ID);
 				}
 			}
 
-			setState(88);
+			setState(91);
 			((ModelEntityAsAttributeContext)_localctx).value = modelNewEntity();
 			}
 			}
@@ -599,17 +606,17 @@ public class TLangModelParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			{
-			setState(91);
+			setState(94);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==ID) {
 				{
-				setState(90);
+				setState(93);
 				((ModelAttributeContext)_localctx).attr = match(ID);
 				}
 			}
 
-			setState(93);
+			setState(96);
 			((ModelAttributeContext)_localctx).value = match(STRING);
 			}
 			}
@@ -663,64 +670,64 @@ public class TLangModelParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(95);
+			setState(98);
 			match(T__9);
-			setState(96);
+			setState(99);
 			((ModelSetEntityContext)_localctx).name = match(ID);
-			setState(108);
+			setState(111);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==T__4) {
 				{
-				setState(97);
+				setState(100);
 				match(T__4);
 				{
 				{
-				setState(98);
+				setState(101);
 				((ModelSetEntityContext)_localctx).modelSetAttribute = modelSetAttribute();
 				((ModelSetEntityContext)_localctx).params.add(((ModelSetEntityContext)_localctx).modelSetAttribute);
 				}
-				setState(103);
+				setState(106);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				while (_la==T__5) {
 					{
 					{
-					setState(99);
+					setState(102);
 					match(T__5);
-					setState(100);
+					setState(103);
 					((ModelSetEntityContext)_localctx).modelSetAttribute = modelSetAttribute();
 					((ModelSetEntityContext)_localctx).params.add(((ModelSetEntityContext)_localctx).modelSetAttribute);
 					}
 					}
-					setState(105);
+					setState(108);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
 				}
-				setState(106);
+				setState(109);
 				match(T__6);
 				}
 			}
 
-			setState(110);
+			setState(113);
 			match(T__1);
-			setState(114);
+			setState(117);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__4) | (1L << T__12) | (1L << ID))) != 0)) {
 				{
 				{
-				setState(111);
+				setState(114);
 				((ModelSetEntityContext)_localctx).modelSetAttribute = modelSetAttribute();
 				((ModelSetEntityContext)_localctx).attrs.add(((ModelSetEntityContext)_localctx).modelSetAttribute);
 				}
 				}
-				setState(116);
+				setState(119);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(117);
+			setState(120);
 			match(T__2);
 			}
 		}
@@ -767,17 +774,17 @@ public class TLangModelParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(120);
+			setState(123);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,13,_ctx) ) {
+			switch ( getInterpreter().adaptivePredict(_input,14,_ctx) ) {
 			case 1:
 				{
-				setState(119);
+				setState(122);
 				((ModelSetAttributeContext)_localctx).attr = match(ID);
 				}
 				break;
 			}
-			setState(122);
+			setState(125);
 			((ModelSetAttributeContext)_localctx).value = modelSetValueType();
 			}
 		}
@@ -825,27 +832,27 @@ public class TLangModelParser extends Parser {
 		ModelSetValueTypeContext _localctx = new ModelSetValueTypeContext(_ctx, getState());
 		enterRule(_localctx, 18, RULE_modelSetValueType);
 		try {
-			setState(127);
+			setState(130);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case ID:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(124);
+				setState(127);
 				modelSetType();
 				}
 				break;
 			case T__4:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(125);
+				setState(128);
 				modelSetFuncDef();
 				}
 				break;
 			case T__12:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(126);
+				setState(129);
 				modelSetRef();
 				}
 				break;
@@ -898,32 +905,32 @@ public class TLangModelParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(129);
+			setState(132);
 			((ModelSetTypeContext)_localctx).type = match(ID);
-			setState(134);
+			setState(137);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==T__10) {
 				{
-				setState(130);
+				setState(133);
 				match(T__10);
 				{
-				setState(131);
+				setState(134);
 				((ModelSetTypeContext)_localctx).generic = modelGeneric();
 				}
-				setState(132);
+				setState(135);
 				match(T__11);
 				}
 			}
 
-			setState(138);
+			setState(141);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==T__7) {
 				{
-				setState(136);
+				setState(139);
 				((ModelSetTypeContext)_localctx).array = match(T__7);
-				setState(137);
+				setState(140);
 				match(T__8);
 				}
 			}
@@ -977,23 +984,23 @@ public class TLangModelParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			{
-			setState(140);
+			setState(143);
 			((ModelGenericContext)_localctx).modelSetType = modelSetType();
 			((ModelGenericContext)_localctx).types.add(((ModelGenericContext)_localctx).modelSetType);
-			setState(145);
+			setState(148);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__5) {
 				{
 				{
-				setState(141);
+				setState(144);
 				match(T__5);
-				setState(142);
+				setState(145);
 				((ModelGenericContext)_localctx).modelSetType = modelSetType();
 				((ModelGenericContext)_localctx).types.add(((ModelGenericContext)_localctx).modelSetType);
 				}
 				}
-				setState(147);
+				setState(150);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -1046,38 +1053,38 @@ public class TLangModelParser extends Parser {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(148);
+			setState(151);
 			match(T__4);
-			setState(149);
+			setState(152);
 			match(T__6);
-			setState(159);
+			setState(162);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,19,_ctx) ) {
+			switch ( getInterpreter().adaptivePredict(_input,20,_ctx) ) {
 			case 1:
 				{
-				setState(150);
+				setState(153);
 				match(T__12);
-				setState(151);
+				setState(154);
 				((ModelSetFuncDefContext)_localctx).modelSetType = modelSetType();
 				((ModelSetFuncDefContext)_localctx).retTypes.add(((ModelSetFuncDefContext)_localctx).modelSetType);
-				setState(156);
+				setState(159);
 				_errHandler.sync(this);
-				_alt = getInterpreter().adaptivePredict(_input,18,_ctx);
+				_alt = getInterpreter().adaptivePredict(_input,19,_ctx);
 				while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 					if ( _alt==1 ) {
 						{
 						{
-						setState(152);
+						setState(155);
 						match(T__5);
-						setState(153);
+						setState(156);
 						((ModelSetFuncDefContext)_localctx).modelSetType = modelSetType();
 						((ModelSetFuncDefContext)_localctx).retTypes.add(((ModelSetFuncDefContext)_localctx).modelSetType);
 						}
 						} 
 					}
-					setState(158);
+					setState(161);
 					_errHandler.sync(this);
-					_alt = getInterpreter().adaptivePredict(_input,18,_ctx);
+					_alt = getInterpreter().adaptivePredict(_input,19,_ctx);
 				}
 				}
 				break;
@@ -1123,9 +1130,9 @@ public class TLangModelParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(161);
+			setState(164);
 			match(T__12);
-			setState(162);
+			setState(165);
 			((ModelSetRefContext)_localctx).ref = match(ID);
 			}
 		}
@@ -1141,53 +1148,54 @@ public class TLangModelParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\24\u00a7\4\2\t\2"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\24\u00aa\4\2\t\2"+
 		"\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13"+
 		"\t\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\3\2\3\2\3\2\7\2\"\n\2\f\2\16"+
-		"\2%\13\2\3\2\3\2\3\3\3\3\5\3+\n\3\3\4\3\4\3\4\3\4\3\4\3\4\7\4\63\n\4\f"+
-		"\4\16\4\66\13\4\3\4\3\4\5\4:\n\4\3\4\3\4\7\4>\n\4\f\4\16\4A\13\4\3\4\3"+
-		"\4\3\5\3\5\3\5\5\5H\n\5\3\6\5\6K\n\6\3\6\3\6\3\6\3\6\7\6Q\n\6\f\6\16\6"+
-		"T\13\6\3\6\3\6\3\7\5\7Y\n\7\3\7\3\7\3\b\5\b^\n\b\3\b\3\b\3\t\3\t\3\t\3"+
-		"\t\3\t\3\t\7\th\n\t\f\t\16\tk\13\t\3\t\3\t\5\to\n\t\3\t\3\t\7\ts\n\t\f"+
-		"\t\16\tv\13\t\3\t\3\t\3\n\5\n{\n\n\3\n\3\n\3\13\3\13\3\13\5\13\u0082\n"+
-		"\13\3\f\3\f\3\f\3\f\3\f\5\f\u0089\n\f\3\f\3\f\5\f\u008d\n\f\3\r\3\r\3"+
-		"\r\7\r\u0092\n\r\f\r\16\r\u0095\13\r\3\16\3\16\3\16\3\16\3\16\3\16\7\16"+
-		"\u009d\n\16\f\16\16\16\u00a0\13\16\5\16\u00a2\n\16\3\17\3\17\3\17\3\17"+
-		"\2\2\20\2\4\6\b\n\f\16\20\22\24\26\30\32\34\2\2\2\u00ae\2\36\3\2\2\2\4"+
-		"*\3\2\2\2\6,\3\2\2\2\bG\3\2\2\2\nJ\3\2\2\2\fX\3\2\2\2\16]\3\2\2\2\20a"+
-		"\3\2\2\2\22z\3\2\2\2\24\u0081\3\2\2\2\26\u0083\3\2\2\2\30\u008e\3\2\2"+
-		"\2\32\u0096\3\2\2\2\34\u00a3\3\2\2\2\36\37\7\3\2\2\37#\7\4\2\2 \"\5\4"+
-		"\3\2! \3\2\2\2\"%\3\2\2\2#!\3\2\2\2#$\3\2\2\2$&\3\2\2\2%#\3\2\2\2&\'\7"+
-		"\5\2\2\'\3\3\2\2\2(+\5\6\4\2)+\5\20\t\2*(\3\2\2\2*)\3\2\2\2+\5\3\2\2\2"+
-		",-\7\6\2\2-9\7\21\2\2./\7\7\2\2/\64\5\16\b\2\60\61\7\b\2\2\61\63\5\16"+
-		"\b\2\62\60\3\2\2\2\63\66\3\2\2\2\64\62\3\2\2\2\64\65\3\2\2\2\65\67\3\2"+
-		"\2\2\66\64\3\2\2\2\678\7\t\2\28:\3\2\2\29.\3\2\2\29:\3\2\2\2:;\3\2\2\2"+
-		";?\7\4\2\2<>\5\b\5\2=<\3\2\2\2>A\3\2\2\2?=\3\2\2\2?@\3\2\2\2@B\3\2\2\2"+
-		"A?\3\2\2\2BC\7\5\2\2C\7\3\2\2\2DH\5\16\b\2EH\5\f\7\2FH\5\n\6\2GD\3\2\2"+
-		"\2GE\3\2\2\2GF\3\2\2\2H\t\3\2\2\2IK\7\21\2\2JI\3\2\2\2JK\3\2\2\2KL\3\2"+
-		"\2\2LM\7\n\2\2MR\5\b\5\2NO\7\b\2\2OQ\5\b\5\2PN\3\2\2\2QT\3\2\2\2RP\3\2"+
-		"\2\2RS\3\2\2\2SU\3\2\2\2TR\3\2\2\2UV\7\13\2\2V\13\3\2\2\2WY\7\21\2\2X"+
-		"W\3\2\2\2XY\3\2\2\2YZ\3\2\2\2Z[\5\6\4\2[\r\3\2\2\2\\^\7\21\2\2]\\\3\2"+
-		"\2\2]^\3\2\2\2^_\3\2\2\2_`\7\23\2\2`\17\3\2\2\2ab\7\f\2\2bn\7\21\2\2c"+
-		"d\7\7\2\2di\5\22\n\2ef\7\b\2\2fh\5\22\n\2ge\3\2\2\2hk\3\2\2\2ig\3\2\2"+
-		"\2ij\3\2\2\2jl\3\2\2\2ki\3\2\2\2lm\7\t\2\2mo\3\2\2\2nc\3\2\2\2no\3\2\2"+
-		"\2op\3\2\2\2pt\7\4\2\2qs\5\22\n\2rq\3\2\2\2sv\3\2\2\2tr\3\2\2\2tu\3\2"+
-		"\2\2uw\3\2\2\2vt\3\2\2\2wx\7\5\2\2x\21\3\2\2\2y{\7\21\2\2zy\3\2\2\2z{"+
-		"\3\2\2\2{|\3\2\2\2|}\5\24\13\2}\23\3\2\2\2~\u0082\5\26\f\2\177\u0082\5"+
-		"\32\16\2\u0080\u0082\5\34\17\2\u0081~\3\2\2\2\u0081\177\3\2\2\2\u0081"+
-		"\u0080\3\2\2\2\u0082\25\3\2\2\2\u0083\u0088\7\21\2\2\u0084\u0085\7\r\2"+
-		"\2\u0085\u0086\5\30\r\2\u0086\u0087\7\16\2\2\u0087\u0089\3\2\2\2\u0088"+
-		"\u0084\3\2\2\2\u0088\u0089\3\2\2\2\u0089\u008c\3\2\2\2\u008a\u008b\7\n"+
-		"\2\2\u008b\u008d\7\13\2\2\u008c\u008a\3\2\2\2\u008c\u008d\3\2\2\2\u008d"+
-		"\27\3\2\2\2\u008e\u0093\5\26\f\2\u008f\u0090\7\b\2\2\u0090\u0092\5\26"+
-		"\f\2\u0091\u008f\3\2\2\2\u0092\u0095\3\2\2\2\u0093\u0091\3\2\2\2\u0093"+
-		"\u0094\3\2\2\2\u0094\31\3\2\2\2\u0095\u0093\3\2\2\2\u0096\u0097\7\7\2"+
-		"\2\u0097\u00a1\7\t\2\2\u0098\u0099\7\17\2\2\u0099\u009e\5\26\f\2\u009a"+
-		"\u009b\7\b\2\2\u009b\u009d\5\26\f\2\u009c\u009a\3\2\2\2\u009d\u00a0\3"+
-		"\2\2\2\u009e\u009c\3\2\2\2\u009e\u009f\3\2\2\2\u009f\u00a2\3\2\2\2\u00a0"+
-		"\u009e\3\2\2\2\u00a1\u0098\3\2\2\2\u00a1\u00a2\3\2\2\2\u00a2\33\3\2\2"+
-		"\2\u00a3\u00a4\7\17\2\2\u00a4\u00a5\7\21\2\2\u00a5\35\3\2\2\2\26#*\64"+
-		"9?GJRX]intz\u0081\u0088\u008c\u0093\u009e\u00a1";
+		"\2%\13\2\3\2\3\2\3\3\3\3\5\3+\n\3\3\4\3\4\3\4\5\4\60\n\4\3\4\3\4\3\4\3"+
+		"\4\7\4\66\n\4\f\4\16\49\13\4\3\4\3\4\5\4=\n\4\3\4\3\4\7\4A\n\4\f\4\16"+
+		"\4D\13\4\3\4\3\4\3\5\3\5\3\5\5\5K\n\5\3\6\5\6N\n\6\3\6\3\6\3\6\3\6\7\6"+
+		"T\n\6\f\6\16\6W\13\6\3\6\3\6\3\7\5\7\\\n\7\3\7\3\7\3\b\5\ba\n\b\3\b\3"+
+		"\b\3\t\3\t\3\t\3\t\3\t\3\t\7\tk\n\t\f\t\16\tn\13\t\3\t\3\t\5\tr\n\t\3"+
+		"\t\3\t\7\tv\n\t\f\t\16\ty\13\t\3\t\3\t\3\n\5\n~\n\n\3\n\3\n\3\13\3\13"+
+		"\3\13\5\13\u0085\n\13\3\f\3\f\3\f\3\f\3\f\5\f\u008c\n\f\3\f\3\f\5\f\u0090"+
+		"\n\f\3\r\3\r\3\r\7\r\u0095\n\r\f\r\16\r\u0098\13\r\3\16\3\16\3\16\3\16"+
+		"\3\16\3\16\7\16\u00a0\n\16\f\16\16\16\u00a3\13\16\5\16\u00a5\n\16\3\17"+
+		"\3\17\3\17\3\17\2\2\20\2\4\6\b\n\f\16\20\22\24\26\30\32\34\2\2\2\u00b2"+
+		"\2\36\3\2\2\2\4*\3\2\2\2\6,\3\2\2\2\bJ\3\2\2\2\nM\3\2\2\2\f[\3\2\2\2\16"+
+		"`\3\2\2\2\20d\3\2\2\2\22}\3\2\2\2\24\u0084\3\2\2\2\26\u0086\3\2\2\2\30"+
+		"\u0091\3\2\2\2\32\u0099\3\2\2\2\34\u00a6\3\2\2\2\36\37\7\3\2\2\37#\7\4"+
+		"\2\2 \"\5\4\3\2! \3\2\2\2\"%\3\2\2\2#!\3\2\2\2#$\3\2\2\2$&\3\2\2\2%#\3"+
+		"\2\2\2&\'\7\5\2\2\'\3\3\2\2\2(+\5\6\4\2)+\5\20\t\2*(\3\2\2\2*)\3\2\2\2"+
+		"+\5\3\2\2\2,-\7\6\2\2-/\7\21\2\2.\60\7\21\2\2/.\3\2\2\2/\60\3\2\2\2\60"+
+		"<\3\2\2\2\61\62\7\7\2\2\62\67\5\b\5\2\63\64\7\b\2\2\64\66\5\b\5\2\65\63"+
+		"\3\2\2\2\669\3\2\2\2\67\65\3\2\2\2\678\3\2\2\28:\3\2\2\29\67\3\2\2\2:"+
+		";\7\t\2\2;=\3\2\2\2<\61\3\2\2\2<=\3\2\2\2=>\3\2\2\2>B\7\4\2\2?A\5\b\5"+
+		"\2@?\3\2\2\2AD\3\2\2\2B@\3\2\2\2BC\3\2\2\2CE\3\2\2\2DB\3\2\2\2EF\7\5\2"+
+		"\2F\7\3\2\2\2GK\5\16\b\2HK\5\f\7\2IK\5\n\6\2JG\3\2\2\2JH\3\2\2\2JI\3\2"+
+		"\2\2K\t\3\2\2\2LN\7\21\2\2ML\3\2\2\2MN\3\2\2\2NO\3\2\2\2OP\7\n\2\2PU\5"+
+		"\b\5\2QR\7\b\2\2RT\5\b\5\2SQ\3\2\2\2TW\3\2\2\2US\3\2\2\2UV\3\2\2\2VX\3"+
+		"\2\2\2WU\3\2\2\2XY\7\13\2\2Y\13\3\2\2\2Z\\\7\21\2\2[Z\3\2\2\2[\\\3\2\2"+
+		"\2\\]\3\2\2\2]^\5\6\4\2^\r\3\2\2\2_a\7\21\2\2`_\3\2\2\2`a\3\2\2\2ab\3"+
+		"\2\2\2bc\7\23\2\2c\17\3\2\2\2de\7\f\2\2eq\7\21\2\2fg\7\7\2\2gl\5\22\n"+
+		"\2hi\7\b\2\2ik\5\22\n\2jh\3\2\2\2kn\3\2\2\2lj\3\2\2\2lm\3\2\2\2mo\3\2"+
+		"\2\2nl\3\2\2\2op\7\t\2\2pr\3\2\2\2qf\3\2\2\2qr\3\2\2\2rs\3\2\2\2sw\7\4"+
+		"\2\2tv\5\22\n\2ut\3\2\2\2vy\3\2\2\2wu\3\2\2\2wx\3\2\2\2xz\3\2\2\2yw\3"+
+		"\2\2\2z{\7\5\2\2{\21\3\2\2\2|~\7\21\2\2}|\3\2\2\2}~\3\2\2\2~\177\3\2\2"+
+		"\2\177\u0080\5\24\13\2\u0080\23\3\2\2\2\u0081\u0085\5\26\f\2\u0082\u0085"+
+		"\5\32\16\2\u0083\u0085\5\34\17\2\u0084\u0081\3\2\2\2\u0084\u0082\3\2\2"+
+		"\2\u0084\u0083\3\2\2\2\u0085\25\3\2\2\2\u0086\u008b\7\21\2\2\u0087\u0088"+
+		"\7\r\2\2\u0088\u0089\5\30\r\2\u0089\u008a\7\16\2\2\u008a\u008c\3\2\2\2"+
+		"\u008b\u0087\3\2\2\2\u008b\u008c\3\2\2\2\u008c\u008f\3\2\2\2\u008d\u008e"+
+		"\7\n\2\2\u008e\u0090\7\13\2\2\u008f\u008d\3\2\2\2\u008f\u0090\3\2\2\2"+
+		"\u0090\27\3\2\2\2\u0091\u0096\5\26\f\2\u0092\u0093\7\b\2\2\u0093\u0095"+
+		"\5\26\f\2\u0094\u0092\3\2\2\2\u0095\u0098\3\2\2\2\u0096\u0094\3\2\2\2"+
+		"\u0096\u0097\3\2\2\2\u0097\31\3\2\2\2\u0098\u0096\3\2\2\2\u0099\u009a"+
+		"\7\7\2\2\u009a\u00a4\7\t\2\2\u009b\u009c\7\17\2\2\u009c\u00a1\5\26\f\2"+
+		"\u009d\u009e\7\b\2\2\u009e\u00a0\5\26\f\2\u009f\u009d\3\2\2\2\u00a0\u00a3"+
+		"\3\2\2\2\u00a1\u009f\3\2\2\2\u00a1\u00a2\3\2\2\2\u00a2\u00a5\3\2\2\2\u00a3"+
+		"\u00a1\3\2\2\2\u00a4\u009b\3\2\2\2\u00a4\u00a5\3\2\2\2\u00a5\33\3\2\2"+
+		"\2\u00a6\u00a7\7\17\2\2\u00a7\u00a8\7\21\2\2\u00a8\35\3\2\2\2\27#*/\67"+
+		"<BJMU[`lqw}\u0084\u008b\u008f\u0096\u00a1\u00a4";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

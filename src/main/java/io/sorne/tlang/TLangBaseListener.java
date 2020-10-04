@@ -1,4 +1,4 @@
-// Generated from /home/joel/sorne_io/io.sorne.tlang/src/main/antlr/TLang.g4 by ANTLR 4.8
+// Generated from C:/Users/joel/sorne_io/io.sorne.tlang/src/main/antlr\TLang.g4 by ANTLR 4.8
 package io.sorne.tlang;
 
 import org.antlr.v4.runtime.ParserRuleContext;

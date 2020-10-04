@@ -2,7 +2,7 @@ package io.sorne.tlang.astbuilder
 
 import io.sorne.tlang.TLangParser._
 import io.sorne.tlang.ast.model._
-import io.sorne.tlang.ast.model.`new`.{ModelNewAttribute, ModelNewEntity}
+import io.sorne.tlang.ast.model.`new`._
 import io.sorne.tlang.ast.model.set._
 
 import scala.jdk.CollectionConverters._
@@ -18,16 +18,28 @@ object BuildModelBlock {
   }
 
   def buildNewEntity(newEntity: ModelNewEntityContext): ModelNewEntity = {
-    ModelNewEntity(newEntity.name.getText, if (newEntity.`type` != null) Some(newEntity.`type`.getText) else None, None, None)
+    ModelNewEntity(newEntity.name.getText, if (newEntity.`type` != null) Some(newEntity.`type`.getText) else None, extractNewEntityAttrDefs(newEntity.attrs.asScala.toList), extractNewEntityAttrDefs(newEntity.decl.asScala.toList))
   }
 
-  def extractSetEntityAttrDefs(attrs: List[ModelAttributeContext]): Option[List[ModelNewAttribute]] = {
-    if (attrs.nonEmpty) Some(attrs.map(attr => attr.modelSetValueType() match {
-      case content@_ if content.modelSetType() != null => ModelSetAttribute(Utils.getText(attr.attr), buildType(content.modelSetType()))
-      case content@_ if content.modelSetFuncDef() != null => ModelSetAttribute(Utils.getText(attr.attr), buildFuncDef(content.modelSetFuncDef()))
-      case content@_ if content.modelSetRef() != null => ModelSetAttribute(Utils.getText(attr.attr), buildRef(content.modelSetRef()))
-    }))
+  def extractNewEntityAttrDefs(attrs: List[ModelValueTypeContext]): Option[List[ModelNewAttribute]] = {
+    if (attrs.nonEmpty) Some(attrs.map {
+      case attr@(content@_) if content.modelAttribute() != null => ModelNewAttribute(Utils.getText(attr.modelAttribute().attr), buildNewEntityAttribute(content.modelAttribute()))
+      case attr@(content@_) if content.modelEntityAsAttribute() != null => ModelNewAttribute(Utils.getText(attr.modelEntityAsAttribute().attr), buildNewEntityAsAttribute(content.modelEntityAsAttribute()))
+      case attr@(content@_) if content.modelTbl() != null => ModelNewAttribute(Utils.getText(attr.modelTbl().attr), buildNewEntityTbl(content.modelTbl()))
+    })
     else None
+  }
+
+  def buildNewEntityAttribute(attr: ModelAttributeContext): ModelNewPrimitiveValue = {
+    ModelNewPrimitiveValue(if (attr.attr != null) Some(attr.attr.getText) else None, attr.value.getText)
+  }
+
+  def buildNewEntityAsAttribute(attr: ModelEntityAsAttributeContext): ModelNewEntityAsValue = {
+    ModelNewEntityAsValue(if (attr.attr != null) Some(attr.attr.getText) else None, buildNewEntity(attr.value))
+  }
+
+  def buildNewEntityTbl(attr: ModelTblContext): ModelNewTblValue = {
+    ModelNewTblValue(if (attr.attr != null) Some(attr.attr.getText) else None, if (attr.elms != null) extractNewEntityAttrDefs(attr.elms.asScala.toList) else None)
   }
 
   def buildSetEntity(setEntity: ModelSetEntityContext): ModelSetEntity = {

@@ -1,4 +1,4 @@
-// Generated from /home/joel/sorne_io/io.sorne.tlang/src/main/antlr/TLang.g4 by ANTLR 4.8
+// Generated from C:/Users/joel/sorne_io/io.sorne.tlang/src/main/antlr\TLang.g4 by ANTLR 4.8
 package io.sorne.tlang;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -1574,9 +1574,8 @@ public class TLangParser extends Parser {
 	public static class ModelNewEntityContext extends ParserRuleContext {
 		public Token name;
 		public Token type;
-		public ModelAttributeContext modelAttribute;
-		public List<ModelAttributeContext> attrs = new ArrayList<ModelAttributeContext>();
 		public ModelValueTypeContext modelValueType;
+		public List<ModelValueTypeContext> attrs = new ArrayList<ModelValueTypeContext>();
 		public List<ModelValueTypeContext> decl = new ArrayList<ModelValueTypeContext>();
 		public List<TerminalNode> ID() { return getTokens(TLangParser.ID); }
 		public TerminalNode ID(int i) {
@@ -1587,12 +1586,6 @@ public class TLangParser extends Parser {
 		}
 		public ModelValueTypeContext modelValueType(int i) {
 			return getRuleContext(ModelValueTypeContext.class,i);
-		}
-		public List<ModelAttributeContext> modelAttribute() {
-			return getRuleContexts(ModelAttributeContext.class);
-		}
-		public ModelAttributeContext modelAttribute(int i) {
-			return getRuleContext(ModelAttributeContext.class,i);
 		}
 		public ModelNewEntityContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -1644,8 +1637,8 @@ public class TLangParser extends Parser {
 				{
 				{
 				setState(278);
-				((ModelNewEntityContext)_localctx).modelAttribute = modelAttribute();
-				((ModelNewEntityContext)_localctx).attrs.add(((ModelNewEntityContext)_localctx).modelAttribute);
+				((ModelNewEntityContext)_localctx).modelValueType = modelValueType();
+				((ModelNewEntityContext)_localctx).attrs.add(((ModelNewEntityContext)_localctx).modelValueType);
 				}
 				setState(283);
 				_errHandler.sync(this);
@@ -1656,8 +1649,8 @@ public class TLangParser extends Parser {
 					setState(279);
 					match(T__9);
 					setState(280);
-					((ModelNewEntityContext)_localctx).modelAttribute = modelAttribute();
-					((ModelNewEntityContext)_localctx).attrs.add(((ModelNewEntityContext)_localctx).modelAttribute);
+					((ModelNewEntityContext)_localctx).modelValueType = modelValueType();
+					((ModelNewEntityContext)_localctx).attrs.add(((ModelNewEntityContext)_localctx).modelValueType);
 					}
 					}
 					setState(285);
@@ -3064,9 +3057,9 @@ public class TLangParser extends Parser {
 		"\u010e\u0111\5(\25\2\u010f\u0111\5\62\32\2\u0110\u010e\3\2\2\2\u0110\u010f"+
 		"\3\2\2\2\u0111\'\3\2\2\2\u0112\u0113\7\31\2\2\u0113\u0115\7 \2\2\u0114"+
 		"\u0116\7 \2\2\u0115\u0114\3\2\2\2\u0115\u0116\3\2\2\2\u0116\u0122\3\2"+
-		"\2\2\u0117\u0118\7\17\2\2\u0118\u011d\5\60\31\2\u0119\u011a\7\f\2\2\u011a"+
-		"\u011c\5\60\31\2\u011b\u0119\3\2\2\2\u011c\u011f\3\2\2\2\u011d\u011b\3"+
-		"\2\2\2\u011d\u011e\3\2\2\2\u011e\u0120\3\2\2\2\u011f\u011d\3\2\2\2\u0120"+
+		"\2\2\u0117\u0118\7\17\2\2\u0118\u011d\5*\26\2\u0119\u011a\7\f\2\2\u011a"+
+		"\u011c\5*\26\2\u011b\u0119\3\2\2\2\u011c\u011f\3\2\2\2\u011d\u011b\3\2"+
+		"\2\2\u011d\u011e\3\2\2\2\u011e\u0120\3\2\2\2\u011f\u011d\3\2\2\2\u0120"+
 		"\u0121\7\20\2\2\u0121\u0123\3\2\2\2\u0122\u0117\3\2\2\2\u0122\u0123\3"+
 		"\2\2\2\u0123\u0124\3\2\2\2\u0124\u0128\7\6\2\2\u0125\u0127\5*\26\2\u0126"+
 		"\u0125\3\2\2\2\u0127\u012a\3\2\2\2\u0128\u0126\3\2\2\2\u0128\u0129\3\2"+
