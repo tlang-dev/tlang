@@ -54,3 +54,7 @@ p
 @src/main/scala/io/sorne/tlang/ast/model/new/ModelNewEntity.scala,3\2\32c73248624d382cb522a5319a1b4e04b6d62d2a
 x
 Hsrc/main/scala/io/sorne/tlang/ast/model/new/ModelNewPrimitiveValue.scala,2\c\2c17da2ae23dc32b40751735513fe1f442967f03
+w
+Gsrc/main/scala/io/sorne/tlang/ast/model/new/ModelNewEntityAsValue.scala,7\0\70cb78eeeb30c9f2a610bcdd87d7b796201790d2
+r
+Bsrc/main/scala/io/sorne/tlang/ast/model/new/ModelNewTblValue.scala,e\7\e728c19e062af5e707f07dbb0a64782103615ef1

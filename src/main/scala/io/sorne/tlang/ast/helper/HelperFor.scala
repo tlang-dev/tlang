@@ -1,5 +1,5 @@
 package io.sorne.tlang.ast.helper
 
-class HelperFor {
+case class HelperFor() extends HelperStatement {
 
 }
