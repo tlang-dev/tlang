@@ -4,6 +4,7 @@ import io.sorne.tlang.ast.helper.{HelperIf, HelperStatement}
 import io.sorne.tlang.interpreter.`type`.Bool
 
 object ExecIf extends Executor {
+
   override def run(statement: HelperStatement, context: Context): Option[Value[_]] = {
     val ifStatement = statement.asInstanceOf[HelperIf]
     ExecStatement.run(ifStatement.statement1, context) match {
@@ -17,4 +18,5 @@ object ExecIf extends Executor {
     }
     None
   }
+
 }
