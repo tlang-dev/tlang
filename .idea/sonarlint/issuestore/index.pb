@@ -94,3 +94,9 @@ i
 9src/main/scala/io/sorne/tlang/interpreter/type/Bool.scala,a\0\a0be4808486b2edfc17a5879a632c217207ff307
 f
 6src/main/scala/io/sorne/tlang/interpreter/ExecIf.scala,3\a\3a739cf99feba856577843ef7b8c69c7db420f2c
+j
+:src/test/scala/io/sorne/tlang/interpreter/ExecIfTest.scala,6\a\6adb36d52869dba74c9fe2000dcec9f5d8d3c07e
+r
+Bsrc/test/scala/io/sorne/tlang/interpreter/ExecCallObjectTest.scala,f\f\ff5fa1265cb3868c836388d11fa918f1bc2e0e8c
+y
+Isrc/main/scala/io/sorne/tlang/ast/model/new/ModelNewCallObjectValue.scala,2\f\2fab94679108d89e7e08828580272b85a1dc2f3a

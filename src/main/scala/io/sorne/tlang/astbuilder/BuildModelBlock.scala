@@ -38,8 +38,8 @@ object BuildModelBlock {
     ModelNewEntityAsValue(if (attr.attr != null) Some(attr.attr.getText) else None, buildNewEntity(attr.value))
   }
 
-  def buildNewEntityTbl(attr: ModelTblContext): ModelNewTblValue = {
-    ModelNewTblValue(if (attr.attr != null) Some(attr.attr.getText) else None, if (attr.elms != null) extractNewEntityAttrDefs(attr.elms.asScala.toList) else None)
+  def buildNewEntityTbl(attr: ModelTblContext): ModelNewArrayValue = {
+    ModelNewArrayValue(if (attr.attr != null) Some(attr.attr.getText) else None, if (attr.elms != null) extractNewEntityAttrDefs(attr.elms.asScala.toList) else None)
   }
 
   def buildSetEntity(setEntity: ModelSetEntityContext): ModelSetEntity = {

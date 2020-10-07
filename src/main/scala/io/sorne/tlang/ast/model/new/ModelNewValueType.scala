@@ -1,3 +1,7 @@
 package io.sorne.tlang.ast.model.`new`
 
-class ModelNewValueType
+import io.sorne.tlang.ast.helper.Callable
+import io.sorne.tlang.interpreter.Value
+
+abstract class ModelNewValueType[T] extends Value[T] with Callable
+
