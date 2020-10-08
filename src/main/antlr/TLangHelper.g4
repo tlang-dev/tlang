@@ -17,7 +17,7 @@ helperFunc:
 	'}';
 
 helperStatement:
-    helperIf | helperFor | helperCallFund
+    helperIf | helperFor | helperCallObj
 ;
 
 helperIf:
@@ -26,7 +26,10 @@ helperIf:
     '}';
 
 helperCondition:
+    arg1=helperCallObj (mark=conditionMark arg2=helperCallObj)?
 ;
+
+conditionMark: '==' | '!=' | '<' | '>' | '<=' '>=';
 
 helperFor:
     'for' '(' var=ID 'in' array=ID ')' '{'
@@ -34,6 +37,18 @@ helperFor:
     '}'
 ;
 
-helperCallFund:
+helperCallObj:
+    helperCallArray | helperCallFunc | helperCallVariable
+;
+
+helperCallArray:
+    name=ID '[' elem=ID ']'
+;
+
+helperCallFunc:
     name=ID '(' ')'
+;
+
+helperCallVariable:
+    name=ID
 ;

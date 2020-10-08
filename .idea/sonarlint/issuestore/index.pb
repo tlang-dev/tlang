@@ -56,8 +56,6 @@ x
 Hsrc/main/scala/io/sorne/tlang/ast/model/new/ModelNewPrimitiveValue.scala,2\c\2c17da2ae23dc32b40751735513fe1f442967f03
 w
 Gsrc/main/scala/io/sorne/tlang/ast/model/new/ModelNewEntityAsValue.scala,7\0\70cb78eeeb30c9f2a610bcdd87d7b796201790d2
-r
-Bsrc/main/scala/io/sorne/tlang/ast/model/new/ModelNewTblValue.scala,e\7\e728c19e062af5e707f07dbb0a64782103615ef1
 h
 8src/main/scala/io/sorne/tlang/ast/helper/Condition.scala,b\e\be63a51fefd3c25c834740daa7794541a8a96ca7
 n
@@ -100,3 +98,17 @@ r
 Bsrc/test/scala/io/sorne/tlang/interpreter/ExecCallObjectTest.scala,f\f\ff5fa1265cb3868c836388d11fa918f1bc2e0e8c
 y
 Isrc/main/scala/io/sorne/tlang/ast/model/new/ModelNewCallObjectValue.scala,2\f\2fab94679108d89e7e08828580272b85a1dc2f3a
+g
+7src/main/scala/io/sorne/tlang/ast/helper/Callable.scala,1\a\1a49a0901b93deccfee2df147f8ea37431a6d49e
+t
+Dsrc/main/scala/io/sorne/tlang/ast/helper/HelperCallArrayObject.scala,0\1\01bdefead5eb4f2357c713d395f42a3cfd6df5be
+w
+Gsrc/main/scala/io/sorne/tlang/ast/helper/HelperCallVariableObject.scala,d\4\d430dda4ff26a901593e019a0a3ca74b847d9446
+s
+Csrc/main/scala/io/sorne/tlang/ast/helper/HelperCallFuncObject.scala,d\0\d05b62e134656b33f3a34c944f752cf7a848da45
+s
+Csrc/main/scala/io/sorne/tlang/ast/helper/HelperCallObjectType.scala,7\5\7537a9fbaea2c781e04254103c168c2021b52079
+i
+9src/main/scala/io/sorne/tlang/interpreter/ExecError.scala,3\c\3c597d336be62ed0490d91b2e2f6565e8161d656
+t
+Dsrc/main/scala/io/sorne/tlang/ast/model/new/ModelNewArrayValue.scala,0\0\006a130780a41186950106329b43fe2e55e5fdf5
