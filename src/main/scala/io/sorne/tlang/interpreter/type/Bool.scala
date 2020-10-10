@@ -1,8 +1,9 @@
 package io.sorne.tlang.interpreter.`type`
 
+import io.sorne.tlang.ast.model.`new`.ModelNewValueType
 import io.sorne.tlang.interpreter.Value
 
-class Bool(value: Boolean) extends Value[Boolean] {
+class Bool(value: Boolean) extends ModelNewValueType[Boolean]() {
   override def getValue: Boolean = value
 
   override def getType: Predef.String = getClass.getName

@@ -19,7 +19,11 @@ modelContent: modelNewEntity | modelSetEntity;
 * Create new Entity
 */
 modelNewEntity:
-	'let' name=ID (type=ID)? ('(' ((attrs+=modelValueType) (',' attrs+=modelValueType)*) ')')? '{'
+    'let' name=ID entity=modelNewEntityValue
+;
+
+modelNewEntityValue:
+	(type=ID)? ('(' ((attrs+=modelValueType) (',' attrs+=modelValueType)*) ')')? '{'
 	decl+=modelValueType*
 	'}';
 
@@ -32,7 +36,7 @@ modelTbl:
 	']';
 
 modelEntityAsAttribute:
-	(attr=ID? value=modelNewEntity);
+	(attr=ID? value=modelNewEntityValue);
 
 modelAttribute:
 	(attr=ID? value=STRING);

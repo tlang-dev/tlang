@@ -52,6 +52,18 @@ public class TLangModelBaseListener implements TLangModelListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterModelNewEntityValue(TLangModelParser.ModelNewEntityValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitModelNewEntityValue(TLangModelParser.ModelNewEntityValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterModelValueType(TLangModelParser.ModelValueTypeContext ctx) { }
 	/**
 	 * {@inheritDoc}

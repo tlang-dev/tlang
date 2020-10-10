@@ -38,6 +38,16 @@ public interface TLangModelListener extends ParseTreeListener {
 	 */
 	void exitModelNewEntity(TLangModelParser.ModelNewEntityContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link TLangModelParser#modelNewEntityValue}.
+	 * @param ctx the parse tree
+	 */
+	void enterModelNewEntityValue(TLangModelParser.ModelNewEntityValueContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TLangModelParser#modelNewEntityValue}.
+	 * @param ctx the parse tree
+	 */
+	void exitModelNewEntityValue(TLangModelParser.ModelNewEntityValueContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link TLangModelParser#modelValueType}.
 	 * @param ctx the parse tree
 	 */

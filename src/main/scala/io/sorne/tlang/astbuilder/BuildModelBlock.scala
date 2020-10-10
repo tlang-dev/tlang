@@ -18,7 +18,11 @@ object BuildModelBlock {
   }
 
   def buildNewEntity(newEntity: ModelNewEntityContext): ModelNewEntity = {
-    ModelNewEntity(newEntity.name.getText, if (newEntity.`type` != null) Some(newEntity.`type`.getText) else None, extractNewEntityAttrDefs(newEntity.attrs.asScala.toList), extractNewEntityAttrDefs(newEntity.decl.asScala.toList))
+    ModelNewEntity(newEntity.name.getText, buildNewEntityValue(newEntity.entity))
+  }
+
+  def buildNewEntityValue(newEntity: ModelNewEntityValueContext): ModelNewEntityValue = {
+    ModelNewEntityValue(if (newEntity.`type` != null) Some(newEntity.`type`.getText) else None, extractNewEntityAttrDefs(newEntity.attrs.asScala.toList), extractNewEntityAttrDefs(newEntity.decl.asScala.toList))
   }
 
   def extractNewEntityAttrDefs(attrs: List[ModelValueTypeContext]): Option[List[ModelNewAttribute]] = {
@@ -34,9 +38,10 @@ object BuildModelBlock {
     ModelNewPrimitiveValue(if (attr.attr != null) Some(attr.attr.getText) else None, attr.value.getText)
   }
 
-  def buildNewEntityAsAttribute(attr: ModelEntityAsAttributeContext): ModelNewEntityAsValue = {
-    ModelNewEntityAsValue(if (attr.attr != null) Some(attr.attr.getText) else None, buildNewEntity(attr.value))
+  def buildNewEntityAsAttribute(attr: ModelEntityAsAttributeContext): ModelNewEntityValue = {
+    buildNewEntityValue(attr.value)
   }
+
 
   def buildNewEntityTbl(attr: ModelTblContext): ModelNewArrayValue = {
     ModelNewArrayValue(if (attr.attr != null) Some(attr.attr.getText) else None, if (attr.elms != null) extractNewEntityAttrDefs(attr.elms.asScala.toList) else None)

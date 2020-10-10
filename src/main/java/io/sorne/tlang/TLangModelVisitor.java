@@ -29,6 +29,12 @@ public interface TLangModelVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitModelNewEntity(TLangModelParser.ModelNewEntityContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link TLangModelParser#modelNewEntityValue}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitModelNewEntityValue(TLangModelParser.ModelNewEntityValueContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link TLangModelParser#modelValueType}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

@@ -1,4 +1,4 @@
-// Generated from C:/Users/joel/sorne_io/io.sorne.tlang/src/main/antlr\TLang.g4 by ANTLR 4.8
+// Generated from /home/joel/sorne_io/io.sorne.tlang/src/main/antlr/TLang.g4 by ANTLR 4.8
 package io.sorne.tlang;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -131,6 +131,12 @@ public interface TLangVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitModelNewEntity(TLangParser.ModelNewEntityContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link TLangParser#modelNewEntityValue}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitModelNewEntityValue(TLangParser.ModelNewEntityValueContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link TLangParser#modelValueType}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -227,15 +233,39 @@ public interface TLangVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitHelperCondition(TLangParser.HelperConditionContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link TLangParser#conditionMark}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitConditionMark(TLangParser.ConditionMarkContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link TLangParser#helperFor}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitHelperFor(TLangParser.HelperForContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link TLangParser#helperCallFund}.
+	 * Visit a parse tree produced by {@link TLangParser#helperCallObj}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitHelperCallFund(TLangParser.HelperCallFundContext ctx);
+	T visitHelperCallObj(TLangParser.HelperCallObjContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link TLangParser#helperCallArray}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitHelperCallArray(TLangParser.HelperCallArrayContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link TLangParser#helperCallFunc}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitHelperCallFunc(TLangParser.HelperCallFuncContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link TLangParser#helperCallVariable}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitHelperCallVariable(TLangParser.HelperCallVariableContext ctx);
 }

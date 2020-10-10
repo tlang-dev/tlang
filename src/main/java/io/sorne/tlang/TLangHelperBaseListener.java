@@ -1,4 +1,4 @@
-// Generated from C:/Users/joel/sorne_io/io.sorne.tlang/src/main/antlr\TLangHelper.g4 by ANTLR 4.8
+// Generated from /home/joel/sorne_io/io.sorne.tlang/src/main/antlr/TLangHelper.g4 by ANTLR 4.8
 package io.sorne.tlang;
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -76,6 +76,18 @@ public class TLangHelperBaseListener implements TLangHelperListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterConditionMark(TLangHelperParser.ConditionMarkContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitConditionMark(TLangHelperParser.ConditionMarkContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterHelperFor(TLangHelperParser.HelperForContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -88,13 +100,49 @@ public class TLangHelperBaseListener implements TLangHelperListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterHelperCallFund(TLangHelperParser.HelperCallFundContext ctx) { }
+	@Override public void enterHelperCallObj(TLangHelperParser.HelperCallObjContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitHelperCallFund(TLangHelperParser.HelperCallFundContext ctx) { }
+	@Override public void exitHelperCallObj(TLangHelperParser.HelperCallObjContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterHelperCallArray(TLangHelperParser.HelperCallArrayContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitHelperCallArray(TLangHelperParser.HelperCallArrayContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterHelperCallFunc(TLangHelperParser.HelperCallFuncContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitHelperCallFunc(TLangHelperParser.HelperCallFuncContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterHelperCallVariable(TLangHelperParser.HelperCallVariableContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitHelperCallVariable(TLangHelperParser.HelperCallVariableContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

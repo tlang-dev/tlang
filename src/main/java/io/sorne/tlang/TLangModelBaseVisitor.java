@@ -38,6 +38,13 @@ public class TLangModelBaseVisitor<T> extends AbstractParseTreeVisitor<T> implem
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitModelNewEntityValue(TLangModelParser.ModelNewEntityValueContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitModelValueType(TLangModelParser.ModelValueTypeContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}

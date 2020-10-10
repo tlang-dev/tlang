@@ -21,17 +21,17 @@ public class TLangModelParser extends Parser {
 		T__9=10, T__10=11, T__11=12, T__12=13, TEXT=14, ID=15, WS=16, STRING=17, 
 		NUMBER=18;
 	public static final int
-		RULE_modelBlock = 0, RULE_modelContent = 1, RULE_modelNewEntity = 2, RULE_modelValueType = 3, 
-		RULE_modelTbl = 4, RULE_modelEntityAsAttribute = 5, RULE_modelAttribute = 6, 
-		RULE_modelSetEntity = 7, RULE_modelSetAttribute = 8, RULE_modelSetValueType = 9, 
-		RULE_modelSetType = 10, RULE_modelGeneric = 11, RULE_modelSetFuncDef = 12, 
-		RULE_modelSetRef = 13;
+		RULE_modelBlock = 0, RULE_modelContent = 1, RULE_modelNewEntity = 2, RULE_modelNewEntityValue = 3, 
+		RULE_modelValueType = 4, RULE_modelTbl = 5, RULE_modelEntityAsAttribute = 6, 
+		RULE_modelAttribute = 7, RULE_modelSetEntity = 8, RULE_modelSetAttribute = 9, 
+		RULE_modelSetValueType = 10, RULE_modelSetType = 11, RULE_modelGeneric = 12, 
+		RULE_modelSetFuncDef = 13, RULE_modelSetRef = 14;
 	private static String[] makeRuleNames() {
 		return new String[] {
-			"modelBlock", "modelContent", "modelNewEntity", "modelValueType", "modelTbl", 
-			"modelEntityAsAttribute", "modelAttribute", "modelSetEntity", "modelSetAttribute", 
-			"modelSetValueType", "modelSetType", "modelGeneric", "modelSetFuncDef", 
-			"modelSetRef"
+			"modelBlock", "modelContent", "modelNewEntity", "modelNewEntityValue", 
+			"modelValueType", "modelTbl", "modelEntityAsAttribute", "modelAttribute", 
+			"modelSetEntity", "modelSetAttribute", "modelSetValueType", "modelSetType", 
+			"modelGeneric", "modelSetFuncDef", "modelSetRef"
 		};
 	}
 	public static final String[] ruleNames = makeRuleNames();
@@ -135,26 +135,26 @@ public class TLangModelParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(28);
+			setState(30);
 			match(T__0);
-			setState(29);
+			setState(31);
 			match(T__1);
-			setState(33);
+			setState(35);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__3 || _la==T__9) {
 				{
 				{
-				setState(30);
+				setState(32);
 				((ModelBlockContext)_localctx).modelContent = modelContent();
 				((ModelBlockContext)_localctx).modelContents.add(((ModelBlockContext)_localctx).modelContent);
 				}
 				}
-				setState(35);
+				setState(37);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(36);
+			setState(38);
 			match(T__2);
 			}
 		}
@@ -199,20 +199,20 @@ public class TLangModelParser extends Parser {
 		ModelContentContext _localctx = new ModelContentContext(_ctx, getState());
 		enterRule(_localctx, 2, RULE_modelContent);
 		try {
-			setState(40);
+			setState(42);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case T__3:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(38);
+				setState(40);
 				modelNewEntity();
 				}
 				break;
 			case T__9:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(39);
+				setState(41);
 				modelSetEntity();
 				}
 				break;
@@ -233,22 +233,10 @@ public class TLangModelParser extends Parser {
 
 	public static class ModelNewEntityContext extends ParserRuleContext {
 		public Token name;
-		public ModelAttributeContext modelAttribute;
-		public List<ModelAttributeContext> attrs = new ArrayList<ModelAttributeContext>();
-		public ModelValueTypeContext modelValueType;
-		public List<ModelValueTypeContext> decl = new ArrayList<ModelValueTypeContext>();
+		public ModelNewEntityValueContext entity;
 		public TerminalNode ID() { return getToken(TLangModelParser.ID, 0); }
-		public List<ModelValueTypeContext> modelValueType() {
-			return getRuleContexts(ModelValueTypeContext.class);
-		}
-		public ModelValueTypeContext modelValueType(int i) {
-			return getRuleContext(ModelValueTypeContext.class,i);
-		}
-		public List<ModelAttributeContext> modelAttribute() {
-			return getRuleContexts(ModelAttributeContext.class);
-		}
-		public ModelAttributeContext modelAttribute(int i) {
-			return getRuleContext(ModelAttributeContext.class,i);
+		public ModelNewEntityValueContext modelNewEntityValue() {
+			return getRuleContext(ModelNewEntityValueContext.class,0);
 		}
 		public ModelNewEntityContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -272,68 +260,130 @@ public class TLangModelParser extends Parser {
 	public final ModelNewEntityContext modelNewEntity() throws RecognitionException {
 		ModelNewEntityContext _localctx = new ModelNewEntityContext(_ctx, getState());
 		enterRule(_localctx, 4, RULE_modelNewEntity);
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(44);
+			match(T__3);
+			setState(45);
+			((ModelNewEntityContext)_localctx).name = match(ID);
+			setState(46);
+			((ModelNewEntityContext)_localctx).entity = modelNewEntityValue();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class ModelNewEntityValueContext extends ParserRuleContext {
+		public Token type;
+		public ModelValueTypeContext modelValueType;
+		public List<ModelValueTypeContext> attrs = new ArrayList<ModelValueTypeContext>();
+		public List<ModelValueTypeContext> decl = new ArrayList<ModelValueTypeContext>();
+		public TerminalNode ID() { return getToken(TLangModelParser.ID, 0); }
+		public List<ModelValueTypeContext> modelValueType() {
+			return getRuleContexts(ModelValueTypeContext.class);
+		}
+		public ModelValueTypeContext modelValueType(int i) {
+			return getRuleContext(ModelValueTypeContext.class,i);
+		}
+		public ModelNewEntityValueContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_modelNewEntityValue; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof TLangModelListener ) ((TLangModelListener)listener).enterModelNewEntityValue(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof TLangModelListener ) ((TLangModelListener)listener).exitModelNewEntityValue(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof TLangModelVisitor ) return ((TLangModelVisitor<? extends T>)visitor).visitModelNewEntityValue(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final ModelNewEntityValueContext modelNewEntityValue() throws RecognitionException {
+		ModelNewEntityValueContext _localctx = new ModelNewEntityValueContext(_ctx, getState());
+		enterRule(_localctx, 6, RULE_modelNewEntityValue);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(42);
-			match(T__3);
-			setState(43);
-			((ModelNewEntityContext)_localctx).name = match(ID);
-			setState(55);
+			setState(49);
+			_errHandler.sync(this);
+			_la = _input.LA(1);
+			if (_la==ID) {
+				{
+				setState(48);
+				((ModelNewEntityValueContext)_localctx).type = match(ID);
+				}
+			}
+
+			setState(62);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==T__4) {
 				{
-				setState(44);
+				setState(51);
 				match(T__4);
 				{
 				{
-				setState(45);
-				((ModelNewEntityContext)_localctx).modelAttribute = modelAttribute();
-				((ModelNewEntityContext)_localctx).attrs.add(((ModelNewEntityContext)_localctx).modelAttribute);
+				setState(52);
+				((ModelNewEntityValueContext)_localctx).modelValueType = modelValueType();
+				((ModelNewEntityValueContext)_localctx).attrs.add(((ModelNewEntityValueContext)_localctx).modelValueType);
 				}
-				setState(50);
+				setState(57);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				while (_la==T__5) {
 					{
 					{
-					setState(46);
+					setState(53);
 					match(T__5);
-					setState(47);
-					((ModelNewEntityContext)_localctx).modelAttribute = modelAttribute();
-					((ModelNewEntityContext)_localctx).attrs.add(((ModelNewEntityContext)_localctx).modelAttribute);
+					setState(54);
+					((ModelNewEntityValueContext)_localctx).modelValueType = modelValueType();
+					((ModelNewEntityValueContext)_localctx).attrs.add(((ModelNewEntityValueContext)_localctx).modelValueType);
 					}
 					}
-					setState(52);
+					setState(59);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
 				}
-				setState(53);
+				setState(60);
 				match(T__6);
 				}
 			}
 
-			setState(57);
+			setState(64);
 			match(T__1);
-			setState(61);
+			setState(68);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__3) | (1L << T__7) | (1L << ID) | (1L << STRING))) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__1) | (1L << T__4) | (1L << T__7) | (1L << ID) | (1L << STRING))) != 0)) {
 				{
 				{
-				setState(58);
-				((ModelNewEntityContext)_localctx).modelValueType = modelValueType();
-				((ModelNewEntityContext)_localctx).decl.add(((ModelNewEntityContext)_localctx).modelValueType);
+				setState(65);
+				((ModelNewEntityValueContext)_localctx).modelValueType = modelValueType();
+				((ModelNewEntityValueContext)_localctx).decl.add(((ModelNewEntityValueContext)_localctx).modelValueType);
 				}
 				}
-				setState(63);
+				setState(70);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(64);
+			setState(71);
 			match(T__2);
 			}
 		}
@@ -379,28 +429,28 @@ public class TLangModelParser extends Parser {
 
 	public final ModelValueTypeContext modelValueType() throws RecognitionException {
 		ModelValueTypeContext _localctx = new ModelValueTypeContext(_ctx, getState());
-		enterRule(_localctx, 6, RULE_modelValueType);
+		enterRule(_localctx, 8, RULE_modelValueType);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(69);
+			setState(76);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,5,_ctx) ) {
+			switch ( getInterpreter().adaptivePredict(_input,6,_ctx) ) {
 			case 1:
 				{
-				setState(66);
+				setState(73);
 				modelAttribute();
 				}
 				break;
 			case 2:
 				{
-				setState(67);
+				setState(74);
 				modelEntityAsAttribute();
 				}
 				break;
 			case 3:
 				{
-				setState(68);
+				setState(75);
 				modelTbl();
 				}
 				break;
@@ -450,50 +500,50 @@ public class TLangModelParser extends Parser {
 
 	public final ModelTblContext modelTbl() throws RecognitionException {
 		ModelTblContext _localctx = new ModelTblContext(_ctx, getState());
-		enterRule(_localctx, 8, RULE_modelTbl);
+		enterRule(_localctx, 10, RULE_modelTbl);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(72);
+			setState(79);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==ID) {
 				{
-				setState(71);
+				setState(78);
 				((ModelTblContext)_localctx).attr = match(ID);
 				}
 			}
 
 			{
-			setState(74);
+			setState(81);
 			match(T__7);
 			}
 			{
 			{
-			setState(75);
+			setState(82);
 			((ModelTblContext)_localctx).modelValueType = modelValueType();
 			((ModelTblContext)_localctx).elms.add(((ModelTblContext)_localctx).modelValueType);
 			}
-			setState(80);
+			setState(87);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__5) {
 				{
 				{
-				setState(76);
+				setState(83);
 				match(T__5);
-				setState(77);
+				setState(84);
 				((ModelTblContext)_localctx).modelValueType = modelValueType();
 				((ModelTblContext)_localctx).elms.add(((ModelTblContext)_localctx).modelValueType);
 				}
 				}
-				setState(82);
+				setState(89);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
 			}
-			setState(83);
+			setState(90);
 			match(T__8);
 			}
 		}
@@ -510,9 +560,9 @@ public class TLangModelParser extends Parser {
 
 	public static class ModelEntityAsAttributeContext extends ParserRuleContext {
 		public Token attr;
-		public ModelNewEntityContext value;
-		public ModelNewEntityContext modelNewEntity() {
-			return getRuleContext(ModelNewEntityContext.class,0);
+		public ModelNewEntityValueContext value;
+		public ModelNewEntityValueContext modelNewEntityValue() {
+			return getRuleContext(ModelNewEntityValueContext.class,0);
 		}
 		public TerminalNode ID() { return getToken(TLangModelParser.ID, 0); }
 		public ModelEntityAsAttributeContext(ParserRuleContext parent, int invokingState) {
@@ -536,24 +586,23 @@ public class TLangModelParser extends Parser {
 
 	public final ModelEntityAsAttributeContext modelEntityAsAttribute() throws RecognitionException {
 		ModelEntityAsAttributeContext _localctx = new ModelEntityAsAttributeContext(_ctx, getState());
-		enterRule(_localctx, 10, RULE_modelEntityAsAttribute);
-		int _la;
+		enterRule(_localctx, 12, RULE_modelEntityAsAttribute);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
 			{
-			setState(86);
+			setState(93);
 			_errHandler.sync(this);
-			_la = _input.LA(1);
-			if (_la==ID) {
+			switch ( getInterpreter().adaptivePredict(_input,9,_ctx) ) {
+			case 1:
 				{
-				setState(85);
+				setState(92);
 				((ModelEntityAsAttributeContext)_localctx).attr = match(ID);
 				}
+				break;
 			}
-
-			setState(88);
-			((ModelEntityAsAttributeContext)_localctx).value = modelNewEntity();
+			setState(95);
+			((ModelEntityAsAttributeContext)_localctx).value = modelNewEntityValue();
 			}
 			}
 		}
@@ -594,23 +643,23 @@ public class TLangModelParser extends Parser {
 
 	public final ModelAttributeContext modelAttribute() throws RecognitionException {
 		ModelAttributeContext _localctx = new ModelAttributeContext(_ctx, getState());
-		enterRule(_localctx, 12, RULE_modelAttribute);
+		enterRule(_localctx, 14, RULE_modelAttribute);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
 			{
-			setState(91);
+			setState(98);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==ID) {
 				{
-				setState(90);
+				setState(97);
 				((ModelAttributeContext)_localctx).attr = match(ID);
 				}
 			}
 
-			setState(93);
+			setState(100);
 			((ModelAttributeContext)_localctx).value = match(STRING);
 			}
 			}
@@ -659,69 +708,69 @@ public class TLangModelParser extends Parser {
 
 	public final ModelSetEntityContext modelSetEntity() throws RecognitionException {
 		ModelSetEntityContext _localctx = new ModelSetEntityContext(_ctx, getState());
-		enterRule(_localctx, 14, RULE_modelSetEntity);
+		enterRule(_localctx, 16, RULE_modelSetEntity);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(95);
+			setState(102);
 			match(T__9);
-			setState(96);
+			setState(103);
 			((ModelSetEntityContext)_localctx).name = match(ID);
-			setState(108);
+			setState(115);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==T__4) {
 				{
-				setState(97);
+				setState(104);
 				match(T__4);
 				{
 				{
-				setState(98);
+				setState(105);
 				((ModelSetEntityContext)_localctx).modelSetAttribute = modelSetAttribute();
 				((ModelSetEntityContext)_localctx).params.add(((ModelSetEntityContext)_localctx).modelSetAttribute);
 				}
-				setState(103);
+				setState(110);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				while (_la==T__5) {
 					{
 					{
-					setState(99);
+					setState(106);
 					match(T__5);
-					setState(100);
+					setState(107);
 					((ModelSetEntityContext)_localctx).modelSetAttribute = modelSetAttribute();
 					((ModelSetEntityContext)_localctx).params.add(((ModelSetEntityContext)_localctx).modelSetAttribute);
 					}
 					}
-					setState(105);
+					setState(112);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
 				}
-				setState(106);
+				setState(113);
 				match(T__6);
 				}
 			}
 
-			setState(110);
+			setState(117);
 			match(T__1);
-			setState(114);
+			setState(121);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__4) | (1L << T__12) | (1L << ID))) != 0)) {
 				{
 				{
-				setState(111);
+				setState(118);
 				((ModelSetEntityContext)_localctx).modelSetAttribute = modelSetAttribute();
 				((ModelSetEntityContext)_localctx).attrs.add(((ModelSetEntityContext)_localctx).modelSetAttribute);
 				}
 				}
-				setState(116);
+				setState(123);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(117);
+			setState(124);
 			match(T__2);
 			}
 		}
@@ -764,21 +813,21 @@ public class TLangModelParser extends Parser {
 
 	public final ModelSetAttributeContext modelSetAttribute() throws RecognitionException {
 		ModelSetAttributeContext _localctx = new ModelSetAttributeContext(_ctx, getState());
-		enterRule(_localctx, 16, RULE_modelSetAttribute);
+		enterRule(_localctx, 18, RULE_modelSetAttribute);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(120);
+			setState(127);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,13,_ctx) ) {
+			switch ( getInterpreter().adaptivePredict(_input,14,_ctx) ) {
 			case 1:
 				{
-				setState(119);
+				setState(126);
 				((ModelSetAttributeContext)_localctx).attr = match(ID);
 				}
 				break;
 			}
-			setState(122);
+			setState(129);
 			((ModelSetAttributeContext)_localctx).value = modelSetValueType();
 			}
 		}
@@ -824,29 +873,29 @@ public class TLangModelParser extends Parser {
 
 	public final ModelSetValueTypeContext modelSetValueType() throws RecognitionException {
 		ModelSetValueTypeContext _localctx = new ModelSetValueTypeContext(_ctx, getState());
-		enterRule(_localctx, 18, RULE_modelSetValueType);
+		enterRule(_localctx, 20, RULE_modelSetValueType);
 		try {
-			setState(127);
+			setState(134);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case ID:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(124);
+				setState(131);
 				modelSetType();
 				}
 				break;
 			case T__4:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(125);
+				setState(132);
 				modelSetFuncDef();
 				}
 				break;
 			case T__12:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(126);
+				setState(133);
 				modelSetRef();
 				}
 				break;
@@ -894,37 +943,37 @@ public class TLangModelParser extends Parser {
 
 	public final ModelSetTypeContext modelSetType() throws RecognitionException {
 		ModelSetTypeContext _localctx = new ModelSetTypeContext(_ctx, getState());
-		enterRule(_localctx, 20, RULE_modelSetType);
+		enterRule(_localctx, 22, RULE_modelSetType);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(129);
+			setState(136);
 			((ModelSetTypeContext)_localctx).type = match(ID);
-			setState(134);
+			setState(141);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==T__10) {
 				{
-				setState(130);
+				setState(137);
 				match(T__10);
 				{
-				setState(131);
+				setState(138);
 				((ModelSetTypeContext)_localctx).generic = modelGeneric();
 				}
-				setState(132);
+				setState(139);
 				match(T__11);
 				}
 			}
 
-			setState(138);
+			setState(145);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==T__7) {
 				{
-				setState(136);
+				setState(143);
 				((ModelSetTypeContext)_localctx).array = match(T__7);
-				setState(137);
+				setState(144);
 				match(T__8);
 				}
 			}
@@ -972,29 +1021,29 @@ public class TLangModelParser extends Parser {
 
 	public final ModelGenericContext modelGeneric() throws RecognitionException {
 		ModelGenericContext _localctx = new ModelGenericContext(_ctx, getState());
-		enterRule(_localctx, 22, RULE_modelGeneric);
+		enterRule(_localctx, 24, RULE_modelGeneric);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
 			{
-			setState(140);
+			setState(147);
 			((ModelGenericContext)_localctx).modelSetType = modelSetType();
 			((ModelGenericContext)_localctx).types.add(((ModelGenericContext)_localctx).modelSetType);
-			setState(145);
+			setState(152);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__5) {
 				{
 				{
-				setState(141);
+				setState(148);
 				match(T__5);
-				setState(142);
+				setState(149);
 				((ModelGenericContext)_localctx).modelSetType = modelSetType();
 				((ModelGenericContext)_localctx).types.add(((ModelGenericContext)_localctx).modelSetType);
 				}
 				}
-				setState(147);
+				setState(154);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -1042,43 +1091,43 @@ public class TLangModelParser extends Parser {
 
 	public final ModelSetFuncDefContext modelSetFuncDef() throws RecognitionException {
 		ModelSetFuncDefContext _localctx = new ModelSetFuncDefContext(_ctx, getState());
-		enterRule(_localctx, 24, RULE_modelSetFuncDef);
+		enterRule(_localctx, 26, RULE_modelSetFuncDef);
 		try {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(148);
+			setState(155);
 			match(T__4);
-			setState(149);
+			setState(156);
 			match(T__6);
-			setState(159);
+			setState(166);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,19,_ctx) ) {
+			switch ( getInterpreter().adaptivePredict(_input,20,_ctx) ) {
 			case 1:
 				{
-				setState(150);
+				setState(157);
 				match(T__12);
-				setState(151);
+				setState(158);
 				((ModelSetFuncDefContext)_localctx).modelSetType = modelSetType();
 				((ModelSetFuncDefContext)_localctx).retTypes.add(((ModelSetFuncDefContext)_localctx).modelSetType);
-				setState(156);
+				setState(163);
 				_errHandler.sync(this);
-				_alt = getInterpreter().adaptivePredict(_input,18,_ctx);
+				_alt = getInterpreter().adaptivePredict(_input,19,_ctx);
 				while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 					if ( _alt==1 ) {
 						{
 						{
-						setState(152);
+						setState(159);
 						match(T__5);
-						setState(153);
+						setState(160);
 						((ModelSetFuncDefContext)_localctx).modelSetType = modelSetType();
 						((ModelSetFuncDefContext)_localctx).retTypes.add(((ModelSetFuncDefContext)_localctx).modelSetType);
 						}
 						} 
 					}
-					setState(158);
+					setState(165);
 					_errHandler.sync(this);
-					_alt = getInterpreter().adaptivePredict(_input,18,_ctx);
+					_alt = getInterpreter().adaptivePredict(_input,19,_ctx);
 				}
 				}
 				break;
@@ -1120,13 +1169,13 @@ public class TLangModelParser extends Parser {
 
 	public final ModelSetRefContext modelSetRef() throws RecognitionException {
 		ModelSetRefContext _localctx = new ModelSetRefContext(_ctx, getState());
-		enterRule(_localctx, 26, RULE_modelSetRef);
+		enterRule(_localctx, 28, RULE_modelSetRef);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(161);
+			setState(168);
 			match(T__12);
-			setState(162);
+			setState(169);
 			((ModelSetRefContext)_localctx).ref = match(ID);
 			}
 		}
@@ -1142,53 +1191,56 @@ public class TLangModelParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\24\u00a7\4\2\t\2"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\24\u00ae\4\2\t\2"+
 		"\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13"+
-		"\t\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\3\2\3\2\3\2\7\2\"\n\2\f\2\16"+
-		"\2%\13\2\3\2\3\2\3\3\3\3\5\3+\n\3\3\4\3\4\3\4\3\4\3\4\3\4\7\4\63\n\4\f"+
-		"\4\16\4\66\13\4\3\4\3\4\5\4:\n\4\3\4\3\4\7\4>\n\4\f\4\16\4A\13\4\3\4\3"+
-		"\4\3\5\3\5\3\5\5\5H\n\5\3\6\5\6K\n\6\3\6\3\6\3\6\3\6\7\6Q\n\6\f\6\16\6"+
-		"T\13\6\3\6\3\6\3\7\5\7Y\n\7\3\7\3\7\3\b\5\b^\n\b\3\b\3\b\3\t\3\t\3\t\3"+
-		"\t\3\t\3\t\7\th\n\t\f\t\16\tk\13\t\3\t\3\t\5\to\n\t\3\t\3\t\7\ts\n\t\f"+
-		"\t\16\tv\13\t\3\t\3\t\3\n\5\n{\n\n\3\n\3\n\3\13\3\13\3\13\5\13\u0082\n"+
-		"\13\3\f\3\f\3\f\3\f\3\f\5\f\u0089\n\f\3\f\3\f\5\f\u008d\n\f\3\r\3\r\3"+
-		"\r\7\r\u0092\n\r\f\r\16\r\u0095\13\r\3\16\3\16\3\16\3\16\3\16\3\16\7\16"+
-		"\u009d\n\16\f\16\16\16\u00a0\13\16\5\16\u00a2\n\16\3\17\3\17\3\17\3\17"+
-		"\2\2\20\2\4\6\b\n\f\16\20\22\24\26\30\32\34\2\2\2\u00ae\2\36\3\2\2\2\4"+
-		"*\3\2\2\2\6,\3\2\2\2\bG\3\2\2\2\nJ\3\2\2\2\fX\3\2\2\2\16]\3\2\2\2\20a"+
-		"\3\2\2\2\22z\3\2\2\2\24\u0081\3\2\2\2\26\u0083\3\2\2\2\30\u008e\3\2\2"+
-		"\2\32\u0096\3\2\2\2\34\u00a3\3\2\2\2\36\37\7\3\2\2\37#\7\4\2\2 \"\5\4"+
-		"\3\2! \3\2\2\2\"%\3\2\2\2#!\3\2\2\2#$\3\2\2\2$&\3\2\2\2%#\3\2\2\2&\'\7"+
-		"\5\2\2\'\3\3\2\2\2(+\5\6\4\2)+\5\20\t\2*(\3\2\2\2*)\3\2\2\2+\5\3\2\2\2"+
-		",-\7\6\2\2-9\7\21\2\2./\7\7\2\2/\64\5\16\b\2\60\61\7\b\2\2\61\63\5\16"+
-		"\b\2\62\60\3\2\2\2\63\66\3\2\2\2\64\62\3\2\2\2\64\65\3\2\2\2\65\67\3\2"+
-		"\2\2\66\64\3\2\2\2\678\7\t\2\28:\3\2\2\29.\3\2\2\29:\3\2\2\2:;\3\2\2\2"+
-		";?\7\4\2\2<>\5\b\5\2=<\3\2\2\2>A\3\2\2\2?=\3\2\2\2?@\3\2\2\2@B\3\2\2\2"+
-		"A?\3\2\2\2BC\7\5\2\2C\7\3\2\2\2DH\5\16\b\2EH\5\f\7\2FH\5\n\6\2GD\3\2\2"+
-		"\2GE\3\2\2\2GF\3\2\2\2H\t\3\2\2\2IK\7\21\2\2JI\3\2\2\2JK\3\2\2\2KL\3\2"+
-		"\2\2LM\7\n\2\2MR\5\b\5\2NO\7\b\2\2OQ\5\b\5\2PN\3\2\2\2QT\3\2\2\2RP\3\2"+
-		"\2\2RS\3\2\2\2SU\3\2\2\2TR\3\2\2\2UV\7\13\2\2V\13\3\2\2\2WY\7\21\2\2X"+
-		"W\3\2\2\2XY\3\2\2\2YZ\3\2\2\2Z[\5\6\4\2[\r\3\2\2\2\\^\7\21\2\2]\\\3\2"+
-		"\2\2]^\3\2\2\2^_\3\2\2\2_`\7\23\2\2`\17\3\2\2\2ab\7\f\2\2bn\7\21\2\2c"+
-		"d\7\7\2\2di\5\22\n\2ef\7\b\2\2fh\5\22\n\2ge\3\2\2\2hk\3\2\2\2ig\3\2\2"+
-		"\2ij\3\2\2\2jl\3\2\2\2ki\3\2\2\2lm\7\t\2\2mo\3\2\2\2nc\3\2\2\2no\3\2\2"+
-		"\2op\3\2\2\2pt\7\4\2\2qs\5\22\n\2rq\3\2\2\2sv\3\2\2\2tr\3\2\2\2tu\3\2"+
-		"\2\2uw\3\2\2\2vt\3\2\2\2wx\7\5\2\2x\21\3\2\2\2y{\7\21\2\2zy\3\2\2\2z{"+
-		"\3\2\2\2{|\3\2\2\2|}\5\24\13\2}\23\3\2\2\2~\u0082\5\26\f\2\177\u0082\5"+
-		"\32\16\2\u0080\u0082\5\34\17\2\u0081~\3\2\2\2\u0081\177\3\2\2\2\u0081"+
-		"\u0080\3\2\2\2\u0082\25\3\2\2\2\u0083\u0088\7\21\2\2\u0084\u0085\7\r\2"+
-		"\2\u0085\u0086\5\30\r\2\u0086\u0087\7\16\2\2\u0087\u0089\3\2\2\2\u0088"+
-		"\u0084\3\2\2\2\u0088\u0089\3\2\2\2\u0089\u008c\3\2\2\2\u008a\u008b\7\n"+
-		"\2\2\u008b\u008d\7\13\2\2\u008c\u008a\3\2\2\2\u008c\u008d\3\2\2\2\u008d"+
-		"\27\3\2\2\2\u008e\u0093\5\26\f\2\u008f\u0090\7\b\2\2\u0090\u0092\5\26"+
-		"\f\2\u0091\u008f\3\2\2\2\u0092\u0095\3\2\2\2\u0093\u0091\3\2\2\2\u0093"+
-		"\u0094\3\2\2\2\u0094\31\3\2\2\2\u0095\u0093\3\2\2\2\u0096\u0097\7\7\2"+
-		"\2\u0097\u00a1\7\t\2\2\u0098\u0099\7\17\2\2\u0099\u009e\5\26\f\2\u009a"+
-		"\u009b\7\b\2\2\u009b\u009d\5\26\f\2\u009c\u009a\3\2\2\2\u009d\u00a0\3"+
-		"\2\2\2\u009e\u009c\3\2\2\2\u009e\u009f\3\2\2\2\u009f\u00a2\3\2\2\2\u00a0"+
-		"\u009e\3\2\2\2\u00a1\u0098\3\2\2\2\u00a1\u00a2\3\2\2\2\u00a2\33\3\2\2"+
-		"\2\u00a3\u00a4\7\17\2\2\u00a4\u00a5\7\21\2\2\u00a5\35\3\2\2\2\26#*\64"+
-		"9?GJRX]intz\u0081\u0088\u008c\u0093\u009e\u00a1";
+		"\t\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\3\2\3\2\3\2\7\2$\n"+
+		"\2\f\2\16\2\'\13\2\3\2\3\2\3\3\3\3\5\3-\n\3\3\4\3\4\3\4\3\4\3\5\5\5\64"+
+		"\n\5\3\5\3\5\3\5\3\5\7\5:\n\5\f\5\16\5=\13\5\3\5\3\5\5\5A\n\5\3\5\3\5"+
+		"\7\5E\n\5\f\5\16\5H\13\5\3\5\3\5\3\6\3\6\3\6\5\6O\n\6\3\7\5\7R\n\7\3\7"+
+		"\3\7\3\7\3\7\7\7X\n\7\f\7\16\7[\13\7\3\7\3\7\3\b\5\b`\n\b\3\b\3\b\3\t"+
+		"\5\te\n\t\3\t\3\t\3\n\3\n\3\n\3\n\3\n\3\n\7\no\n\n\f\n\16\nr\13\n\3\n"+
+		"\3\n\5\nv\n\n\3\n\3\n\7\nz\n\n\f\n\16\n}\13\n\3\n\3\n\3\13\5\13\u0082"+
+		"\n\13\3\13\3\13\3\f\3\f\3\f\5\f\u0089\n\f\3\r\3\r\3\r\3\r\3\r\5\r\u0090"+
+		"\n\r\3\r\3\r\5\r\u0094\n\r\3\16\3\16\3\16\7\16\u0099\n\16\f\16\16\16\u009c"+
+		"\13\16\3\17\3\17\3\17\3\17\3\17\3\17\7\17\u00a4\n\17\f\17\16\17\u00a7"+
+		"\13\17\5\17\u00a9\n\17\3\20\3\20\3\20\3\20\2\2\21\2\4\6\b\n\f\16\20\22"+
+		"\24\26\30\32\34\36\2\2\2\u00b5\2 \3\2\2\2\4,\3\2\2\2\6.\3\2\2\2\b\63\3"+
+		"\2\2\2\nN\3\2\2\2\fQ\3\2\2\2\16_\3\2\2\2\20d\3\2\2\2\22h\3\2\2\2\24\u0081"+
+		"\3\2\2\2\26\u0088\3\2\2\2\30\u008a\3\2\2\2\32\u0095\3\2\2\2\34\u009d\3"+
+		"\2\2\2\36\u00aa\3\2\2\2 !\7\3\2\2!%\7\4\2\2\"$\5\4\3\2#\"\3\2\2\2$\'\3"+
+		"\2\2\2%#\3\2\2\2%&\3\2\2\2&(\3\2\2\2\'%\3\2\2\2()\7\5\2\2)\3\3\2\2\2*"+
+		"-\5\6\4\2+-\5\22\n\2,*\3\2\2\2,+\3\2\2\2-\5\3\2\2\2./\7\6\2\2/\60\7\21"+
+		"\2\2\60\61\5\b\5\2\61\7\3\2\2\2\62\64\7\21\2\2\63\62\3\2\2\2\63\64\3\2"+
+		"\2\2\64@\3\2\2\2\65\66\7\7\2\2\66;\5\n\6\2\678\7\b\2\28:\5\n\6\29\67\3"+
+		"\2\2\2:=\3\2\2\2;9\3\2\2\2;<\3\2\2\2<>\3\2\2\2=;\3\2\2\2>?\7\t\2\2?A\3"+
+		"\2\2\2@\65\3\2\2\2@A\3\2\2\2AB\3\2\2\2BF\7\4\2\2CE\5\n\6\2DC\3\2\2\2E"+
+		"H\3\2\2\2FD\3\2\2\2FG\3\2\2\2GI\3\2\2\2HF\3\2\2\2IJ\7\5\2\2J\t\3\2\2\2"+
+		"KO\5\20\t\2LO\5\16\b\2MO\5\f\7\2NK\3\2\2\2NL\3\2\2\2NM\3\2\2\2O\13\3\2"+
+		"\2\2PR\7\21\2\2QP\3\2\2\2QR\3\2\2\2RS\3\2\2\2ST\7\n\2\2TY\5\n\6\2UV\7"+
+		"\b\2\2VX\5\n\6\2WU\3\2\2\2X[\3\2\2\2YW\3\2\2\2YZ\3\2\2\2Z\\\3\2\2\2[Y"+
+		"\3\2\2\2\\]\7\13\2\2]\r\3\2\2\2^`\7\21\2\2_^\3\2\2\2_`\3\2\2\2`a\3\2\2"+
+		"\2ab\5\b\5\2b\17\3\2\2\2ce\7\21\2\2dc\3\2\2\2de\3\2\2\2ef\3\2\2\2fg\7"+
+		"\23\2\2g\21\3\2\2\2hi\7\f\2\2iu\7\21\2\2jk\7\7\2\2kp\5\24\13\2lm\7\b\2"+
+		"\2mo\5\24\13\2nl\3\2\2\2or\3\2\2\2pn\3\2\2\2pq\3\2\2\2qs\3\2\2\2rp\3\2"+
+		"\2\2st\7\t\2\2tv\3\2\2\2uj\3\2\2\2uv\3\2\2\2vw\3\2\2\2w{\7\4\2\2xz\5\24"+
+		"\13\2yx\3\2\2\2z}\3\2\2\2{y\3\2\2\2{|\3\2\2\2|~\3\2\2\2}{\3\2\2\2~\177"+
+		"\7\5\2\2\177\23\3\2\2\2\u0080\u0082\7\21\2\2\u0081\u0080\3\2\2\2\u0081"+
+		"\u0082\3\2\2\2\u0082\u0083\3\2\2\2\u0083\u0084\5\26\f\2\u0084\25\3\2\2"+
+		"\2\u0085\u0089\5\30\r\2\u0086\u0089\5\34\17\2\u0087\u0089\5\36\20\2\u0088"+
+		"\u0085\3\2\2\2\u0088\u0086\3\2\2\2\u0088\u0087\3\2\2\2\u0089\27\3\2\2"+
+		"\2\u008a\u008f\7\21\2\2\u008b\u008c\7\r\2\2\u008c\u008d\5\32\16\2\u008d"+
+		"\u008e\7\16\2\2\u008e\u0090\3\2\2\2\u008f\u008b\3\2\2\2\u008f\u0090\3"+
+		"\2\2\2\u0090\u0093\3\2\2\2\u0091\u0092\7\n\2\2\u0092\u0094\7\13\2\2\u0093"+
+		"\u0091\3\2\2\2\u0093\u0094\3\2\2\2\u0094\31\3\2\2\2\u0095\u009a\5\30\r"+
+		"\2\u0096\u0097\7\b\2\2\u0097\u0099\5\30\r\2\u0098\u0096\3\2\2\2\u0099"+
+		"\u009c\3\2\2\2\u009a\u0098\3\2\2\2\u009a\u009b\3\2\2\2\u009b\33\3\2\2"+
+		"\2\u009c\u009a\3\2\2\2\u009d\u009e\7\7\2\2\u009e\u00a8\7\t\2\2\u009f\u00a0"+
+		"\7\17\2\2\u00a0\u00a5\5\30\r\2\u00a1\u00a2\7\b\2\2\u00a2\u00a4\5\30\r"+
+		"\2\u00a3\u00a1\3\2\2\2\u00a4\u00a7\3\2\2\2\u00a5\u00a3\3\2\2\2\u00a5\u00a6"+
+		"\3\2\2\2\u00a6\u00a9\3\2\2\2\u00a7\u00a5\3\2\2\2\u00a8\u009f\3\2\2\2\u00a8"+
+		"\u00a9\3\2\2\2\u00a9\35\3\2\2\2\u00aa\u00ab\7\17\2\2\u00ab\u00ac\7\21"+
+		"\2\2\u00ac\37\3\2\2\2\27%,\63;@FNQY_dpu{\u0081\u0088\u008f\u0093\u009a"+
+		"\u00a5\u00a8";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {
