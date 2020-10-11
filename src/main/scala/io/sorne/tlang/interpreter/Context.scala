@@ -1,6 +1,7 @@
 package io.sorne.tlang.interpreter
 
 import io.sorne.tlang.ast.helper.HelperFunc
-import io.sorne.tlang.ast.model.`new`.{ModelNewEntity, ModelNewValueType}
 
-case class Context(variables: Map[String, ModelNewValueType[_]] = Map(), functions: Map[String, HelperFunc] = Map(), params: Option[List[Value[_]]] = None)
+import scala.collection.mutable
+
+case class Context(variables: mutable.Map[String, Value[_]] = mutable.Map(), functions: mutable.Map[String, HelperFunc] = mutable.Map())

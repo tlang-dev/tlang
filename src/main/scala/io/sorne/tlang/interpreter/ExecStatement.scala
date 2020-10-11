@@ -8,7 +8,7 @@ object ExecStatement extends Executor {
       case HelperIf(_, _, _, _, _) => ExecIf.run(statement, context)
       case HelperCallObject(_) => ExecCallObject.run(statement, context)
       case HelperFor() => ExecFor.run(statement, context)
-      case HelperFunc(_) => ExecFunc.run(statement, context)
+      case HelperFunc(_, _, _) => ExecFunc.run(statement, context)
     }
   }
 }

@@ -4,10 +4,12 @@ import io.sorne.tlang.ast.helper.{HelperCallArrayObject, HelperCallObject, Helpe
 import io.sorne.tlang.ast.model.`new`._
 import org.scalatest.funsuite.AnyFunSuite
 
+import scala.collection.mutable
+
 class ExecCallObjectTest extends AnyFunSuite {
 
   test("Get simple variable") {
-    val context = Context(variables = Map("var1" -> ModelNewEntityValue(Some("MyEntity"))))
+    val context = Context(variables = mutable.Map("var1" -> ModelNewEntityValue(Some("MyEntity"))))
     val statement = HelperCallObject(List(HelperCallVarObject("var1")))
     val res = ExecCallObject.run(statement, context).toOption.get.get
     assert(res.isInstanceOf[ModelNewEntityValue])
@@ -20,7 +22,7 @@ class ExecCallObjectTest extends AnyFunSuite {
       ModelNewAttribute(value = ModelNewPrimitiveValue(value = "value2")),
       ModelNewAttribute(value = ModelNewPrimitiveValue(value = "value3"))
     )))
-    val context = Context(variables = Map("var1" -> array))
+    val context = Context(variables = mutable.Map("var1" -> array))
     val statement = HelperCallObject(List(HelperCallArrayObject("var1", "1")))
     val res = ExecCallObject.run(statement, context).toOption.get.get
     assert(res.isInstanceOf[ModelNewPrimitiveValue])
@@ -33,7 +35,7 @@ class ExecCallObjectTest extends AnyFunSuite {
       ModelNewAttribute(Some("myPosition2"), ModelNewPrimitiveValue(value = "value2")),
       ModelNewAttribute(Some("myPosition3"), ModelNewPrimitiveValue(value = "value3"))
     )))
-    val context = Context(variables = Map("var1" -> array))
+    val context = Context(variables = mutable.Map("var1" -> array))
     val statement = HelperCallObject(List(HelperCallArrayObject("var1", "myPosition2")))
     val res = ExecCallObject.run(statement, context).toOption.get.get
     assert(res.isInstanceOf[ModelNewPrimitiveValue])
@@ -46,7 +48,7 @@ class ExecCallObjectTest extends AnyFunSuite {
       ModelNewAttribute(Some("attr2"), ModelNewPrimitiveValue(value = "value2")),
       ModelNewAttribute(Some("attr3"), ModelNewPrimitiveValue(value = "value3"))
     )))
-    val context = Context(variables = Map("var1" -> myEntity))
+    val context = Context(variables = mutable.Map("var1" -> myEntity))
     val statement = HelperCallObject(List(HelperCallVarObject("var1"), HelperCallVarObject("attr2")))
     val res = ExecCallObject.run(statement, context).toOption.get.get
     assert(res.isInstanceOf[ModelNewPrimitiveValue])
@@ -59,7 +61,7 @@ class ExecCallObjectTest extends AnyFunSuite {
       ModelNewAttribute(Some("attr2"), ModelNewPrimitiveValue(value = "value2")),
       ModelNewAttribute(Some("attr3"), ModelNewPrimitiveValue(value = "value3"))
     )))
-    val context = Context(variables = Map("var1" -> myEntity))
+    val context = Context(variables = mutable.Map("var1" -> myEntity))
     val statement = HelperCallObject(List(HelperCallVarObject("var1"), HelperCallVarObject("attr2")))
     val res = ExecCallObject.run(statement, context).toOption.get.get
     assert(res.isInstanceOf[ModelNewPrimitiveValue])
