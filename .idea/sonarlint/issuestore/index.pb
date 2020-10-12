@@ -112,3 +112,5 @@ i
 9src/main/scala/io/sorne/tlang/interpreter/ExecError.scala,3\c\3c597d336be62ed0490d91b2e2f6565e8161d656
 t
 Dsrc/main/scala/io/sorne/tlang/ast/model/new/ModelNewArrayValue.scala,0\0\006a130780a41186950106329b43fe2e55e5fdf5
+k
+;src/main/scala/io/sorne/tlang/interpreter/type/String.scala,d\3\d3f75e007f4b98ec9f18f828ed690fcf3d56c44e
