@@ -1,48 +1,72 @@
 package io.sorne.tlang.lsp
 
-import java.util
-import java.util.concurrent.CompletableFuture
+import io.sorne.tlang.lsp.context.{Context, CurrentFile}
 
-import org.eclipse.lsp4j.jsonrpc.messages
-import org.eclipse.lsp4j.services.TextDocumentService
-import org.eclipse.lsp4j.{CompletionItem, CompletionList, CompletionParams, DidChangeTextDocumentParams, DidCloseTextDocumentParams, DidOpenTextDocumentParams, DidSaveTextDocumentParams}
+object TLangTextDocumentService {
 
-class TLangTextDocumentService extends TextDocumentService {
-  override def didOpen(params: DidOpenTextDocumentParams): Unit = {
-
+  def completion(request: Request): Either[LSPError, Option[Response]] = {
+    Right(Some(Response(request.jsonrpc, request.id, Map("isIncomplete" -> false,
+      "items" -> List(
+        CompletionItem("helper"),
+        CompletionItem("model"),
+        CompletionItem("tmpl"),
+      )))))
   }
 
-  override def didChange(params: DidChangeTextDocumentParams): Unit = {
-
+  def formatting(request: Request): Either[LSPError, Option[Response]] = {
+    Right(Some(Response(request.jsonrpc, request.id, List(
+      TextEdit(Range(Position(1, 1), Position(1, 12)), "My new data"),
+    ))))
   }
 
-  override def didClose(params: DidCloseTextDocumentParams): Unit = {
-
+  def color(request: Request): Either[LSPError, Option[Response]] = {
+    Right(Some(Response(request.jsonrpc, request.id, List(
+      ColorInformation(Range(Position(0, 0), Position(0, 6)), Color(0.11f, 0.678f, 0.192f, 1)))
+    )))
   }
 
-  override def didSave(params: DidSaveTextDocumentParams): Unit = {
-
+  def open(request: Request): Either[LSPError, Option[Response]] = {
+    request.params.get("textDocument").foreach(doc => {
+      val asMap = doc.asInstanceOf[Map[String, Any]]
+      Context.openFile(CurrentFile(asMap.getOrElse("uri", "").toString, new StringBuilder(asMap.getOrElse("text", "").toString)))
+    })
+    Right(None)
   }
 
-  override def completion(position: CompletionParams): CompletableFuture[messages.Either[util.List[CompletionItem], CompletionList]] = {
-    import java.util
-    import java.util.concurrent.CompletableFuture
+  def change(request: Request): Either[LSPError, Option[Response]] = {
+    request.params.get("contentChanges").foreach(changes => {
+      changes.asInstanceOf[List[Map[String, Any]]].foreach(asMap => {
+        val text = asMap.getOrElse("text", "").toString
+        val rangeLength: Int = asMap.getOrElse("rangeLength", "0").toString.toInt
+        asMap.get("range").foreach(range => {
+          val rangeAsMap = range.asInstanceOf[Map[String, Any]]
+          rangeAsMap.get("start").foreach(x => {
+            val start = x.asInstanceOf[Map[String, BigInt]]
+            rangeAsMap.get("end").foreach(y => {
+              val end = y.asInstanceOf[Map[String, BigInt]]
+              val finalRange = Range(Position(start.getOrElse("line", BigInt(0)).intValue, start.getOrElse("character", BigInt(0)).intValue),
+                Position(end.getOrElse("line", BigInt(0)).intValue, end.getOrElse("character", BigInt(0)).intValue))
+              Context.change(finalRange, rangeLength, text)
+            })
+          })
+        })
+      })
+      //      Context.change()
 
-    import org.eclipse.lsp4j.{CompletionItem, CompletionItemKind, CompletionList}
-    val typescriptCompletionItem = new CompletionItem
-    typescriptCompletionItem.setLabel("TypeScript")
-    typescriptCompletionItem.setKind(CompletionItemKind.Text)
-    typescriptCompletionItem.setData(1.0)
-
-    val javascriptCompletionItem = new CompletionItem
-    javascriptCompletionItem.setLabel("JavaScript")
-    javascriptCompletionItem.setKind(CompletionItemKind.Text)
-    javascriptCompletionItem.setData(2.0)
-
-    val completions = new util.ArrayList[CompletionItem]
-    completions.add(typescriptCompletionItem)
-    completions.add(javascriptCompletionItem)
-
-    CompletableFuture.completedFuture(new CompletionList(false, completions))
+    })
+    Right(None)
   }
+
+  case class TextEdit(range: Range, newText: String)
+
+  case class CompletionItem(label: String)
+
+  case class Range(start: Position, end: Position)
+
+  case class Position(line: Int, character: Int)
+
+  case class ColorInformation(range: Range, color: Color)
+
+  case class Color(red: Float, blue: Float, green: Float, alpha: Float)
+
 }

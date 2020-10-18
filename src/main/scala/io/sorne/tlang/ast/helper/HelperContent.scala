@@ -1,5 +1,5 @@
 package io.sorne.tlang.ast.helper
 
-class HelperContent {
+case class HelperContent(content: Option[List[HelperStatement]]) {
 
 }

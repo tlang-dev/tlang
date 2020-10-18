@@ -1,69 +1,82 @@
 package io.sorne.tlang.lsp
 
-import java.net.Socket
-import java.util.concurrent.CompletableFuture
+import java.io.{BufferedReader, InputStreamReader, PrintStream}
+import java.net.ServerSocket
 
-import org.eclipse.lsp4j._
-import org.eclipse.lsp4j.jsonrpc.Launcher
-import org.eclipse.lsp4j.launch.LSPLauncher
-import org.eclipse.lsp4j.services._
-
-class LSPServer extends LanguageServer with LanguageClientAware {
-
-  val textDocumentService = new TLangTextDocumentService
-  val workspaceService = new TLangWorkspaceService
-
-  var client: LanguageClient = _
-  var workspaceRoot: String = _
-
-  override def initialize(params: InitializeParams): CompletableFuture[InitializeResult] = {
-
-    workspaceRoot = params.getRootUri
-
-    val capabilities = new ServerCapabilities
-    capabilities.setTextDocumentSync(TextDocumentSyncKind.Full)
-    capabilities.setCodeActionProvider(false)
-    capabilities.setCompletionProvider(new CompletionOptions(true, null))
-
-    CompletableFuture.completedFuture(new InitializeResult(capabilities))
-  }
-
-  override def shutdown(): CompletableFuture[AnyRef] = {
-    CompletableFuture.completedFuture(null)
-  }
-
-  override def exit(): Unit = {
-
-  }
-
-  override def getTextDocumentService: TextDocumentService = {
-    textDocumentService
-  }
-
-  override def getWorkspaceService: WorkspaceService = {
-    workspaceService
-  }
-
-  override def connect(client: LanguageClient): Unit = {
-    this.client = client
-  }
-
-}
+import org.json4s.native.Serialization.write
+import org.json4s.native.{JsonMethods, Serialization}
+import org.json4s.{Formats, NoTypeHints}
 
 object LSPServer {
 
+  implicit val formats: AnyRef with Formats = Serialization.formats(NoTypeHints)
+
+
   def startLSPServer(port: Int): Unit = {
-    val socket = new Socket("localhost", port.toInt)
+    try {
+      val server = new ServerSocket(4242)
+      println("Serve initialized:")
+      val client = server.accept
 
-    val in = socket.getInputStream
-    val out = socket.getOutputStream
+      val in = new BufferedReader(new InputStreamReader(client.getInputStream))
+      val out = new PrintStream(client.getOutputStream)
 
-    val server = new LSPServer
-    val launcher: Launcher[LanguageClient] = LSPLauncher.createServerLauncher(server, in, out)
+      var stop = false;
+      var header = true;
+      var length: Int = 0;
+      while (!stop) {
+        if (header) {
+          val line = in.readLine()
+          println("[" + line + "]")
+          if (line.startsWith("Content-Length:")) {
+            length = line.substring(15).trim.toInt
+          }
+          if (line.equals("\n") || line.equals("\r\n") || line.isEmpty) {
+            header = false
+          }
+        } else {
+          val data = new Array[Char](length)
+          in.read(data, 0, length)
+          val line = String.valueOf(data)
+          println(line)
+          println("*************************************************")
+          val values = JsonMethods.parse(line).values.asInstanceOf[Map[String, Any]]
+          //          val values = read[Message](line)
+          val id: Int = if (values.contains("id")) values("id").toString.toInt else 0
+          val message = Request(values("jsonrpc").toString, id, values("method").toString, values("params").asInstanceOf[Map[String, Any]])
+          ParseMessage.parseMessage(message) match {
+            case Left(value) =>
+            case Right(value) => {
+              value match {
+                case Some(value) => {
+                  val res = write(value)
+                  val str = new StringBuilder("Content-Length: " + res.length + "\r\n")
+                  str ++= "\r\n"
+                  str ++= res
+                  print(str.toString())
+                  out.print(str.toString())
+                  out.flush()
+                  println("\n-----------------------------------------------------")
+                }
+                case None =>
+              }
+            }
+          }
+          header = true
+        }
 
-    val client = launcher.getRemoteProxy
-    server.connect(client)
+      }
+      client.close();
+      server.close();
+      println("Server closing:")
+    }
 
-    launcher.startListening
+    catch {
+      case e: Exception => {
+        e.printStackTrace()
+        System.exit(1)
+      }
+    }
+
   }
 }

@@ -2,16 +2,19 @@ package io.sorne.tlang.runner
 
 import java.io.File
 
+import io.sorne.tlang.lsp.LSPServer
+
 object Main {
 
   val FILE_EXTENSION = "tlang"
 
   def main(args: Array[String]): Unit = {
-    if (args != null && args.length > 0) {
-      args(0) match {
-        case "run" =>
-      }
-    }
+    LSPServer.startLSPServer(4242)
+//    if (args != null && args.length > 0) {
+//      args(0) match {
+//        case "run" =>
+//      }
+//    }
   }
 
   def run(args: List[String]): Unit = {

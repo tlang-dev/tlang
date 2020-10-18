@@ -12,10 +12,10 @@ object BuildHelperBlock {
   }
 
   def buildFunc(func: HelperFuncContext): HelperFunc = {
-    HelperFunc()
+    HelperFunc(null, null, null)
   }
 
   def buildStatement(): HelperStatement = {
-    HelperStatement()
+    null
   }
 }
