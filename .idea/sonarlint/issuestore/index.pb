@@ -42,8 +42,6 @@ r
 Bsrc/test/scala/io/sorne/tlang/astbuilder/BuildModelBlockTest.scala,2\e\2e49e5829dd54ec425edef8b4cdbe8799f82edd7
 c
 3src/main/scala/io/sorne/tlang/ast/DomainModel.scala,8\2\82a811125b2601f27306e12fab782cbd4598c252
-r
-Bsrc/test/scala/io/sorne/tlang/astbuilder/BuildModelNewEntity.scala,6\a\6adbc9da24a3a12a84250f77891c6f50a60482d6
 M
 src/main/antlr/TLangHelper.g4,f\6\f6dad761f8fe552f7dd1f238c0f7e590b3a9a788
 s
@@ -54,8 +52,6 @@ p
 @src/main/scala/io/sorne/tlang/ast/model/new/ModelNewEntity.scala,3\2\32c73248624d382cb522a5319a1b4e04b6d62d2a
 x
 Hsrc/main/scala/io/sorne/tlang/ast/model/new/ModelNewPrimitiveValue.scala,2\c\2c17da2ae23dc32b40751735513fe1f442967f03
-w
-Gsrc/main/scala/io/sorne/tlang/ast/model/new/ModelNewEntityAsValue.scala,7\0\70cb78eeeb30c9f2a610bcdd87d7b796201790d2
 h
 8src/main/scala/io/sorne/tlang/ast/helper/Condition.scala,b\e\be63a51fefd3c25c834740daa7794541a8a96ca7
 n
@@ -96,14 +92,8 @@ j
 :src/test/scala/io/sorne/tlang/interpreter/ExecIfTest.scala,6\a\6adb36d52869dba74c9fe2000dcec9f5d8d3c07e
 r
 Bsrc/test/scala/io/sorne/tlang/interpreter/ExecCallObjectTest.scala,f\f\ff5fa1265cb3868c836388d11fa918f1bc2e0e8c
-y
-Isrc/main/scala/io/sorne/tlang/ast/model/new/ModelNewCallObjectValue.scala,2\f\2fab94679108d89e7e08828580272b85a1dc2f3a
-g
-7src/main/scala/io/sorne/tlang/ast/helper/Callable.scala,1\a\1a49a0901b93deccfee2df147f8ea37431a6d49e
 t
 Dsrc/main/scala/io/sorne/tlang/ast/helper/HelperCallArrayObject.scala,0\1\01bdefead5eb4f2357c713d395f42a3cfd6df5be
-w
-Gsrc/main/scala/io/sorne/tlang/ast/helper/HelperCallVariableObject.scala,d\4\d430dda4ff26a901593e019a0a3ca74b847d9446
 s
 Csrc/main/scala/io/sorne/tlang/ast/helper/HelperCallFuncObject.scala,d\0\d05b62e134656b33f3a34c944f752cf7a848da45
 s
@@ -114,3 +104,11 @@ t
 Dsrc/main/scala/io/sorne/tlang/ast/model/new/ModelNewArrayValue.scala,0\0\006a130780a41186950106329b43fe2e55e5fdf5
 k
 ;src/main/scala/io/sorne/tlang/interpreter/type/String.scala,d\3\d3f75e007f4b98ec9f18f828ed690fcf3d56c44e
+q
+Asrc/main/scala/io/sorne/tlang/ast/model/set/ModelSetFuncDef.scala,5\7\57604aee28894418009aa8151bb97eb66610b51c
+g
+7src/main/scala/io/sorne/tlang/astbuilder/BuildAst.scala,9\1\9146d350c092b405f2ede19f61cd1cf86d82bfd8
+c
+3src/main/scala/io/sorne/tlang/ast/HelperBlock.scala,f\0\f0e725557f605711226185268d9322e4dd77300a
+o
+?src/main/scala/io/sorne/tlang/astbuilder/BuildHelperBlock.scala,4\e\4e139d5637959e139c203b602f236096fb379f37
