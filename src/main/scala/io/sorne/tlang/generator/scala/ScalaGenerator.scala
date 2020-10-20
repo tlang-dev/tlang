@@ -2,24 +2,25 @@ package io.sorne.tlang.generator.scala
 
 import io.sorne.tlang.ast.tmpl.func.TmplFunc
 import io.sorne.tlang.ast.tmpl.{TmplBlock, TmplImpl, TmplImplContent}
+import io.sorne.tlang.generator.CodeGenerator
 
-class ScalaGenerator {
+class ScalaGenerator extends CodeGenerator {
 
-  def gen(tmpl: TmplBlock): String = {
+  override def generate(tmpl: TmplBlock): String = {
     val str = new StringBuilder()
     tmpl.pkg.foreach(str ++= "package " ++= _ ++= "\n\n")
     tmpl.uses.foreach(_.foreach((str ++= "import " ++= _.name ++= "\n")))
-    tmpl.impls.foreach(str ++= gen(_))
+    tmpl.impls.foreach(str ++= genBlocks(_))
     str.toString
   }
 
-  def gen(impls: List[TmplImpl]): String = {
+  def genBlocks(impls: List[TmplImpl]): String = {
     val str = new StringBuilder
-    impls.foreach(str ++= gen(_) ++ "\n\n")
+    impls.foreach(str ++= genClasses(_) ++ "\n\n")
     str.toString
   }
 
-  def gen(impl: TmplImpl): String = {
+  def genClasses(impl: TmplImpl): String = {
     val str = new StringBuilder
     str ++= "class " ++= impl.name
     impl.fors.foreach(_.zipWithIndex.foreach {

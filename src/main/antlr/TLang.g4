@@ -8,29 +8,13 @@ import TLangModel, TLangHelper, CommonLexer;
  * This is the entry point of the language
  *
  */
-domainModel:
-	lang?
-	file?
-	(helperBlocks+=helperBlock)*
-	(tmplBlocks+=tmplBlock)*
-	(modelBlocks+=modelBlock)*
-		;
+domainModel: body+=domainBlock*;
+
+domainBlock: helperBlock | tmplBlock | modelBlock;
 
 	/*
  * Defines the language for the tl file
  */
-lang: 'lang' name=STRING;
-
-	/*
- * Defines the destination file where the results will be written
- * Only tl files containing this statement will generate a file
- */
-file:
-	'file' name=STRING;
-
-//LANG: 'lang';
-//FILE: 'file';
-
 
 //HELPER: 'helper';
 //FUNC: 'func';
@@ -41,6 +25,7 @@ file:
  */
 tmplBlock:
 	'tmpl' '{'
+	'lang' name=STRING
 	(tmplPakage=tmplPkg)?
 	(tmplUses+=tmplUse)*
 	(tmplImpls+=tmplImpl)*

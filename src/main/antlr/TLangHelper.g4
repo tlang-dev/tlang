@@ -13,8 +13,10 @@ helperBlock:
 
 helperFunc:
 	'func' name=ID '{'
-	    (content+=helperStatement)*
+	    body=helperContent
 	'}';
+
+helperContent: content+=helperStatement*;
 
 helperStatement:
     helperIf | helperFor | helperCallObj
@@ -22,7 +24,12 @@ helperStatement:
 
 helperIf:
     'if' '(' condition=helperCondition ')' '{'
-        (content+=helperStatement)*
+        body=helperContent
+    '}' else=helperElse?;
+
+helperElse:
+    'else' '{'
+        body=helperContent
     '}';
 
 helperCondition:
@@ -33,7 +40,7 @@ conditionMark: '==' | '!=' | '<' | '>' | '<=' '>=';
 
 helperFor:
     'for' '(' var=ID 'in' array=ID ')' '{'
-        (content+=helperStatement)*
+        body=helperContent
     '}'
 ;
 

@@ -16,7 +16,7 @@ class ScalaGeneratorTest extends AnyFunSuite {
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
     val impl = BuildTmplBlock.build(parser.tmplBlock().tmplImpl)
-    assert(new ScalaGenerator().gen(impl).contains("extends Test1"))
+    assert(new ScalaGenerator().genClasses(impl).contains("extends Test1"))
   }
 
   test("Test impl fors") {
@@ -28,7 +28,7 @@ class ScalaGeneratorTest extends AnyFunSuite {
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
     val impl = BuildTmplBlock.build(parser.tmplBlock().tmplImpl)
-    assert(new ScalaGenerator().gen(impl).contains("extends Test1 with Test2, Test3"))
+    assert(new ScalaGenerator().genClasses(impl).contains("extends Test1 with Test2, Test3"))
   }
 
 }

@@ -112,3 +112,13 @@ c
 3src/main/scala/io/sorne/tlang/ast/HelperBlock.scala,f\0\f0e725557f605711226185268d9322e4dd77300a
 o
 ?src/main/scala/io/sorne/tlang/astbuilder/BuildHelperBlock.scala,4\e\4e139d5637959e139c203b602f236096fb379f37
+_
+/src/main/scala/io/sorne/tlang/runner/Main.scala,4\2\42dc72b6a417b42872172fd4d281022a5b4f1e8c
+b
+2src/main/scala/io/sorne/tlang/bagman/BGError.scala,4\1\41f4104c625c7ecbda3e11489dcf69e0b36314af
+e
+5src/main/scala/io/sorne/tlang/bagman/Repository.scala,b\e\be0fb2136b3a71fcf6452b4e2037985e08972566
+c
+3src/main/scala/io/sorne/tlang/bagman/Manifest.scala,6\c\6c7515944c9c8c29704d6c335d7ea4e411b394a1
+f
+6src/main/scala/io/sorne/tlang/bagman/TBagManager.scala,e\a\ea133cfb82f8a8cdc08361ba43de68c32f5c6777
