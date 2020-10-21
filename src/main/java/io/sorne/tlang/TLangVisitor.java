@@ -1,4 +1,4 @@
-// Generated from /home/joel/sorne_io/io.sorne.tlang/src/main/antlr/TLang.g4 by ANTLR 4.8
+// Generated from C:/Users/joel/sorne_io/io.sorne.tlang/src/main/antlr\TLang.g4 by ANTLR 4.8
 package io.sorne.tlang;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -17,17 +17,11 @@ public interface TLangVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDomainModel(TLangParser.DomainModelContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link TLangParser#lang}.
+	 * Visit a parse tree produced by {@link TLangParser#domainBlock}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLang(TLangParser.LangContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link TLangParser#file}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFile(TLangParser.FileContext ctx);
+	T visitDomainBlock(TLangParser.DomainBlockContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link TLangParser#tmplBlock}.
 	 * @param ctx the parse tree
@@ -215,6 +209,12 @@ public interface TLangVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitHelperFunc(TLangParser.HelperFuncContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link TLangParser#helperContent}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitHelperContent(TLangParser.HelperContentContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link TLangParser#helperStatement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -226,6 +226,12 @@ public interface TLangVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitHelperIf(TLangParser.HelperIfContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link TLangParser#helperElse}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitHelperElse(TLangParser.HelperElseContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link TLangParser#helperCondition}.
 	 * @param ctx the parse tree

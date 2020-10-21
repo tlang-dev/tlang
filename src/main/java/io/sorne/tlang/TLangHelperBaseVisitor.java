@@ -1,4 +1,4 @@
-// Generated from /home/joel/sorne_io/io.sorne.tlang/src/main/antlr/TLangHelper.g4 by ANTLR 4.8
+// Generated from C:/Users/joel/sorne_io/io.sorne.tlang/src/main/antlr\TLangHelper.g4 by ANTLR 4.8
 package io.sorne.tlang;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
@@ -31,6 +31,13 @@ public class TLangHelperBaseVisitor<T> extends AbstractParseTreeVisitor<T> imple
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitHelperContent(TLangHelperParser.HelperContentContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitHelperStatement(TLangHelperParser.HelperStatementContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
@@ -39,6 +46,13 @@ public class TLangHelperBaseVisitor<T> extends AbstractParseTreeVisitor<T> imple
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitHelperIf(TLangHelperParser.HelperIfContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitHelperElse(TLangHelperParser.HelperElseContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

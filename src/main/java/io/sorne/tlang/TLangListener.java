@@ -1,4 +1,4 @@
-// Generated from /home/joel/sorne_io/io.sorne.tlang/src/main/antlr/TLang.g4 by ANTLR 4.8
+// Generated from C:/Users/joel/sorne_io/io.sorne.tlang/src/main/antlr\TLang.g4 by ANTLR 4.8
 package io.sorne.tlang;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -18,25 +18,15 @@ public interface TLangListener extends ParseTreeListener {
 	 */
 	void exitDomainModel(TLangParser.DomainModelContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link TLangParser#lang}.
+	 * Enter a parse tree produced by {@link TLangParser#domainBlock}.
 	 * @param ctx the parse tree
 	 */
-	void enterLang(TLangParser.LangContext ctx);
+	void enterDomainBlock(TLangParser.DomainBlockContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link TLangParser#lang}.
+	 * Exit a parse tree produced by {@link TLangParser#domainBlock}.
 	 * @param ctx the parse tree
 	 */
-	void exitLang(TLangParser.LangContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link TLangParser#file}.
-	 * @param ctx the parse tree
-	 */
-	void enterFile(TLangParser.FileContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TLangParser#file}.
-	 * @param ctx the parse tree
-	 */
-	void exitFile(TLangParser.FileContext ctx);
+	void exitDomainBlock(TLangParser.DomainBlockContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link TLangParser#tmplBlock}.
 	 * @param ctx the parse tree
@@ -348,6 +338,16 @@ public interface TLangListener extends ParseTreeListener {
 	 */
 	void exitHelperFunc(TLangParser.HelperFuncContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link TLangParser#helperContent}.
+	 * @param ctx the parse tree
+	 */
+	void enterHelperContent(TLangParser.HelperContentContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TLangParser#helperContent}.
+	 * @param ctx the parse tree
+	 */
+	void exitHelperContent(TLangParser.HelperContentContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link TLangParser#helperStatement}.
 	 * @param ctx the parse tree
 	 */
@@ -367,6 +367,16 @@ public interface TLangListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitHelperIf(TLangParser.HelperIfContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TLangParser#helperElse}.
+	 * @param ctx the parse tree
+	 */
+	void enterHelperElse(TLangParser.HelperElseContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TLangParser#helperElse}.
+	 * @param ctx the parse tree
+	 */
+	void exitHelperElse(TLangParser.HelperElseContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link TLangParser#helperCondition}.
 	 * @param ctx the parse tree

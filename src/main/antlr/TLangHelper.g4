@@ -25,7 +25,7 @@ helperStatement:
 helperIf:
     'if' '(' condition=helperCondition ')' '{'
         body=helperContent
-    '}' else=helperElse?;
+    '}' orElse=helperElse?;
 
 helperElse:
     'else' '{'

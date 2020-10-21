@@ -1,4 +1,4 @@
-// Generated from /home/joel/sorne_io/io.sorne.tlang/src/main/antlr/TLangHelper.g4 by ANTLR 4.8
+// Generated from C:/Users/joel/sorne_io/io.sorne.tlang/src/main/antlr\TLangHelper.g4 by ANTLR 4.8
 package io.sorne.tlang;
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -40,6 +40,18 @@ public class TLangHelperBaseListener implements TLangHelperListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterHelperContent(TLangHelperParser.HelperContentContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitHelperContent(TLangHelperParser.HelperContentContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterHelperStatement(TLangHelperParser.HelperStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -59,6 +71,18 @@ public class TLangHelperBaseListener implements TLangHelperListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitHelperIf(TLangHelperParser.HelperIfContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterHelperElse(TLangHelperParser.HelperElseContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitHelperElse(TLangHelperParser.HelperElseContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

@@ -25,7 +25,7 @@ domainBlock: helperBlock | tmplBlock | modelBlock;
  */
 tmplBlock:
 	'tmpl' '{'
-	'lang' name=STRING
+	('lang' lang=STRING)
 	(tmplPakage=tmplPkg)?
 	(tmplUses+=tmplUse)*
 	(tmplImpls+=tmplImpl)*

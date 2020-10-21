@@ -7,6 +7,8 @@ import java.nio.file.{Files, Path, Paths}
 import scala.sys.process._
 import scala.util.{Failure, Success, Try}
 
+import scala.language.postfixOps
+
 object TBagManager {
 
   val USER_HOME: String = System.getProperty("user.home")
@@ -14,7 +16,7 @@ object TBagManager {
 
   def fetch(repositories: List[Repository], dependency: String): Either[BGError, Unit] = {
 
-    Right(Unit)
+    Right()
   }
 
   def findInLocalRepo(dependency: String): Either[BGError, Boolean] = {
@@ -27,7 +29,7 @@ object TBagManager {
         if (Files.isRegularFile(path)) {
           readManifest(path) match {
             case Left(error) => Left(error)
-            case Right(value) =>
+            case Right(value) =>null
           }
         } else Left(BGError("MANIFEST_NOT_FOUND", "The MANIFEST file does not exist"))
       }
@@ -35,11 +37,11 @@ object TBagManager {
   }
 
   def readManifest(path: Path): Either[BGError, Manifest] = {
-
+null
   }
 
   def syncFiles(manifest: Manifest): Either[BGError, Unit] = {
-    manifest.files.map(syncFile).find(_.isLeft).getOrElse()
+    manifest.files.map(syncFile).find(_.isLeft).getOrElse(Right())
   }
 
   def syncFile(file: ManifestFile): Either[BGError, Unit] = {
@@ -63,7 +65,7 @@ object TBagManager {
   }
 
   def checksum(path: String, checksum: String): Either[BGError, Boolean] = {
-
+null
   }
 
 }

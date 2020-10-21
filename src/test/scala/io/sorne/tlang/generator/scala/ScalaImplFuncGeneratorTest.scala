@@ -10,7 +10,9 @@ class ScalaImplFuncGeneratorTest extends AnyFunSuite {
 
   test("Test func to scala") {
     val lexer = new TLangLexer(CharStreams.fromString(
-      """tmpl { impl Test {
+      """tmpl {
+        |lang="scala"
+        |impl Test {
         |func test {
         |}
         |}}""".stripMargin))
@@ -23,7 +25,9 @@ class ScalaImplFuncGeneratorTest extends AnyFunSuite {
 
   test("Test func to scala with ()") {
     val lexer = new TLangLexer(CharStreams.fromString(
-      """tmpl { impl Test {
+      """tmpl {
+        |lang="scala"
+        |impl Test {
         |func test() {
         |}
         |}}""".stripMargin))
@@ -36,7 +40,9 @@ class ScalaImplFuncGeneratorTest extends AnyFunSuite {
 
   test("Test func to scala with one parameter") {
     val lexer = new TLangLexer(CharStreams.fromString(
-      """tmpl { impl Test {
+      """tmpl {
+        |lang="scala"
+        |impl Test {
         |func test(myParam: MyType) {
         |}
         |}}""".stripMargin))
@@ -49,7 +55,9 @@ class ScalaImplFuncGeneratorTest extends AnyFunSuite {
 
   test("Test func to scala with one array parameter") {
     val lexer = new TLangLexer(CharStreams.fromString(
-      """tmpl { impl Test {
+      """tmpl {
+        |lang="scala"
+        |impl Test {
         |func test(myParam: MyType[]) {
         |}
         |}}""".stripMargin))
@@ -62,7 +70,9 @@ class ScalaImplFuncGeneratorTest extends AnyFunSuite {
 
   test("Test func to scala with parameters and generics") {
     val lexer = new TLangLexer(CharStreams.fromString(
-      """tmpl { impl Test {
+      """tmpl {
+        |lang="scala"
+        |impl Test {
         |func test(myParam: MyType<JustAType<AlsoGeneric>>, mySecondParam: MySecondType<SomeThing, AnotherThing<EvenSomethingElse>>) {
         |}
         |}}""".stripMargin))
@@ -75,7 +85,9 @@ class ScalaImplFuncGeneratorTest extends AnyFunSuite {
 
   test("Test func to scala with currying") {
     val lexer = new TLangLexer(CharStreams.fromString(
-      """tmpl { impl Test {
+      """tmpl {
+        |lang="scala"
+        |impl Test {
         |func test(myParam: MyType[])(mySecondParam: MySecondType<JustTrying>) {
         |}
         |}}""".stripMargin))

@@ -1,4 +1,4 @@
-// Generated from /home/joel/sorne_io/io.sorne.tlang/src/main/antlr/TLangHelper.g4 by ANTLR 4.8
+// Generated from C:/Users/joel/sorne_io/io.sorne.tlang/src/main/antlr\TLangHelper.g4 by ANTLR 4.8
 package io.sorne.tlang;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -28,6 +28,16 @@ public interface TLangHelperListener extends ParseTreeListener {
 	 */
 	void exitHelperFunc(TLangHelperParser.HelperFuncContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link TLangHelperParser#helperContent}.
+	 * @param ctx the parse tree
+	 */
+	void enterHelperContent(TLangHelperParser.HelperContentContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TLangHelperParser#helperContent}.
+	 * @param ctx the parse tree
+	 */
+	void exitHelperContent(TLangHelperParser.HelperContentContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link TLangHelperParser#helperStatement}.
 	 * @param ctx the parse tree
 	 */
@@ -47,6 +57,16 @@ public interface TLangHelperListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitHelperIf(TLangHelperParser.HelperIfContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TLangHelperParser#helperElse}.
+	 * @param ctx the parse tree
+	 */
+	void enterHelperElse(TLangHelperParser.HelperElseContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TLangHelperParser#helperElse}.
+	 * @param ctx the parse tree
+	 */
+	void exitHelperElse(TLangHelperParser.HelperElseContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link TLangHelperParser#helperCondition}.
 	 * @param ctx the parse tree

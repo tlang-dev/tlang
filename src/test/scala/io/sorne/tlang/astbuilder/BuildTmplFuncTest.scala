@@ -9,7 +9,9 @@ class BuildTmplFuncTest extends AnyFunSuite {
 
   test("Test build func") {
     val lexer = new TLangLexer(CharStreams.fromString(
-      """tmpl { impl test {
+      """tmpl {
+        |lang="scala"
+        |impl test {
         |func func1 {
         |}
         |}}""".stripMargin))
@@ -21,7 +23,9 @@ class BuildTmplFuncTest extends AnyFunSuite {
 
   test("Test build func with ()") {
     val lexer = new TLangLexer(CharStreams.fromString(
-      """tmpl { impl test {
+      """tmpl {
+        |lang="scala"
+        |impl test {
         |func func1() {
         |}
         |}}""".stripMargin))
@@ -33,7 +37,9 @@ class BuildTmplFuncTest extends AnyFunSuite {
 
   test("Test build func with one parameter") {
     val lexer = new TLangLexer(CharStreams.fromString(
-      """tmpl { impl test {
+      """tmpl {
+        |lang="scala"
+        |impl test {
         |func func1(myParam: MyType) {
         |}
         |}}""".stripMargin))
@@ -51,7 +57,9 @@ class BuildTmplFuncTest extends AnyFunSuite {
 
   test("Test build func with one array parameter") {
     val lexer = new TLangLexer(CharStreams.fromString(
-      """tmpl { impl test {
+      """tmpl {
+        |lang="scala"
+        |impl test {
         |func func1(myParam: MyType[]) {
         |}
         |}}""".stripMargin))
@@ -69,7 +77,9 @@ class BuildTmplFuncTest extends AnyFunSuite {
 
   test("Test build func with one generic parameter") {
     val lexer = new TLangLexer(CharStreams.fromString(
-      """tmpl { impl test {
+      """tmpl {
+        |lang="scala"
+        |impl test {
         |func func1(myParam: MyType<AnotherType, YetAnotherType<AndSoOn>>) {
         |}
         |}}""".stripMargin))
@@ -89,7 +99,9 @@ class BuildTmplFuncTest extends AnyFunSuite {
 
   test("Test build func with currying") {
     val lexer = new TLangLexer(CharStreams.fromString(
-      """tmpl { impl test {
+      """tmpl {
+        | lang="scala"
+        | impl test {
         |func func1(myParam: MyType)(myParam2: MyType2[]) {
         |}
         |}}""".stripMargin))

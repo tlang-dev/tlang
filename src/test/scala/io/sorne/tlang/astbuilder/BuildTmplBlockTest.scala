@@ -9,6 +9,7 @@ class BuildTmplBlockTest extends AnyFunSuite {
   test("Test use in TmplBloc") {
     val lexer = new TLangLexer(CharStreams.fromString(
       """tmpl {
+        |lang="scala"
         |use "io.sorne.tlang"
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
@@ -19,6 +20,7 @@ class BuildTmplBlockTest extends AnyFunSuite {
   test("Test uses in TmplBloc") {
     val lexer = new TLangLexer(CharStreams.fromString(
       """tmpl {
+        |lang="scala"
         |use "io.sorne.tlang1"
         |use "io.sorne.tlang2"
         |use "io.sorne.tlang3"
@@ -34,6 +36,7 @@ class BuildTmplBlockTest extends AnyFunSuite {
   test("Test uses in TmplBloc with empty list") {
     val lexer = new TLangLexer(CharStreams.fromString(
       """tmpl {
+        |lang="scala"
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
@@ -44,6 +47,7 @@ class BuildTmplBlockTest extends AnyFunSuite {
   test("Test impl name") {
     val lexer = new TLangLexer(CharStreams.fromString(
       """tmpl {
+        |lang="scala"
         |impl test {
         |}
         |}""".stripMargin))
@@ -57,6 +61,7 @@ class BuildTmplBlockTest extends AnyFunSuite {
   test("Test impl with for") {
     val lexer = new TLangLexer(CharStreams.fromString(
       """tmpl {
+        |lang="scala"
         |impl test for test1{
         |}
         |}""".stripMargin))
@@ -70,6 +75,7 @@ class BuildTmplBlockTest extends AnyFunSuite {
   test("Test impl with fors") {
     val lexer = new TLangLexer(CharStreams.fromString(
       """tmpl {
+        |lang="scala"
         |impl test for test1, test2, test3 {
         |}
         |}""".stripMargin))

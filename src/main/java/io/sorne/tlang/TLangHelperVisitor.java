@@ -1,4 +1,4 @@
-// Generated from /home/joel/sorne_io/io.sorne.tlang/src/main/antlr/TLangHelper.g4 by ANTLR 4.8
+// Generated from C:/Users/joel/sorne_io/io.sorne.tlang/src/main/antlr\TLangHelper.g4 by ANTLR 4.8
 package io.sorne.tlang;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -23,6 +23,12 @@ public interface TLangHelperVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitHelperFunc(TLangHelperParser.HelperFuncContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link TLangHelperParser#helperContent}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitHelperContent(TLangHelperParser.HelperContentContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link TLangHelperParser#helperStatement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -34,6 +40,12 @@ public interface TLangHelperVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitHelperIf(TLangHelperParser.HelperIfContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link TLangHelperParser#helperElse}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitHelperElse(TLangHelperParser.HelperElseContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link TLangHelperParser#helperCondition}.
 	 * @param ctx the parse tree

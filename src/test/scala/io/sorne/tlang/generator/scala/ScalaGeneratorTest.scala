@@ -10,6 +10,7 @@ class ScalaGeneratorTest extends AnyFunSuite {
   test("Test impl for") {
     val lexer = new TLangLexer(CharStreams.fromString(
       """tmpl {
+        |lang="scala"
         |impl Test for Test1{
         |}
         |}""".stripMargin))
@@ -22,6 +23,7 @@ class ScalaGeneratorTest extends AnyFunSuite {
   test("Test impl fors") {
     val lexer = new TLangLexer(CharStreams.fromString(
       """tmpl {
+        |lang="scala"
         |impl Test for Test1, Test2, Test3{
         |}
         |}""".stripMargin))
