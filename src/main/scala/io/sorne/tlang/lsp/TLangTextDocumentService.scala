@@ -1,6 +1,7 @@
 package io.sorne.tlang.lsp
 
 import io.sorne.tlang.lsp.context.{Context, CurrentFile}
+import io.sorne.tlang.lsp.indent.Indent
 
 object TLangTextDocumentService {
 
@@ -14,9 +15,7 @@ object TLangTextDocumentService {
   }
 
   def formatting(request: Request): Either[LSPError, Option[Response]] = {
-    Right(Some(Response(request.jsonrpc, request.id, List(
-      TextEdit(Range(Position(1, 1), Position(1, 12)), "My new data"),
-    ))))
+    Right(Some(Response(request.jsonrpc, request.id, Indent.indent(Context.context.currentFile.content.clone()))))
   }
 
   def color(request: Request): Either[LSPError, Option[Response]] = {
