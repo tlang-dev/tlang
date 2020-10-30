@@ -13,7 +13,7 @@ object ExecCallFunc extends Executor {
       case Some(value) =>
         val newContext = manageParameters(caller, value, context)
         ExecFunc.run(value, newContext)
-      case None => Left(NotImplemented())
+      case None => ExecLibFunc.run(caller, context)
     }
 
 

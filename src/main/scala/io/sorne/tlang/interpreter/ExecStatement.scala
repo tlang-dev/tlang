@@ -1,6 +1,6 @@
 package io.sorne.tlang.interpreter
 
-import io.sorne.tlang.ast.helper.{HelperCallObject, HelperFor, HelperFunc, HelperIf, HelperStatement}
+import io.sorne.tlang.ast.helper._
 
 object ExecStatement extends Executor {
   override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[Value[_]]] = {

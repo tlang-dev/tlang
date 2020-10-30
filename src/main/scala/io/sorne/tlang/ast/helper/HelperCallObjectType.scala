@@ -1,5 +1,5 @@
 package io.sorne.tlang.ast.helper
 
-class HelperCallObjectType {
+class HelperCallObjectType extends HelperStatement {
 
 }

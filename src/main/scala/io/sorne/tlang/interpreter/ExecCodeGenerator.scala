@@ -9,6 +9,6 @@ object ExecCodeGenerator extends Executor {
   override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[Value[_]]] = {
     val tmpl = TmplImpl("", None)
     val code = new ScalaGenerator().genClasses(tmpl)
-    Right(Some(String(code)))
+    Right(Some(new String(code)))
   }
 }
