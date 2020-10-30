@@ -22,7 +22,7 @@ object Indent {
     if (startPos >= content.length() - 1) edits
     else {
       val endPos = findEndingPosition(content, startPos)
-      val delta = indentLineByLine(content, startPos, endPos , indentLevel, edits)
+      val delta = indentLineByLine(content, startPos, endPos, indentLevel, edits)
       val newLevel = if (content.substring(endPos + delta, endPos + delta + 1).equals("{")) indentLevel + 1 else indentLevel - 1
       doNextBracket(content, endPos + delta + 1, newLevel, edits)
     }
