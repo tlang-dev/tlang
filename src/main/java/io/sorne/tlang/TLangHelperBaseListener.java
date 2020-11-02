@@ -1,4 +1,4 @@
-// Generated from C:/Users/joel/sorne_io/io.sorne.tlang/src/main/antlr\TLangHelper.g4 by ANTLR 4.8
+// Generated from /home/joel/sorne_io/io.sorne.tlang/src/main/antlr/TLangHelper.g4 by ANTLR 4.8
 package io.sorne.tlang;
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -35,6 +35,78 @@ public class TLangHelperBaseListener implements TLangHelperListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitHelperFunc(TLangHelperParser.HelperFuncContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterHelperCurrying(TLangHelperParser.HelperCurryingContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitHelperCurrying(TLangHelperParser.HelperCurryingContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterHelperParam(TLangHelperParser.HelperParamContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitHelperParam(TLangHelperParser.HelperParamContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterHelperParamType(TLangHelperParser.HelperParamTypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitHelperParamType(TLangHelperParser.HelperParamTypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterHelperObjType(TLangHelperParser.HelperObjTypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitHelperObjType(TLangHelperParser.HelperObjTypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterHelperArrayType(TLangHelperParser.HelperArrayTypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitHelperArrayType(TLangHelperParser.HelperArrayTypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterHelperFuncType(TLangHelperParser.HelperFuncTypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitHelperFuncType(TLangHelperParser.HelperFuncTypeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -88,6 +160,18 @@ public class TLangHelperBaseListener implements TLangHelperListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterHelperConditionBlock(TLangHelperParser.HelperConditionBlockContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitHelperConditionBlock(TLangHelperParser.HelperConditionBlockContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterHelperCondition(TLangHelperParser.HelperConditionContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -131,6 +215,54 @@ public class TLangHelperBaseListener implements TLangHelperListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitHelperCallObj(TLangHelperParser.HelperCallObjContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterHelperCallObjType(TLangHelperParser.HelperCallObjTypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitHelperCallObjType(TLangHelperParser.HelperCallObjTypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterHelperCallString(TLangHelperParser.HelperCallStringContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitHelperCallString(TLangHelperParser.HelperCallStringContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterHelperCallNumber(TLangHelperParser.HelperCallNumberContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitHelperCallNumber(TLangHelperParser.HelperCallNumberContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterHelperCallText(TLangHelperParser.HelperCallTextContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitHelperCallText(TLangHelperParser.HelperCallTextContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

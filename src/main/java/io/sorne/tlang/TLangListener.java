@@ -1,4 +1,4 @@
-// Generated from C:/Users/joel/sorne_io/io.sorne.tlang/src/main/antlr\TLang.g4 by ANTLR 4.8
+// Generated from /home/joel/sorne_io/io.sorne.tlang/src/main/antlr/TLang.g4 by ANTLR 4.8
 package io.sorne.tlang;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -338,6 +338,66 @@ public interface TLangListener extends ParseTreeListener {
 	 */
 	void exitHelperFunc(TLangParser.HelperFuncContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link TLangParser#helperCurrying}.
+	 * @param ctx the parse tree
+	 */
+	void enterHelperCurrying(TLangParser.HelperCurryingContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TLangParser#helperCurrying}.
+	 * @param ctx the parse tree
+	 */
+	void exitHelperCurrying(TLangParser.HelperCurryingContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TLangParser#helperParam}.
+	 * @param ctx the parse tree
+	 */
+	void enterHelperParam(TLangParser.HelperParamContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TLangParser#helperParam}.
+	 * @param ctx the parse tree
+	 */
+	void exitHelperParam(TLangParser.HelperParamContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TLangParser#helperParamType}.
+	 * @param ctx the parse tree
+	 */
+	void enterHelperParamType(TLangParser.HelperParamTypeContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TLangParser#helperParamType}.
+	 * @param ctx the parse tree
+	 */
+	void exitHelperParamType(TLangParser.HelperParamTypeContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TLangParser#helperObjType}.
+	 * @param ctx the parse tree
+	 */
+	void enterHelperObjType(TLangParser.HelperObjTypeContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TLangParser#helperObjType}.
+	 * @param ctx the parse tree
+	 */
+	void exitHelperObjType(TLangParser.HelperObjTypeContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TLangParser#helperArrayType}.
+	 * @param ctx the parse tree
+	 */
+	void enterHelperArrayType(TLangParser.HelperArrayTypeContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TLangParser#helperArrayType}.
+	 * @param ctx the parse tree
+	 */
+	void exitHelperArrayType(TLangParser.HelperArrayTypeContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TLangParser#helperFuncType}.
+	 * @param ctx the parse tree
+	 */
+	void enterHelperFuncType(TLangParser.HelperFuncTypeContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TLangParser#helperFuncType}.
+	 * @param ctx the parse tree
+	 */
+	void exitHelperFuncType(TLangParser.HelperFuncTypeContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link TLangParser#helperContent}.
 	 * @param ctx the parse tree
 	 */
@@ -378,6 +438,16 @@ public interface TLangListener extends ParseTreeListener {
 	 */
 	void exitHelperElse(TLangParser.HelperElseContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link TLangParser#helperConditionBlock}.
+	 * @param ctx the parse tree
+	 */
+	void enterHelperConditionBlock(TLangParser.HelperConditionBlockContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TLangParser#helperConditionBlock}.
+	 * @param ctx the parse tree
+	 */
+	void exitHelperConditionBlock(TLangParser.HelperConditionBlockContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link TLangParser#helperCondition}.
 	 * @param ctx the parse tree
 	 */
@@ -417,6 +487,46 @@ public interface TLangListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitHelperCallObj(TLangParser.HelperCallObjContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TLangParser#helperCallObjType}.
+	 * @param ctx the parse tree
+	 */
+	void enterHelperCallObjType(TLangParser.HelperCallObjTypeContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TLangParser#helperCallObjType}.
+	 * @param ctx the parse tree
+	 */
+	void exitHelperCallObjType(TLangParser.HelperCallObjTypeContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TLangParser#helperCallString}.
+	 * @param ctx the parse tree
+	 */
+	void enterHelperCallString(TLangParser.HelperCallStringContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TLangParser#helperCallString}.
+	 * @param ctx the parse tree
+	 */
+	void exitHelperCallString(TLangParser.HelperCallStringContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TLangParser#helperCallNumber}.
+	 * @param ctx the parse tree
+	 */
+	void enterHelperCallNumber(TLangParser.HelperCallNumberContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TLangParser#helperCallNumber}.
+	 * @param ctx the parse tree
+	 */
+	void exitHelperCallNumber(TLangParser.HelperCallNumberContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TLangParser#helperCallText}.
+	 * @param ctx the parse tree
+	 */
+	void enterHelperCallText(TLangParser.HelperCallTextContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TLangParser#helperCallText}.
+	 * @param ctx the parse tree
+	 */
+	void exitHelperCallText(TLangParser.HelperCallTextContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link TLangParser#helperCallArray}.
 	 * @param ctx the parse tree

@@ -8,7 +8,7 @@ import io.sorne.tlang.interpreter._
 object File extends Executor {
   override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[Value[_]]] = {
     val arg1 = statement.asInstanceOf[HelperCallFuncObject]
-    arg1.name match {
+    arg1.name.get match {
       case "write" =>
         val file = ExecCallObject.run(arg1.currying.get.head.attrs.head, context)
         val content = ExecCallObject.run(arg1.currying.get.head.attrs(1), context)

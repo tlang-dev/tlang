@@ -42,9 +42,9 @@ object ExecCallObject extends Executor {
         case Some(array) => resolveCallback(position, array)
         case None => Left(CallableNotFound(name))
       }
-      case HelperCallFuncObject(name, _) => context.functions.get(name) match {
-        case Some(value) => resolveCallback(name, value)
-        case None => Left(CallableNotFound(name))
+      case HelperCallFuncObject(name, _) => context.functions.get(name.get) match {
+        case Some(value) => resolveCallback(name.get, value)
+        case None => Left(CallableNotFound(name.get))
       }
       case HelperCallVarObject(name) => context.variables.get(name) match {
         case Some(value) => Right(value)
@@ -57,7 +57,7 @@ object ExecCallObject extends Executor {
   private def findInCallable(statement: HelperCallObjectType, callable: Value[_]): Either[ExecError, Value[_]] = {
     statement match {
       case HelperCallArrayObject(name, position) => resolveCallback(position, callable)
-      case HelperCallFuncObject(name, _) => resolveCallback(name, callable)
+      case HelperCallFuncObject(name, _) => resolveCallback(name.get, callable)
       case HelperCallVarObject(name) => resolveCallback(name, callable)
       case _ => Left(NotImplemented())
     }

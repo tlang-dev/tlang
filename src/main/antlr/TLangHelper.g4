@@ -12,18 +12,30 @@ helperBlock:
 	'}';
 
 helperFunc:
-	'func' name=ID '{'
+	'func' name=ID ('(' (currying+=helperCurrying)? ')')* (':' retVals+=helperParamType (',' retVals+=helperParamType)*)?'{'
 	    body=helperContent
 	'}';
+
+helperCurrying: params += helperParam (',' params += helperParam)*;
+
+helperParam: (param=ID)? type=helperParamType;
+
+helperParamType: helperObjType | helperArrayType | helperFuncType;
+
+helperObjType: tpye=ID;
+
+helperArrayType: tpye=ID'['']';
+
+helperFuncType: type='(' (currying+=helperCurrying)? ')' ('(' currying+=helperCurrying ')')* ':' retVals+=helperParamType (',' retVals+=helperParamType)*;
 
 helperContent: content+=helperStatement*;
 
 helperStatement:
-    helperIf | helperFor | helperCallObj
+    helperIf | helperFor | helperCallObj | helperConditionBlock
 ;
 
 helperIf:
-    'if' '(' condition=helperCondition ')' '{'
+    'if' '(' condition=helperConditionBlock ')' '{'
         body=helperContent
     '}' orElse=helperElse?;
 
@@ -32,30 +44,36 @@ helperElse:
         body=helperContent
     '}';
 
+helperConditionBlock: '('? content+=helperCondition ')'? (link=('&&' | '||') helperConditionBlock)*;
+
 helperCondition:
-    arg1=helperCallObj (mark=conditionMark arg2=helperCallObj)?
+    arg1=helperCallObj (mark=conditionMark arg2=helperCallObj)? (link=('&&' | '||') helperCondition)*
 ;
 
 conditionMark: '==' | '!=' | '<' | '>' | '<=' '>=';
 
 helperFor:
-    'for' '(' var=ID 'in' array=ID ')' '{'
+    'for' '(' var=ID type=('in' | 'to' | 'until') array=helperCallObj ')' '{'
         body=helperContent
     '}'
 ;
 
-helperCallObj:
-    helperCallArray | helperCallFunc | helperCallVariable
+helperCallObj: objs+=helperCallObjType ('.'objs+=helperCallObjType)*;
+
+helperCallObjType:
+    helperCallArray | helperCallString | helperCallText | helperCallNumber | helperCallFunc | helperCallVariable
 ;
 
-helperCallArray:
-    name=ID '[' elem=ID ']'
-;
+helperCallString: type=STRING;
+
+helperCallNumber: type=NUMBER;
+
+helperCallText: type=TEXT;
+
+helperCallArray: (name=ID)? '[' elem=helperCallObj ']';
 
 helperCallFunc:
-    name=ID '(' ')'
+    ((name=ID) | '_') currying += '(' params+=helperCallObj (',' params+=helperCallObj)* ')' (currying+='(' params+=helperCallObj (',' params+=helperCallObj)* ')')*
 ;
 
-helperCallVariable:
-    name=ID
-;
+helperCallVariable: name=ID;

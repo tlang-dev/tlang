@@ -9,7 +9,7 @@ object ExecCallFunc extends Executor {
     val caller = statement.asInstanceOf[HelperCallFuncObject]
 
 
-    context.functions.get(caller.name) match {
+    context.functions.get(caller.name.get) match {
       case Some(value) =>
         val newContext = manageParameters(caller, value, context)
         ExecFunc.run(value, newContext)
@@ -43,6 +43,6 @@ object ExecCallFunc extends Executor {
   }
 
   private def findParamName(curryPos: Int, paramPos: Int, helperFunc: HelperFunc): String = {
-    helperFunc.currying.get(curryPos).attrs(paramPos).attr.getOrElse(paramPos.toString)
+    helperFunc.currying.get(curryPos).params(paramPos).param.getOrElse(paramPos.toString)
   }
 }
