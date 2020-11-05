@@ -18,6 +18,36 @@ public interface TLangListener extends ParseTreeListener {
 	 */
 	void exitDomainModel(TLangParser.DomainModelContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link TLangParser#domainHeader}.
+	 * @param ctx the parse tree
+	 */
+	void enterDomainHeader(TLangParser.DomainHeaderContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TLangParser#domainHeader}.
+	 * @param ctx the parse tree
+	 */
+	void exitDomainHeader(TLangParser.DomainHeaderContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TLangParser#domainUse}.
+	 * @param ctx the parse tree
+	 */
+	void enterDomainUse(TLangParser.DomainUseContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TLangParser#domainUse}.
+	 * @param ctx the parse tree
+	 */
+	void exitDomainUse(TLangParser.DomainUseContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TLangParser#domainExpose}.
+	 * @param ctx the parse tree
+	 */
+	void enterDomainExpose(TLangParser.DomainExposeContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TLangParser#domainExpose}.
+	 * @param ctx the parse tree
+	 */
+	void exitDomainExpose(TLangParser.DomainExposeContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link TLangParser#domainBlock}.
 	 * @param ctx the parse tree
 	 */

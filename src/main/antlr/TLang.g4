@@ -8,7 +8,18 @@ import TLangModel, TLangHelper, CommonLexer;
  * This is the entry point of the language
  *
  */
-domainModel: body+=domainBlock*;
+domainModel:
+    header=domainHeader
+    body+=domainBlock*;
+
+domainHeader:
+    (exposes += domainExpose)*
+    (uses += domainUse)*
+;
+
+domainUse: 'use' uses+=ID ('.' uses+=ID)?;
+
+domainExpose: 'expose' expose=ID;
 
 domainBlock: helperBlock | tmplBlock | modelBlock;
 

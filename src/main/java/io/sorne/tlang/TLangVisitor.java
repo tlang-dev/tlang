@@ -17,6 +17,24 @@ public interface TLangVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDomainModel(TLangParser.DomainModelContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link TLangParser#domainHeader}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDomainHeader(TLangParser.DomainHeaderContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link TLangParser#domainUse}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDomainUse(TLangParser.DomainUseContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link TLangParser#domainExpose}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDomainExpose(TLangParser.DomainExposeContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link TLangParser#domainBlock}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

@@ -16,7 +16,7 @@ object TBagManager {
 
   def fetch(repositories: List[Repository], dependency: String): Either[BGError, Unit] = {
 
-    Right()
+    Right(())
   }
 
   def findInLocalRepo(dependency: String): Either[BGError, Boolean] = {
@@ -41,7 +41,7 @@ null
   }
 
   def syncFiles(manifest: Manifest): Either[BGError, Unit] = {
-    manifest.files.map(syncFile).find(_.isLeft).getOrElse(Right())
+    manifest.files.map(syncFile).find(_.isLeft).getOrElse(Right(()))
   }
 
   def syncFile(file: ManifestFile): Either[BGError, Unit] = {
@@ -51,7 +51,7 @@ null
           case Failure(exception) => Left(BGError("DOWNLOAD_ERROR", exception.getMessage))
           case Success(_) => checksum(local, file.checksum) match {
             case Left(error) => Left(error)
-            case Right(res) => if (res) Right() else Left(BGError("CHECKSUM_NOT_MATCHING", "Checksum error for " + file.name))
+            case Right(res) => if (res) Right(()) else Left(BGError("CHECKSUM_NOT_MATCHING", "Checksum error for " + file.name))
           }
         }
         case None => Left(BGError("NO_LOCAL_DEFINED", "Local destination file not defined for " + file.name))

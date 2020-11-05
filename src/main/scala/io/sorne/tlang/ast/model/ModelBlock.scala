@@ -1,3 +1,5 @@
 package io.sorne.tlang.ast.model
 
-case class ModelBlock(content: Option[List[ModelContent]])
+import io.sorne.tlang.ast.DomainBlock
+
+case class ModelBlock(content: Option[List[ModelContent]]) extends DomainBlock

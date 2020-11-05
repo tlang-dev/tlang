@@ -1,8 +1,7 @@
 package io.sorne.tlang.astbuilder
 
 import io.sorne.tlang.TLangParser._
-import io.sorne.tlang.ast.HelperBlock
-import io.sorne.tlang.ast.helper._
+import io.sorne.tlang.ast.helper.{HelperBlock, _}
 
 import scala.collection.mutable.ListBuffer
 import scala.jdk.CollectionConverters._
