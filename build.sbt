@@ -12,3 +12,8 @@ libraryDependencies += "org.mockito" % "mockito-core" % "3.3.3" % Test
 
 libraryDependencies += "org.json4s" %% "json4s-native" % "3.6.10"
 //libraryDependencies += "org.eclipse.lsp4j" % "org.eclipse.lsp4j" % "0.9.0"
+
+
+antlr4Version in Antlr4 := "4.8-1"
+antlr4PackageName in Antlr4 := Some("io.sorne.tlang")
+enablePlugins(Antlr4Plugin)

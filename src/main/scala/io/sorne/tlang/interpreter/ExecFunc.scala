@@ -1,9 +1,10 @@
 package io.sorne.tlang.interpreter
 
 import io.sorne.tlang.ast.helper.{HelperFunc, HelperStatement}
+import io.sorne.tlang.interpreter.context.Context
 
 object ExecFunc extends Executor {
-  override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[Value[_]]] = {
+  override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
     val funcStatement = statement.asInstanceOf[HelperFunc]
     if (funcStatement.block.content.isDefined) {
       val statements = funcStatement.block.content.get

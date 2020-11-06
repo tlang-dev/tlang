@@ -2,16 +2,17 @@ package io.sorne.tlang.interpreter
 
 import io.sorne.tlang.ast.helper._
 import io.sorne.tlang.ast.model.`new`._
+import io.sorne.tlang.interpreter.context.{Context, ContextUtils}
 
 import scala.annotation.tailrec
 
 object ExecCallObject extends Executor {
 
-  override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[Value[_]]] = {
+  override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
     val arg1 = statement.asInstanceOf[HelperCallObject]
     loopOverStatement(arg1.statements, context) match {
       case Left(value) => Left(value)
-      case Right(value) => Right(Some(value))
+      case Right(value) => Right(Some(List(value)))
     }
   }
 
@@ -38,15 +39,15 @@ object ExecCallObject extends Executor {
 
   private def findInContext(statement: HelperCallObjectType, context: Context): Either[ExecError, Value[_]] = {
     statement match {
-      case HelperCallArrayObject(name, position) => context.variables.get(name) match {
+      case HelperCallArrayObject(name, position) => ContextUtils.findVar(context, name) match {
         case Some(array) => resolveCallback(position, array)
         case None => Left(CallableNotFound(name))
       }
-      case HelperCallFuncObject(name, _) => context.functions.get(name.get) match {
+      case HelperCallFuncObject(name, _) => ContextUtils.findFunc(context, name.get) match {
         case Some(value) => resolveCallback(name.get, value)
         case None => Left(CallableNotFound(name.get))
       }
-      case HelperCallVarObject(name) => context.variables.get(name) match {
+      case HelperCallVarObject(name) => ContextUtils.findVar(context, name) match {
         case Some(value) => Right(value)
         case None => Left(CallableNotFound(name))
       }

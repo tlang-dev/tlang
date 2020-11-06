@@ -1,24 +1,21 @@
 package io.sorne.tlang.interpreter
 
 import io.sorne.tlang.ast.helper.{HelperCallFuncObject, HelperFunc, HelperStatement}
+import io.sorne.tlang.interpreter
+import io.sorne.tlang.interpreter.context.{Context, ContextUtils, Scope}
 
 import scala.collection.mutable
 
 object ExecCallFunc extends Executor {
-  override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[Value[_]]] = {
+  override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
     val caller = statement.asInstanceOf[HelperCallFuncObject]
 
-
-    context.functions.get(caller.name.get) match {
-      case Some(value) =>
-        val newContext = manageParameters(caller, value, context)
-        ExecFunc.run(value, newContext)
-      case None => ExecLibFunc.run(caller, context)
+    ContextUtils.findFunc(context, caller.name.get) match {
+      case Some(func) =>
+        val newContext = manageParameters(caller, func, context)
+        ExecFunc.run(func, newContext)
+      case None => Left(CallableNotFound(caller.name.get))
     }
-
-
-
-    //      Context(vars, funcs)
 
   }
 
@@ -31,7 +28,7 @@ object ExecCallFunc extends Executor {
           ExecStatement.run(attr._1, context) match {
             case Left(value) => Left(value)
             case Right(optionVal) => optionVal match {
-              case Some(value) => vars.put(findParamName(param._2, attr._2, helperFunc), value)
+              case Some(value) => if (value.size == 1) vars.put(findParamName(param._2, attr._2, helperFunc), value.head)
               case None =>
             }
           }
@@ -39,7 +36,7 @@ object ExecCallFunc extends Executor {
       })
 
     }
-    Context(vars, funcs)
+    Context(List(Scope(vars, funcs)))
   }
 
   private def findParamName(curryPos: Int, paramPos: Int, helperFunc: HelperFunc): String = {

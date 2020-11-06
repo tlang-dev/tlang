@@ -7,3 +7,7 @@ case class CallableNotFound(name: String) extends ExecError(name, "Callable not 
 case class NotImplemented() extends ExecError("NotImplemented")
 
 case class NotACondition() extends ExecError("NotACondition")
+
+case class WrongType(types: String) extends ExecError("WrongType", types)
+
+case class WrongNumberOfArguments(error: String) extends ExecError("WrongNumberOfArguments", error)

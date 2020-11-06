@@ -2,6 +2,7 @@ package io.sorne.tlang.interpreter
 
 import io.sorne.tlang.ast.helper.{HelperCallArrayObject, HelperCallObject, HelperCallVarObject}
 import io.sorne.tlang.ast.model.`new`._
+import io.sorne.tlang.interpreter.context.{Context, Scope}
 import org.scalatest.funsuite.AnyFunSuite
 
 import scala.collection.mutable
@@ -9,11 +10,11 @@ import scala.collection.mutable
 class ExecCallObjectTest extends AnyFunSuite {
 
   test("Get simple variable") {
-    val context = Context(variables = mutable.Map("var1" -> ModelNewEntityValue(Some("MyEntity"))))
+    val context = Context(List(Scope(variables = mutable.Map("var1" -> ModelNewEntityValue(Some("MyEntity"))))))
     val statement = HelperCallObject(List(HelperCallVarObject("var1")))
     val res = ExecCallObject.run(statement, context).toOption.get.get
-    assert(res.isInstanceOf[ModelNewEntityValue])
-    assert("MyEntity".equals(res.asInstanceOf[ModelNewEntityValue].`type`.get))
+    assert(res.head.isInstanceOf[ModelNewEntityValue])
+    assert("MyEntity".equals(res.head.asInstanceOf[ModelNewEntityValue].`type`.get))
   }
 
   test("Get variable from array by index") {
@@ -22,11 +23,11 @@ class ExecCallObjectTest extends AnyFunSuite {
       ModelNewAttribute(value = ModelNewPrimitiveValue(value = "value2")),
       ModelNewAttribute(value = ModelNewPrimitiveValue(value = "value3"))
     )))
-    val context = Context(variables = mutable.Map("var1" -> array))
+    val context = Context(List(Scope(variables = mutable.Map("var1" -> array))))
     val statement = HelperCallObject(List(HelperCallArrayObject("var1", "1")))
     val res = ExecCallObject.run(statement, context).toOption.get.get
-    assert(res.isInstanceOf[ModelNewPrimitiveValue])
-    assert("value2".equals(res.asInstanceOf[ModelNewPrimitiveValue].value))
+    assert(res.head.isInstanceOf[ModelNewPrimitiveValue])
+    assert("value2".equals(res.head.asInstanceOf[ModelNewPrimitiveValue].value))
   }
 
   test("Get variable from array by name") {
@@ -35,11 +36,11 @@ class ExecCallObjectTest extends AnyFunSuite {
       ModelNewAttribute(Some("myPosition2"), ModelNewPrimitiveValue(value = "value2")),
       ModelNewAttribute(Some("myPosition3"), ModelNewPrimitiveValue(value = "value3"))
     )))
-    val context = Context(variables = mutable.Map("var1" -> array))
+    val context = Context(List(Scope(variables = mutable.Map("var1" -> array))))
     val statement = HelperCallObject(List(HelperCallArrayObject("var1", "myPosition2")))
     val res = ExecCallObject.run(statement, context).toOption.get.get
-    assert(res.isInstanceOf[ModelNewPrimitiveValue])
-    assert("value2".equals(res.asInstanceOf[ModelNewPrimitiveValue].value))
+    assert(res.head.isInstanceOf[ModelNewPrimitiveValue])
+    assert("value2".equals(res.head.asInstanceOf[ModelNewPrimitiveValue].value))
   }
 
   test("Get variable from params in entity") {
@@ -48,11 +49,11 @@ class ExecCallObjectTest extends AnyFunSuite {
       ModelNewAttribute(Some("attr2"), ModelNewPrimitiveValue(value = "value2")),
       ModelNewAttribute(Some("attr3"), ModelNewPrimitiveValue(value = "value3"))
     )))
-    val context = Context(variables = mutable.Map("var1" -> myEntity))
+    val context = Context(List(Scope(variables = mutable.Map("var1" -> myEntity))))
     val statement = HelperCallObject(List(HelperCallVarObject("var1"), HelperCallVarObject("attr2")))
     val res = ExecCallObject.run(statement, context).toOption.get.get
-    assert(res.isInstanceOf[ModelNewPrimitiveValue])
-    assert("value2".equals(res.asInstanceOf[ModelNewPrimitiveValue].value))
+    assert(res.head.isInstanceOf[ModelNewPrimitiveValue])
+    assert("value2".equals(res.head.asInstanceOf[ModelNewPrimitiveValue].value))
   }
 
   test("Get variable from attrs in entity") {
@@ -61,11 +62,11 @@ class ExecCallObjectTest extends AnyFunSuite {
       ModelNewAttribute(Some("attr2"), ModelNewPrimitiveValue(value = "value2")),
       ModelNewAttribute(Some("attr3"), ModelNewPrimitiveValue(value = "value3"))
     )))
-    val context = Context(variables = mutable.Map("var1" -> myEntity))
+    val context = Context(List(Scope(variables = mutable.Map("var1" -> myEntity))))
     val statement = HelperCallObject(List(HelperCallVarObject("var1"), HelperCallVarObject("attr2")))
     val res = ExecCallObject.run(statement, context).toOption.get.get
-    assert(res.isInstanceOf[ModelNewPrimitiveValue])
-    assert("value2".equals(res.asInstanceOf[ModelNewPrimitiveValue].value))
+    assert(res.head.isInstanceOf[ModelNewPrimitiveValue])
+    assert("value2".equals(res.head.asInstanceOf[ModelNewPrimitiveValue].value))
   }
 
 }

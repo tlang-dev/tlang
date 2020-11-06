@@ -13,24 +13,22 @@ object BuildModuleTree {
 
   def build(rootDir: Path, mainFile: Option[String])(implicit resourceLoader: ResourceLoader): Either[LoaderError, Module] = {
     val resources = mutable.Map.empty[String, Resource]
-    val results = mainFile match {
+    val (fromRoot, pkg, name) = mainFile match {
       case Some(value) =>
-        //        Paths.get(value).spliterator().forEachRemaining()
-        //StreamSupport.stream(Paths.get(value).spliterator(), false).map(path => path.toString).collect(Collectors.toList).asScala.toList
         val parts: Array[String] = value.split(File.separator)
         val fromRoot = if (parts.length > 2) {
           parts.slice(0, parts.length - 2).mkString("/")
         } else ""
         val pkg = parts(parts.length - 2)
         val name = parts.last
-        browseResources(rootDir.toString, fromRoot, pkg, name, resources)
-      case None => browseResources(rootDir.toString, "", "", "Main", resources)
+        (fromRoot, pkg, name)
+      case None => ("", "", "Main")
     }
 
-    results match {
+    browseResources(rootDir.toString, fromRoot, pkg, name, resources) match {
       case Some(error) => Left(error)
       case None =>
-        Right(Module(rootDir.toString, resources.toMap, None))
+        Right(Module(rootDir.toString, resources.toMap, None, createPkg(fromRoot, pkg, name)))
     }
   }
 

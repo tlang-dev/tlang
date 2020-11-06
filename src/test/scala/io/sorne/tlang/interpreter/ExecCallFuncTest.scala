@@ -2,7 +2,8 @@ package io.sorne.tlang.interpreter
 
 import io.sorne.tlang.ast.helper._
 import io.sorne.tlang.ast.model.`new`.{ModelNewAttribute, ModelNewPrimitiveValue}
-import io.sorne.tlang.interpreter.`type`.{Bool, String}
+import io.sorne.tlang.interpreter.`type`.{TLangBool, TLangString}
+import io.sorne.tlang.interpreter.context.{Context, Scope}
 import org.scalatest.funsuite.AnyFunSuite
 
 import scala.collection.mutable
@@ -15,9 +16,9 @@ class ExecCallFuncTest extends AnyFunSuite {
     val funcDef = HelperFunc("myFunc", Some(List(HelperCurrying(List(HelperParam(Some("valToReturn"), HelperObjType("String")))))), None, block = block)
     val caller = HelperCallObject(List(HelperCallVarObject("var1")))
     val funcCaller = HelperCallFuncObject(Some("myFunc"), Some(List(HelperCallFuncParam(List(caller)))))
-    val context = Context(variables = mutable.Map("var1" -> new String("MyValue")), functions = mutable.Map("myFunc" -> funcDef))
+    val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangString("MyValue")), functions = mutable.Map("myFunc" -> funcDef))))
     val res = ExecCallFunc.run(funcCaller, context).toOption.get.get
-    assert("MyValue".equals(res.asInstanceOf[String].getValue))
+    assert("MyValue".equals(res.head.asInstanceOf[TLangString].getValue))
   }
 
 }

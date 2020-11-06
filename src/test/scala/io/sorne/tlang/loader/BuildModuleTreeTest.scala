@@ -15,17 +15,17 @@ class BuildModuleTreeTest extends AnyFunSuite {
         |model {
         |}""".stripMargin
     val resource = BuildModuleTree.buildResourceAST("Root", "Level1", "Package", "Main", content)
-    assert("Root".equals(resource.rootDir))
-    assert("Level1".equals(resource.fromRoot))
-    assert("Package".equals(resource.pkg))
-    assert("Main".equals(resource.name))
+    assert("Root" == resource.rootDir)
+    assert("Level1" == resource.fromRoot)
+    assert("Package" == resource.pkg)
+    assert("Main" == resource.name)
     assert(resource.ast.body.head.isInstanceOf[ModelBlock])
   }
 
   test("Browse resource") {
     val resources = mutable.Map.empty[String, Resource]
     implicit val loader: ResourceLoader = (_: String, _: String, _: String, name: String) => {
-      if (name.equals("Main")) {
+      if (name == "Main") {
         Right(
           """
             |use MyFile
@@ -44,23 +44,23 @@ class BuildModuleTreeTest extends AnyFunSuite {
     val resName2 = resources.last._1
     val res1 = resources.head._2
     val res2 = resources.last._2
-    assert("FromRoot/Package/Main".equals(resName1))
-    assert("Root".equals(res1.rootDir))
-    assert("FromRoot".equals(res1.fromRoot))
-    assert("Package".equals(res1.pkg))
-    assert("Main".equals(res1.name))
+    assert("FromRoot/Package/Main" == resName1)
+    assert("Root" == res1.rootDir)
+    assert("FromRoot" == res1.fromRoot)
+    assert("Package" == res1.pkg)
+    assert("Main" == res1.name)
 
-    assert("FromRoot/Package/MyFile".equals(resName2))
-    assert("Root".equals(res2.rootDir))
-    assert("FromRoot".equals(res2.fromRoot))
-    assert("Package".equals(res2.pkg))
-    assert("MyFile".equals(res2.name))
+    assert("FromRoot/Package/MyFile" == resName2)
+    assert("Root" == res2.rootDir)
+    assert("FromRoot" == res2.fromRoot)
+    assert("Package" == res2.pkg)
+    assert("MyFile" == res2.name)
   }
 
   test("Browse resource in sub package") {
     val resources = mutable.Map.empty[String, Resource]
     implicit val loader: ResourceLoader = (_: String, _: String, _: String, name: String) => {
-      if (name.equals("Main")) {
+      if (name == "Main") {
         Right(
           """
             |use MyPackage.MyFile
@@ -79,22 +79,22 @@ class BuildModuleTreeTest extends AnyFunSuite {
     val resName2 = resources.last._1
     val res1 = resources.head._2
     val res2 = resources.last._2
-    assert("FromRoot/Package/MyPackage/MyFile".equals(resName1))
-    assert("Root".equals(res1.rootDir))
-    assert("FromRoot/Package".equals(res1.fromRoot))
-    assert("MyPackage".equals(res1.pkg))
-    assert("MyFile".equals(res1.name))
+    assert("FromRoot/Package/MyPackage/MyFile" == resName1)
+    assert("Root" == res1.rootDir)
+    assert("FromRoot/Package" == res1.fromRoot)
+    assert("MyPackage" == res1.pkg)
+    assert("MyFile" == res1.name)
 
-    assert("FromRoot/Package/Main".equals(resName2))
-    assert("Root".equals(res2.rootDir))
-    assert("FromRoot".equals(res2.fromRoot))
-    assert("Package".equals(res2.pkg))
-    assert("Main".equals(res2.name))
+    assert("FromRoot/Package/Main" == resName2)
+    assert("Root" == res2.rootDir)
+    assert("FromRoot" == res2.fromRoot)
+    assert("Package" == res2.pkg)
+    assert("Main" == res2.name)
   }
 
   test("Build module tree") {
     implicit val loader: ResourceLoader = (_: String, _: String, _: String, name: String) => {
-      if (name.equals("Main")) {
+      if (name == "Main") {
         Right(
           """
             |use MyPackage.MyFile
@@ -109,25 +109,26 @@ class BuildModuleTreeTest extends AnyFunSuite {
     }
 
     val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
+    assert("Main" == module.mainFile)
     assert(module.extResources.isEmpty)
     assert("Root" == module.rootDir)
     assert(2 == module.resources.size)
     val res1 = module.resources("MyPackage/MyFile")
     val res2 = module.resources("Main")
-    assert("Root".equals(res1.rootDir))
-    assert("".equals(res1.fromRoot))
-    assert("MyPackage".equals(res1.pkg))
-    assert("MyFile".equals(res1.name))
+    assert("Root" == res1.rootDir)
+    assert("" == res1.fromRoot)
+    assert("MyPackage" == res1.pkg)
+    assert("MyFile" == res1.name)
 
-    assert("Root".equals(res2.rootDir))
-    assert("".equals(res2.fromRoot))
-    assert("".equals(res2.pkg))
-    assert("Main".equals(res2.name))
+    assert("Root" == res2.rootDir)
+    assert("" == res2.fromRoot)
+    assert("" == res2.pkg)
+    assert("Main" == res2.name)
   }
 
   test("Build module tree with defined main") {
     implicit val loader: ResourceLoader = (_: String, _: String, _: String, name: String) => {
-      if (name.equals("MainFile")) {
+      if (name == "MainFile") {
         Right(
           """
             |use MyPackage.MyFile
@@ -142,20 +143,26 @@ class BuildModuleTreeTest extends AnyFunSuite {
     }
 
     val module = BuildModuleTree.build(Paths.get("Root"), Some("MainPackage/MainFile")).toOption.get
+    assert("MainPackage/MainFile" == module.mainFile)
     assert(module.extResources.isEmpty)
     assert("Root" == module.rootDir)
     assert(2 == module.resources.size)
     val res1 = module.resources("MainPackage/MainFile")
     val res2 = module.resources("MainPackage/MyPackage/MyFile")
-    assert("Root".equals(res1.rootDir))
-    assert("".equals(res1.fromRoot))
-    assert("MainPackage".equals(res1.pkg))
-    assert("MainFile".equals(res1.name))
+    assert("Root" == res1.rootDir)
+    assert("" == res1.fromRoot)
+    assert("MainPackage" == res1.pkg)
+    assert("MainFile" == res1.name)
 
-    assert("Root".equals(res2.rootDir))
-    assert("MainPackage".equals(res2.fromRoot))
-    assert("MyPackage".equals(res2.pkg))
-    assert("MyFile".equals(res2.name))
+    assert("Root" == res2.rootDir)
+    assert("MainPackage" == res2.fromRoot)
+    assert("MyPackage" == res2.pkg)
+    assert("MyFile" == res2.name)
+  }
+
+  test("Create package name") {
+    val res = BuildModuleTree.createPkg("", "", "Part1", "Part2", "", "Part3")
+    assert("Part1/Part2/Part3" == res)
   }
 
 }
