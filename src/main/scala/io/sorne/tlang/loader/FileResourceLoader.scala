@@ -11,7 +11,7 @@ object FileResourceLoader extends ResourceLoader {
     val rsc = Paths.get(root, fromRoot, pkg, name, "tlang").toString
     val buffer = Source.fromFile(rsc)
     try {
-      Right(buffer.getLines.mkString)
+      Right(buffer.getLines().mkString)
     } catch {
       case _: FileNotFoundException => Left(LoaderError("FILE_NOT_FOUND", "File:" + rsc))
       case e: IOException => Left(LoaderError("CANNOT_READ", "File:" + rsc + "\n" + e.getMessage))

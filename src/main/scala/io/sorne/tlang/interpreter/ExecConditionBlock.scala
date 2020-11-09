@@ -38,7 +38,7 @@ object ExecConditionBlock extends Executor {
       case Right(res1) =>
         val state1 = res1.asInstanceOf[Value[Any]]
         if (cond.condition.isDefined) {
-          execStatement(cond.statement1, context) match {
+          execStatement(cond.statement2.get, context) match {
             case Left(error) => Left(error)
             case Right(res2) =>
               val state2 = res2.asInstanceOf[Value[Any]]
@@ -49,7 +49,7 @@ object ExecConditionBlock extends Executor {
                   case io.sorne.tlang.ast.helper.ConditionType.GREATER => state1.compareTo(state2) > 0
                   case io.sorne.tlang.ast.helper.ConditionType.LESSER => state1.compareTo(state2) < 0
                   case io.sorne.tlang.ast.helper.ConditionType.GREATER_OR_EQUAL => state1.compareTo(state2) >= 0
-                  case io.sorne.tlang.ast.helper.ConditionType.LESSER_OR_SMALLER => state1.compareTo(state2) <= 0
+                  case io.sorne.tlang.ast.helper.ConditionType.LESSER_OR_EQUAL => state1.compareTo(state2) <= 0
                   case io.sorne.tlang.ast.helper.ConditionType.NOT_EQUAL => state1.compareTo(state2) != 0
                 }
                 if (cond.link.isDefined) solveNextCondition(res, cond.link.get, cond.nextCondition.get, context) else Right(res)
