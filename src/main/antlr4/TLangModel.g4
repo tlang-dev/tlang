@@ -28,9 +28,9 @@ modelNewEntityValue:
 	'}';
 
 modelValueType:
-	(modelAttribute | modelEntityAsAttribute | modelTbl);
+	(modelAttribute | modelEntityAsAttribute | modelArray);
 
-modelTbl:
+modelArray:
 	attr=ID? ('[')
 	((elms+=modelValueType) (',' elms+=modelValueType)*)
 	']';
@@ -56,15 +56,16 @@ modelSetEntity:
 modelSetAttribute:
     attr=ID? value=modelSetValueType;
 
-modelSetValueType:
-    modelSetType | modelSetFuncDef | modelSetRef;
+modelSetValueType: modelSetType | modelSetArray | modelSetFuncDef | modelSetRef;
 
-modelSetType:
-    type=ID ('<' (generic=modelGeneric) '>')? (array='[' ']')?;
+modelSetType: type=ID;
 
-modelGeneric:
-    (types+=modelSetType (',' types+=modelSetType)*);
+modelSetArray: array=ID '[' ']';
 
-modelSetFuncDef: '('  ')' ('->' retTypes+=modelSetType (',' retTypes+=modelSetType)*)?;
+modelSetFuncDef: '(' (paramTypes+=modelSetValueType (',' paramTypes+=modelSetValueType)*)? ')' (':'  '(' retTypes+=modelSetValueType (',' retTypes+=modelSetValueType)* ')' )?;
 
-modelSetRef: '->' ref=ID;
+modelSetRef: '&' refs+=ID ('.' refs+=ID)* (('(' currying+=modelSetRefCurrying  ')') ('(' currying+=modelSetRefCurrying ')')*)?;
+
+modelSetRefCurrying:values+=modelSetRefValue (',' values+=modelSetRefValue)*;
+
+modelSetRefValue: modelSetRef | modelAttribute | modelEntityAsAttribute | modelArray;

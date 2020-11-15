@@ -29,7 +29,7 @@ object BuildModelBlock {
     if (attrs.nonEmpty) Some(attrs.map {
       case attr@(content@_) if content.modelAttribute() != null => ModelNewAttribute(Utils.getText(attr.modelAttribute().attr), buildNewEntityAttribute(content.modelAttribute()))
       case attr@(content@_) if content.modelEntityAsAttribute() != null => ModelNewAttribute(Utils.getText(attr.modelEntityAsAttribute().attr), buildNewEntityAsAttribute(content.modelEntityAsAttribute()))
-      case attr@(content@_) if content.modelTbl() != null => ModelNewAttribute(Utils.getText(attr.modelTbl().attr), buildNewEntityTbl(content.modelTbl()))
+      case attr@(content@_) if content.modelArray() != null => ModelNewAttribute(Utils.getText(attr.modelArray().attr), buildNewEntityArray(content.modelArray()))
     })
     else None
   }
@@ -42,8 +42,7 @@ object BuildModelBlock {
     buildNewEntityValue(attr.value)
   }
 
-
-  def buildNewEntityTbl(attr: ModelTblContext): ModelNewArrayValue = {
+  def buildNewEntityArray(attr: ModelArrayContext): ModelNewArrayValue = {
     ModelNewArrayValue(if (attr.attr != null) Some(attr.attr.getText) else None, if (attr.elms != null) extractNewEntityAttrDefs(attr.elms.asScala.toList) else None)
   }
 
@@ -52,29 +51,40 @@ object BuildModelBlock {
   }
 
   def extractSetEntityAttrDefs(attrs: List[ModelSetAttributeContext]): Option[List[ModelSetAttribute]] = {
-    if (attrs.nonEmpty) Some(attrs.map(attr => attr.modelSetValueType() match {
-      case content@_ if content.modelSetType() != null => ModelSetAttribute(Utils.getText(attr.attr), buildType(content.modelSetType()))
-      case content@_ if content.modelSetFuncDef() != null => ModelSetAttribute(Utils.getText(attr.attr), buildFuncDef(content.modelSetFuncDef()))
-      case content@_ if content.modelSetRef() != null => ModelSetAttribute(Utils.getText(attr.attr), buildRef(content.modelSetRef()))
-    }))
+    if (attrs.nonEmpty) Some(attrs.map(attr => buildModeLSetValueType(Utils.getText(attr.attr), attr.value)))
     else None
+  }
+
+  def buildModeLSetValueType(attr: Option[String], value: ModelSetValueTypeContext): ModelSetAttribute = {
+    value match {
+      case content@_ if content.modelSetType() != null => ModelSetAttribute(attr, buildType(content.modelSetType()))
+      case content@_ if content.modelSetFuncDef() != null => ModelSetAttribute(attr, buildFuncDef(content.modelSetFuncDef()))
+      case content@_ if content.modelSetRef() != null => ModelSetAttribute(attr, buildRef(content.modelSetRef()))
+      case content@_ if content.modelSetArray() != null => ModelSetAttribute(attr, ModelSetArray(content.modelSetArray().array.getText))
+    }
   }
 
   def buildType(setType: ModelSetTypeContext): ModelSetType = {
-    ModelSetType(setType.`type`.getText, buildGeneric(setType.generic))
-  }
-
-  def buildGeneric(generic: ModelGenericContext): Option[ModelSetGeneric] = {
-    if (generic != null && generic.types != null && !generic.isEmpty) Some(ModelSetGeneric(generic.types.asScala.map(buildType).toList))
-    else None
+    ModelSetType(setType.`type`.getText)
   }
 
   def buildFuncDef(funcDef: ModelSetFuncDefContext): ModelSetFuncDef = {
-    ModelSetFuncDef()
+    ModelSetFuncDef(
+      if (funcDef.paramTypes != null && !funcDef.paramTypes.isEmpty) Some(funcDef.paramTypes.asScala.toList.map(param => buildModeLSetValueType(None, param))) else None,
+      if (funcDef.retTypes != null && !funcDef.retTypes.isEmpty) Some(funcDef.retTypes.asScala.toList.map(ret => buildModeLSetValueType(None, ret))) else None)
   }
 
   def buildRef(ref: ModelSetRefContext): ModelSetRef = {
-    ModelSetRef(ref.ref.getText)
+    ModelSetRef(ref.refs.asScala.toList.map(_.getText), if (ref.currying != null && !ref.currying.isEmpty) Some(ref.currying.asScala.toList.map(buildModelSetRefCurrying)) else None)
+  }
+
+  def buildModelSetRefCurrying(values: ModelSetRefCurryingContext): ModelSetRefCurrying = {
+    ModelSetRefCurrying(values.values.asScala.toList.map {
+      case value@_ if value.modelAttribute() != null => ModelNewAttribute(Utils.getText(value.modelAttribute().attr), buildNewEntityAttribute(value.modelAttribute()))
+      case value@_ if value.modelArray() != null => ModelNewAttribute(Utils.getText(value.modelArray().attr), buildNewEntityArray(value.modelArray()))
+      case value@_ if value.modelEntityAsAttribute() != null => ModelNewAttribute(Utils.getText(value.modelEntityAsAttribute().attr), buildNewEntityAsAttribute(value.modelEntityAsAttribute()))
+      case value@_ if value.modelSetRef() != null => ModelSetRef(value.modelSetRef().refs.asScala.toList.map(_.getText), if (value.modelSetRef().currying != null) Some(value.modelSetRef().currying.asScala.toList.map(buildModelSetRefCurrying)) else None)
+    })
   }
 
 }

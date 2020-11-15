@@ -131,8 +131,8 @@ object ResolveContext {
           case None => Right(())
         }
         case None => Right(())
-        case None => Left(ResolverError("Should be a var or a func"))
       }
+      case None => Left(ResolverError("Should be a var or a func"))
     }
 
   }

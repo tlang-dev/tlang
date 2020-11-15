@@ -1,3 +1,3 @@
 package io.sorne.tlang.ast.model.set
 
-case class ModelSetRef(ref: String) extends ModelSetValueType
+case class ModelSetRef(refs: List[String], currying: Option[List[ModelSetRefCurrying]]) extends ModelSetValueType with ModelSetRefValue

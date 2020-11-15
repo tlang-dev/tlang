@@ -30,9 +30,7 @@ helperFuncType: type='(' (currying+=helperCurrying)? ')' ('(' currying+=helperCu
 
 helperContent: content+=helperStatement*;
 
-helperStatement:
-    helperIf | helperFor | helperCallObj | helperConditionBlock
-;
+helperStatement: helperIf | helperFor | helperCallObj | helperConditionBlock;
 
 helperIf:
     'if' '(' condition=helperConditionBlock ')' '{'
