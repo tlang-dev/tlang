@@ -1,6 +1,7 @@
 package io.sorne.tlang.interpreter
 
 import io.sorne.tlang.ast.helper._
+import io.sorne.tlang.ast.helper.call.HelperCallObject
 import io.sorne.tlang.interpreter.context.Context
 
 object ExecStatement extends Executor {

@@ -1,6 +1,7 @@
 package io.sorne.tlang.interpreter
 
 import io.sorne.tlang.ast.helper._
+import io.sorne.tlang.ast.helper.call.{HelperCallFuncObject, HelperCallFuncParam, HelperCallObject, HelperCallVarObject}
 import io.sorne.tlang.ast.model.`new`.{ModelNewAttribute, ModelNewPrimitiveValue}
 import io.sorne.tlang.interpreter.`type`.{TLangBool, TLangString}
 import io.sorne.tlang.interpreter.context.{Context, Scope}

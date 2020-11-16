@@ -1,6 +1,6 @@
 package io.sorne.tlang.interpreter
 
-import io.sorne.tlang.ast.helper.{HelperCallArrayObject, HelperCallObject, HelperCallVarObject}
+import io.sorne.tlang.ast.helper.call._
 import io.sorne.tlang.ast.model.`new`._
 import io.sorne.tlang.interpreter.context.{Context, Scope}
 import org.scalatest.funsuite.AnyFunSuite
@@ -24,7 +24,7 @@ class ExecCallObjectTest extends AnyFunSuite {
       ModelNewAttribute(value = ModelNewPrimitiveValue(value = "value3"))
     )))
     val context = Context(List(Scope(variables = mutable.Map("var1" -> array))))
-    val statement = HelperCallObject(List(HelperCallArrayObject("var1", "1")))
+    val statement = HelperCallObject(List(HelperCallArrayObject("var1", HelperCallObject(List(HelperCallInt(1))))))
     val res = ExecCallObject.run(statement, context).toOption.get.get
     assert(res.head.isInstanceOf[ModelNewPrimitiveValue])
     assert("value2".equals(res.head.asInstanceOf[ModelNewPrimitiveValue].value))
@@ -37,7 +37,7 @@ class ExecCallObjectTest extends AnyFunSuite {
       ModelNewAttribute(Some("myPosition3"), ModelNewPrimitiveValue(value = "value3"))
     )))
     val context = Context(List(Scope(variables = mutable.Map("var1" -> array))))
-    val statement = HelperCallObject(List(HelperCallArrayObject("var1", "myPosition2")))
+    val statement = HelperCallObject(List(HelperCallArrayObject("var1", HelperCallObject(List(HelperCallString("myPosition2"))))))
     val res = ExecCallObject.run(statement, context).toOption.get.get
     assert(res.head.isInstanceOf[ModelNewPrimitiveValue])
     assert("value2".equals(res.head.asInstanceOf[ModelNewPrimitiveValue].value))
@@ -68,5 +68,7 @@ class ExecCallObjectTest extends AnyFunSuite {
     assert(res.head.isInstanceOf[ModelNewPrimitiveValue])
     assert("value2".equals(res.head.asInstanceOf[ModelNewPrimitiveValue].value))
   }
+
+
 
 }

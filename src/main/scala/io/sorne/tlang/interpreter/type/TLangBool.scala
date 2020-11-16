@@ -1,9 +1,8 @@
 package io.sorne.tlang.interpreter.`type`
 
-import io.sorne.tlang.ast.model.`new`.ModelNewValueType
 import io.sorne.tlang.interpreter.Value
 
-class TLangBool(value: Boolean) extends ModelNewValueType[Boolean]() {
+class TLangBool(value: Boolean) extends PrimitiveValue[Boolean]() {
   override def getValue: Boolean = value
 
   override def getType: String = TLangBool.getType

@@ -1,7 +1,9 @@
 package io.sorne.tlang.interpreter
 
 import io.sorne.tlang.ast.helper._
+import io.sorne.tlang.ast.helper.call.{HelperCallArrayObject, HelperCallFuncObject, HelperCallInt, HelperCallObject, HelperCallObjectType, HelperCallString, HelperCallVarObject}
 import io.sorne.tlang.ast.model.`new`._
+import io.sorne.tlang.interpreter.`type`.{TLangInt, TLangString}
 import io.sorne.tlang.interpreter.context.{Context, ContextUtils}
 
 import scala.annotation.tailrec
@@ -23,7 +25,7 @@ object ExecCallObject extends Executor {
     }
     else {
       if (callable.isDefined) {
-        findInCallable(statements(index), callable.get) match {
+        findInCallable(statements(index), callable.get, context) match {
           case Left(value) => Left(value)
           case Right(value) => loopOverStatement(statements, context, index + 1, Some(value))
         }
@@ -40,49 +42,61 @@ object ExecCallObject extends Executor {
   private def findInContext(statement: HelperCallObjectType, context: Context): Either[ExecError, Value[_]] = {
     statement match {
       case HelperCallArrayObject(name, position) => ContextUtils.findVar(context, name) match {
-        case Some(array) => resolveCallback(position, array)
+        case Some(array) => resolveArray(position, array.asInstanceOf[ModelNewArrayValue], context)
         case None => Left(CallableNotFound(name))
       }
       case HelperCallFuncObject(name, _) => ContextUtils.findFunc(context, name.get) match {
-        case Some(value) => resolveCallback(name.get, value)
+        case Some(value) => resolveFunc(name.get, value.asInstanceOf[HelperFunc])
         case None => Left(CallableNotFound(name.get))
       }
       case HelperCallVarObject(name) => ContextUtils.findVar(context, name) match {
         case Some(value) => Right(value)
         case None => Left(CallableNotFound(name))
       }
+      case HelperCallString(value) => Right(new TLangString(value))
+      case HelperCallInt(value) => Right(new TLangInt(value))
       case _ => Left(NotImplemented())
     }
   }
 
-  private def findInCallable(statement: HelperCallObjectType, callable: Value[_]): Either[ExecError, Value[_]] = {
+  private def findInCallable(statement: HelperCallObjectType, callable: Value[_], context: Context): Either[ExecError, Value[_]] = {
     statement match {
-      case HelperCallArrayObject(name, position) => resolveCallback(position, callable)
-      case HelperCallFuncObject(name, _) => resolveCallback(name.get, callable)
+      case HelperCallArrayObject(_, position) => resolveArray(position, callable.asInstanceOf[ModelNewArrayValue], context)
+      case HelperCallFuncObject(name, _) => resolveFunc(name.get, callable.asInstanceOf[HelperFunc])
       case HelperCallVarObject(name) => resolveCallback(name, callable)
       case _ => Left(NotImplemented())
     }
   }
 
+  //  def resolveCallBackForArray(name:String, position: HelperCallObject, callable:Value[_]): Either[ExecError, Value[_]] = {
+  //
+  //  }
+
   def resolveCallback(name: String, callable: Value[_]): Either[ExecError, Value[_]] = {
     callable match {
-      case valueType: ModelNewArrayValue => resolveArray(name, valueType)
-      case valueType: ModelNewCallFuncValue => resolveFunc(name, valueType)
+      //      case valueType: ModelNewArrayValue => resolveArray(name, valueType)
+      //      case valueType: ModelNewCallFuncValue => resolveFunc(name, valueType)
       case valueType: ModelNewEntityValue => resolveEntity(name, valueType)
       case _ => Right(callable)
     }
   }
 
-  def resolveArray(position: String, arrayValue: ModelNewArrayValue): Either[ExecError, Value[_]] = {
+  def resolveArray(position: HelperCallObject, arrayValue: ModelNewArrayValue, context: Context): Either[ExecError, Value[_]] = {
+    val posValue = loopOverStatement(position.statements, context)
+
     arrayValue.tbl match {
-      case Some(array) =>
-        if (position.toIntOption.isDefined) Right(array(position.toInt).value)
-        else {
-          val callRes = array.find(elem => elem.attr.isDefined && elem.attr.get.equals(position))
-          if (callRes.isDefined) Right(callRes.get.value)
-          else Left(CallableNotFound(position))
+      case Some(array) => posValue match {
+        case Left(error) => Left(error)
+        case Right(value) => value match {
+          case int: TLangInt => Right(array(int.getValue).value)
+          case str: TLangString =>
+            val callRes = array.find(elem => elem.attr.isDefined && elem.attr.get.equals(str.getValue))
+            if (callRes.isDefined) Right(callRes.get.value)
+            else Left(CallableNotFound(value.getValue.toString))
+          case _ => Left(WrongType("Should be Int or String instead of " + value.getType))
         }
-      case None => Left(CallableNotFound(position))
+      }
+      case None => Left(CallableNotFound("position"))
     }
   }
 
@@ -99,7 +113,7 @@ object ExecCallObject extends Executor {
     }
   }
 
-  def resolveFunc(name: String, func: ModelNewCallFuncValue): Either[ExecError, Value[_]] = {
+  def resolveFunc(name: String, func: HelperFunc): Either[ExecError, Value[_]] = {
     Left(NotImplemented())
   }
 

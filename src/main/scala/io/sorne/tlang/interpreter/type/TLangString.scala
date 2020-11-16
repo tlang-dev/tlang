@@ -2,7 +2,7 @@ package io.sorne.tlang.interpreter.`type`
 
 import io.sorne.tlang.interpreter.Value
 
-class TLangString(value: String) extends Value[String] {
+class TLangString(value: String) extends PrimitiveValue[String] {
   override def getValue: String = value
 
   override def getType: String = TLangString.getType

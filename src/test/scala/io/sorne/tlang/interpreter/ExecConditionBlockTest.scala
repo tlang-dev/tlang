@@ -1,6 +1,7 @@
 package io.sorne.tlang.interpreter
 
-import io.sorne.tlang.ast.helper.{ConditionLink, ConditionType, HelperCallObject, HelperCallVarObject, HelperCondition, HelperConditionBlock}
+import io.sorne.tlang.ast.helper.call.{HelperCallObject, HelperCallVarObject}
+import io.sorne.tlang.ast.helper.{ConditionLink, ConditionType, HelperCondition, HelperConditionBlock}
 import io.sorne.tlang.interpreter.`type`.{TLangBool, TLangInt}
 import io.sorne.tlang.interpreter.context.{Context, Scope}
 import org.scalatest.funsuite.AnyFunSuite

@@ -126,4 +126,7 @@ class BuildHelperBlockTest extends AnyFunSuite {
     assert("Bool".equals(funcType.returns.get.head.asInstanceOf[HelperObjType].name))
     assert("String".equals(secondCurry.params.last.`type`.asInstanceOf[HelperObjType].name))
   }
+
+
+
 }

@@ -1,6 +1,7 @@
 package io.sorne.tlang.interpreter
 
-import io.sorne.tlang.ast.helper.{HelperCallFuncObject, HelperStatement}
+import io.sorne.tlang.ast.helper.HelperStatement
+import io.sorne.tlang.ast.helper.call.HelperCallFuncObject
 import io.sorne.tlang.interpreter.context.Context
 import io.sorne.tlang.libraries.generator.Generator
 import io.sorne.tlang.libraries.tio.IOFile

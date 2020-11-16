@@ -2,7 +2,8 @@ package io.sorne.tlang.libraries.tio
 
 import java.io.{File, PrintWriter}
 
-import io.sorne.tlang.ast.helper.{HelperCallFuncObject, HelperStatement}
+import io.sorne.tlang.ast.helper.HelperStatement
+import io.sorne.tlang.ast.helper.call.HelperCallFuncObject
 import io.sorne.tlang.interpreter._
 import io.sorne.tlang.interpreter.context.Context
 

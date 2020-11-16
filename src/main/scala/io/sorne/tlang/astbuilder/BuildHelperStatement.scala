@@ -2,6 +2,7 @@ package io.sorne.tlang.astbuilder
 
 import io.sorne.tlang.TLangParser._
 import io.sorne.tlang.ast.helper._
+import io.sorne.tlang.ast.helper.call._
 
 import scala.jdk.CollectionConverters._
 
@@ -18,18 +19,20 @@ object BuildHelperStatement {
   def buildCallObject(call: HelperCallObjContext): HelperCallObject = {
     HelperCallObject(call.objs.asScala.toList.map {
       case obj@_ if obj.helperCallVariable() != null => HelperCallVarObject(obj.helperCallVariable().name.getText)
-      case obj@_ if obj.helperCallArray() != null => HelperCallArrayObject(obj.helperCallArray().name.getText, obj.helperCallArray().elem.getText)
+      case obj@_ if obj.helperCallArray() != null => HelperCallArrayObject(obj.helperCallArray().name.getText, buildCallObject(obj.helperCallArray().elem))
       case obj@_ if obj.helperCallFunc() != null => buildCallFunc(obj.helperCallFunc())
+      case obj@_ if obj.helperCallNumber() != null => HelperCallInt(obj.getText.toInt)
+      case obj@_ if obj.helperCallString() != null => HelperCallString(obj.getText)
     })
   }
 
   def buildCallFunc(func: HelperCallFuncContext): HelperCallFuncObject = {
-    HelperCallFuncObject(if(func.name != null)Some(func.name.getText) else None,
+    HelperCallFuncObject(if (func.name != null) Some(func.name.getText) else None,
       None)
   }
 
   def buildIf(anIf: HelperIfContext): HelperIf = {
-   null
+    null
   }
 
   def buildFor(aFor: HelperForContext): HelperFor = {
