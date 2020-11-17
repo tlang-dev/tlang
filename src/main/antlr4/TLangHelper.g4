@@ -42,13 +42,18 @@ helperElse:
         body=helperContent
     '}';
 
-helperConditionBlock: '('? content+=helperCondition ')'? (link=('&&' | '||') helperConditionBlock)*;
-
-helperCondition:
-    arg1=helperCallObj (mark=conditionMark arg2=helperCallObj)? (link=('&&' | '||') helperCondition)*
+helperConditionBlock:
+     content=helperCondition (link=('&&' | '||')  next=helperConditionBlock)* |
+    '(' content=helperCondition ')' (link=('&&' | '||')  next=helperConditionBlock)* |
+    '(' content=helperCondition (link=('&&' | '||')  next=helperConditionBlock)* ')' |
+    '(' innerBlock=helperConditionBlock ')' (link=('&&' | '||')  next=helperConditionBlock)*
 ;
 
-conditionMark: '==' | '!=' | '<' | '>' | '<=' '>=';
+helperCondition:
+    arg1=helperCallObj (mark=conditionMark arg2=helperCallObj)? (link=('&&' | '||') next=helperConditionBlock)*
+;
+
+conditionMark: '==' | '!=' | '<' | '>' | '<=' | '>=';
 
 helperFor:
     'for' '(' var=ID type=('in' | 'to' | 'until') array=helperCallObj ')' '{'

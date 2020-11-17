@@ -15,20 +15,28 @@ object ExecConditionBlock extends Executor {
   }
 
   def solveConditionBlock(block: HelperConditionBlock, context: Context): Either[ExecError, Boolean] = {
-    solveCondition(block.content, context) match {
-      case Left(error) => Left(error)
-      case Right(res) => if (block.link.isDefined) {
-        if (block.link.get == ConditionLink.AND && !res) Right(false)
-        else {
-          solveConditionBlock(block.nextBlock.get, context) match {
-            case Left(error) => Left(error)
-            case Right(res2) =>
-              if (res && res2) Right(true)
-              else if (block.link.get == ConditionLink.OR && (res || res2)) Right(true)
-              else Right(false)
+
+    def callCondition(condition: HelperCondition): Either[ExecError, Boolean] = {
+      solveCondition(condition, context) match {
+        case Left(error) => Left(error)
+        case Right(res) => if (block.link.isDefined) {
+          if (block.link.get == ConditionLink.AND && !res) Right(false)
+          else {
+            solveConditionBlock(block.nextBlock.get, context) match {
+              case Left(error) => Left(error)
+              case Right(res2) =>
+                if (res && res2) Right(true)
+                else if (block.link.get == ConditionLink.OR && (res || res2)) Right(true)
+                else Right(false)
+            }
           }
-        }
-      } else Right(res)
+        } else Right(res)
+      }
+    }
+
+    block.content match {
+      case Left(content) => solveConditionBlock(content, context)
+      case Right(content) => callCondition(content)
     }
   }
 
@@ -52,24 +60,24 @@ object ExecConditionBlock extends Executor {
                   case io.sorne.tlang.ast.helper.ConditionType.LESSER_OR_EQUAL => state1.compareTo(state2) <= 0
                   case io.sorne.tlang.ast.helper.ConditionType.NOT_EQUAL => state1.compareTo(state2) != 0
                 }
-                if (cond.link.isDefined) solveNextCondition(res, cond.link.get, cond.nextCondition.get, context) else Right(res)
+                if (cond.link.isDefined) solveNextCondition(res, cond.link.get, cond.nextBlock.get, context) else Right(res)
               }
           }
         } else {
           if (state1.getType == TLangBool.getType) {
             val res = state1.asInstanceOf[TLangBool]
             if (cond.link.isDefined) {
-              solveNextCondition(res.getValue, cond.link.get, cond.nextCondition.get, context)
+              solveNextCondition(res.getValue, cond.link.get, cond.nextBlock.get, context)
             } else Right(res.getValue)
           } else Left(WrongType("Should be Bool but is " + state1.getType))
         }
     }
   }
 
-  def solveNextCondition(state1: Boolean, cond: ConditionLink.condition, next: HelperCondition, context: Context): Either[ExecError, Boolean] = {
+  def solveNextCondition(state1: Boolean, cond: ConditionLink.condition, next: HelperConditionBlock, context: Context): Either[ExecError, Boolean] = {
     if (!state1 && cond == ConditionLink.AND) Right(false)
     else {
-      solveCondition(next, context) match {
+      solveConditionBlock(next, context) match {
         case Left(error) => Left(error)
         case Right(state2) =>
           if (state1 && state2) Right(true)
