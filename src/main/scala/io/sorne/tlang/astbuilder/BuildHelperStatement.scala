@@ -76,7 +76,21 @@ object BuildHelperStatement {
   }
 
   def buildFor(aFor: HelperForContext): HelperFor = {
-    HelperFor()
+    HelperFor(aFor.`var`.getText,
+      if (aFor.start != null) Some(buildCallObject(aFor.start)) else None,
+      buildForType(aFor.`type`),
+      buildCallObject(aFor.array),
+      BuildHelperBlock.buildContent(aFor.body)
+    )
+  }
+
+  def buildForType(forType: Token): ForType.forType = {
+    forType.getText match {
+      case "in" => ForType.IN
+      case "to" => ForType.TO
+      case "until" => ForType.UNTIL
+    }
+
   }
 
 }

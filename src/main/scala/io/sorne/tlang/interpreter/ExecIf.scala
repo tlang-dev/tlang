@@ -21,14 +21,14 @@ object ExecIf extends Executor {
 
   private def execIfTrue(helperIf: HelperIf, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
     if (helperIf.ifTrue.isDefined) {
-      if (helperIf.ifTrue.get.content.isDefined) ExecStatement.run(helperIf.ifTrue.get.content.get.last, context)
+      if (helperIf.ifTrue.get.content.isDefined) ExecContent.run(helperIf.ifTrue.get, context)
       else Right(None)
     } else Right(None)
   }
 
   private def execIfFalse(helperIf: HelperIf, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
     if (helperIf.ifFalse.isDefined) {
-      if (helperIf.ifFalse.get.content.isDefined) ExecStatement.run(helperIf.ifFalse.get.content.get.last, context)
+      if (helperIf.ifFalse.get.content.isDefined) ExecContent.run(helperIf.ifFalse.get, context)
       else Right(None)
     } else Right(None)
   }

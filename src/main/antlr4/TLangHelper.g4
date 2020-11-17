@@ -56,7 +56,7 @@ helperCondition:
 conditionMark: '==' | '!=' | '<' | '>' | '<=' | '>=';
 
 helperFor:
-    'for' '(' var=ID type=('in' | 'to' | 'until') array=helperCallObj ')' '{'
+    'for' '(' var=ID start=helperCallObj? type=('in' | 'to' | 'until') array=helperCallObj ')' '{'
         body=helperContent
     '}'
 ;
