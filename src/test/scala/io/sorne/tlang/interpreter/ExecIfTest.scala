@@ -2,7 +2,7 @@ package io.sorne.tlang.interpreter
 
 import io.sorne.tlang.ast.helper._
 import io.sorne.tlang.ast.helper.call.{HelperCallObject, HelperCallVarObject}
-import io.sorne.tlang.interpreter.`type`.TLangBool
+import io.sorne.tlang.interpreter.`type`.{TLangBool, TLangString}
 import io.sorne.tlang.interpreter.context.{Context, Scope}
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -24,6 +24,13 @@ class ExecIfTest extends AnyFunSuite {
     val res = ExecIf.run(statement, context).toOption.get
     assert(res.isDefined)
     assert(!res.get.head.asInstanceOf[TLangBool].getValue)
+  }
+
+  test("If wrong type") {
+    val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangString("Anything")))))
+    val statement = HelperIf(HelperConditionBlock(Right(HelperCondition(HelperCallObject(List(HelperCallVarObject("var1")))))), ifFalse = Some(HelperContent(Some(List(HelperCallObject(List(HelperCallVarObject("var1"))))))))
+    val res = ExecIf.run(statement, context).left.toOption.get
+    assert("WrongType" == res.code)
   }
 
 }

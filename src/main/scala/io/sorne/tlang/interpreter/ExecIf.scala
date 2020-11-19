@@ -8,7 +8,7 @@ object ExecIf extends Executor {
 
   override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
     val ifStatement = statement.asInstanceOf[HelperIf]
-    ExecStatement.run(ifStatement.condition, context) match {
+    ExecConditionBlock.run(ifStatement.condition, context) match {
       case Left(value) => Left(value)
       case Right(value) => value match {
         case Some(valType) => if (valType.size == 1) valType.head match {

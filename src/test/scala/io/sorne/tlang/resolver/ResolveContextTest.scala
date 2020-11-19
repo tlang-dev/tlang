@@ -5,7 +5,7 @@ import java.nio.file.Paths
 import io.sorne.tlang.ast.helper.call.{HelperCallFuncObject, HelperCallVarObject}
 import io.sorne.tlang.ast.helper.{HelperContent, HelperFunc}
 import io.sorne.tlang.ast.model.ModelContent
-import io.sorne.tlang.ast.model.`new`.{ModelNewEntity, ModelNewEntityValue}
+import io.sorne.tlang.ast.model.let.{ModelNewEntity, ModelNewEntityValue}
 import io.sorne.tlang.ast.model.set.ModelSetEntity
 import io.sorne.tlang.astbuilder.BuildAst
 import io.sorne.tlang.interpreter.context.Scope

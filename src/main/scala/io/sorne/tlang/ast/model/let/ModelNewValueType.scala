@@ -1,4 +1,4 @@
-package io.sorne.tlang.ast.model.`new`
+package io.sorne.tlang.ast.model.let
 
 import io.sorne.tlang.interpreter.Value
 

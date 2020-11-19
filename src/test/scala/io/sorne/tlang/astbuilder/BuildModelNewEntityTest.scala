@@ -1,6 +1,6 @@
 package io.sorne.tlang.astbuilder
 
-import io.sorne.tlang.ast.model.`new`.{ModelNewArrayValue, ModelNewEntity, ModelNewEntityValue, ModelNewPrimitiveValue}
+import io.sorne.tlang.ast.model.let.{ModelNewArrayValue, ModelNewEntity, ModelNewEntityValue, ModelNewPrimitiveValue}
 import io.sorne.tlang.{TLangLexer, TLangParser}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite

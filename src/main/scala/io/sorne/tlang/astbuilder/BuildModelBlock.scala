@@ -2,7 +2,7 @@ package io.sorne.tlang.astbuilder
 
 import io.sorne.tlang.TLangParser._
 import io.sorne.tlang.ast.model._
-import io.sorne.tlang.ast.model.`new`._
+import io.sorne.tlang.ast.model.let._
 import io.sorne.tlang.ast.model.set._
 
 import scala.jdk.CollectionConverters._

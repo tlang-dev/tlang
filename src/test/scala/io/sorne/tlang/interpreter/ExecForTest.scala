@@ -2,7 +2,7 @@ package io.sorne.tlang.interpreter
 
 import io.sorne.tlang.ast.helper.call.{HelperCallInt, HelperCallObject, HelperCallVarObject}
 import io.sorne.tlang.ast.helper.{ForType, HelperContent, HelperFor, HelperInternalFunc}
-import io.sorne.tlang.ast.model.`new`.{ModelNewArrayValue, ModelNewAttribute}
+import io.sorne.tlang.ast.model.let.{ModelNewArrayValue, ModelNewAttribute}
 import io.sorne.tlang.interpreter.`type`.{TLangInt, TLangString}
 import io.sorne.tlang.interpreter.context.{Context, Scope}
 import org.scalatest.funsuite.AnyFunSuite

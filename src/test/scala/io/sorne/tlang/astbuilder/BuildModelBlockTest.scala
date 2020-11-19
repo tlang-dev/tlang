@@ -1,6 +1,6 @@
 package io.sorne.tlang.astbuilder
 
-import io.sorne.tlang.ast.model.`new`.{ModelNewArrayValue, ModelNewAttribute, ModelNewPrimitiveValue}
+import io.sorne.tlang.ast.model.let.{ModelNewArrayValue, ModelNewAttribute, ModelNewPrimitiveValue}
 import io.sorne.tlang.ast.model.set.{ModelSetArray, ModelSetEntity, ModelSetFuncDef, ModelSetRef, ModelSetType}
 import io.sorne.tlang.{TLangLexer, TLangParser}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}

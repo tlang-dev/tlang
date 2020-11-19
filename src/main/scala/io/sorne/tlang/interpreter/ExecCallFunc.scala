@@ -8,6 +8,7 @@ import io.sorne.tlang.interpreter.context.{Context, ContextUtils, Scope}
 import scala.collection.mutable
 
 object ExecCallFunc extends Executor {
+
   override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
     val caller = statement.asInstanceOf[HelperCallFuncObject]
 
@@ -35,12 +36,12 @@ object ExecCallFunc extends Executor {
           }
         })
       })
-
     }
-    Context(List(Scope(vars, funcs)))
+    Context(context.scopes :+ Scope(vars, funcs))
   }
 
   private def findParamName(curryPos: Int, paramPos: Int, helperFunc: HelperFunc): String = {
     helperFunc.currying.get(curryPos).params(paramPos).param.getOrElse(paramPos.toString)
   }
+
 }

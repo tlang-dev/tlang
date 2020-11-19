@@ -3,7 +3,7 @@ package io.sorne.tlang.resolver
 import io.sorne.tlang.ast.DomainUse
 import io.sorne.tlang.ast.helper._
 import io.sorne.tlang.ast.helper.call.{HelperCallFuncObject, HelperCallObject, HelperCallObjectType, HelperCallVarObject}
-import io.sorne.tlang.ast.model.`new`.{ModelNewEntity, ModelNewEntityValue}
+import io.sorne.tlang.ast.model.let.{ModelNewEntity, ModelNewEntityValue}
 import io.sorne.tlang.ast.model.{ModelBlock, ModelContent}
 import io.sorne.tlang.interpreter.context.Scope
 import io.sorne.tlang.interpreter.{Value, WrongType}

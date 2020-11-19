@@ -90,7 +90,6 @@ object BuildHelperStatement {
       case "to" => ForType.TO
       case "until" => ForType.UNTIL
     }
-
   }
 
 }
