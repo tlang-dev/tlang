@@ -32,7 +32,7 @@ object ResolveContext {
     var error: Option[ResolverError] = None
     var i = 0
     while (error.isEmpty && i < funcs.size) {
-      resolveStatements(funcs(i).block.content, module, uses) match {
+      resolveStatements(funcs(i).block.content, module, uses, funcs(i).scope) match {
         case Left(err) => error = Some(err)
         case _ =>
       }
@@ -42,15 +42,14 @@ object ResolveContext {
     else Right(())
   }
 
-  def resolveStatements(statements: Option[List[HelperStatement]], module: Module, uses: List[DomainUse]): Either[ResolverError, Unit] = {
+  def resolveStatements(statements: Option[List[HelperStatement]], module: Module, uses: List[DomainUse], scope: Scope): Either[ResolverError, Unit] = {
     if (statements.nonEmpty) {
       var error: Option[ResolverError] = None
       var i = 0
       while (error.isEmpty && i < statements.get.size) {
         val statement = statements.get(i)
         statement match {
-          case call: HelperCallObject =>
-
+          case call: HelperCallObject => resolveCallObject(call, module, uses, scope)
           case _ => resolveStatement(statement, module, uses) match {
             case Left(err) => error = Some(err)
             case _ =>

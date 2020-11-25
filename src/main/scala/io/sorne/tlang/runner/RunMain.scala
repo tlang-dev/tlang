@@ -7,6 +7,7 @@ import io.sorne.tlang.ast.helper.{HelperBlock, HelperFunc}
 import io.sorne.tlang.interpreter.ExecFunc
 import io.sorne.tlang.interpreter.context.Context
 import io.sorne.tlang.loader.{BuildModuleTree, FileResourceLoader, Module}
+import io.sorne.tlang.resolver.ResolveContext
 
 object RunMain {
 
@@ -15,7 +16,7 @@ object RunMain {
   def runFile(name: String): Unit = {
     val parts = name.split(File.separator)
     BuildModuleTree.build(Paths.get(parts.slice(0, parts.size - 1).mkString(File.separator)), Some(parts.last)) match {
-      case Left(error) =>
+      case Left(error) => println("Error while loading the program (" + error.code + "): " + error.message)
       case Right(module) => runMainFile(module)
     }
   }
@@ -33,7 +34,9 @@ object RunMain {
           findMainInHelper(block).foreach(f => func = Some(f))
         })
         func match {
-          case Some(main) => ExecFunc.run(main, Context(List()))
+          case Some(main) =>
+            ResolveContext.resolveContext(module)
+            ExecFunc.run(main, Context(List()))
           case None =>
         }
       case None =>

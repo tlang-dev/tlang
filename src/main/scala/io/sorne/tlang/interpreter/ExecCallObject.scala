@@ -56,16 +56,16 @@ object ExecCallObject extends Executor {
     statement match {
       case HelperCallArrayObject(_, position) => resolveArrayInCallable(position, callable, context)
       case caller: HelperCallFuncObject => resolveFunc(caller, callable, context)
-      case HelperCallVarObject(name) => resolveCallback(name, callable)
+      case HelperCallVarObject(name) => resolveCallback(name, callable, context)
       case _ => Left(NotImplemented())
     }
   }
 
-  def resolveCallback(name: String, callable: Option[List[Value[_]]]): Either[ExecError, Option[List[Value[_]]]] = {
+  def resolveCallback(name: String, callable: Option[List[Value[_]]], context: Context): Either[ExecError, Option[List[Value[_]]]] = {
     pickFirst(callable) match {
       case Left(error) => Left(error)
       case Right(value) => value match {
-        case valueType: ModelNewEntityValue => resolveEntity(name, valueType)
+        case valueType: ModelNewEntityValue => resolveEntity(name, valueType, context)
         case _ => Right(callable)
       }
     }
@@ -107,15 +107,18 @@ object ExecCallObject extends Executor {
     }
   }
 
-  def resolveEntity(name: String, entity: ModelNewEntityValue): Either[ExecError, Option[List[Value[_]]]] = {
-    if (entity.params.isDefined) findInEntity(name, entity.params.get)
-    else if (entity.attrs.isDefined) findInEntity(name, entity.attrs.get)
+  def resolveEntity(name: String, entity: ModelNewEntityValue, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+    if (entity.params.isDefined) findInEntity(name, entity.params.get, context)
+    else if (entity.attrs.isDefined) findInEntity(name, entity.attrs.get, context)
     else Left(CallableNotFound(name))
   }
 
-  def findInEntity(name: String, attrs: List[ModelNewAttribute]): Either[ExecError, Option[List[Value[_]]]] = {
+  def findInEntity(name: String, attrs: List[ModelNewAttribute], context: Context): Either[ExecError, Option[List[Value[_]]]] = {
     attrs.find(_.attr.getOrElse(false).equals(name)) match {
-      case Some(value) => Right(Some(List(value.value)))
+      case Some(value) => value.value match {
+        case caller: HelperCallObject => loopOverStatement(caller.statements, context, 0, None)
+        case _ => Right(Some(List(value.value)))
+      }
       case None => Left(CallableNotFound(name))
     }
   }

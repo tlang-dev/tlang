@@ -1,7 +1,7 @@
 package io.sorne.tlang.interpreter
 
-import io.sorne.tlang.ast.helper.{HelperContent, HelperCurrying, HelperFunc, HelperNewMultiValue, HelperNewValue, HelperObjType, HelperParam}
 import io.sorne.tlang.ast.helper.call._
+import io.sorne.tlang.ast.helper._
 import io.sorne.tlang.ast.model.let._
 import io.sorne.tlang.interpreter.`type`.TLangString
 import io.sorne.tlang.interpreter.context.{Context, Scope}
@@ -100,6 +100,38 @@ class ExecCallObjectTest extends AnyFunSuite {
     val res = ExecCallObject.run(statement, context).toOption.get.get
     assert("MyValue".equals(res.head.asInstanceOf[TLangString].getValue))
     assert("MyValue2".equals(res.last.asInstanceOf[TLangString].getValue))
+  }
+
+  test("Call function from entity") {
+    val callInsideFunc = HelperCallObject(List(HelperCallVarObject("valToReturn")))
+    val block = HelperContent(Some(List(callInsideFunc)))
+    val funcDef = HelperFunc("myFunc", Some(List(HelperCurrying(List(HelperParam(Some("valToReturn"), HelperObjType("String")))))), None, block = block)
+    val caller = HelperCallObject(List(HelperCallVarObject("var1")))
+    val attrStatement = HelperCallObject(List(HelperCallFuncObject(Some("myFunc"), Some(List(HelperCallFuncParam(List(caller)))))))
+    val myEntity = ModelNewEntityValue(Some("MyEntity"), None, Some(List(
+      ModelNewAttribute(Some("attr1"), attrStatement),
+    )))
+    val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangString("MyValue"), "myEntity" -> myEntity), functions = mutable.Map("myFunc" -> funcDef))))
+    val statement = HelperCallObject(List(HelperCallVarObject("myEntity"), HelperCallVarObject("attr1")))
+    val res = ExecCallObject.run(statement, context).toOption.get.get
+    assert("MyValue".equals(res.head.asInstanceOf[TLangString].getValue))
+  }
+
+  test("Call array from entity") {
+    val array = ModelNewArrayValue(Some("MyArray"), Some(List(
+      ModelNewAttribute(Some("myPosition1"), ModelNewPrimitiveValue(value = "value1")),
+      ModelNewAttribute(Some("myPosition2"), ModelNewPrimitiveValue(value = "value2")),
+      ModelNewAttribute(Some("myPosition3"), ModelNewPrimitiveValue(value = "value3"))
+    )))
+    val attrStatement = HelperCallObject(List(HelperCallArrayObject("var1", HelperCallObject(List(HelperCallString("myPosition2"))))))
+    val myEntity = ModelNewEntityValue(Some("MyEntity"), None, Some(List(
+      ModelNewAttribute(Some("attr1"), attrStatement),
+    )))
+    val context = Context(List(Scope(variables = mutable.Map("var1" -> array, "myEntity" -> myEntity))))
+    val statement = HelperCallObject(List(HelperCallVarObject("myEntity"), HelperCallVarObject("attr1")))
+    val res = ExecCallObject.run(statement, context).toOption.get.get
+    assert(res.head.isInstanceOf[ModelNewPrimitiveValue])
+    assert("value2".equals(res.head.asInstanceOf[ModelNewPrimitiveValue].value))
   }
 
 }

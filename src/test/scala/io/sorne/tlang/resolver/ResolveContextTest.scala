@@ -2,8 +2,9 @@ package io.sorne.tlang.resolver
 
 import java.nio.file.Paths
 
-import io.sorne.tlang.ast.helper.call.{HelperCallFuncObject, HelperCallVarObject}
-import io.sorne.tlang.ast.helper.{HelperContent, HelperFunc}
+import io.sorne.tlang.ast.DomainUse
+import io.sorne.tlang.ast.helper.call.{HelperCallFuncObject, HelperCallObject, HelperCallVarObject}
+import io.sorne.tlang.ast.helper.{HelperBlock, HelperContent, HelperFunc}
 import io.sorne.tlang.ast.model.ModelContent
 import io.sorne.tlang.ast.model.let.{ModelNewEntity, ModelNewEntityValue}
 import io.sorne.tlang.ast.model.set.ModelSetEntity
@@ -22,22 +23,138 @@ class ResolveContextTest extends AnyFunSuite {
         Right(
           """
             |use MyPackage.MyFile
-            |model {
+            |helper {
+            |func myFunc() {
+            |MyFile.myEntity
+            |}
             |}""".stripMargin)
       } else {
         Right(
           """
+            |expose myEntity
             |model {
+            |let myEntity MyEntity{}
+            |
             |}""".stripMargin)
       }
     }
 
     val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
     ResolveContext.resolveContext(module)
+
+    val scope = module.resources(module.mainFile).ast.body.head.asInstanceOf[HelperBlock].funcs.get.head.scope
+    assert("MyFile/myEntity" == scope.variables.head._1)
+    assert("MyEntity" == scope.variables.head._2.getType)
   }
 
-  test("Resolve call object"){
+  test("Resolve funcs") {
+    implicit val loader: ResourceLoader = (_: String, _: String, _: String, name: String) => {
+      if (name == "Main") {
+        Right(
+          """
+            |use MyPackage.MyFile
+            |helper {
+            |}""".stripMargin)
+      } else {
+        Right(
+          """
+            |expose myEntity
+            |model {
+            |let myEntity MyEntity{}
+            |
+            |}""".stripMargin)
+      }
+    }
+    val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
+    val uses = List(DomainUse(List("MyPackage", "MyFile")))
+    val caller = HelperCallObject(List(HelperCallVarObject("MyFile"), HelperCallVarObject("myEntity")))
+    val scope = Scope()
+    val func = HelperFunc("aFunc", None, None, HelperContent(Some(List(caller))), scope)
+    ResolveContext.resolveFuncs(List(func), module, uses)
+    assert("MyFile/myEntity" == scope.variables.head._1)
+    assert("MyEntity" == scope.variables.head._2.getType)
+  }
 
+  test("Resolve statement") {
+    implicit val loader: ResourceLoader = (_: String, _: String, _: String, name: String) => {
+      if (name == "Main") {
+        Right(
+          """
+            |use MyPackage.MyFile
+            |helper {
+            |}""".stripMargin)
+      } else {
+        Right(
+          """
+            |expose myEntity
+            |model {
+            |let myEntity MyEntity{}
+            |
+            |}""".stripMargin)
+      }
+    }
+    val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
+    val uses = List(DomainUse(List("MyPackage", "MyFile")))
+    val caller = HelperCallObject(List(HelperCallVarObject("MyFile"), HelperCallVarObject("myEntity")))
+    val scope = Scope()
+    ResolveContext.resolveStatements(Some(List(caller)), module, uses, scope)
+    assert("MyFile/myEntity" == scope.variables.head._1)
+    assert("MyEntity" == scope.variables.head._2.getType)
+  }
+
+  test("Resolve call object for entity in another package") {
+    implicit val loader: ResourceLoader = (_: String, _: String, _: String, name: String) => {
+      if (name == "Main") {
+        Right(
+          """
+            |use MyPackage.MyFile
+            |helper {
+            |}""".stripMargin)
+      } else {
+        Right(
+          """
+            |expose myEntity
+            |model {
+            |let myEntity MyEntity{}
+            |
+            |}""".stripMargin)
+      }
+    }
+    val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
+    val uses = List(DomainUse(List("MyPackage", "MyFile")))
+    val caller = HelperCallObject(List(HelperCallVarObject("MyFile"), HelperCallVarObject("myEntity")))
+    val scope = Scope()
+    ResolveContext.resolveCallObject(caller, module, uses, scope).toOption.get
+    assert("MyFile/myEntity" == scope.variables.head._1)
+    assert("MyEntity" == scope.variables.head._2.getType)
+  }
+
+  test("Resolve call object for func in same package") {
+    implicit val loader: ResourceLoader = (_: String, _: String, _: String, name: String) => {
+      if (name == "Main") {
+        Right(
+          """
+            |use MyFile
+            |model {
+            |}""".stripMargin)
+      } else {
+        Right(
+          """
+            |expose myFunc
+            |helper {
+            |func myFunc() {
+            |MyFile.myEntity
+            |}
+            |}""".stripMargin)
+      }
+    }
+    val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
+    val uses = List(DomainUse(List("MyFile")))
+    val caller = HelperCallObject(List(HelperCallVarObject("MyFile"), HelperCallVarObject("myFunc")))
+    val scope = Scope()
+    ResolveContext.resolveCallObject(caller, module, uses, scope).toOption.get
+    assert("MyFile/myFunc" == scope.functions.head._1)
+    assert("myFunc" == scope.functions.head._2.getValue.name)
   }
 
   test("Follow func call") {
@@ -52,7 +169,7 @@ class ResolveContextTest extends AnyFunSuite {
     val parser = new TLangParser(tokens)
     val block = BuildAst.build(parser.domainModel())
     val resource = Resource("", "", "", "Main", block)
-    val calls = List(HelperCallVarObject("first"),HelperCallVarObject("second"), HelperCallFuncObject(Some("myFunc"), None))
+    val calls = List(HelperCallVarObject("first"), HelperCallVarObject("second"), HelperCallFuncObject(Some("myFunc"), None))
     val scope = Scope()
 
     ResolveContext.followCall(resource, calls, 2, List("first", "second"), scope)
@@ -72,7 +189,7 @@ class ResolveContextTest extends AnyFunSuite {
     val parser = new TLangParser(tokens)
     val block = BuildAst.build(parser.domainModel())
     val resource = Resource("", "", "", "Main", block)
-    val calls = List(HelperCallVarObject("first"),HelperCallVarObject("second"), HelperCallVarObject("myEntity"))
+    val calls = List(HelperCallVarObject("first"), HelperCallVarObject("second"), HelperCallVarObject("myEntity"))
     val scope = Scope()
 
     ResolveContext.followCall(resource, calls, 2, List("first", "second"), scope)
