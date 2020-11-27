@@ -9,43 +9,40 @@ class BuildTmplFuncTest extends AnyFunSuite {
 
   test("Test build func") {
     val lexer = new TLangLexer(CharStreams.fromString(
-      """tmpl {
-        |lang="scala"
+      """tmpl[scala] myTmpl {
         |impl test {
         |func func1 {
         |}
         |}}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val impl = BuildTmplBlock.build(parser.tmplBlock().tmplImpl)
+    val impl = BuildTmplBlock.buildImpl(parser.tmplBlock().tmplImpl)
     assert("func1".equals(impl.content.get.head.asInstanceOf[TmplFunc].name))
   }
 
   test("Test build func with ()") {
     val lexer = new TLangLexer(CharStreams.fromString(
-      """tmpl {
-        |lang="scala"
+      """tmpl[scala] myTmpl {
         |impl test {
         |func func1() {
         |}
         |}}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val impl = BuildTmplBlock.build(parser.tmplBlock().tmplImpl)
+    val impl = BuildTmplBlock.buildImpl(parser.tmplBlock().tmplImpl)
     assert("func1".equals(impl.content.get.head.asInstanceOf[TmplFunc].name))
   }
 
   test("Test build func with one parameter") {
     val lexer = new TLangLexer(CharStreams.fromString(
-      """tmpl {
-        |lang="scala"
+      """tmpl[scala] myTmpl {
         |impl test {
         |func func1(myParam: MyType) {
         |}
         |}}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val impl = BuildTmplBlock.build(parser.tmplBlock().tmplImpl)
+    val impl = BuildTmplBlock.buildImpl(parser.tmplBlock().tmplImpl)
     val func = impl.content.get.head.asInstanceOf[TmplFunc]
     val param = func.curries.get.head.params.get.head
     assert("func1".equals(func.name))
@@ -57,15 +54,14 @@ class BuildTmplFuncTest extends AnyFunSuite {
 
   test("Test build func with one array parameter") {
     val lexer = new TLangLexer(CharStreams.fromString(
-      """tmpl {
-        |lang="scala"
+      """tmpl[scala] myTmpl {
         |impl test {
         |func func1(myParam: MyType[]) {
         |}
         |}}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val impl = BuildTmplBlock.build(parser.tmplBlock().tmplImpl)
+    val impl = BuildTmplBlock.buildImpl(parser.tmplBlock().tmplImpl)
     val func = impl.content.get.head.asInstanceOf[TmplFunc]
     val param = func.curries.get.head.params.get.head
     assert("func1".equals(func.name))
@@ -77,15 +73,14 @@ class BuildTmplFuncTest extends AnyFunSuite {
 
   test("Test build func with one generic parameter") {
     val lexer = new TLangLexer(CharStreams.fromString(
-      """tmpl {
-        |lang="scala"
+      """tmpl[scala] myTmpl {
         |impl test {
         |func func1(myParam: MyType<AnotherType, YetAnotherType<AndSoOn>>) {
         |}
         |}}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val impl = BuildTmplBlock.build(parser.tmplBlock().tmplImpl)
+    val impl = BuildTmplBlock.buildImpl(parser.tmplBlock().tmplImpl)
     val func = impl.content.get.head.asInstanceOf[TmplFunc]
     val param = func.curries.get.head.params.get.head
     assert("func1".equals(func.name))
@@ -99,15 +94,14 @@ class BuildTmplFuncTest extends AnyFunSuite {
 
   test("Test build func with currying") {
     val lexer = new TLangLexer(CharStreams.fromString(
-      """tmpl {
-        | lang="scala"
+      """tmpl[scala] myTmpl {
         | impl test {
         |func func1(myParam: MyType)(myParam2: MyType2[]) {
         |}
         |}}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val impl = BuildTmplBlock.build(parser.tmplBlock().tmplImpl)
+    val impl = BuildTmplBlock.buildImpl(parser.tmplBlock().tmplImpl)
     val func = impl.content.get.head.asInstanceOf[TmplFunc]
     val param1 = func.curries.get.head.params.get.head
     val param2 = func.curries.get.last.params.get.head

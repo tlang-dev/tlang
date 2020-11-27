@@ -9,6 +9,7 @@ libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.0" % Test
 libraryDependencies += "org.mockito" % "mockito-core" % "3.3.3" % Test
 
 libraryDependencies += "org.json4s" %% "json4s-native" % "3.6.10"
+libraryDependencies += "org.snakeyaml" % "snakeyaml-engine" % "2.2.1"
 
 //antlr4 plugin
 antlr4Version in Antlr4 := "4.8-1"

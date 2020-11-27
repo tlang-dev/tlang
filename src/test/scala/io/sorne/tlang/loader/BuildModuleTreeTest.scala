@@ -3,11 +3,21 @@ package io.sorne.tlang.loader
 import java.nio.file.Paths
 
 import io.sorne.tlang.ast.model.ModelBlock
+import io.sorne.tlang.loader.manifest.Stability
 import org.scalatest.funsuite.AnyFunSuite
 
 import scala.collection.mutable
 
 class BuildModuleTreeTest extends AnyFunSuite {
+
+  val defaultManifest: String =
+    """name: MyProgram
+      |project: MyProject
+      |organisation: MyOrganisation
+      |version: 1.33.7
+      |stability: final
+      |releaseNumber: 2
+      |""".stripMargin
 
   test("Build resource AST") {
     val content =
@@ -100,6 +110,8 @@ class BuildModuleTreeTest extends AnyFunSuite {
             |use MyPackage.MyFile
             |model {
             |}""".stripMargin)
+      } else if (name == "manifest.yaml") {
+        Right(defaultManifest)
       } else {
         Right(
           """
@@ -134,6 +146,8 @@ class BuildModuleTreeTest extends AnyFunSuite {
             |use MyPackage.MyFile
             |model {
             |}""".stripMargin)
+      } else if (name == "manifest.yaml") {
+        Right(defaultManifest)
       } else {
         Right(
           """
@@ -163,6 +177,27 @@ class BuildModuleTreeTest extends AnyFunSuite {
   test("Create package name") {
     val res = BuildModuleTree.createPkg("", "", "Part1", "Part2", "", "Part3")
     assert("Part1/Part2/Part3" == res)
+  }
+
+  test("Build manifest") {
+    implicit val loader: ResourceLoader = (_: String, _: String, _: String, _: String) => {
+      Right(
+        """
+          |name: MyProgram
+          |project: MyProject
+          |organisation: MyOrganisation
+          |version: 1.33.7
+          |stability: final
+          |releaseNumber: 2
+          |""".stripMargin)
+    }
+    val manifest = BuildModuleTree.buildManifest(Paths.get("Root")).toOption.get
+    assert("MyProgram" == manifest.name)
+    assert("MyProject" == manifest.project)
+    assert("MyOrganisation" == manifest.organisation)
+    assert("1.33.7" == manifest.version)
+    assert(Stability.FINAL == manifest.stability.get)
+    assert(2 == manifest.releaseNumber)
   }
 
 }

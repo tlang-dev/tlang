@@ -17,7 +17,16 @@ import org.scalatest.funsuite.AnyFunSuite
 
 class ResolveContextTest extends AnyFunSuite {
 
-  test("") {
+  val defaultManifest: String =
+    """name: MyProgram
+      |project: MyProject
+      |organisation: MyOrganisation
+      |version: 1.33.7
+      |stability: final
+      |releaseNumber: 2
+      |""".stripMargin
+
+  test("Resolve context with entity") {
     implicit val loader: ResourceLoader = (_: String, _: String, _: String, name: String) => {
       if (name == "Main") {
         Right(
@@ -28,6 +37,8 @@ class ResolveContextTest extends AnyFunSuite {
             |MyFile.myEntity
             |}
             |}""".stripMargin)
+      } else if (name == "manifest.yaml") {
+        Right(defaultManifest)
       } else {
         Right(
           """
@@ -47,6 +58,37 @@ class ResolveContextTest extends AnyFunSuite {
     assert("MyEntity" == scope.variables.head._2.getType)
   }
 
+  test("Resolve context with template") {
+    implicit val loader: ResourceLoader = (_: String, _: String, _: String, name: String) => {
+      if (name == "Main") {
+        Right(
+          """
+            |use MyPackage.MyFile
+            |helper {
+            |func myFunc() {
+            |MyFile.myTmpl
+            |}
+            |}""".stripMargin)
+      } else if (name == "manifest.yaml") {
+        Right(defaultManifest)
+      } else {
+        Right(
+          """
+            |expose myTmpl
+            |tmpl[scala] myTmpl {
+            |
+            |}""".stripMargin)
+      }
+    }
+
+    val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
+    ResolveContext.resolveContext(module)
+
+    val scope = module.resources(module.mainFile).ast.body.head.asInstanceOf[HelperBlock].funcs.get.head.scope
+    assert("MyFile/myTmpl" == scope.templates.head._1)
+    assert("myTmpl" == scope.templates.head._2.name)
+  }
+
   test("Resolve funcs") {
     implicit val loader: ResourceLoader = (_: String, _: String, _: String, name: String) => {
       if (name == "Main") {
@@ -55,6 +97,8 @@ class ResolveContextTest extends AnyFunSuite {
             |use MyPackage.MyFile
             |helper {
             |}""".stripMargin)
+      } else if (name == "manifest.yaml") {
+        Right(defaultManifest)
       } else {
         Right(
           """
@@ -83,6 +127,8 @@ class ResolveContextTest extends AnyFunSuite {
             |use MyPackage.MyFile
             |helper {
             |}""".stripMargin)
+      } else if (name == "manifest.yaml") {
+        Right(defaultManifest)
       } else {
         Right(
           """
@@ -110,6 +156,8 @@ class ResolveContextTest extends AnyFunSuite {
             |use MyPackage.MyFile
             |helper {
             |}""".stripMargin)
+      } else if (name == "manifest.yaml") {
+        Right(defaultManifest)
       } else {
         Right(
           """
@@ -137,6 +185,8 @@ class ResolveContextTest extends AnyFunSuite {
             |use MyFile
             |model {
             |}""".stripMargin)
+      } else if (name == "manifest.yaml") {
+        Right(defaultManifest)
       } else {
         Right(
           """
@@ -252,6 +302,7 @@ class ResolveContextTest extends AnyFunSuite {
     val myVar = ResolveContext.findInVars(contents, "myEntity")
     assert("myEntity" == myVar.get.name)
   }
+
   test("Find empty func") {
     val funcs = List(
       HelperFunc("func1", block = HelperContent(None)),

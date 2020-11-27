@@ -35,8 +35,7 @@ domainBlock: helperBlock | tmplBlock | modelBlock;
  * The content of this block will be translated in the final language as it is
  */
 tmplBlock:
-	'tmpl' '{'
-	('lang' lang=STRING)
+	'tmpl' '[' lang=ID ']' name=ID ('('params+=ID (',' params+=ID)*')')? '{'
 	(tmplPakage=tmplPkg)?
 	(tmplUses+=tmplUse)*
 	(tmplImpls+=tmplImpl)*

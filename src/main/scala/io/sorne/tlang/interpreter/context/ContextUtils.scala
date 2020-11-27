@@ -1,6 +1,7 @@
 package io.sorne.tlang.interpreter.context
 
 import io.sorne.tlang.ast.helper.HelperFunc
+import io.sorne.tlang.ast.tmpl.TmplBlock
 import io.sorne.tlang.interpreter.Value
 
 object ContextUtils {
@@ -23,6 +24,16 @@ object ContextUtils {
       i += 1
     }
     func
+  }
+
+  def findTmpl(context: Context, name: String): Option[TmplBlock] = {
+    var i = 0
+    var tmpl: Option[TmplBlock] = None
+    while (tmpl.isEmpty && i < context.scopes.length) {
+      context.scopes(i).templates.get(name).foreach(value => tmpl = Some(value))
+      i += 1
+    }
+    tmpl
   }
 
 }

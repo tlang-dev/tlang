@@ -1,13 +1,12 @@
 package io.sorne.tlang.interpreter
 
 import io.sorne.tlang.ast.helper._
-import io.sorne.tlang.ast.helper.call.{HelperCallArrayObject, HelperCallFuncObject, HelperCallInt, HelperCallObject, HelperCallObjectType, HelperCallString, HelperCallVarObject}
+import io.sorne.tlang.ast.helper.call._
 import io.sorne.tlang.ast.model.let._
 import io.sorne.tlang.interpreter.`type`.{TLangInt, TLangString}
-import io.sorne.tlang.interpreter.context.{Context, ContextUtils, Scope}
+import io.sorne.tlang.interpreter.context.{Context, ContextUtils}
 
 import scala.annotation.tailrec
-import scala.collection.mutable
 
 object ExecCallObject extends Executor {
 
@@ -55,7 +54,7 @@ object ExecCallObject extends Executor {
   private def findInCallable(statement: HelperCallObjectType, callable: Option[List[Value[_]]], context: Context): Either[ExecError, Option[List[Value[_]]]] = {
     statement match {
       case HelperCallArrayObject(_, position) => resolveArrayInCallable(position, callable, context)
-      case caller: HelperCallFuncObject => resolveFunc(caller, callable, context)
+      //case caller: HelperCallFuncObject => resolveFunc(caller, callable, context)
       case HelperCallVarObject(name) => resolveCallback(name, callable, context)
       case _ => Left(NotImplemented())
     }
@@ -123,6 +122,7 @@ object ExecCallObject extends Executor {
     }
   }
 
+  /* For now the returned functions are directly executed, a reference will be needed.
   def resolveFunc(caller: HelperCallFuncObject, callable: Option[List[Value[_]]], context: Context): Either[ExecError, Option[List[Value[_]]]] = {
 
     def execFunc(func: HelperFunc): Either[ExecError, Option[List[Value[_]]]] = {
@@ -148,7 +148,7 @@ object ExecCallObject extends Executor {
         case _ => Left(NotImplemented())
       }
     }
-  }
+  }*/
 
   def pickFirst(callable: Option[List[Value[_]]]): Either[ExecError, Value[_]] = {
     if (callable.isDefined && callable.get.nonEmpty) Right(callable.get.head)

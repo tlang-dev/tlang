@@ -4,10 +4,12 @@ import java.io.File
 import java.nio.file.Path
 
 import io.sorne.tlang.astbuilder.BuildAst
+import io.sorne.tlang.loader.manifest.{Manifest, ManifestLoader}
 import io.sorne.tlang.{TLangLexer, TLangParser}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 
 import scala.collection.mutable
+
 
 object BuildModuleTree {
 
@@ -28,7 +30,19 @@ object BuildModuleTree {
     browseResources(rootDir.toString, fromRoot, pkg, name, resources) match {
       case Some(error) => Left(error)
       case None =>
-        Right(Module(rootDir.toString, resources.toMap, None, createPkg(fromRoot, pkg, name)))
+        buildManifest(rootDir) match {
+          case Left(error) => Left(error)
+          case Right(manifest) =>
+
+            Right(Module(rootDir.toString, manifest, resources.toMap, None, createPkg(fromRoot, pkg, name)))
+        }
+    }
+  }
+
+  def buildManifest(rootDir: Path)(implicit resourceLoader: ResourceLoader): Either[LoaderError, Manifest] = {
+    resourceLoader.load(rootDir.toString, "", "", "manifest.yaml") match {
+      case Left(error) => Left(error)
+      case Right(manifest) => Right(ManifestLoader.parseManifest(manifest))
     }
   }
 

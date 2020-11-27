@@ -12,4 +12,6 @@ case class WrongType(types: String) extends ExecError("WrongType", types)
 
 case class WrongNumberOfArguments(error: String) extends ExecError("WrongNumberOfArguments", error)
 
-case class NoValue(error:String) extends ExecError("NoValue", error)
+case class NoValue(error: String) extends ExecError("NoValue", error)
+
+case class ElementNotFound(error: String) extends ExecError("ElementNotFound", error)

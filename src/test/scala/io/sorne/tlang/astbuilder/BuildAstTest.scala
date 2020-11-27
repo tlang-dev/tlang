@@ -132,8 +132,7 @@ class BuildAstTest extends AnyFunSuite {
         |}
         |helper {
         |}
-        |tmpl {
-        |lang "scala"
+        |tmpl[scala] myTmpl {
         |}
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)

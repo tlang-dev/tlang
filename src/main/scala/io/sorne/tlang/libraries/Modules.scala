@@ -1,10 +1,20 @@
 package io.sorne.tlang.libraries
 
-import io.sorne.tlang.libraries.tio.IOModule
+import io.sorne.tlang.libraries.generator.GenModule
+import io.sorne.tlang.libraries.tio.terminal.TerminalModule
 import io.sorne.tlang.loader.Module
+import io.sorne.tlang.loader.manifest.Stability
 
 object Modules {
 
-  val tLangModules: Map[String, Module] = Map("TLang/IO" -> IOModule.ioModule)
+  val organisation = "TLang"
+  val version = "1.0.0"
+  val stability: Stability.Value = Stability.ALPHA
+  val releaseNumber = 1
+
+  val tLangModules: Map[String, Module] = Map(
+    TerminalModule.getModuleName -> TerminalModule.getModule,
+    GenModule.getModuleName -> GenModule.getModule,
+  )
 
 }

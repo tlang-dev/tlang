@@ -12,29 +12,31 @@ object BuildTmplBlock {
 
   def build(tmpl: TmplBlockContext): TmplBlock = {
     val pkg = if (tmpl.tmplPkg() != null && !tmpl.tmplPkg().isEmpty) Some(tmpl.tmplPkg().name.getText) else None
-    val uses: List[TmplUse] = build(tmpl.tmplUse())
-    TmplBlock(pkg, Some(uses))
+    val uses: List[TmplUse] = buildUses(tmpl.tmplUse())
+    TmplBlock(tmpl.name.getText, tmpl.lang.getText,
+      if (tmpl.params != null && !tmpl.params.isEmpty) Some(tmpl.params.asScala.toList.map(_.getText)) else None,
+      pkg, Some(uses))
   }
 
-  def build(uses: java.util.List[TmplUseContext]): List[TmplUse] = {
-    if (uses != null && !uses.isEmpty) uses.asScala.map(build).toList
+  def buildUses(uses: java.util.List[TmplUseContext]): List[TmplUse] = {
+    if (uses != null && !uses.isEmpty) uses.asScala.map(buildUse).toList
     else List()
   }
 
-  def build(use: TmplUseContext): TmplUse = {
+  def buildUse(use: TmplUseContext): TmplUse = {
     TmplUse(Utils.extraString(use.name.getText))
   }
 
-  def build(impl: TmplImplContext): TmplImpl = {
+  def buildImpl(impl: TmplImplContext): TmplImpl = {
     val contRet: List[TmplImplContent] = impl.tmplImplContents.asScala.map {
       case content@_ if content.tmplFunc() != null => build(content.tmplFunc())
       case content@_ if content.tmplExpression() != null => build(content.tmplExpression())
       case _ => new TmplImplContent()
     }.toList
-    TmplImpl(impl.name.getText, build(impl.forName, impl.forNames), Some(contRet))
+    TmplImpl(impl.name.getText, buildFor(impl.forName, impl.forNames), Some(contRet))
   }
 
-  def build(for1: Token, fors: java.util.List[Token]): Option[List[TmplImplFor]] = {
+  def buildFor(for1: Token, fors: java.util.List[Token]): Option[List[TmplImplFor]] = {
     val forsRet = new ListBuffer[TmplImplFor]
     if (for1 != null && for1.getText != null && !for1.getText.isEmpty) forsRet += TmplImplFor(Utils.extraString(for1.getText))
     if (fors != null) fors.asScala.foreach(token => forsRet += TmplImplFor(Utils.extraString(token.getText)))

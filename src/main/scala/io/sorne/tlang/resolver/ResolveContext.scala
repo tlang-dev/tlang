@@ -5,6 +5,7 @@ import io.sorne.tlang.ast.helper._
 import io.sorne.tlang.ast.helper.call.{HelperCallFuncObject, HelperCallObject, HelperCallObjectType, HelperCallVarObject}
 import io.sorne.tlang.ast.model.let.{ModelNewEntity, ModelNewEntityValue}
 import io.sorne.tlang.ast.model.{ModelBlock, ModelContent}
+import io.sorne.tlang.ast.tmpl.{TmplBlock, TmplBlockAsValue}
 import io.sorne.tlang.interpreter.context.Scope
 import io.sorne.tlang.interpreter.{Value, WrongType}
 import io.sorne.tlang.loader.{BuildModuleTree, Module, Resource}
@@ -109,6 +110,7 @@ object ResolveContext {
           value.get match {
             case func: HelperFunc => scope.functions.addOne(name, func)
             case variable: ModelNewEntityValue => scope.variables.addOne(name, variable)
+            case tmpl: TmplBlockAsValue => scope.templates.addOne(name, tmpl.block)
           }
           Right(())
         } else Right(())
@@ -157,7 +159,7 @@ object ResolveContext {
               case None =>
             }
           }
-          case _ =>
+          case tmpl: TmplBlock => if (tmpl.name == name) elem = Some(TmplBlockAsValue(tmpl, List()))
         }
         i += 1
       }

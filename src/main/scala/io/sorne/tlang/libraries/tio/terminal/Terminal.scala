@@ -1,4 +1,4 @@
-package io.sorne.tlang.libraries.tio
+package io.sorne.tlang.libraries.tio.terminal
 
 import io.sorne.tlang.ast.helper._
 import io.sorne.tlang.interpreter.`type`.TLangString

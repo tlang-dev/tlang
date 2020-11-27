@@ -14,16 +14,16 @@ object LSPServer {
 
   def startLSPServer(port: Int): Unit = {
     try {
-      val server = new ServerSocket(4242)
+      val server = new ServerSocket(port)
       println("Serve initialized:")
       val client = server.accept
 
       val in = new BufferedReader(new InputStreamReader(client.getInputStream))
       val out = new PrintStream(client.getOutputStream)
 
-      var stop = false;
-      var header = true;
-      var length: Int = 0;
+      var stop = false
+      var header = true
+      var length: Int = 0
       while (!stop) {
         if (header) {
           val line = in.readLine()
@@ -45,10 +45,10 @@ object LSPServer {
           val id: Int = if (values.contains("id")) values("id").toString.toInt else 0
           val message = Request(values("jsonrpc").toString, id, values("method").toString, values("params").asInstanceOf[Map[String, Any]])
           ParseMessage.parseMessage(message) match {
-            case Left(value) =>
-            case Right(value) => {
+            case Left(_) =>
+            case Right(value) =>
               value match {
-                case Some(value) => {
+                case Some(value) =>
                   val res = write(value)
                   val str = new StringBuilder("Content-Length: " + res.length + "\r\n")
                   str ++= "\r\n"
@@ -57,25 +57,22 @@ object LSPServer {
                   out.print(str.toString())
                   out.flush()
                   println("\n-----------------------------------------------------")
-                }
                 case None =>
               }
-            }
           }
           header = true
         }
 
       }
-      client.close();
-      server.close();
+      client.close()
+      server.close()
       println("Server closing:")
     }
 
     catch {
-      case e: Exception => {
+      case e: Exception =>
         e.printStackTrace()
         System.exit(1)
-      }
     }
 
   }

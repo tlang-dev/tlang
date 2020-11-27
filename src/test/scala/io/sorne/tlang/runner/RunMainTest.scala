@@ -3,7 +3,9 @@ package io.sorne.tlang.runner
 import io.sorne.tlang.ast.DomainModel
 import io.sorne.tlang.ast.helper.{HelperBlock, HelperContent, HelperFunc, HelperInternalFunc}
 import io.sorne.tlang.interpreter.context.Context
+import io.sorne.tlang.loader.manifest.Stability
 import io.sorne.tlang.loader.{Module, Resource}
+import io.sorne.tlang.loader.manifest.Manifest
 import org.scalatest.funsuite.AnyFunSuite
 
 import scala.collection.immutable
@@ -32,7 +34,8 @@ class RunMainTest extends AnyFunSuite {
     )))
     val ast = DomainModel(None, List(helper))
     val resource = Resource("Root", "", "", "Main", ast)
-    val module = Module("Root", immutable.Map("Main" -> resource), None, "Main")
+    val manifest = Manifest("Org", "Proj", "Prog", "1.0.0", Some(Stability.FINAL), 1, None)
+    val module = Module("Root", manifest, immutable.Map("Main" -> resource), None, "Main")
     RunMain.runMainFile(module)
     assert(mainFuncRan)
   }
