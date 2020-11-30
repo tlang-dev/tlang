@@ -3,7 +3,7 @@ package io.sorne.tlang.libraries
 import io.sorne.tlang.libraries.generator.GenModule
 import io.sorne.tlang.libraries.tio.terminal.TerminalModule
 import io.sorne.tlang.loader.Module
-import io.sorne.tlang.loader.manifest.Stability
+import io.sorne.tlang.loader.manifest.{Dependency, Stability}
 
 object Modules {
 
@@ -16,5 +16,9 @@ object Modules {
     TerminalModule.getModuleName -> TerminalModule.getModule,
     GenModule.getModuleName -> GenModule.getModule,
   )
+
+  def findModule(dependency: Dependency): Option[Module] = {
+    tLangModules.get(dependency.getModuleName)
+  }
 
 }

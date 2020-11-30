@@ -1,7 +1,7 @@
 package io.sorne.tlang.libraries
 
-import io.sorne.tlang.ast.DomainModel
 import io.sorne.tlang.ast.helper.{HelperBlock, HelperFunc}
+import io.sorne.tlang.ast.{DomainExpose, DomainHeader, DomainModel}
 import io.sorne.tlang.loader.manifest.{Dependency, Manifest}
 import io.sorne.tlang.loader.{Module, Resource}
 
@@ -21,9 +21,13 @@ abstract class ModulePattern {
 
 
   def getMainResource: Resource = {
-    Resource("", "", "", "Main", DomainModel(None, List(
+    Resource("", "", "", "Main", DomainModel(Some(DomainHeader(Some(exposeFunctions), None)), List(
       HelperBlock(Some(getFunctions))
     )))
+  }
+
+  def exposeFunctions: List[DomainExpose] = {
+    getFunctions.map(func => DomainExpose(func.name))
   }
 
   def getResources: Map[String, Resource] = Map("Main" -> getMainResource)
@@ -31,7 +35,7 @@ abstract class ModulePattern {
   def getExternalResources: Option[Map[String, Module]] = None
 
   def getManifest: Manifest = {
-    Manifest(Modules.organisation, getProject, getName, Modules.version, Some(Modules.stability), Modules.releaseNumber, getDependencies)
+    Manifest(getName, getProject, Modules.organisation, Modules.version, Some(Modules.stability), Modules.releaseNumber, getDependencies)
   }
 
   def getModule: Module = Module("", getManifest, getResources, getExternalResources, "Main")

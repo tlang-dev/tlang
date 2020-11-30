@@ -4,6 +4,7 @@ import java.io.File
 import java.nio.file.Path
 
 import io.sorne.tlang.astbuilder.BuildAst
+import io.sorne.tlang.libraries.Modules
 import io.sorne.tlang.loader.manifest.{Manifest, ManifestLoader}
 import io.sorne.tlang.{TLangLexer, TLangParser}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
@@ -33,8 +34,12 @@ object BuildModuleTree {
         buildManifest(rootDir) match {
           case Left(error) => Left(error)
           case Right(manifest) =>
-
-            Right(Module(rootDir.toString, manifest, resources.toMap, None, createPkg(fromRoot, pkg, name)))
+            browseExternalResources(manifest) match {
+              case Left(error) => Left(error)
+              case Right(value) =>
+                val modules = if (value.nonEmpty) Some(value) else None
+                Right(Module(rootDir.toString, manifest, resources.toMap, modules, createPkg(fromRoot, pkg, name)))
+            }
         }
     }
   }
@@ -44,6 +49,19 @@ object BuildModuleTree {
       case Left(error) => Left(error)
       case Right(manifest) => Right(ManifestLoader.parseManifest(manifest))
     }
+  }
+
+  def browseExternalResources(manifest: Manifest): Either[LoaderError, Map[String, Module]] = {
+    val modules = mutable.Map.empty[String, Module]
+    manifest.dependencies.foreach(_.foreach(dependency => {
+      if (dependency.organisation == Modules.organisation) {
+        Modules.findModule(dependency) match {
+          case Some(module) => modules.addOne(dependency.alias, module)
+          case None =>
+        }
+      }
+    }))
+    Right(modules.toMap)
   }
 
   def browseResources(root: String, fromRoot: String, pkg: String, name: String, resources: mutable.Map[String, Resource])(implicit resourceLoader: ResourceLoader): Option[LoaderError] = {

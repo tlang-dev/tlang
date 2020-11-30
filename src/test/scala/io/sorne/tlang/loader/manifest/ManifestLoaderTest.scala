@@ -19,12 +19,14 @@ class ManifestLoaderTest extends AnyFunSuite {
         |    version: 1.0.0
         |    stability: alpha
         |    releaseNumber: 2
+        |    alias: file
         |  - organisation: TLang
         |    project: Generator
         |    name: Generator
         |    version: 1.2.0
         |    stability: beta
         |    releaseNumber: 3
+        |    alias: generator
         |""".stripMargin
     val manifest = ManifestLoader.parseManifest(yaml)
     assert("MyProgram" == manifest.name)
@@ -33,8 +35,8 @@ class ManifestLoaderTest extends AnyFunSuite {
     assert("1.33.7" == manifest.version)
     assert(Stability.FINAL == manifest.stability.get)
     assert(2 == manifest.releaseNumber)
-    assert(Dependency("TLang", "IO", "File", "1.0.0", Stability.ALPHA, 2) == manifest.dependencies.get.head)
-    assert(Dependency("TLang", "Generator", "Generator", "1.2.0", Stability.BETA, 3) == manifest.dependencies.get.last)
+    assert(Dependency("TLang", "IO", "File", "1.0.0", Stability.ALPHA, 2, "file") == manifest.dependencies.get.head)
+    assert(Dependency("TLang", "Generator", "Generator", "1.2.0", Stability.BETA, 3, "generator") == manifest.dependencies.get.last)
   }
 
   test("Map to manifest with all") {
@@ -75,20 +77,22 @@ class ManifestLoaderTest extends AnyFunSuite {
   }
 
   test("Get dependency") {
-    val dependency = ManifestLoader.mapToManifest(Map(
+    val dependency = ManifestLoader.getDependency(Map(
       "organisation" -> "MyOrganisation",
       "project" -> "MyProject",
       "name" -> "MyProgram",
       "version" -> "1.33.7",
       "stability" -> "alpha",
       "releaseNumber" -> 2.toInt,
+      "alias" -> "myProgram"
     ))
     assert("MyProgram" == dependency.name)
     assert("MyProject" == dependency.project)
     assert("MyOrganisation" == dependency.organisation)
     assert("1.33.7" == dependency.version)
-    assert(Stability.ALPHA == dependency.stability.get)
+    assert(Stability.ALPHA == dependency.stability)
     assert(2 == dependency.releaseNumber)
+    assert("myProgram" == dependency.alias)
   }
 
   test("Get dependency with default values") {

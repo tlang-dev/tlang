@@ -78,7 +78,7 @@ object ResolveContext {
                 found = true
                 followCall(resource, call.statements, 1, List(use.parts.last), scope)
               case None => module.extResources match {
-                case Some(resources) => resources.get(name) match {
+                case Some(resources) => resources.get(use.parts.head) match {
                   case Some(extModule) => extModule.resources.get(extModule.mainFile) match {
                     case Some(resource) =>
                       found = true

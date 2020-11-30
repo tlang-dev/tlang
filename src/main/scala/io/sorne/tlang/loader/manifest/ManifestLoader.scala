@@ -52,6 +52,7 @@ object ManifestLoader {
       elem.getOrElse("version", "").asInstanceOf[String],
       getStability(elem).getOrElse(Stability.FINAL),
       elem.getOrElse("releaseNumber", 1).asInstanceOf[Int],
+      elem.getOrElse("alias", "").asInstanceOf[String],
     )
   }
 

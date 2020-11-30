@@ -3,7 +3,7 @@ package io.sorne.tlang.loader
 import java.nio.file.Paths
 
 import io.sorne.tlang.ast.model.ModelBlock
-import io.sorne.tlang.loader.manifest.Stability
+import io.sorne.tlang.loader.manifest.{Dependency, Stability, Manifest}
 import org.scalatest.funsuite.AnyFunSuite
 
 import scala.collection.mutable
@@ -198,6 +198,17 @@ class BuildModuleTreeTest extends AnyFunSuite {
     assert("1.33.7" == manifest.version)
     assert(Stability.FINAL == manifest.stability.get)
     assert(2 == manifest.releaseNumber)
+  }
+
+  test("Browse external resources with TLang modules") {
+    val manifest = Manifest("MyName", "MyProject", "MyOrg", "1.0.0", None, 1, Some(List(
+      Dependency("TLang", "IO", "Terminal", "1.0.0", Stability.ALPHA, 1, "terminal"),
+      Dependency("TLang", "Generator", "Generator", "1.0.0", Stability.ALPHA, 1, "generator"),
+    )))
+    val res = BuildModuleTree.browseExternalResources(manifest).toOption.get
+    assert(2 == res.size)
+    assert("Terminal" == res("terminal").manifest.name)
+    assert("Generator" == res("generator").manifest.name)
   }
 
 }
