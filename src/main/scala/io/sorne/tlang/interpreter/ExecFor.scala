@@ -16,7 +16,7 @@ object ExecFor extends Executor {
   }
 
   def runForIn(forStatement: HelperFor, context: Context): Unit = {
-    val array = ExecCallObject.run(forStatement.array, context).toOption.get.get.head.asInstanceOf[ArrayValue].tbl.get
+    val array = ExecSimpleValue.run(forStatement.array, context).toOption.get.get.head.asInstanceOf[ArrayValue].tbl.get
     val end = array.size
     val newScope = Scope()
     val newContext = Context(context.scopes :+ newScope)
@@ -29,8 +29,8 @@ object ExecFor extends Executor {
   }
 
   def runFor(forStatement: HelperFor, context: Context): Unit = {
-    val start = ExecCallObject.run(forStatement.start.get, context).toOption.get.get.head.asInstanceOf[TLangLong].getValue
-    val end = ExecCallObject.run(forStatement.array, context).toOption.get.get.head.asInstanceOf[TLangLong].getValue
+    val start = ExecSimpleValue.run(forStatement.start.get, context).toOption.get.get.head.asInstanceOf[TLangLong].getValue
+    val end = ExecSimpleValue.run(forStatement.array, context).toOption.get.get.head.asInstanceOf[TLangLong].getValue
     val realEnd = forStatement.forType match {
       case io.sorne.tlang.ast.helper.ForType.TO => end
       case io.sorne.tlang.ast.helper.ForType.UNTIL => end - 1

@@ -1,12 +1,10 @@
 package io.sorne.tlang.interpreter
 
-import io.sorne.tlang.ast.common
-import io.sorne.tlang.ast.common.{HelperCondition, HelperConditionBlock, condition}
-import io.sorne.tlang.ast.helper._
 import io.sorne.tlang.ast.common.call.{CallObject, CallVarObject}
+import io.sorne.tlang.ast.common.condition
 import io.sorne.tlang.ast.common.condition.{Condition, ConditionBlock}
 import io.sorne.tlang.ast.common.value.{TLangBool, TLangString}
-import io.sorne.tlang.interpreter.`type`.TLangString
+import io.sorne.tlang.ast.helper._
 import io.sorne.tlang.interpreter.context.{Context, Scope}
 import org.scalatest.funsuite.AnyFunSuite
 

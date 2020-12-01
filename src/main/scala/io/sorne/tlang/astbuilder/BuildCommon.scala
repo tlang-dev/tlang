@@ -9,32 +9,35 @@ import scala.jdk.CollectionConverters._
 object BuildCommon {
 
   def buildAssignVar(assign: AssignVarContext): AssignVar = {
-    AssignVar(assign.name.getText, buildComplexValueType(assign.value))
+    val varType = if (assign.`type` != null && !assign.`type`.getText.isEmpty) Some(assign.`type`.getText) else None
+    AssignVar(assign.name.getText,
+      varType,
+      buildComplexValueType(varType, assign.value))
   }
 
-  def buildSimpleValueType(valueType: SimpleValueTypeContext): SimpleValueStatement[_] = {
+  def buildSimpleValueType(`type`: Option[String] = None, valueType: SimpleValueTypeContext): SimpleValueStatement[_] = {
     valueType match {
       case call@_ if call.callObj() != null => BuildHelperStatement.buildCallObject(call.callObj())
-      case value@_ if value.primitiveValue() != null => buildPrimitiveValue(value.primitiveValue())
+      case value@_ if value.primitiveValue() != null => buildPrimitiveValue(`type`, value.primitiveValue())
     }
   }
 
-  def buildComplexValueType(valueType: ComplexValueTypeContext): ComplexValueStatement[_] = {
+  def buildComplexValueType(`type`: Option[String] = None, valueType: ComplexValueTypeContext): ComplexValueStatement[_] = {
     valueType match {
       case call@_ if call.callObj() != null => BuildHelperStatement.buildCallObject(call.callObj())
-      case value@_ if value.primitiveValue() != null => buildPrimitiveValue(value.primitiveValue())
+      case value@_ if value.primitiveValue() != null => buildPrimitiveValue(`type`, value.primitiveValue())
       case condition@_ if condition.conditionBlock() != null => BuildHelperStatement.buildConditionBlock(condition.conditionBlock())
     }
   }
 
-  def buildPrimitiveValue(value: PrimitiveValueContext): PrimitiveValue[_] = {
+  def buildPrimitiveValue(`type`: Option[String] = None, value: PrimitiveValueContext): PrimitiveValue[_] = {
     value match {
       case string@_ if string.stringValue() != null => new TLangString(string.stringValue().value.getText)
       case number@_ if number.numberValue() != null =>
         val numbVal = number.numberValue().value.getText
         if (numbVal.contains(".")) new TLangDouble(numbVal.toDouble) else new TLangLong(numbVal.toLong)
       case text@_ if text.textValue() != null => new TLangString(text.textValue().value.getText)
-      case entity@_ if entity.entityValue() != null => buildEntityValue(entity.entityValue())
+      case entity@_ if entity.entityValue() != null => buildEntityValue(`type`, entity.entityValue())
       case bool@_ if bool.boolValue() != null => new TLangBool(bool.boolValue().value.getText == "true")
       case array@_ if array.arrayValue() != null => buildArray(array.arrayValue())
     }
@@ -45,11 +48,12 @@ object BuildCommon {
   }
 
   def buildSimpleValueTypes(types: List[SimpleValueTypeContext]): Option[List[SimpleValueStatement[_]]] = {
-    if (types.nonEmpty) Some(types.map(buildSimpleValueType)) else None
+    if (types.nonEmpty) Some(types.map(valType => buildSimpleValueType(None, valType))) else None
   }
 
-  def buildEntityValue(entity: EntityValueContext): EntityValue = {
-    EntityValue(None, buildComplexAttributes(entity.attrs.asScala.toList), buildComplexAttributes(entity.decl.asScala.toList))
+  def buildEntityValue(`type`: Option[String] = None, entity: EntityValueContext): EntityValue = {
+    EntityValue(if (`type`.isDefined) Some(`type`.get) else None,
+      buildComplexAttributes(entity.attrs.asScala.toList), buildComplexAttributes(entity.decl.asScala.toList))
   }
 
   def buildSimpleAttributes(attrs: List[SimpleAttributeContext]): Option[List[SimpleAttribute]] = {
@@ -57,9 +61,11 @@ object BuildCommon {
   }
 
   def buildSimpleAttribute(attr: SimpleAttributeContext): SimpleAttribute = {
+    val attrType = if (attr.`type` != null && !attr.`type`.getText.isEmpty) Some(attr.`type`.getText) else None
     SimpleAttribute(
       if (attr.attr != null && !attr.attr.getText.isEmpty) Some(attr.attr.getText) else None,
-      buildSimpleValueType(attr.value)
+      attrType,
+      buildSimpleValueType(attrType, attr.value)
     )
   }
 
@@ -68,9 +74,11 @@ object BuildCommon {
   }
 
   def buildComplexAttribute(attr: ComplexAttributeContext): ComplexAttribute = {
+    val attrType = if (attr.`type` != null && !attr.`type`.getText.isEmpty) Some(attr.`type`.getText) else None
     ComplexAttribute(
       if (attr.attr != null && !attr.attr.getText.isEmpty) Some(attr.attr.getText) else None,
-      buildComplexValueType(attr.value)
+      attrType,
+      buildComplexValueType(attrType, attr.value)
     )
   }
 

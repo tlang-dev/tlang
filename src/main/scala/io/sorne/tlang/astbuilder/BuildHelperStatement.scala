@@ -12,7 +12,8 @@ object BuildHelperStatement {
 
   def build(statements: List[HelperStatementContext]): List[HelperStatement] = {
     statements.map {
-      case statement@_ if statement.callObj() != null => buildCallObject(statement.callObj())
+      case statement@_ if statement.assignVar() != null => BuildCommon.buildAssignVar(statement.assignVar())
+      case statement@_ if statement.complexValueType() != null => BuildCommon.buildComplexValueType(None, statement.complexValueType())
       case statement@_ if statement.helperIf() != null => buildIf(statement.helperIf())
       case statement@_ if statement.helperFor() != null => buildFor(statement.helperFor())
     }
@@ -21,7 +22,7 @@ object BuildHelperStatement {
   def buildCallObject(call: CallObjContext): CallObject = {
     CallObject(call.objs.asScala.toList.map {
       case obj@_ if obj.callVariable() != null => CallVarObject(obj.callVariable().name.getText)
-      case obj@_ if obj.callArray() != null => CallArrayObject(obj.callArray().name.getText, BuildCommon.buildSimpleValueType(obj.callArray().elem))
+      case obj@_ if obj.callArray() != null => CallArrayObject(obj.callArray().name.getText, BuildCommon.buildSimpleValueType(None, obj.callArray().elem))
       case obj@_ if obj.callFunc() != null => buildCallFunc(obj.callFunc())
     })
   }
@@ -31,8 +32,8 @@ object BuildHelperStatement {
       buildCallFuncParam(func.currying.asScala.toList))
   }
 
-  def buildCallFuncParam(params: List[CurryParamsContext]):Option[List[CallFuncParam]] = {
-    if(params.nonEmpty) Some(params.map(param => CallFuncParam(BuildCommon.buildComplexAttributes(param.params.asScala.toList)))) else None
+  def buildCallFuncParam(params: List[CurryParamsContext]): Option[List[CallFuncParam]] = {
+    if (params.nonEmpty) Some(params.map(param => CallFuncParam(BuildCommon.buildComplexAttributes(param.params.asScala.toList)))) else None
   }
 
   def buildIf(anIf: HelperIfContext): HelperIf = {
@@ -53,9 +54,9 @@ object BuildHelperStatement {
   }
 
   def buildCondition(condition: ConditionContext): Condition = {
-    Condition(BuildCommon.buildSimpleValueType(condition.arg1),
+    Condition(BuildCommon.buildSimpleValueType(None, condition.arg1),
       if (condition.mark != null) Some(buildConditionType(condition.mark)) else None,
-      if (condition.arg2 != null) Some(BuildCommon.buildSimpleValueType(condition.arg2)) else None,
+      if (condition.arg2 != null) Some(BuildCommon.buildSimpleValueType(None, condition.arg2)) else None,
       if (condition.link != null) Some(buildConditionLink(condition.link)) else None,
       if (condition.next != null) Some(buildConditionBlock(condition.next)) else None)
   }
@@ -80,9 +81,9 @@ object BuildHelperStatement {
 
   def buildFor(aFor: HelperForContext): HelperFor = {
     HelperFor(aFor.`var`.getText,
-      if (aFor.start != null) Some(BuildCommon.buildSimpleValueType(aFor.start)) else None,
+      if (aFor.start != null) Some(BuildCommon.buildSimpleValueType(None, aFor.start)) else None,
       buildForType(aFor.`type`),
-      BuildCommon.buildSimpleValueType(aFor.array),
+      BuildCommon.buildSimpleValueType(None, aFor.array),
       BuildHelperBlock.buildContent(aFor.body)
     )
   }

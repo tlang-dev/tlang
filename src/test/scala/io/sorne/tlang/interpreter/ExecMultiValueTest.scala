@@ -13,9 +13,9 @@ class ExecMultiValueTest extends AnyFunSuite {
     val varToCall = CallObject(List(CallVarObject("var1")))
     val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangString("myValue2")))))
     val statement = MultiValue(List(
-      Right(new TLangString("myValue1")),
-      Left(varToCall),
-      Right(new TLangString("myValue3"))))
+      new TLangString("myValue1"),
+      varToCall,
+      new TLangString("myValue3")))
     val res = ExecMultiValue.run(statement, context).toOption.get.get
     assert("myValue1" == res.head.asInstanceOf[TLangString].getValue)
     assert("myValue2" == res(1).asInstanceOf[TLangString].getValue)

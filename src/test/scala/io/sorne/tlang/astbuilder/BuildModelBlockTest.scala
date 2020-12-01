@@ -1,6 +1,6 @@
 package io.sorne.tlang.astbuilder
 
-import io.sorne.tlang.ast.common.value.{ArrayValue, ComplexAttribute}
+import io.sorne.tlang.ast.common.value.{ArrayValue, ComplexAttribute, TLangString}
 import io.sorne.tlang.ast.model.set.{ModelSetArray, ModelSetEntity, ModelSetFuncDef, ModelSetRef, ModelSetType}
 import io.sorne.tlang.{TLangLexer, TLangParser}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
@@ -230,12 +230,12 @@ class BuildModelBlockTest extends AnyFunSuite {
     val parser = new TLangParser(tokens)
     val setEntity = BuildModelBlock.build(parser.modelBlock()).content.get.head.asInstanceOf[ModelSetEntity]
     val ref = setEntity.attrs.get.head.value.asInstanceOf[ModelSetRef]
-    val array =  ref.currying.get.head.values.last.asInstanceOf[ComplexAttribute].value.asInstanceOf[ArrayValue].tbl.get
+    val array = ref.currying.get.head.values.last.asInstanceOf[ArrayValue].tbl.get
     assert("anyFunc" == ref.refs.head)
-    assert("\"myValue\"" == ref.currying.get.head.values.head.asInstanceOf[ComplexAttribute].value.asInstanceOf[ModelNewPrimitiveValue].value)
-    assert("\"1\"" == array.head.value.asInstanceOf[ModelNewPrimitiveValue].value)
-    assert("\"2\"" == array(1).value.asInstanceOf[ModelNewPrimitiveValue].value)
-    assert("\"3\"" == array.last.value.asInstanceOf[ModelNewPrimitiveValue].value)
+    assert("\"myValue\"" == ref.currying.get.head.values.head.asInstanceOf[TLangString].getValue)
+    assert("\"1\"" == array.head.value.asInstanceOf[TLangString].getValue)
+    assert("\"2\"" == array(1).value.asInstanceOf[TLangString].getValue)
+    assert("\"3\"" == array.last.value.asInstanceOf[TLangString].getValue)
   }
 
 }

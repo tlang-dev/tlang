@@ -21,7 +21,7 @@ class ResolveExternalResourcesTest extends AnyFunSuite {
 
   test("Resolve from external resources") {
     implicit val loader: ResourceLoader = (_: String, _: String, _: String, name: String) => {
-      if (name == "Main") {
+      if (name == "Main.tlang") {
         Right(
           """
             |use gen.Generator

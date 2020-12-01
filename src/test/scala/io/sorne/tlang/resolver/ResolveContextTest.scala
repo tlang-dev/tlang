@@ -4,7 +4,7 @@ import java.nio.file.Paths
 
 import io.sorne.tlang.ast.DomainUse
 import io.sorne.tlang.ast.common.call.{CallFuncObject, CallObject, CallVarObject}
-import io.sorne.tlang.ast.common.value.EntityValue
+import io.sorne.tlang.ast.common.value.{AssignVar, EntityValue}
 import io.sorne.tlang.ast.helper.{HelperBlock, HelperContent, HelperFunc}
 import io.sorne.tlang.ast.model.ModelContent
 import io.sorne.tlang.ast.model.set.ModelSetEntity
@@ -28,7 +28,7 @@ class ResolveContextTest extends AnyFunSuite {
 
   test("Resolve context with entity") {
     implicit val loader: ResourceLoader = (_: String, _: String, _: String, name: String) => {
-      if (name == "Main") {
+      if (name == "Main.tlang") {
         Right(
           """
             |use MyPackage.MyFile
@@ -44,7 +44,7 @@ class ResolveContextTest extends AnyFunSuite {
           """
             |expose myEntity
             |model {
-            |let myEntity MyEntity{}
+            |let myEntity :MyEntity = {}
             |
             |}""".stripMargin)
       }
@@ -55,12 +55,12 @@ class ResolveContextTest extends AnyFunSuite {
 
     val scope = module.resources(module.mainFile).ast.body.head.asInstanceOf[HelperBlock].funcs.get.head.scope
     assert("MyFile/myEntity" == scope.variables.head._1)
-    assert("MyEntity" == scope.variables.head._2.getType)
+    assert("MyEntity" == scope.variables.head._2.asInstanceOf[EntityValue].`type`.get)
   }
 
   test("Resolve context with template") {
     implicit val loader: ResourceLoader = (_: String, _: String, _: String, name: String) => {
-      if (name == "Main") {
+      if (name == "Main.tlang") {
         Right(
           """
             |use MyPackage.MyFile
@@ -91,7 +91,7 @@ class ResolveContextTest extends AnyFunSuite {
 
   test("Resolve funcs") {
     implicit val loader: ResourceLoader = (_: String, _: String, _: String, name: String) => {
-      if (name == "Main") {
+      if (name == "Main.tlang") {
         Right(
           """
             |use MyPackage.MyFile
@@ -104,7 +104,7 @@ class ResolveContextTest extends AnyFunSuite {
           """
             |expose myEntity
             |model {
-            |let myEntity MyEntity{}
+            |let myEntity :MyEntity = {}
             |
             |}""".stripMargin)
       }
@@ -121,7 +121,7 @@ class ResolveContextTest extends AnyFunSuite {
 
   test("Resolve statement") {
     implicit val loader: ResourceLoader = (_: String, _: String, _: String, name: String) => {
-      if (name == "Main") {
+      if (name == "Main.tlang") {
         Right(
           """
             |use MyPackage.MyFile
@@ -134,7 +134,7 @@ class ResolveContextTest extends AnyFunSuite {
           """
             |expose myEntity
             |model {
-            |let myEntity MyEntity{}
+            |let myEntity :MyEntity = {}
             |
             |}""".stripMargin)
       }
@@ -150,7 +150,7 @@ class ResolveContextTest extends AnyFunSuite {
 
   test("Resolve call object for entity in another package") {
     implicit val loader: ResourceLoader = (_: String, _: String, _: String, name: String) => {
-      if (name == "Main") {
+      if (name == "Main.tlang") {
         Right(
           """
             |use MyPackage.MyFile
@@ -163,7 +163,7 @@ class ResolveContextTest extends AnyFunSuite {
           """
             |expose myEntity
             |model {
-            |let myEntity MyEntity{}
+            |let myEntity :MyEntity = {}
             |
             |}""".stripMargin)
       }
@@ -179,7 +179,7 @@ class ResolveContextTest extends AnyFunSuite {
 
   test("Resolve call object for func in same package") {
     implicit val loader: ResourceLoader = (_: String, _: String, _: String, name: String) => {
-      if (name == "Main") {
+      if (name == "Main.tlang") {
         Right(
           """
             |use MyFile
@@ -232,7 +232,7 @@ class ResolveContextTest extends AnyFunSuite {
       """
         |expose myEntity
         |model {
-        |let myEntity AnyEntity {}
+        |let myEntity :AnyEntity ={}
         |}
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
@@ -267,9 +267,9 @@ class ResolveContextTest extends AnyFunSuite {
   test("Find var in resource") {
     val lexer = new TLangLexer(CharStreams.fromString(
       """model {
-        |let myEntity AnyEntity {}
-        |let myEntity2 AnyEntity2 {}
-        |let myEntity3 AnyEntity3 {}
+        |let myEntity :AnyEntity = {}
+        |let myEntity2 :AnyEntity2 = {}
+        |let myEntity3 :AnyEntity3 = {}
         |}
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
@@ -295,8 +295,8 @@ class ResolveContextTest extends AnyFunSuite {
   test("Find var") {
     val contents: List[ModelContent] = List(
       ModelSetEntity("myEntity", None, None),
-      ModelNewEntity("myEntity", EntityValue(None, None, None)),
-      ModelNewEntity("myEntity2", EntityValue(None, None, None)),
+      AssignVar("myEntity", None, EntityValue(None, None, None)),
+      AssignVar("myEntity2", None, EntityValue(None, None, None)),
     )
 
     val myVar = ResolveContext.findInVars(contents, "myEntity")
@@ -317,8 +317,8 @@ class ResolveContextTest extends AnyFunSuite {
   test("Find empty var") {
     val contents: List[ModelContent] = List(
       ModelSetEntity("myEntity", None, None),
-      ModelNewEntity("myEntity", EntityValue(None, None, None)),
-      ModelNewEntity("myEntity2", EntityValue(None, None, None)),
+      AssignVar("myEntity", None, EntityValue(None, None, None)),
+      AssignVar("myEntity2", None, EntityValue(None, None, None)),
     )
 
     val myVar = ResolveContext.findInVars(contents, "myEntity3")

@@ -55,7 +55,7 @@ object BuildModelBlock {
   def buildModelSetRefValue(value: ModelSetRefValueContext): ModelSetRefValue = {
     value match {
       case ref@_ if ref.modelSetRef() != null => buildRef(ref.modelSetRef())
-      case valueType@_ if valueType.complexValueType() != null => BuildCommon.buildComplexValueType(valueType.complexValueType())
+      case valueType@_ if valueType.complexValueType() != null => BuildCommon.buildComplexValueType(None, valueType.complexValueType())
     }
   }
 

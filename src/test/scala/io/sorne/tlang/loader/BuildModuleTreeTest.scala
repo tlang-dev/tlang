@@ -35,7 +35,7 @@ class BuildModuleTreeTest extends AnyFunSuite {
   test("Browse resource") {
     val resources = mutable.Map.empty[String, Resource]
     implicit val loader: ResourceLoader = (_: String, _: String, _: String, name: String) => {
-      if (name == "Main") {
+      if (name == "Main.tlang") {
         Right(
           """
             |use MyFile
@@ -70,7 +70,7 @@ class BuildModuleTreeTest extends AnyFunSuite {
   test("Browse resource in sub package") {
     val resources = mutable.Map.empty[String, Resource]
     implicit val loader: ResourceLoader = (_: String, _: String, _: String, name: String) => {
-      if (name == "Main") {
+      if (name == "Main.tlang") {
         Right(
           """
             |use MyPackage.MyFile
@@ -104,7 +104,7 @@ class BuildModuleTreeTest extends AnyFunSuite {
 
   test("Build module tree") {
     implicit val loader: ResourceLoader = (_: String, _: String, _: String, name: String) => {
-      if (name == "Main") {
+      if (name == "Main.tlang") {
         Right(
           """
             |use MyPackage.MyFile
@@ -140,7 +140,7 @@ class BuildModuleTreeTest extends AnyFunSuite {
 
   test("Build module tree with defined main") {
     implicit val loader: ResourceLoader = (_: String, _: String, _: String, name: String) => {
-      if (name == "MainFile") {
+      if (name == "MainFile.tlang") {
         Right(
           """
             |use MyPackage.MyFile

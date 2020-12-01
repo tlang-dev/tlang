@@ -56,7 +56,6 @@ entityValue:
 
 multiValue: '(' (values+=complexValueType) (',' values+=complexValueType)* ')';
 
-complexAttribute: ((attr=ID )? value=complexValueType);
+complexAttribute: ((attr=ID)? (':' type=ID)? value=complexValueType);
 
-simpleAttribute: ((attr=ID )? value=simpleValueType);
-
+simpleAttribute: ((attr=ID)? (':' type=ID)? value=simpleValueType);
