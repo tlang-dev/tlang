@@ -1,7 +1,7 @@
 package io.sorne.tlang.interpreter
 
+import io.sorne.tlang.ast.common.value.TLangBool
 import io.sorne.tlang.ast.helper.{HelperIf, HelperStatement}
-import io.sorne.tlang.interpreter.`type`.TLangBool
 import io.sorne.tlang.interpreter.context.Context
 
 object ExecIf extends Executor {

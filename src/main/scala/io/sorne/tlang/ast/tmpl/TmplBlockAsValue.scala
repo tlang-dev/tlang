@@ -1,7 +1,7 @@
 package io.sorne.tlang.ast.tmpl
 
+import io.sorne.tlang.ast.common.value.TLangType
 import io.sorne.tlang.interpreter.Value
-import io.sorne.tlang.interpreter.`type`.TLangType
 
 case class TmplBlockAsValue(block: TmplBlock, params: List[Value[_]]) extends Value[TmplBlock] {
   override def getValue: TmplBlock = this.block

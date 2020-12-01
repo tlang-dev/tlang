@@ -1,7 +1,7 @@
 package io.sorne.tlang.ast.model.let
 
+import io.sorne.tlang.ast.common.value.TLangType
 import io.sorne.tlang.interpreter.Value
-import io.sorne.tlang.interpreter.`type`.TLangType
 
 case class ModelLetRefVar(variable: Value[_]) extends ModelLetRefType[ModelLetRefVar] {
   override def getValue: ModelLetRefVar = this

@@ -2,8 +2,8 @@ package io.sorne.tlang.resolver
 
 import io.sorne.tlang.ast.DomainUse
 import io.sorne.tlang.ast.helper._
-import io.sorne.tlang.ast.helper.call.{HelperCallFuncObject, HelperCallObject, HelperCallObjectType, HelperCallVarObject}
-import io.sorne.tlang.ast.model.let.{ModelNewEntity, ModelNewEntityValue}
+import io.sorne.tlang.ast.common.call.{CallFuncObject, CallObject, CallObjectType, CallVarObject}
+import io.sorne.tlang.ast.common.value.{AssignVar, EntityValue, PrimitiveValue}
 import io.sorne.tlang.ast.model.{ModelBlock, ModelContent}
 import io.sorne.tlang.ast.tmpl.{TmplBlock, TmplBlockAsValue}
 import io.sorne.tlang.interpreter.context.Scope
@@ -50,7 +50,7 @@ object ResolveContext {
       while (error.isEmpty && i < statements.get.size) {
         val statement = statements.get(i)
         statement match {
-          case call: HelperCallObject => resolveCallObject(call, module, uses, scope)
+          case call: CallObject => resolveCallObject(call, module, uses, scope)
           case _ => resolveStatement(statement, module, uses) match {
             case Left(err) => error = Some(err)
             case _ =>
@@ -63,9 +63,9 @@ object ResolveContext {
     } else Right(())
   }
 
-  def resolveCallObject(call: HelperCallObject, module: Module, uses: List[DomainUse], scope: Scope): Either[ResolverError, Unit] = {
+  def resolveCallObject(call: CallObject, module: Module, uses: List[DomainUse], scope: Scope): Either[ResolverError, Unit] = {
     call.statements.head match {
-      case varObj: HelperCallVarObject =>
+      case varObj: CallVarObject =>
         var error: Option[ResolverError] = None
         var found = false
         var i = 0
@@ -100,7 +100,7 @@ object ResolveContext {
 
   }
 
-  def followCall(resource: Resource, statements: List[HelperCallObjectType], nextStatement: Int, previousNames: List[String], scope: Scope): Either[ResolverError, Unit] = {
+  def followCall(resource: Resource, statements: List[CallObjectType], nextStatement: Int, previousNames: List[String], scope: Scope): Either[ResolverError, Unit] = {
 
     def addInScope(lastName: String, elem: Either[ResolverError, Option[Value[_]]]): Either[ResolverError, Unit] = {
       elem match {
@@ -109,7 +109,7 @@ object ResolveContext {
           val name = BuildModuleTree.createPkg(previousNames.mkString("/"), lastName)
           value.get match {
             case func: HelperFunc => scope.functions.addOne(name, func)
-            case variable: ModelNewEntityValue => scope.variables.addOne(name, variable)
+            case variable: EntityValue => scope.variables.addOne(name, variable)
             case tmpl: TmplBlockAsValue => scope.templates.addOne(name, tmpl.block)
           }
           Right(())
@@ -118,8 +118,8 @@ object ResolveContext {
     }
 
     val callName: Option[String] = statements(nextStatement) match {
-      case varObj: HelperCallVarObject => Some(varObj.name)
-      case funcObj: HelperCallFuncObject => funcObj.name
+      case varObj: CallVarObject => Some(varObj.name)
+      case funcObj: CallFuncObject => funcObj.name
       case _ => None
     }
 
@@ -139,7 +139,7 @@ object ResolveContext {
 
   }
 
-  def findInResource(resource: Resource, nextCaller: HelperCallObjectType): Either[ResolverError, Option[Value[_]]] = {
+  def findInResource(resource: Resource, nextCaller: CallObjectType): Either[ResolverError, Option[Value[_]]] = {
     def browseBody(name: String): Either[ResolverError, Option[Value[_]]] = {
       var error: Option[ResolverError] = None
       var i = 0
@@ -155,7 +155,7 @@ object ResolveContext {
           }
           case ModelBlock(contents) => if (contents.isDefined) {
             findInVars(contents.get, name) match {
-              case Some(variable) => elem = Some(variable.entity)
+              case Some(variable) => elem = Some(variable.value)
               case None =>
             }
           }
@@ -168,8 +168,8 @@ object ResolveContext {
     }
 
     nextCaller match {
-      case HelperCallFuncObject(name, _) => browseBody(name.get)
-      case HelperCallVarObject(name) => browseBody(name)
+      case CallFuncObject(name, _) => browseBody(name.get)
+      case CallVarObject(name) => browseBody(name)
       case _ => Right(None)
     }
 
@@ -185,12 +185,12 @@ object ResolveContext {
     func
   }
 
-  def findInVars(contents: List[ModelContent], name: String): Option[ModelNewEntity] = {
+  def findInVars(contents: List[ModelContent], name: String): Option[AssignVar] = {
     var i = 0
-    var entity: Option[ModelNewEntity] = None
+    var entity: Option[AssignVar] = None
     while (entity.isEmpty && i < contents.size) {
       contents(i) match {
-        case newEntity: ModelNewEntity => if (newEntity.name == name) entity = Some(newEntity)
+        case newEntity: AssignVar => if (newEntity.name == name) entity = Some(newEntity)
         case _ =>
       }
       i += 1

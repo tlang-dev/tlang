@@ -13,9 +13,10 @@ object RunMain {
 
   implicit val loader: FileResourceLoader.type = FileResourceLoader
 
-  def runFile(name: String): Unit = {
-    val parts = name.split(File.separator)
-    BuildModuleTree.build(Paths.get(parts.slice(0, parts.size - 1).mkString(File.separator)), Some(parts.last)) match {
+  def runDir(name: String): Unit = {
+    //    val parts = name.split(File.separator)
+    //BuildModuleTree.build(Paths.get(parts.slice(0, parts.size - 1).mkString(File.separator)), Some(parts.last)) match {
+    BuildModuleTree.build(Paths.get(name), None) match {
       case Left(error) => println("Error while loading the program (" + error.code + "): " + error.message)
       case Right(module) => runMainFile(module)
     }
@@ -36,7 +37,7 @@ object RunMain {
         func match {
           case Some(main) =>
             ResolveContext.resolveContext(module)
-            ExecFunc.run(main, Context(List()))
+            ExecFunc.run(main, Context(List(main.scope)))
           case None =>
         }
       case None =>

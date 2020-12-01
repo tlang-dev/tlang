@@ -1,3 +1,5 @@
 package io.sorne.tlang.ast.helper
 
-case class HelperIf(condition: HelperConditionBlock, ifTrue: Option[HelperContent] = None, ifFalse: Option[HelperContent] = None) extends HelperStatement
+import io.sorne.tlang.ast.common.condition.ConditionBlock
+
+case class HelperIf(condition: ConditionBlock, ifTrue: Option[HelperContent] = None, ifFalse: Option[HelperContent] = None) extends HelperStatement

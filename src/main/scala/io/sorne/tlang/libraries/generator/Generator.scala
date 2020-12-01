@@ -1,5 +1,6 @@
 package io.sorne.tlang.libraries.generator
 
+import io.sorne.tlang.ast.common.value.TLangString
 import io.sorne.tlang.ast.helper._
 import io.sorne.tlang.ast.tmpl.TmplBlockAsValue
 import io.sorne.tlang.generator.CodeGenerator
@@ -11,7 +12,6 @@ import io.sorne.tlang.generator.scala.ScalaGenerator
 import io.sorne.tlang.generator.xml.XMLGenerator
 import io.sorne.tlang.generator.yml.YMLGenerator
 import io.sorne.tlang.interpreter._
-import io.sorne.tlang.interpreter.`type`.TLangString
 import io.sorne.tlang.interpreter.context.{Context, ContextUtils}
 
 object Generator {

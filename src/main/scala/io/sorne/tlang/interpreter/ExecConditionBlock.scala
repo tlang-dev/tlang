@@ -1,22 +1,23 @@
 package io.sorne.tlang.interpreter
 
-import io.sorne.tlang.ast.helper.{ConditionLink, HelperCondition, HelperConditionBlock, HelperStatement}
-import io.sorne.tlang.interpreter.`type`.TLangBool
+import io.sorne.tlang.ast.common.condition.{Condition, ConditionBlock}
+import io.sorne.tlang.ast.common.value.TLangBool
+import io.sorne.tlang.ast.helper.{ConditionLink, HelperStatement}
 import io.sorne.tlang.interpreter.context.Context
 
 object ExecConditionBlock extends Executor {
 
   override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
-    val block = statement.asInstanceOf[HelperConditionBlock]
+    val block = statement.asInstanceOf[ConditionBlock]
     solveConditionBlock(block, context) match {
       case Left(error) => Left(error)
       case Right(value) => Right(Some(List(new TLangBool(value))))
     }
   }
 
-  def solveConditionBlock(block: HelperConditionBlock, context: Context): Either[ExecError, Boolean] = {
+  def solveConditionBlock(block: ConditionBlock, context: Context): Either[ExecError, Boolean] = {
 
-    def callCondition(condition: HelperCondition): Either[ExecError, Boolean] = {
+    def callCondition(condition: Condition): Either[ExecError, Boolean] = {
       solveCondition(condition, context) match {
         case Left(error) => Left(error)
         case Right(res) => if (block.link.isDefined) {
@@ -40,7 +41,7 @@ object ExecConditionBlock extends Executor {
     }
   }
 
-  def solveCondition(cond: HelperCondition, context: Context): Either[ExecError, Boolean] = {
+  def solveCondition(cond: Condition, context: Context): Either[ExecError, Boolean] = {
     execStatement(cond.statement1, context) match {
       case Left(error) => Left(error)
       case Right(res1) =>
@@ -74,7 +75,7 @@ object ExecConditionBlock extends Executor {
     }
   }
 
-  def solveNextCondition(state1: Boolean, cond: ConditionLink.condition, next: HelperConditionBlock, context: Context): Either[ExecError, Boolean] = {
+  def solveNextCondition(state1: Boolean, cond: ConditionLink.condition, next: ConditionBlock, context: Context): Either[ExecError, Boolean] = {
     if (!state1 && cond == ConditionLink.AND) Right(false)
     else {
       solveConditionBlock(next, context) match {

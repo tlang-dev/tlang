@@ -1,6 +1,6 @@
 grammar TLangHelper;
 
-import CommonLexer;
+import TLangCommon, CommonLexer;
 
 /*
  * Helper block
@@ -30,10 +30,10 @@ helperFuncType: type='(' (currying+=helperCurrying)? ')' ('(' currying+=helperCu
 
 helperContent: content+=helperStatement*;
 
-helperStatement: helperIf | helperFor | helperCallObj | helperConditionBlock;
+helperStatement: assignVar | helperIf | helperFor | callObj | conditionBlock;
 
 helperIf:
-    'if' '(' condition=helperConditionBlock ')' '{'
+    'if' '(' cond=conditionBlock ')' '{'
         body=helperContent
     '}' orElse=helperElse?;
 
@@ -42,41 +42,8 @@ helperElse:
         body=helperContent
     '}';
 
-helperConditionBlock:
-     content=helperCondition (link=('&&' | '||')  next=helperConditionBlock)* |
-    '(' content=helperCondition ')' (link=('&&' | '||')  next=helperConditionBlock)* |
-    '(' content=helperCondition (link=('&&' | '||')  next=helperConditionBlock)* ')' |
-    '(' innerBlock=helperConditionBlock ')' (link=('&&' | '||')  next=helperConditionBlock)*
-;
-
-helperCondition:
-    arg1=helperCallObj (mark=conditionMark arg2=helperCallObj)? (link=('&&' | '||') next=helperConditionBlock)*
-;
-
-conditionMark: '==' | '!=' | '<' | '>' | '<=' | '>=';
-
 helperFor:
-    'for' '(' var=ID start=helperCallObj? type=('in' | 'to' | 'until') array=helperCallObj ')' '{'
+    'for' '(' var=ID start=simpleValueType? type=('in' | 'to' | 'until') array=simpleValueType ')' '{'
         body=helperContent
     '}'
 ;
-
-helperCallObj: objs+=helperCallObjType ('.'objs+=helperCallObjType)*;
-
-helperCallObjType:
-    helperCallArray | helperCallString | helperCallText | helperCallNumber | helperCallFunc | helperCallVariable
-;
-
-helperCallString: type=STRING;
-
-helperCallNumber: type=NUMBER;
-
-helperCallText: type=TEXT;
-
-helperCallArray: (name=ID)? '[' elem=helperCallObj ']';
-
-helperCallFunc:
-    ((name=ID) | '_') currying += '(' params+=helperCallObj (',' params+=helperCallObj)* ')' (currying+='(' params+=helperCallObj (',' params+=helperCallObj)* ')')*
-;
-
-helperCallVariable: name=ID;

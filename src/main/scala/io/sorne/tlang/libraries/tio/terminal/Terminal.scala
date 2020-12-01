@@ -1,7 +1,7 @@
 package io.sorne.tlang.libraries.tio.terminal
 
+import io.sorne.tlang.ast.common.value.TLangString
 import io.sorne.tlang.ast.helper._
-import io.sorne.tlang.interpreter.`type`.TLangString
 import io.sorne.tlang.interpreter.context.{Context, ContextUtils}
 
 object Terminal {

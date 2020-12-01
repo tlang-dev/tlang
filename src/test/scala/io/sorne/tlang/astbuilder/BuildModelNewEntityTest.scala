@@ -1,6 +1,6 @@
 package io.sorne.tlang.astbuilder
 
-import io.sorne.tlang.ast.model.let.{ModelNewArrayValue, ModelNewEntity, ModelNewEntityValue, ModelNewPrimitiveValue}
+import io.sorne.tlang.ast.common.value.{ArrayValue, EntityValue}
 import io.sorne.tlang.{TLangLexer, TLangParser}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
@@ -46,11 +46,11 @@ class BuildModelNewEntityTest extends AnyFunSuite {
     assert("AnyEntity".equals(newEntity.entity.`type`.get))
     assert(newEntity.entity.params.get.head.attr.isEmpty)
     assert("\"myString\"".equals(newEntity.entity.params.get.head.value.asInstanceOf[ModelNewPrimitiveValue].getValue.value))
-    assert("var1".equals(newEntity.entity.params.get(1).value.asInstanceOf[ModelNewArrayValue].attr.get))
-    assert("\"elm1\"".equals(newEntity.entity.params.get(1).value.asInstanceOf[ModelNewArrayValue].tbl.get.head.value.asInstanceOf[ModelNewPrimitiveValue].getValue.value))
-    assert("\"elm2\"".equals(newEntity.entity.params.get(1).value.asInstanceOf[ModelNewArrayValue].tbl.get.last.value.asInstanceOf[ModelNewPrimitiveValue].getValue.value))
+    assert("var1".equals(newEntity.entity.params.get(1).value.asInstanceOf[ArrayValue].attr.get))
+    assert("\"elm1\"".equals(newEntity.entity.params.get(1).value.asInstanceOf[ArrayValue].tbl.get.head.value.asInstanceOf[ModelNewPrimitiveValue].getValue.value))
+    assert("\"elm2\"".equals(newEntity.entity.params.get(1).value.asInstanceOf[ArrayValue].tbl.get.last.value.asInstanceOf[ModelNewPrimitiveValue].getValue.value))
     assert("newEntity".equals(newEntity.entity.params.get.last.attr.get))
-    assert("NewEntity".equals(newEntity.entity.params.get.last.value.asInstanceOf[ModelNewEntityValue].`type`.get))
+    assert("NewEntity".equals(newEntity.entity.params.get.last.value.asInstanceOf[EntityValue].`type`.get))
   }
 
 }

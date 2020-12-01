@@ -21,38 +21,46 @@ object ManifestLoader {
       elems.getOrElse("project", "").asInstanceOf[String],
       elems.getOrElse("organisation", "").asInstanceOf[String],
       elems.getOrElse("version", "").asInstanceOf[String],
-      getStability(elems),
+      extractStability(elems),
       elems.getOrElse("releaseNumber", 1).asInstanceOf[Int],
       getDependencies(elems),
     )
   }
 
-  def getStability(elems: Map[String, _]): Option[Stability.stability] = {
-    if (elems.contains("stability")) elems("stability") match {
+  def extractStability(elems: Map[String, _]): Option[Stability.stability] = {
+    if (elems.contains("stability")) getStability(elems("stability").asInstanceOf[String]) else None
+  }
+
+  def getStability(stability: String): Option[Stability.stability] = {
+    stability match {
       case "final" => Some(Stability.FINAL)
       case "rc" => Some(Stability.RC)
       case "beta" => Some(Stability.BETA)
       case "alpha" => Some(Stability.ALPHA)
       case _ => None
-    } else None
+    }
   }
 
   def getDependencies(elems: Map[String, _]): Option[List[Dependency]] = {
     if (elems.contains("dependencies")) {
-      val deps = elems("dependencies").asInstanceOf[util.ArrayList[util.Map[String, Object]]].asScala.toList
-      Some(deps.map(dep => getDependency(dep.asScala.toMap)))
+      val deps = elems("dependencies").asInstanceOf[util.ArrayList[String]].asScala.toList
+      Some(deps.map(dep => getDependency(dep)))
     } else None
   }
 
-  def getDependency(elem: Map[String, _]): Dependency = {
+  def getDependency(dependency: String): Dependency = {
+    val parts = dependency.split(" ")
+    val names = parts(0).split("/")
+    val versions = parts(1).split(":")
+    val alias = parts(2)
     Dependency(
-      elem.getOrElse("organisation", "").asInstanceOf[String],
-      elem.getOrElse("project", "").asInstanceOf[String],
-      elem.getOrElse("name", "").asInstanceOf[String],
-      elem.getOrElse("version", "").asInstanceOf[String],
-      getStability(elem).getOrElse(Stability.FINAL),
-      elem.getOrElse("releaseNumber", 1).asInstanceOf[Int],
-      elem.getOrElse("alias", "").asInstanceOf[String],
+      names(0),
+      names(1),
+      names(2),
+      versions(0),
+      getStability(versions(1)).getOrElse(Stability.FINAL),
+      versions(2).toInt,
+      alias
     )
   }
 

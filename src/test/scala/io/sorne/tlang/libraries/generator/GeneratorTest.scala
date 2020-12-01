@@ -1,9 +1,9 @@
 package io.sorne.tlang.libraries.generator
 
-import io.sorne.tlang.ast.helper.call.{HelperCallFuncObject, HelperCallFuncParam, HelperCallObject, HelperCallVarObject}
+import io.sorne.tlang.ast.common.call.{CallFuncObject, CallObject, CallVarObject}
+import io.sorne.tlang.ast.common.value.TLangString
 import io.sorne.tlang.ast.tmpl.{TmplBlock, TmplBlockAsValue}
 import io.sorne.tlang.interpreter.{ElementNotFound, ExecCallFunc, ExecFunc}
-import io.sorne.tlang.interpreter.`type`.TLangString
 import io.sorne.tlang.interpreter.context.{Context, Scope}
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -29,7 +29,7 @@ class GeneratorTest extends AnyFunSuite {
     val block = TmplBlock("myBlock", "scala", None, Some("myPackage"))
     val blockAsValue = TmplBlockAsValue(block, List())
     val context = Context(List(Scope(variables = mutable.Map("myTmpl" -> blockAsValue), functions = mutable.Map("generate" -> Generator.generateFunc))))
-    val caller = HelperCallFuncObject(Some("generate"), Some(List(HelperCallFuncParam(List(HelperCallObject(List(HelperCallVarObject("myTmpl"))))))))
+    val caller = CallFuncObject(Some("generate"), Some(List(CallFuncParam(List(CallObject(List(CallVarObject("myTmpl"))))))))
     val res = ExecCallFunc.run(caller, context).toOption.get.get.head.asInstanceOf[TLangString].getValue
     assert(res.contains("package myPackage"))
   }

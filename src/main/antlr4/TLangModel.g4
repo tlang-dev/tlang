@@ -1,6 +1,6 @@
 grammar TLangModel;
 
-import CommonLexer;
+import TLangCommon, CommonLexer;
 
 	/*
  * Model Block
@@ -13,33 +13,33 @@ modelBlock:
 
 //MODEL: 'model';
 
-modelContent: modelNewEntity | modelSetEntity;
+modelContent: assignVar | modelSetEntity;
 
 /**
 * Create new Entity
 */
-modelNewEntity:
-    'let' name=ID entity=modelNewEntityValue
-;
-
-modelNewEntityValue:
-	(type=ID)? ('(' ((attrs+=modelValueType) (',' attrs+=modelValueType)*) ')')? '{'
-	decl+=modelValueType*
-	'}';
-
-modelValueType:
-	(modelAttribute | modelEntityAsAttribute | modelArray);
-
-modelArray:
-	attr=ID? ('[')
-	((elms+=modelValueType) (',' elms+=modelValueType)*)
-	']';
-
-modelEntityAsAttribute:
-	(attr=ID? value=modelNewEntityValue);
-
-modelAttribute:
-	(attr=ID? value=STRING);
+//modelNewEntity:
+//    'let' name=ID entity=modelNewEntityValue
+//;
+//
+//modelNewEntityValue:
+//	(type=ID)? ('(' ((attrs+=modelValueType) (',' attrs+=modelValueType)*) ')')? '{'
+//	decl+=modelValueType*
+//	'}';
+//
+//modelValueType:
+//	(modelAttribute | modelEntityAsAttribute | modelArray);
+//
+//modelArray:
+//	attr=ID? ('[')
+//	((elms+=modelValueType) (',' elms+=modelValueType)*)
+//	']';
+//
+//modelEntityAsAttribute:
+//	(attr=ID? value=modelNewEntityValue);
+//
+//modelAttribute:
+//	(attr=ID? value=STRING);
 
 /**
 * Set entity type
@@ -68,4 +68,4 @@ modelSetRef: '&' refs+=ID ('.' refs+=ID)* (('(' currying+=modelSetRefCurrying  '
 
 modelSetRefCurrying:values+=modelSetRefValue (',' values+=modelSetRefValue)*;
 
-modelSetRefValue: modelSetRef | modelAttribute | modelEntityAsAttribute | modelArray;
+modelSetRefValue: modelSetRef | complexValueType;

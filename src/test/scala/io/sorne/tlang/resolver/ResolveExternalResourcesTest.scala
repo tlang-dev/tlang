@@ -16,13 +16,7 @@ class ResolveExternalResourcesTest extends AnyFunSuite {
       |stability: final
       |releaseNumber: 2
       |dependencies:
-      |  - organisation: TLang
-      |    project: Generator
-      |    name: Generator
-      |    version: 1.0.0
-      |    stability: alpha
-      |    releaseNumber: 1
-      |    alias: gen
+      |  - TLang/Generator/Generator 1.0.0:alpha:1 gen
       |""".stripMargin
 
   test("Resolve from external resources") {

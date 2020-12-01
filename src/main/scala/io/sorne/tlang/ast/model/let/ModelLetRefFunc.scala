@@ -1,11 +1,11 @@
 package io.sorne.tlang.ast.model.let
 
+import io.sorne.tlang.ast.common.call.CallFuncParam
 import io.sorne.tlang.ast.helper.HelperFunc
-import io.sorne.tlang.ast.helper.call.HelperCallFuncParam
+import io.sorne.tlang.ast.common.value.TLangType
 import io.sorne.tlang.interpreter.Value
-import io.sorne.tlang.interpreter.`type`.TLangType
 
-case class ModelLetRefFunc(func: HelperFunc, currying: Option[List[HelperCallFuncParam]]) extends ModelLetRefType[ModelLetRefFunc] {
+case class ModelLetRefFunc(func: HelperFunc, currying: Option[List[CallFuncParam]]) extends ModelLetRefType[ModelLetRefFunc] {
   override def getValue: ModelLetRefFunc = this
 
   override def getType: String = ModelLetRefFunc.getType

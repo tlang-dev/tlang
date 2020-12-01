@@ -1,6 +1,6 @@
 package io.sorne.tlang.astbuilder
 
-import io.sorne.tlang.ast.helper.call.{HelperCallInt, HelperCallObject, HelperCallString, HelperCallVarObject}
+import io.sorne.tlang.ast.common.call.{CallObject, CallVarObject}
 import io.sorne.tlang.ast.helper.{ForType, HelperFor, HelperIf}
 import io.sorne.tlang.{TLangLexer, TLangParser}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
@@ -23,10 +23,10 @@ class BuildHelperForStatementTest extends AnyFunSuite{
     val func = BuildHelperBlock.build(parser.helperBlock()).funcs.get.head
     val forStmt = func.block.content.get.head.asInstanceOf[HelperFor]
     assert("i" == forStmt.variable)
-    assert(1 == forStmt.start.get.statements.head.asInstanceOf[HelperCallInt].value)
+    assert(1 == forStmt.start.get.statements.head.asInstanceOf[HelperNewInt].value)
     assert(ForType.TO == forStmt.forType)
-    assert(10 == forStmt.array.statements.head.asInstanceOf[HelperCallInt].value)
-    assert("\"myBody\"" == forStmt.body.content.get.head.asInstanceOf[HelperCallObject].statements.head.asInstanceOf[HelperCallString].value)
+    assert(10 == forStmt.array.statements.head.asInstanceOf[HelperNewInt].value)
+    assert("\"myBody\"" == forStmt.body.content.get.head.asInstanceOf[CallObject].statements.head.asInstanceOf[HelperNewString].value)
   }
 
   test("For 0 until 10") {
@@ -43,9 +43,9 @@ class BuildHelperForStatementTest extends AnyFunSuite{
     val func = BuildHelperBlock.build(parser.helperBlock()).funcs.get.head
     val forStmt = func.block.content.get.head.asInstanceOf[HelperFor]
     assert("i" == forStmt.variable)
-    assert(0 == forStmt.start.get.statements.head.asInstanceOf[HelperCallInt].value)
+    assert(0 == forStmt.start.get.statements.head.asInstanceOf[HelperNewInt].value)
     assert(ForType.UNTIL == forStmt.forType)
-    assert(10 == forStmt.array.statements.head.asInstanceOf[HelperCallInt].value)
+    assert(10 == forStmt.array.statements.head.asInstanceOf[HelperNewInt].value)
     assert(forStmt.body.content.isEmpty)
   }
 
@@ -65,7 +65,7 @@ class BuildHelperForStatementTest extends AnyFunSuite{
     assert("i" == forStmt.variable)
     assert(forStmt.start.isEmpty)
     assert(ForType.IN == forStmt.forType)
-    assert("myVar" == forStmt.array.statements.head.asInstanceOf[HelperCallVarObject].name)
+    assert("myVar" == forStmt.array.statements.head.asInstanceOf[CallVarObject].name)
     assert(forStmt.body.content.isEmpty)
   }
 

@@ -65,7 +65,7 @@ object BuildModuleTree {
   }
 
   def browseResources(root: String, fromRoot: String, pkg: String, name: String, resources: mutable.Map[String, Resource])(implicit resourceLoader: ResourceLoader): Option[LoaderError] = {
-    resourceLoader.load(root, fromRoot, pkg, name) match {
+    resourceLoader.load(root, fromRoot, pkg, name + ".tlang") match {
       case Left(error) => Some(error)
       case Right(value) =>
         val resource = buildResourceAST(root, fromRoot, pkg, name, value)

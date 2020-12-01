@@ -13,20 +13,8 @@ class ManifestLoaderTest extends AnyFunSuite {
         |stability: final
         |releaseNumber: 2
         |dependencies:
-        |  - organisation: TLang
-        |    project: IO
-        |    name: File
-        |    version: 1.0.0
-        |    stability: alpha
-        |    releaseNumber: 2
-        |    alias: file
-        |  - organisation: TLang
-        |    project: Generator
-        |    name: Generator
-        |    version: 1.2.0
-        |    stability: beta
-        |    releaseNumber: 3
-        |    alias: generator
+        |  - TLang/IO/File 1.0.0:alpha:2 file
+        |  - TLang/Generator/Generator 1.2.0:beta:3 generator
         |""".stripMargin
     val manifest = ManifestLoader.parseManifest(yaml)
     assert("MyProgram" == manifest.name)
@@ -68,24 +56,16 @@ class ManifestLoaderTest extends AnyFunSuite {
   }
 
   test("Get stability") {
-    assert(Stability.FINAL == ManifestLoader.getStability(Map("stability" -> "final")).get)
-    assert(Stability.RC == ManifestLoader.getStability(Map("stability" -> "rc")).get)
-    assert(Stability.BETA == ManifestLoader.getStability(Map("stability" -> "beta")).get)
-    assert(Stability.ALPHA == ManifestLoader.getStability(Map("stability" -> "alpha")).get)
-    assert(ManifestLoader.getStability(Map("stability" -> "anything")).isEmpty)
-    assert(ManifestLoader.getStability(Map()).isEmpty)
+    assert(Stability.FINAL == ManifestLoader.extractStability(Map("stability" -> "final")).get)
+    assert(Stability.RC == ManifestLoader.extractStability(Map("stability" -> "rc")).get)
+    assert(Stability.BETA == ManifestLoader.extractStability(Map("stability" -> "beta")).get)
+    assert(Stability.ALPHA == ManifestLoader.extractStability(Map("stability" -> "alpha")).get)
+    assert(ManifestLoader.extractStability(Map("stability" -> "anything")).isEmpty)
+    assert(ManifestLoader.extractStability(Map()).isEmpty)
   }
 
   test("Get dependency") {
-    val dependency = ManifestLoader.getDependency(Map(
-      "organisation" -> "MyOrganisation",
-      "project" -> "MyProject",
-      "name" -> "MyProgram",
-      "version" -> "1.33.7",
-      "stability" -> "alpha",
-      "releaseNumber" -> 2.toInt,
-      "alias" -> "myProgram"
-    ))
+    val dependency = ManifestLoader.getDependency("MyOrganisation/MyProject/MyProgram 1.33.7:alpha:2 myProgram")
     assert("MyProgram" == dependency.name)
     assert("MyProject" == dependency.project)
     assert("MyOrganisation" == dependency.organisation)
@@ -93,16 +73,6 @@ class ManifestLoaderTest extends AnyFunSuite {
     assert(Stability.ALPHA == dependency.stability)
     assert(2 == dependency.releaseNumber)
     assert("myProgram" == dependency.alias)
-  }
-
-  test("Get dependency with default values") {
-    val dependency = ManifestLoader.getDependency(Map())
-    assert("" == dependency.name)
-    assert("" == dependency.project)
-    assert("" == dependency.organisation)
-    assert("" == dependency.version)
-    assert(Stability.FINAL == dependency.stability)
-    assert(1 == dependency.releaseNumber)
   }
 
 }

@@ -1,9 +1,9 @@
 package io.sorne.tlang.interpreter
 
-import io.sorne.tlang.ast.helper.call.{HelperCallObject, HelperCallVarObject}
-import io.sorne.tlang.ast.helper.{HelperAssignVar, HelperNewMultiValue}
+import io.sorne.tlang.ast.common.CommonNewMultiValue
+import io.sorne.tlang.ast.common.call.{CallObject, CallVarObject}
+import io.sorne.tlang.ast.common.value.{MultiValue, TLangString}
 import io.sorne.tlang.ast.model.let.ModelLetMultiValue
-import io.sorne.tlang.interpreter.`type`.TLangString
 import io.sorne.tlang.interpreter.context.{Context, Scope}
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -36,7 +36,7 @@ class ExecAssignVarTest extends AnyFunSuite {
   }
 
   test("Assign value from called object") {
-    val varToCall = HelperCallObject(List(HelperCallVarObject("var1")))
+    val varToCall = CallObject(List(CallVarObject("var1")))
     val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangString("myValue")))))
     val statement = HelperAssignVar("myVar", Left(varToCall))
     val res = ExecAssignVar.run(statement, context)
@@ -45,9 +45,9 @@ class ExecAssignVarTest extends AnyFunSuite {
   }
 
   test("Assign multiple values with HelperNewMultiValue") {
-    val varToCall = HelperCallObject(List(HelperCallVarObject("var1")))
+    val varToCall = CallObject(List(CallVarObject("var1")))
     val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangString("myValue2")))))
-    val values = HelperNewMultiValue(List(
+    val values = MultiValue(List(
       Right(new TLangString("myValue1")),
       Left(varToCall),
       Right(new TLangString("myValue3"))))

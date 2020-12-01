@@ -3,10 +3,10 @@ package io.sorne.tlang.resolver
 import java.nio.file.Paths
 
 import io.sorne.tlang.ast.DomainUse
-import io.sorne.tlang.ast.helper.call.{HelperCallFuncObject, HelperCallObject, HelperCallVarObject}
+import io.sorne.tlang.ast.common.call.{CallFuncObject, CallObject, CallVarObject}
+import io.sorne.tlang.ast.common.value.EntityValue
 import io.sorne.tlang.ast.helper.{HelperBlock, HelperContent, HelperFunc}
 import io.sorne.tlang.ast.model.ModelContent
-import io.sorne.tlang.ast.model.let.{ModelNewEntity, ModelNewEntityValue}
 import io.sorne.tlang.ast.model.set.ModelSetEntity
 import io.sorne.tlang.astbuilder.BuildAst
 import io.sorne.tlang.interpreter.context.Scope
@@ -111,7 +111,7 @@ class ResolveContextTest extends AnyFunSuite {
     }
     val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
     val uses = List(DomainUse(List("MyPackage", "MyFile")))
-    val caller = HelperCallObject(List(HelperCallVarObject("MyFile"), HelperCallVarObject("myEntity")))
+    val caller = CallObject(List(CallVarObject("MyFile"), CallVarObject("myEntity")))
     val scope = Scope()
     val func = HelperFunc("aFunc", None, None, HelperContent(Some(List(caller))), scope)
     ResolveContext.resolveFuncs(List(func), module, uses)
@@ -141,7 +141,7 @@ class ResolveContextTest extends AnyFunSuite {
     }
     val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
     val uses = List(DomainUse(List("MyPackage", "MyFile")))
-    val caller = HelperCallObject(List(HelperCallVarObject("MyFile"), HelperCallVarObject("myEntity")))
+    val caller = CallObject(List(CallVarObject("MyFile"), CallVarObject("myEntity")))
     val scope = Scope()
     ResolveContext.resolveStatements(Some(List(caller)), module, uses, scope)
     assert("MyFile/myEntity" == scope.variables.head._1)
@@ -170,7 +170,7 @@ class ResolveContextTest extends AnyFunSuite {
     }
     val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
     val uses = List(DomainUse(List("MyPackage", "MyFile")))
-    val caller = HelperCallObject(List(HelperCallVarObject("MyFile"), HelperCallVarObject("myEntity")))
+    val caller = CallObject(List(CallVarObject("MyFile"), CallVarObject("myEntity")))
     val scope = Scope()
     ResolveContext.resolveCallObject(caller, module, uses, scope).toOption.get
     assert("MyFile/myEntity" == scope.variables.head._1)
@@ -200,7 +200,7 @@ class ResolveContextTest extends AnyFunSuite {
     }
     val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
     val uses = List(DomainUse(List("MyFile")))
-    val caller = HelperCallObject(List(HelperCallVarObject("MyFile"), HelperCallVarObject("myFunc")))
+    val caller = CallObject(List(CallVarObject("MyFile"), CallVarObject("myFunc")))
     val scope = Scope()
     ResolveContext.resolveCallObject(caller, module, uses, scope).toOption.get
     assert("MyFile/myFunc" == scope.functions.head._1)
@@ -219,7 +219,7 @@ class ResolveContextTest extends AnyFunSuite {
     val parser = new TLangParser(tokens)
     val block = BuildAst.build(parser.domainModel())
     val resource = Resource("", "", "", "Main", block)
-    val calls = List(HelperCallVarObject("first"), HelperCallVarObject("second"), HelperCallFuncObject(Some("myFunc"), None))
+    val calls = List(CallVarObject("first"), CallVarObject("second"), CallFuncObject(Some("myFunc"), None))
     val scope = Scope()
 
     ResolveContext.followCall(resource, calls, 2, List("first", "second"), scope)
@@ -239,7 +239,7 @@ class ResolveContextTest extends AnyFunSuite {
     val parser = new TLangParser(tokens)
     val block = BuildAst.build(parser.domainModel())
     val resource = Resource("", "", "", "Main", block)
-    val calls = List(HelperCallVarObject("first"), HelperCallVarObject("second"), HelperCallVarObject("myEntity"))
+    val calls = List(CallVarObject("first"), CallVarObject("second"), CallVarObject("myEntity"))
     val scope = Scope()
 
     ResolveContext.followCall(resource, calls, 2, List("first", "second"), scope)
@@ -260,7 +260,7 @@ class ResolveContextTest extends AnyFunSuite {
     val block = BuildAst.build(parser.domainModel())
     val resource = Resource("", "", "", "Main", block)
 
-    val func = ResolveContext.findInResource(resource, HelperCallFuncObject(Some("MyFunc2"), None)).toOption.get.get.asInstanceOf[HelperFunc]
+    val func = ResolveContext.findInResource(resource, CallFuncObject(Some("MyFunc2"), None)).toOption.get.get.asInstanceOf[HelperFunc]
     assert("MyFunc2" == func.name)
   }
 
@@ -277,7 +277,7 @@ class ResolveContextTest extends AnyFunSuite {
     val block = BuildAst.build(parser.domainModel())
     val resource = Resource("", "", "", "Main", block)
 
-    val entityType = ResolveContext.findInResource(resource, HelperCallVarObject("myEntity2")).toOption.get.get.asInstanceOf[ModelNewEntityValue].`type`.get
+    val entityType = ResolveContext.findInResource(resource, CallVarObject("myEntity2")).toOption.get.get.asInstanceOf[EntityValue].`type`.get
     assert("AnyEntity2" == entityType)
   }
 
@@ -295,8 +295,8 @@ class ResolveContextTest extends AnyFunSuite {
   test("Find var") {
     val contents: List[ModelContent] = List(
       ModelSetEntity("myEntity", None, None),
-      ModelNewEntity("myEntity", ModelNewEntityValue(None, None, None)),
-      ModelNewEntity("myEntity2", ModelNewEntityValue(None, None, None)),
+      ModelNewEntity("myEntity", EntityValue(None, None, None)),
+      ModelNewEntity("myEntity2", EntityValue(None, None, None)),
     )
 
     val myVar = ResolveContext.findInVars(contents, "myEntity")
@@ -317,8 +317,8 @@ class ResolveContextTest extends AnyFunSuite {
   test("Find empty var") {
     val contents: List[ModelContent] = List(
       ModelSetEntity("myEntity", None, None),
-      ModelNewEntity("myEntity", ModelNewEntityValue(None, None, None)),
-      ModelNewEntity("myEntity2", ModelNewEntityValue(None, None, None)),
+      ModelNewEntity("myEntity", EntityValue(None, None, None)),
+      ModelNewEntity("myEntity2", EntityValue(None, None, None)),
     )
 
     val myVar = ResolveContext.findInVars(contents, "myEntity3")
