@@ -1,3 +1,5 @@
 package io.sorne.tlang.resolver
 
-case class ResolverError(code: String, message: String = "")
+class ResolverError(code: String, message: String = "")
+
+case class ResourceNotFound(error: String) extends ResolverError("ResourceNotFound", error)

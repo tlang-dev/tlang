@@ -1,13 +1,13 @@
 package io.sorne.tlang.resolver
 
 import io.sorne.tlang.ast.DomainUse
-import io.sorne.tlang.ast.helper._
 import io.sorne.tlang.ast.common.call.{CallFuncObject, CallObject, CallObjectType, CallVarObject}
-import io.sorne.tlang.ast.common.value.{AssignVar, EntityValue, PrimitiveValue}
+import io.sorne.tlang.ast.common.value.PrimitiveValue
+import io.sorne.tlang.ast.helper._
 import io.sorne.tlang.ast.model.{ModelBlock, ModelContent}
 import io.sorne.tlang.ast.tmpl.{TmplBlock, TmplBlockAsValue}
+import io.sorne.tlang.interpreter.Value
 import io.sorne.tlang.interpreter.context.Scope
-import io.sorne.tlang.interpreter.{Value, WrongType}
 import io.sorne.tlang.loader.{BuildModuleTree, Module, Resource}
 
 object ResolveContext {
@@ -21,19 +21,19 @@ object ResolveContext {
       }
 
       ast.body.foreach {
-        case HelperBlock(funcs) => funcs.foreach(resolveFuncs(_, module, uses))
-        case ModelBlock(content) =>
-        case _ =>
+        case HelperBlock(funcs) => funcs.foreach(resolveFuncs(_, module, uses, resource._2))
+        case ModelBlock(content) => resolveModel(content, module, uses, resource._2)
+        case _ => Right(())
       }
     })
     Right(())
   }
 
-  def resolveFuncs(funcs: List[HelperFunc], module: Module, uses: List[DomainUse]): Either[ResolverError, Unit] = {
+  def resolveFuncs(funcs: List[HelperFunc], module: Module, uses: List[DomainUse], currentResource: Resource): Either[ResolverError, Unit] = {
     var error: Option[ResolverError] = None
     var i = 0
     while (error.isEmpty && i < funcs.size) {
-      resolveStatements(funcs(i).block.content, module, uses, funcs(i).scope) match {
+      ResolveStatement.resolveStatements(funcs(i).block.content, module, uses, funcs(i).scope, currentResource) match {
         case Left(err) => error = Some(err)
         case _ =>
       }
@@ -43,27 +43,17 @@ object ResolveContext {
     else Right(())
   }
 
-  def resolveStatements(statements: Option[List[HelperStatement]], module: Module, uses: List[DomainUse], scope: Scope): Either[ResolverError, Unit] = {
-    if (statements.nonEmpty) {
-      var error: Option[ResolverError] = None
-      var i = 0
-      while (error.isEmpty && i < statements.get.size) {
-        val statement = statements.get(i)
-        statement match {
-          case call: CallObject => resolveCallObject(call, module, uses, scope)
-          case _ => resolveStatement(statement, module, uses) match {
-            case Left(err) => error = Some(err)
-            case _ =>
-          }
-        }
-        i += 1
-      }
-      if (error.isDefined) Left(error.get)
-      else Right(())
-    } else Right(())
-  }
+  def resolveCallObject(call: CallObject, module: Module, uses: List[DomainUse], scope: Scope, currentResource: Resource): Either[ResolverError, Unit] = {
 
-  def resolveCallObject(call: CallObject, module: Module, uses: List[DomainUse], scope: Scope): Either[ResolverError, Unit] = {
+    def callNextLevel(resource: Resource, sameResource: Boolean, previousNames: List[String], level: Int): Either[ResolverError, Unit] = {
+      followCall(resource, sameResource, call.statements, level, previousNames, scope)
+      val stmt = call.statements(level)
+      stmt match {
+        case funcObject: CallFuncObject => ResolveStatement.resolveCallFuncObjectParams(funcObject, module, uses, scope, currentResource)
+        case _ => Right(())
+      }
+    }
+
     call.statements.head match {
       case varObj: CallVarObject =>
         var error: Option[ResolverError] = None
@@ -72,44 +62,34 @@ object ResolveContext {
         while (!found && error.isEmpty && i < uses.size) {
           val use = uses(i)
           if (use.parts.last == varObj.name) {
-            val name = use.parts.mkString("/")
-            module.resources.get(name) match {
+            ResolveUtils.findResource(use, module) match {
+              case None => error = Some(ResourceNotFound("Cannot find " + use.parts.mkString("/")))
               case Some(resource) =>
                 found = true
-                followCall(resource, call.statements, 1, List(use.parts.last), scope)
-              case None => module.extResources match {
-                case Some(resources) => resources.get(use.parts.head) match {
-                  case Some(extModule) => extModule.resources.get(extModule.mainFile) match {
-                    case Some(resource) =>
-                      found = true
-                      followCall(resource, call.statements, 1, List(use.parts.last), scope)
-                    case None => Right(())
-                  }
-                  case None => Right(())
-                }
-                case None => Right(())
-              }
+                callNextLevel(resource, sameResource = false, List(use.parts.last), 1)
             }
           }
           i += 1
         }
         if (error.isDefined) Left(error.get)
         else Right(())
+      case _: CallFuncObject =>
+        callNextLevel(currentResource, sameResource = true, List(), 0)
       case _ => Right(())
     }
 
   }
 
-  def followCall(resource: Resource, statements: List[CallObjectType], nextStatement: Int, previousNames: List[String], scope: Scope): Either[ResolverError, Unit] = {
+  def followCall(resource: Resource, sameResource: Boolean, statements: List[CallObjectType], nextStatement: Int, previousNames: List[String], scope: Scope): Either[ResolverError, Unit] = {
 
     def addInScope(lastName: String, elem: Either[ResolverError, Option[Value[_]]]): Either[ResolverError, Unit] = {
       elem match {
         case Left(error) => Left(error)
         case Right(value) => if (value.isDefined) {
-          val name = BuildModuleTree.createPkg(previousNames.mkString("/"), lastName)
+          val name = if (previousNames.nonEmpty) BuildModuleTree.createPkg(previousNames.mkString("/"), lastName) else lastName
           value.get match {
             case func: HelperFunc => scope.functions.addOne(name, func)
-            case variable: EntityValue => scope.variables.addOne(name, variable)
+            case variable: PrimitiveValue[_] => scope.variables.addOne(name, variable)
             case tmpl: TmplBlockAsValue => scope.templates.addOne(name, tmpl.block)
           }
           Right(())
@@ -124,17 +104,20 @@ object ResolveContext {
     }
 
     callName match {
-      case Some(objName) => resource.ast.header match {
-        case Some(header) => header.exposes match {
-          case Some(exposes) => exposes.find(_.name == objName) match {
-            case Some(expose) => addInScope(expose.name, findInResource(resource, statements(nextStatement)))
+      case Some(objName) =>
+        if (!sameResource) {
+          resource.ast.header match {
+            case Some(header) => header.exposes match {
+              case Some(exposes) => exposes.find(_.name == objName) match {
+                case Some(expose) => addInScope(expose.name, findInResource(resource, statements(nextStatement)))
+                case None => Right(())
+              }
+              case None => Right(())
+            }
             case None => Right(())
           }
-          case None => Right(())
-        }
-        case None => Right(())
-      }
-      case None => Left(ResolverError("Should be a var or a func"))
+        } else addInScope(objName, findInResource(resource, statements(nextStatement)))
+      case None => Left(new ResolverError("Should be a var or a func"))
     }
 
   }
@@ -148,13 +131,13 @@ object ResolveContext {
         val block = resource.ast.body(i)
         block match {
           case HelperBlock(funcs) => if (funcs.isDefined) {
-            findInFuncs(funcs.get, name) match {
+            ResolveUtils.findInFuncs(funcs.get, name) match {
               case Some(func) => elem = Some(func)
               case None =>
             }
           }
           case ModelBlock(contents) => if (contents.isDefined) {
-            findInVars(contents.get, name) match {
+            ResolveUtils.findInVars(contents.get, name) match {
               case Some(variable) => elem = Some(variable.value)
               case None =>
             }
@@ -175,34 +158,11 @@ object ResolveContext {
 
   }
 
-  def findInFuncs(funcs: List[HelperFunc], name: String): Option[HelperFunc] = {
-    var i = 0
-    var func: Option[HelperFunc] = None
-    while (func.isEmpty && i < funcs.size) {
-      if (funcs(i).name == name) func = Some(funcs(i))
-      i += 1
-    }
-    func
-  }
-
-  def findInVars(contents: List[ModelContent], name: String): Option[AssignVar] = {
-    var i = 0
-    var entity: Option[AssignVar] = None
-    while (entity.isEmpty && i < contents.size) {
-      contents(i) match {
-        case newEntity: AssignVar => if (newEntity.name == name) entity = Some(newEntity)
-        case _ =>
-      }
-      i += 1
-    }
-    entity
-  }
-
-  def resolveStatement(statement: HelperStatement, module: Module, uses: List[DomainUse]): Either[ResolverError, Unit] = {
-    Right(())
-  }
-
-  def resolveModel(model: ModelBlock, module: Module, uses: List[DomainUse]): Either[ResolverError, Unit] = {
+  def resolveModel(contents: Option[List[ModelContent]], module: Module, uses: List[DomainUse], currentResource: Resource): Either[ResolverError, Unit] = {
+    contents.foreach(_.foreach {
+      //case assign: AssignVar => ResolveStatement.resolveAssignVar(assign, module, uses, scope, currentResource)
+      case _ => Right(())
+    })
     Right(())
   }
 

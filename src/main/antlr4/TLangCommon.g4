@@ -32,7 +32,7 @@ callFunc:
     ((name=ID) | '_') (currying += curryParams)+
 ;
 
-curryParams:'(' params+=complexAttribute (',' params+=complexAttribute)* ')';
+curryParams:'(' (params+=complexAttribute (',' params+=complexAttribute)*)? ')';
 
 callVariable: name=ID;
 
