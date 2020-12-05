@@ -4,6 +4,7 @@ import io.sorne.tlang.{TLangLexer, TLangParser}
 import io.sorne.tlang.astbuilder.BuildTmplBlock
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
+import scala.jdk.CollectionConverters._
 
 class ScalaGeneratorTest extends AnyFunSuite {
 
@@ -15,8 +16,8 @@ class ScalaGeneratorTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val impl = BuildTmplBlock.buildImpl(parser.tmplBlock().tmplImpl)
-    assert(new ScalaGenerator().genClasses(impl).contains("extends Test1"))
+    val impl = BuildTmplBlock.buildImpl(parser.tmplBlock().tmplContents.asScala.toList.head.tmplImpl())
+    assert(ScalaGenerator.genImpl(impl).contains("extends Test1"))
   }
 
   test("Test impl fors") {
@@ -27,8 +28,8 @@ class ScalaGeneratorTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val impl = BuildTmplBlock.buildImpl(parser.tmplBlock().tmplImpl)
-    assert(new ScalaGenerator().genClasses(impl).contains("extends Test1 with Test2, Test3"))
+    val impl = BuildTmplBlock.buildImpl(parser.tmplBlock().tmplContents.asScala.toList.head.tmplImpl())
+    assert(ScalaGenerator.genImpl(impl).contains("extends Test1 with Test2, Test3"))
   }
 
 }

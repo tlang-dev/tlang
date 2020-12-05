@@ -4,6 +4,7 @@ import io.sorne.tlang.ast.tmpl.func.TmplFunc
 import io.sorne.tlang.{TLangLexer, TLangParser}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
+import scala.jdk.CollectionConverters._
 
 class BuildTmplFuncTest extends AnyFunSuite {
 
@@ -16,7 +17,7 @@ class BuildTmplFuncTest extends AnyFunSuite {
         |}}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val impl = BuildTmplBlock.buildImpl(parser.tmplBlock().tmplImpl)
+    val impl = BuildTmplBlock.buildImpl(parser.tmplBlock().tmplContents.asScala.toList.head.tmplImpl())
     assert("func1".equals(impl.content.get.head.asInstanceOf[TmplFunc].name))
   }
 
@@ -29,7 +30,7 @@ class BuildTmplFuncTest extends AnyFunSuite {
         |}}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val impl = BuildTmplBlock.buildImpl(parser.tmplBlock().tmplImpl)
+    val impl = BuildTmplBlock.buildImpl(parser.tmplBlock().tmplContents.asScala.toList.head.tmplImpl())
     assert("func1".equals(impl.content.get.head.asInstanceOf[TmplFunc].name))
   }
 
@@ -42,7 +43,7 @@ class BuildTmplFuncTest extends AnyFunSuite {
         |}}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val impl = BuildTmplBlock.buildImpl(parser.tmplBlock().tmplImpl)
+    val impl = BuildTmplBlock.buildImpl(parser.tmplBlock().tmplContents.asScala.toList.head.tmplImpl())
     val func = impl.content.get.head.asInstanceOf[TmplFunc]
     val param = func.curries.get.head.params.get.head
     assert("func1".equals(func.name))
@@ -61,7 +62,7 @@ class BuildTmplFuncTest extends AnyFunSuite {
         |}}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val impl = BuildTmplBlock.buildImpl(parser.tmplBlock().tmplImpl)
+    val impl = BuildTmplBlock.buildImpl(parser.tmplBlock().tmplContents.asScala.toList.head.tmplImpl())
     val func = impl.content.get.head.asInstanceOf[TmplFunc]
     val param = func.curries.get.head.params.get.head
     assert("func1".equals(func.name))
@@ -80,7 +81,7 @@ class BuildTmplFuncTest extends AnyFunSuite {
         |}}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val impl = BuildTmplBlock.buildImpl(parser.tmplBlock().tmplImpl)
+    val impl = BuildTmplBlock.buildImpl(parser.tmplBlock().tmplContents.asScala.toList.head.tmplImpl())
     val func = impl.content.get.head.asInstanceOf[TmplFunc]
     val param = func.curries.get.head.params.get.head
     assert("func1".equals(func.name))
@@ -101,7 +102,7 @@ class BuildTmplFuncTest extends AnyFunSuite {
         |}}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val impl = BuildTmplBlock.buildImpl(parser.tmplBlock().tmplImpl)
+    val impl = BuildTmplBlock.buildImpl(parser.tmplBlock().tmplContents.asScala.toList.head.tmplImpl())
     val func = impl.content.get.head.asInstanceOf[TmplFunc]
     val param1 = func.curries.get.head.params.get.head
     val param2 = func.curries.get.last.params.get.head

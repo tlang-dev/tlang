@@ -1,3 +1,3 @@
 package io.sorne.tlang.ast.tmpl
 
-case class TmplUse(name: String)
+case class TmplUse(parts: List[String])

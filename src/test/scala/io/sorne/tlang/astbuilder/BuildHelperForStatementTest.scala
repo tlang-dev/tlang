@@ -27,7 +27,7 @@ class BuildHelperForStatementTest extends AnyFunSuite {
     assert(1 == forStmt.start.get.asInstanceOf[TLangLong].getValue)
     assert(ForType.TO == forStmt.forType)
     assert(10 == forStmt.array.asInstanceOf[TLangLong].getValue)
-    assert("\"myBody\"" == forStmt.body.content.get.head.asInstanceOf[TLangString].getValue)
+    assert("myBody" == forStmt.body.content.get.head.asInstanceOf[TLangString].getValue)
   }
 
   test("For 0 until 10") {

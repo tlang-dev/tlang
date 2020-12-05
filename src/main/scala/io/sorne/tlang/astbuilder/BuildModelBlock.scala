@@ -21,7 +21,7 @@ object BuildModelBlock {
   }
 
   def extractSetEntityAttrDefs(attrs: List[ModelSetAttributeContext]): Option[List[ModelSetAttribute]] = {
-    if (attrs.nonEmpty) Some(attrs.map(attr => buildModeLSetValueType(Utils.getText(attr.attr), attr.value)))
+    if (attrs.nonEmpty) Some(attrs.map(attr => buildModeLSetValueType(AstBuilderUtils.getText(attr.attr), attr.value)))
     else None
   }
 

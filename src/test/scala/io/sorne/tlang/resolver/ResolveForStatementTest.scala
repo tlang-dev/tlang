@@ -120,7 +120,7 @@ class ResolveForStatementTest extends AnyFunSuite {
 
     val scope = module.resources(module.mainFile).ast.body.head.asInstanceOf[HelperBlock].funcs.get.head.scope
     assert("MyFile/content" == scope.variables.head._1)
-    assert("\"content\"" == scope.variables.head._2.asInstanceOf[TLangString].getValue)
+    assert("content" == scope.variables.head._2.asInstanceOf[TLangString].getValue)
   }
 
 }

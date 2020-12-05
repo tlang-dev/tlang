@@ -41,7 +41,7 @@ class BuildHelperStatementTest extends AnyFunSuite {
     assert("myArray" == array1.name)
     assert(1 == array1.position.asInstanceOf[TLangLong].getValue)
     assert("myArray2" == array2.name)
-    assert("\"one\"" == array2.position.asInstanceOf[TLangString].getValue)
+    assert("one" == array2.position.asInstanceOf[TLangString].getValue)
     assert("myArray3" == array3.name)
     assert("anyVar" == array3.position.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
   }
@@ -57,7 +57,7 @@ class BuildHelperStatementTest extends AnyFunSuite {
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
     val func = BuildHelperBlock.build(parser.helperBlock()).funcs.get.head
-    assert("\"myValue\"" == func.block.content.get.head.asInstanceOf[TLangString].getValue)
+    assert("myValue" == func.block.content.get.head.asInstanceOf[TLangString].getValue)
   }
 
   test("Call int") {

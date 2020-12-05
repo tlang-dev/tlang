@@ -55,7 +55,7 @@ object BuildHelperStatement {
 
   def buildCondition(condition: ConditionContext): Condition = {
     Condition(BuildCommon.buildSimpleValueType(None, condition.arg1),
-      if (condition.mark != null) Some(buildConditionType(condition.mark)) else None,
+      if (condition.mark != null) Some(buildConditionType(condition.mark.getText)) else None,
       if (condition.arg2 != null) Some(BuildCommon.buildSimpleValueType(None, condition.arg2)) else None,
       if (condition.link != null) Some(buildConditionLink(condition.link)) else None,
       if (condition.next != null) Some(buildConditionBlock(condition.next)) else None)
@@ -68,8 +68,8 @@ object BuildHelperStatement {
     }
   }
 
-  def buildConditionType(condition: ConditionMarkContext): ConditionType.condition = {
-    condition.getText match {
+  def buildConditionType(condType:String): ConditionType.condition = {
+    condType match {
       case "==" => ConditionType.EQUAL
       case "!=" => ConditionType.NOT_EQUAL
       case ">" => ConditionType.GREATER

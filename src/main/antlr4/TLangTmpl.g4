@@ -10,26 +10,23 @@ tmplBlock:
 	'tmpl' '[' lang=ID ']' name=ID ('('params+=ID (',' params+=ID)*')')? '{'
 	(tmplPakage=tmplPkg)?
 	(tmplUses+=tmplUse)*
-	(tmplImpls+=tmplImpl)*
-	(tmplFuncs+=tmplFunc)*
+	(tmplContents+=tmplContent)*
 	'}';
 
-tmplPkg:
-	'pkg' name=STRING;
+tmplContent: tmplImpl | tmplFunc | tmplExpression;
 
-tmplUse:
-	'use' name=STRING;
+tmplPkg: 'pkg' parts+=ID ('.' parts+=ID)*;
+
+tmplUse: 'use' parts+=ID ('.' parts+=ID)*;
 
 tmplImpl:
 	'impl' name=ID (('for' forName=ID) (',' forNames+=ID)*)? '{'
-	(tmplImplContents+=tmplImplContent)*
+	(tmplImplContents+=tmplContent)*
 	'}';
 
-tmplImplContent:
-    tmplExpression | tmplFunc;
-
 tmplFunc:
-	'func' name=ID curries+=tmplCurrying* (':' types+=tmplType (',' types+=tmplType)*)? ('{' exprs+=tmplExpression*
+	'func' name=ID curries+=tmplCurrying* (':' types+=tmplType (',' types+=tmplType)*)? ('{'
+	    exprs+=tmplExpression*
 	'}')?;
 
 tmplCurrying:
@@ -47,11 +44,58 @@ tmplType:
 tmplGeneric:
 	(types+=tmplType (',' types+=tmplType)*);
 
-tmplExpression:
-	tmplVal | tmplVar;
+tmplExpression:	tmplVar | tmplCallObj | tmplValueType | tmplConditionBlock | tmplFunc;
 
-tmplVal:
-	'val' name=ID (':' type=tmplType)? ('=' value=tmplExpression)?;
+tmplVar: 'var' name=ID (':' type=tmplType)? ('=' value=tmplExpression)?;
 
-tmplVar:
-	'var' name=ID (':' type=tmplType)? ('=' value=tmplExpression)?;
+tmplCallObj: objs+=tmplCallObjType ('.'objs+=tmplCallObjType)*;
+
+tmplCallObjType: tmplCallArray | tmplCallFunc | tmplCallVariable;
+
+tmplCallFunc: ((name=ID) | '_') (currying += tmplCurryParams)+;
+
+tmplCurryParams:'(' (params+=tmplSetAttribute (',' params+=tmplSetAttribute)*)? ')';
+
+tmplSetAttribute: (name=ID '=')? value=tmplValueType;
+
+tmplCallArray: name=ID '[' elem=tmplValueType ']';
+
+tmplCallVariable: name=ID;
+
+tmplValueType: tmplCallObj | tmplPrimitiveValue | tmplConditionBlock | tmplMultiValue;
+
+tmplSimpleValueType: tmplCallObj | tmplPrimitiveValue;
+
+tmplPrimitiveValue: tmplStringValue | tmplNumberValue | tmplTextValue | tmplEntityValue | tmplBoolValue | tmplArrayValue;
+
+tmplStringValue: value=STRING;
+
+tmplNumberValue: value=NUMBER;
+
+tmplTextValue: value=TEXT;
+
+tmplBoolValue: value= 'true' | 'false';
+
+tmplArrayValue: '[' (params+=tmplSetAttribute)? (',' params+=tmplSetAttribute)* ']';
+
+tmplAttribute: ((attr=ID)? (':' type=tmplType)? value=tmplValueType);
+
+tmplMultiValue: '(' (values+=tmplValueType) (',' values+=tmplValueType)* ')';
+
+tmplEntityValue:
+	 ('(' ((params+=tmplAttribute) (',' params+=tmplAttribute)*) ')')? '{'
+	attrs+=tmplAttribute*
+	'}';
+
+tmplConditionBlock:
+     content=tmplCondition (link=('&&' | '||')  next=tmplConditionBlock)* |
+    '(' content=tmplCondition ')' (link=('&&' | '||')  next=tmplConditionBlock)* |
+    '(' content=tmplCondition (link=('&&' | '||')  next=tmplConditionBlock)* ')' |
+    '(' innerBlock=tmplConditionBlock ')' (link=('&&' | '||')  next=tmplConditionBlock)*
+;
+
+tmplCondition:
+    arg1=tmplSimpleValueType (mark=tmplConditionMark arg2=tmplSimpleValueType)? (link=('&&' | '||') next=tmplConditionBlock)*
+;
+
+tmplConditionMark: '==' | '!=' | '<' | '>' | '<=' | '>=';

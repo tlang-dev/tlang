@@ -32,7 +32,6 @@ class ContentUtilsTest extends AnyFunSuite {
     "Sed at auctor risus.")
 
   test("Find char number by position") {
-    println(longText.indexOf("hasellus pulvinar cursus"))
     assert(340 == ContentUtils.findCharNumberByPosition(longText, Position(4, 0)))
     assert(1019 == ContentUtils.findCharNumberByPosition(longText, Position(16, 13)))
   }

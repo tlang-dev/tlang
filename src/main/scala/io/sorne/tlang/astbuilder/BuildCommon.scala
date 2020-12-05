@@ -9,7 +9,7 @@ import scala.jdk.CollectionConverters._
 object BuildCommon {
 
   def buildAssignVar(assign: AssignVarContext): AssignVar = {
-    val varType = if (assign.`type` != null && !assign.`type`.getText.isEmpty) Some(assign.`type`.getText) else None
+    val varType = if (assign.`type` != null && assign.`type`.getText.nonEmpty) Some(assign.`type`.getText) else None
     AssignVar(assign.name.getText,
       varType,
       buildComplexValueType(varType, assign.value))
@@ -32,11 +32,11 @@ object BuildCommon {
 
   def buildPrimitiveValue(`type`: Option[String] = None, value: PrimitiveValueContext): PrimitiveValue[_] = {
     value match {
-      case string@_ if string.stringValue() != null => new TLangString(string.stringValue().value.getText)
+      case string@_ if string.stringValue() != null => new TLangString(AstBuilderUtils.extraString(string.stringValue().value.getText))
       case number@_ if number.numberValue() != null =>
         val numbVal = number.numberValue().value.getText
         if (numbVal.contains(".")) new TLangDouble(numbVal.toDouble) else new TLangLong(numbVal.toLong)
-      case text@_ if text.textValue() != null => new TLangString(text.textValue().value.getText)
+      case text@_ if text.textValue() != null => new TLangString(AstBuilderUtils.extraText(text.textValue().value.getText))
       case entity@_ if entity.entityValue() != null => buildEntityValue(`type`, entity.entityValue())
       case bool@_ if bool.boolValue() != null => new TLangBool(bool.boolValue().value.getText == "true")
       case array@_ if array.arrayValue() != null => buildArray(array.arrayValue())
@@ -61,9 +61,9 @@ object BuildCommon {
   }
 
   def buildSimpleAttribute(attr: SimpleAttributeContext): SimpleAttribute = {
-    val attrType = if (attr.`type` != null && !attr.`type`.getText.isEmpty) Some(attr.`type`.getText) else None
+    val attrType = if (attr.`type` != null && attr.`type`.getText.nonEmpty) Some(attr.`type`.getText) else None
     SimpleAttribute(
-      if (attr.attr != null && !attr.attr.getText.isEmpty) Some(attr.attr.getText) else None,
+      if (attr.attr != null && attr.attr.getText.nonEmpty) Some(attr.attr.getText) else None,
       attrType,
       buildSimpleValueType(attrType, attr.value)
     )
@@ -74,9 +74,9 @@ object BuildCommon {
   }
 
   def buildComplexAttribute(attr: ComplexAttributeContext): ComplexAttribute = {
-    val attrType = if (attr.`type` != null && !attr.`type`.getText.isEmpty) Some(attr.`type`.getText) else None
+    val attrType = if (attr.`type` != null && attr.`type`.getText.nonEmpty) Some(attr.`type`.getText) else None
     ComplexAttribute(
-      if (attr.attr != null && !attr.attr.getText.isEmpty) Some(attr.attr.getText) else None,
+      if (attr.attr != null && attr.attr.getText.nonEmpty) Some(attr.attr.getText) else None,
       attrType,
       buildComplexValueType(attrType, attr.value)
     )
