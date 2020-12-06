@@ -1,7 +1,8 @@
 package io.sorne.tlang.astbuilder
 
 import io.sorne.tlang.TLangParser._
-import io.sorne.tlang.ast.common.call._
+import io.sorne.tlang.ast.common.call
+import io.sorne.tlang.ast.common.call.{SetAttribute, _}
 import io.sorne.tlang.ast.common.condition.{Condition, ConditionBlock}
 import io.sorne.tlang.ast.helper._
 import org.antlr.v4.runtime.Token
@@ -33,7 +34,13 @@ object BuildHelperStatement {
   }
 
   def buildCallFuncParam(params: List[CurryParamsContext]): Option[List[CallFuncParam]] = {
-    if (params.nonEmpty) Some(params.map(param => CallFuncParam(BuildCommon.buildComplexAttributes(param.params.asScala.toList)))) else None
+    if (params.nonEmpty) Some(params.map(param => CallFuncParam(
+      if (param.params != null && !param.params.isEmpty) Some(param.params.asScala.toList.map(buildSetAttribute)) else None)))
+    else None
+  }
+
+  def buildSetAttribute(attr: SetAttributeContext): SetAttribute = {
+    call.SetAttribute(AstBuilderUtils.getText(attr.attr), BuildCommon.buildComplexValueType(None, attr.value))
   }
 
   def buildIf(anIf: HelperIfContext): HelperIf = {
@@ -68,7 +75,7 @@ object BuildHelperStatement {
     }
   }
 
-  def buildConditionType(condType:String): ConditionType.condition = {
+  def buildConditionType(condType: String): ConditionType.condition = {
     condType match {
       case "==" => ConditionType.EQUAL
       case "!=" => ConditionType.NOT_EQUAL

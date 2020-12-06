@@ -142,7 +142,7 @@ object ResolveContext {
               case None =>
             }
           }
-          case tmpl: TmplBlock => if (tmpl.name == name) elem = Some(TmplBlockAsValue(tmpl, List()))
+          case tmpl: TmplBlock => if (tmpl.name == name) elem = Some(TmplBlockAsValue(tmpl, Map()))
         }
         i += 1
       }

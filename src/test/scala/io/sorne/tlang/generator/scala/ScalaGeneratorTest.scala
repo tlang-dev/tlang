@@ -32,4 +32,28 @@ class ScalaGeneratorTest extends AnyFunSuite {
     assert(ScalaGenerator.genImpl(impl).contains("extends Test1 with Test2, Test3"))
   }
 
+  test("Generate call func") {
+    val lexer = new TLangLexer(CharStreams.fromString(
+      """tmpl[scala] myTmpl {
+        |myVar.myFunc(1.0, "two")(param3=true)
+        |}""".stripMargin))
+    val tokens = new CommonTokenStream(lexer)
+    val parser = new TLangParser(tokens)
+    val impl = BuildTmplBlock.build(parser.tmplBlock())
+    val res = new ScalaGenerator().generate(impl)
+    assert(res.contains("myVar.myFunc(1.0, \"two\")(param3 = true)"))
+  }
+
+  test("Generate call array") {
+    val lexer = new TLangLexer(CharStreams.fromString(
+      """tmpl[scala] myTmpl {
+        |myVar.myArray[5]
+        |}""".stripMargin))
+    val tokens = new CommonTokenStream(lexer)
+    val parser = new TLangParser(tokens)
+    val impl = BuildTmplBlock.build(parser.tmplBlock())
+    val res = new ScalaGenerator().generate(impl)
+    assert(res.contains("myVar.myArray[5]"))
+  }
+
 }

@@ -32,7 +32,9 @@ callFunc:
     ((name=ID) | '_') (currying += curryParams)+
 ;
 
-curryParams:'(' (params+=complexAttribute (',' params+=complexAttribute)*)? ')';
+curryParams:'(' (params+=setAttribute (',' params+=setAttribute)*)? ')';
+
+setAttribute: (attr=ID '=')? value=complexValueType;
 
 callVariable: name=ID;
 
@@ -56,6 +58,6 @@ entityValue:
 
 multiValue: '(' (values+=complexValueType) (',' values+=complexValueType)* ')';
 
-complexAttribute: ((attr=ID)? (':' type=ID)? value=complexValueType);
+complexAttribute: (((attr=ID) (':' type=ID)? '=')? value=complexValueType);
 
-simpleAttribute: ((attr=ID)? (':' type=ID)? value=simpleValueType);
+simpleAttribute: (((attr=ID) (':' type=ID)? '=')? value=simpleValueType);

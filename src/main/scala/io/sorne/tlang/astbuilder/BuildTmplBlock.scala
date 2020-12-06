@@ -16,7 +16,7 @@ object BuildTmplBlock {
   def build(tmpl: TmplBlockContext): TmplBlock = {
     val pkg = if (tmpl.tmplPkg() != null && !tmpl.tmplPkg().isEmpty) Some(buildPkg(tmpl.tmplPkg())) else None
     val uses: List[TmplUse] = buildUses(tmpl.tmplUses.asScala.toList)
-    TmplBlock(tmpl.name.getText, tmpl.lang.getText,
+    new TmplBlock(tmpl.name.getText, tmpl.lang.getText,
       if (tmpl.params != null && !tmpl.params.isEmpty) Some(tmpl.params.asScala.toList.map(_.getText)) else None,
       pkg, Some(uses),
       buildContent(tmpl.tmplContents.asScala.toList)
@@ -24,7 +24,7 @@ object BuildTmplBlock {
   }
 
   def buildPkg(pkg: TmplPkgContext): TmplPkg = {
-    TmplPkg(pkg.parts.asScala.toList.map(_.getText))
+    new TmplPkg(pkg.parts.asScala.toList.map(_.getText))
   }
 
   def buildUses(uses: List[TmplUseContext]): List[TmplUse] = {
@@ -33,7 +33,7 @@ object BuildTmplBlock {
   }
 
   def buildUse(use: TmplUseContext): TmplUse = {
-    TmplUse(use.parts.asScala.toList.map(_.getText))
+    new TmplUse(use.parts.asScala.toList.map(_.getText))
   }
 
   def buildContent(content: List[TmplContentContext]): Option[List[TmplContent]] = {
@@ -203,7 +203,11 @@ object BuildTmplBlock {
 
   def buildString(string: TmplStringValueContext): TmplStringValue = TmplStringValue(AstBuilderUtils.extraString(string.value.getText))
 
-  def buildNumber(number: TmplNumberValueContext): TmplNumberValue = TmplNumberValue(number.value.getText.toDouble)
+  def buildNumber(number: TmplNumberValueContext): TmplPrimitiveValue = {
+    val value = number.value.getText
+    if (value.contains(".")) TmplDoubleValue(value.toDouble)
+    else TmplLongValue(value.toLong)
+  }
 
   def buildText(text: TmplTextValueContext): TmplTextValue = TmplTextValue(AstBuilderUtils.extraText(text.value.getText))
 

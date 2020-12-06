@@ -1,6 +1,5 @@
 package io.sorne.tlang.generator.scala
 
-import io.sorne.tlang.ast.tmpl.TmplImpl
 import io.sorne.tlang.ast.tmpl.func.TmplFunc
 import io.sorne.tlang.astbuilder.BuildTmplBlock
 import io.sorne.tlang.{TLangLexer, TLangParser}

@@ -35,7 +35,7 @@ class BuildModelNewEntityTest extends AnyFunSuite {
   test("Test new entity with parameters") {
     val lexer = new TLangLexer(CharStreams.fromString(
       """model {
-        |let firstEntity :AnyEntity = ("myString", var1 ["elm1", "elm2"], newEntity :NewEntity {
+        |let firstEntity :AnyEntity = ("myString", var1 = ["elm1", "elm2"], newEntity :NewEntity = {
         |}) {
         |}
         |}""".stripMargin))

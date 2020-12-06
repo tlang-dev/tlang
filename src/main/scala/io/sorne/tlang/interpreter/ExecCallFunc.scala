@@ -6,7 +6,6 @@ import io.sorne.tlang.ast.tmpl.{TmplBlock, TmplBlockAsValue}
 import io.sorne.tlang.interpreter.context.{Context, ContextUtils, Scope}
 
 import scala.collection.mutable
-import scala.collection.mutable.ListBuffer
 
 object ExecCallFunc extends Executor {
 
@@ -19,8 +18,8 @@ object ExecCallFunc extends Executor {
         ExecFunc.run(func, newContext)
       case None => ContextUtils.findTmpl(context, caller.name.get) match {
         case Some(tmpl) =>
-          val params = if (tmpl.params.nonEmpty) manageTmplParameters(caller, tmpl, context) else List()
-          Right(Some(List(TmplBlockAsValue(tmpl, params))))
+          val params: Map[String, Value[_]] = if (tmpl.params.nonEmpty) manageTmplParameters(caller, tmpl, context) else Map()
+          Right(Some(List(TmplBlockAsValue(tmpl.copy(), params))))
         case None => Left(CallableNotFound(caller.name.get))
       }
     }
@@ -50,15 +49,15 @@ object ExecCallFunc extends Executor {
     helperFunc.currying.get(curryPos).params(paramPos).param.getOrElse(paramPos.toString)
   }
 
-  private def manageTmplParameters(caller: CallFuncObject, tmpl: TmplBlock, context: Context): List[Value[_]] = {
-    val params = ListBuffer.empty[Value[_]]
+  private def manageTmplParameters(caller: CallFuncObject, tmpl: TmplBlock, context: Context): Map[String, Value[_]] = {
+    val params = mutable.Map.empty[String, Value[_]]
     for (param <- tmpl.params.get.zipWithIndex) {
-      ExecCallObject.run(caller.currying.get.head.params.get(param._2).value, context) match {
+      ExecComplexValue.run(caller.currying.get.head.params.get(param._2).value, context) match {
         case Left(_) =>
-        case Right(value) => params.addOne(value.get.head)
+        case Right(value) => params.addOne(param._1, value.get.head)
       }
     }
-    params.toList
+    params.toMap
   }
 
 }

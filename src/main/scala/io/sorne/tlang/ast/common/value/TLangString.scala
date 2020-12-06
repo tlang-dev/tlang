@@ -8,6 +8,9 @@ class TLangString(value: String) extends PrimitiveValue[String] {
   override def getType: String = TLangString.getType
 
   override def compareTo(value: Value[String]): Int = this.value.compareTo(value.getValue)
+
+  override def toString: String = getValue
+
 }
 
 object TLangString extends TLangType {

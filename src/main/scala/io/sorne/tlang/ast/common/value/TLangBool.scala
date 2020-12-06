@@ -8,6 +8,8 @@ class TLangBool(value: Boolean) extends PrimitiveValue[Boolean]() {
   override def getType: String = TLangBool.getType
 
   override def compareTo(value: Value[Boolean]): Int = this.value.compareTo(value.getValue)
+
+  override def toString: String = if(getValue) "true" else "false"
 }
 
 object TLangBool extends TLangType {

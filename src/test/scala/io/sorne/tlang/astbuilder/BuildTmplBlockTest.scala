@@ -148,7 +148,7 @@ class BuildTmplBlockTest extends AnyFunSuite {
     val parser = new TLangParser(tokens)
     val res = BuildTmplBlock.build(parser.tmplBlock()).content.get.head.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallArray]
     assert("myArray" == res.name)
-    assert(1 == res.elem.asInstanceOf[TmplNumberValue].value)
+    assert(1 == res.elem.asInstanceOf[TmplLongValue].value)
   }
 
   test("Call func") {
@@ -160,7 +160,7 @@ class BuildTmplBlockTest extends AnyFunSuite {
     val parser = new TLangParser(tokens)
     val res = BuildTmplBlock.build(parser.tmplBlock()).content.get.head.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallFunc]
     assert("myFunc" == res.name)
-    assert(1 == res.currying.get.head.params.get.head.value.asInstanceOf[TmplNumberValue].value)
+    assert(1 == res.currying.get.head.params.get.head.value.asInstanceOf[TmplLongValue].value)
     assert("param2" == res.currying.get.last.params.get.head.value.asInstanceOf[TmplStringValue].value)
     assert("hasName" == res.currying.get.last.params.get.last.name.get)
     assert(res.currying.get.last.params.get.last.value.asInstanceOf[TmplBoolValue].value)
@@ -196,11 +196,11 @@ class BuildTmplBlockTest extends AnyFunSuite {
     val parser = new TLangParser(tokens)
     val res = BuildTmplBlock.build(parser.tmplBlock()).content.get.head.asInstanceOf[TmplMultiValue]
     val array = res.values.last.asInstanceOf[TmplArrayValue]
-    assert(1 == res.values.head.asInstanceOf[TmplNumberValue].value)
+    assert(1 == res.values.head.asInstanceOf[TmplLongValue].value)
     assert("value2" == res.values(1).asInstanceOf[TmplStringValue].value)
-    assert(1 == array.params.get.head.value.asInstanceOf[TmplNumberValue].value)
-    assert(2 == array.params.get(1).value.asInstanceOf[TmplNumberValue].value)
-    assert(3 == array.params.get.last.value.asInstanceOf[TmplNumberValue].value)
+    assert(1 == array.params.get.head.value.asInstanceOf[TmplLongValue].value)
+    assert(2 == array.params.get(1).value.asInstanceOf[TmplLongValue].value)
+    assert(3 == array.params.get.last.value.asInstanceOf[TmplLongValue].value)
   }
 
   test("Entity") {
@@ -214,15 +214,15 @@ class BuildTmplBlockTest extends AnyFunSuite {
     val parser = new TLangParser(tokens)
     val res = BuildTmplBlock.build(parser.tmplBlock()).content.get.head.asInstanceOf[TmplEntityValue]
     val attr1 = res.attrs.get.head
-    assert(1 == res.params.get.head.value.asInstanceOf[TmplNumberValue].value)
+    assert(1 == res.params.get.head.value.asInstanceOf[TmplLongValue].value)
     assert("param2" == res.params.get.last.attr.get)
     assert("value2" == res.params.get.last.value.asInstanceOf[TmplStringValue].value)
     assert("attr1" == attr1.attr.get)
     assert("Int" == attr1.`type`.get.name)
     assert(attr1.`type`.get.isArray)
-    assert(1 == attr1.value.asInstanceOf[TmplArrayValue].params.get.head.value.asInstanceOf[TmplNumberValue].value)
-    assert(2 == attr1.value.asInstanceOf[TmplArrayValue].params.get(1).value.asInstanceOf[TmplNumberValue].value)
-    assert(3 == attr1.value.asInstanceOf[TmplArrayValue].params.get.last.value.asInstanceOf[TmplNumberValue].value)
+    assert(1 == attr1.value.asInstanceOf[TmplArrayValue].params.get.head.value.asInstanceOf[TmplLongValue].value)
+    assert(2 == attr1.value.asInstanceOf[TmplArrayValue].params.get(1).value.asInstanceOf[TmplLongValue].value)
+    assert(3 == attr1.value.asInstanceOf[TmplArrayValue].params.get.last.value.asInstanceOf[TmplLongValue].value)
   }
 
 }

@@ -3,6 +3,7 @@ package io.sorne.tlang.astbuilder
 import io.sorne.tlang.TLangParser._
 import io.sorne.tlang.ast.common.call.{ComplexValueStatement, SimpleValueStatement}
 import io.sorne.tlang.ast.common.value._
+import io.sorne.tlang.ast.tmpl.TmplMultiValue
 
 import scala.jdk.CollectionConverters._
 
@@ -27,6 +28,7 @@ object BuildCommon {
       case call@_ if call.callObj() != null => BuildHelperStatement.buildCallObject(call.callObj())
       case value@_ if value.primitiveValue() != null => buildPrimitiveValue(`type`, value.primitiveValue())
       case condition@_ if condition.conditionBlock() != null => BuildHelperStatement.buildConditionBlock(condition.conditionBlock())
+      case multi@_ if multi.multiValue() != null => buildMultiValue(multi.multiValue())
     }
   }
 
@@ -54,6 +56,10 @@ object BuildCommon {
   def buildEntityValue(`type`: Option[String] = None, entity: EntityValueContext): EntityValue = {
     EntityValue(if (`type`.isDefined) Some(`type`.get) else None,
       buildComplexAttributes(entity.attrs.asScala.toList), buildComplexAttributes(entity.decl.asScala.toList))
+  }
+
+  def buildMultiValue(multi: MultiValueContext): MultiValue = {
+    MultiValue(multi.values.asScala.toList.map(buildComplexValueType(None, _)))
   }
 
   def buildSimpleAttributes(attrs: List[SimpleAttributeContext]): Option[List[SimpleAttribute]] = {

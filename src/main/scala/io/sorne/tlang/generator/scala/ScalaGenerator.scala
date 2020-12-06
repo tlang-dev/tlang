@@ -1,5 +1,6 @@
 package io.sorne.tlang.generator.scala
 
+import io.sorne.tlang.ast.common.call.ComplexValueStatement
 import io.sorne.tlang.ast.tmpl._
 import io.sorne.tlang.ast.tmpl.call._
 import io.sorne.tlang.ast.tmpl.condition.{TmplCondition, TmplConditionBlock}
@@ -90,7 +91,7 @@ object ScalaGenerator {
 
   def genCallArray(array: TmplCallArray): String = {
     val str = new StringBuilder
-    str ++= array.name ++= genValueType(array.elem)
+    str ++= array.name ++= "[" ++= genValueType(array.elem) ++= "]"
     str.toString
   }
 
@@ -116,6 +117,12 @@ object ScalaGenerator {
     val str = new StringBuilder
     attr.name.foreach(str ++= _ ++= " = ")
     str ++= genValueType(attr.value)
+    str.toString
+  }
+
+  def genComplexValueStatement(value: ComplexValueStatement[_]):String = {
+    val str = new StringBuilder
+
     str.toString
   }
 
@@ -149,7 +156,8 @@ object ScalaGenerator {
   def genPrimitive(value: TmplPrimitiveValue): String = {
     value match {
       case string: TmplStringValue => genString(string)
-      case number: TmplNumberValue => genNumber(number)
+      case double: TmplDoubleValue => genDouble(double)
+      case long: TmplLongValue => genLong(long)
       case text: TmplTextValue => genText(text)
       case entity: TmplEntityValue => genEntity(entity)
       case bool: TmplBoolValue => genBool(bool)
@@ -171,7 +179,9 @@ object ScalaGenerator {
 
   def genString(string: TmplStringValue): String = "\"" + string.value + "\""
 
-  def genNumber(number: TmplNumberValue): String = number.value.toString
+  def genDouble(number: TmplDoubleValue): String = number.value.toString
+
+  def genLong(long: TmplLongValue): String = long.value.toString
 
   def genText(text: TmplTextValue): String = "\"\"\"" + text.value + "\"\"\""
 
