@@ -1,14 +1,12 @@
 package io.sorne.tlang.loader
 
-import java.io.File
-import java.nio.file.Path
-
 import io.sorne.tlang.astbuilder.BuildAst
 import io.sorne.tlang.libraries.Modules
 import io.sorne.tlang.loader.manifest.{Manifest, ManifestLoader}
 import io.sorne.tlang.{TLangLexer, TLangParser}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 
+import java.nio.file.Path
 import scala.collection.mutable
 
 
@@ -18,7 +16,7 @@ object BuildModuleTree {
     val resources = mutable.Map.empty[String, Resource]
     val (fromRoot, pkg, name) = mainFile match {
       case Some(value) =>
-        val parts: Array[String] = value.split(File.separator)
+        val parts: Array[String] = value.split("/")
         val fromRoot = if (parts.length > 2) {
           parts.slice(0, parts.length - 2).mkString("/")
         } else ""
@@ -86,7 +84,7 @@ object BuildModuleTree {
   def createPkg(parts: String*): String = {
     val str = new StringBuilder()
     parts.foreach(part => {
-      if (!part.isEmpty) {
+      if (part.nonEmpty) {
         if (str.nonEmpty) {
           str ++= "/"
         }

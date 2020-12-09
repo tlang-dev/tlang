@@ -1,7 +1,7 @@
 package io.sorne.tlang.generator
 
 import io.sorne.tlang.ast.common.value.TLangString
-import io.sorne.tlang.ast.tmpl.TmplPkg
+import io.sorne.tlang.ast.tmpl.{TmplPkg, TmplUse}
 import org.scalatest.funsuite.AnyFunSuite
 
 class ValueMapperTest extends AnyFunSuite {
@@ -20,5 +20,13 @@ class ValueMapperTest extends AnyFunSuite {
     assert("Package2" == res.parts.last)
   }
 
+  test("Replace in uses") {
+    val values = Map("one" -> new TLangString("Package1"), "two" -> new TLangString("Package2"))
+    val res = ValueMapper.mapUses(Some(List(new TmplUse(List("${one}", "Package2")), new TmplUse(List("Package1", "${two}")))), values).get
+    assert("Package1" == res.head.parts.head)
+    assert("Package2" == res.head.parts.last)
+    assert("Package1" == res.last.parts.head)
+    assert("Package2" == res.last.parts.last)
+  }
 
 }
