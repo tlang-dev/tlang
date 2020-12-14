@@ -3,20 +3,25 @@ package io.sorne.tlang.runner
 import io.sorne.tlang.ast.helper.{HelperBlock, HelperFunc}
 import io.sorne.tlang.interpreter.ExecFunc
 import io.sorne.tlang.interpreter.context.Context
-import io.sorne.tlang.loader.{BuildModuleTree, FileResourceLoader, Module}
+import io.sorne.tlang.loader.remote.RemoteLoader
+import io.sorne.tlang.loader.{BuildModuleTree, FileResourceLoader, Module, TBagManager}
 import io.sorne.tlang.resolver.ResolveContext
 
 import java.io.File
 import java.nio.file.Paths
+import java.util.UUID.randomUUID
 
 object RunMain {
 
   implicit val loader: FileResourceLoader.type = FileResourceLoader
+  implicit val remoteLoader: RemoteLoader.type = RemoteLoader
+  implicit val tBagManager: TBagManager.type = TBagManager
 
   def runDir(name: String): Unit = {
     val newName = name.split(File.separator).mkString("/")
+    val uuid = randomUUID().toString
     //BuildModuleTree.build(Paths.get(parts.slice(0, parts.size - 1).mkString(File.separator)), Some(parts.last)) match {
-    BuildModuleTree.build(Paths.get(newName), None) match {
+    BuildModuleTree.build(Paths.get(newName), None, uuid) match {
       case Left(error) => println("Error while loading the program (" + error.code + "): " + error.message)
       case Right(module) => runMainFile(module)
     }

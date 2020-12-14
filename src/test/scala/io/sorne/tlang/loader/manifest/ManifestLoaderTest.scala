@@ -23,8 +23,8 @@ class ManifestLoaderTest extends AnyFunSuite {
     assert("1.33.7" == manifest.version)
     assert(Stability.FINAL == manifest.stability.get)
     assert(2 == manifest.releaseNumber)
-    assert(Dependency("TLang", "IO", "File", "1.0.0", Stability.ALPHA, 2, "file") == manifest.dependencies.get.head)
-    assert(Dependency("TLang", "Generator", "Generator", "1.2.0", Stability.BETA, 3, "generator") == manifest.dependencies.get.last)
+    assert(Dependency("TLang", "IO", "File", "1.0.0", Stability.ALPHA, 2, Some("file")) == manifest.dependencies.get.head)
+    assert(Dependency("TLang", "Generator", "Generator", "1.2.0", Stability.BETA, 3, Some("generator")) == manifest.dependencies.get.last)
   }
 
   test("Map to manifest with all") {
@@ -72,7 +72,7 @@ class ManifestLoaderTest extends AnyFunSuite {
     assert("1.33.7" == dependency.version)
     assert(Stability.ALPHA == dependency.stability)
     assert(2 == dependency.releaseNumber)
-    assert("myProgram" == dependency.alias)
+    assert("myProgram" == dependency.alias.get)
   }
 
 }

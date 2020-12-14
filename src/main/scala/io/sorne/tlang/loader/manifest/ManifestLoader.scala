@@ -9,10 +9,14 @@ import scala.jdk.CollectionConverters._
 object ManifestLoader {
 
   def parseManifest(content: String): Manifest = {
+    val map = loadFromString(content)
+    mapToManifest(map)
+  }
+
+  def loadFromString(content: String): Map[String, Object] = {
     val settings = LoadSettings.builder().build()
     val load = new Load(settings)
-    val map = load.loadFromString(content).asInstanceOf[util.Map[String, Object]].asScala.toMap
-    mapToManifest(map)
+    load.loadFromString(content).asInstanceOf[util.Map[String, Object]].asScala.toMap
   }
 
   def mapToManifest(elems: Map[String, _]): Manifest = {
@@ -60,7 +64,7 @@ object ManifestLoader {
       versions(0),
       getStability(versions(1)).getOrElse(Stability.FINAL),
       versions(2).toInt,
-      alias
+      Some(alias)
     )
   }
 

@@ -1,12 +1,16 @@
 package io.sorne.tlang.resolver
 
 import java.nio.file.Paths
-
 import io.sorne.tlang.ast.helper.HelperBlock
-import io.sorne.tlang.loader.{BuildModuleTree, LoaderError, ResourceLoader}
+import io.sorne.tlang.loader.remote.RemoteLoader
+import io.sorne.tlang.loader.{BuildModuleTree, FileResourceLoader, LoaderError, ResourceLoader, TBagManager}
 import org.scalatest.funsuite.AnyFunSuite
 
 class ResolveExternalResourcesTest extends AnyFunSuite {
+
+  implicit val loader: FileResourceLoader.type = FileResourceLoader
+  implicit val remoteLoader: RemoteLoader.type = RemoteLoader
+  implicit val tBagManager: TBagManager.type = TBagManager
 
   val defaultManifest: String =
     """name: MyProgram

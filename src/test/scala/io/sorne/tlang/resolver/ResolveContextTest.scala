@@ -1,7 +1,6 @@
 package io.sorne.tlang.resolver
 
 import java.nio.file.Paths
-
 import io.sorne.tlang.ast.DomainUse
 import io.sorne.tlang.ast.common.call.{CallFuncObject, CallObject, CallVarObject}
 import io.sorne.tlang.ast.common.value.{AssignVar, EntityValue}
@@ -10,12 +9,17 @@ import io.sorne.tlang.ast.model.ModelContent
 import io.sorne.tlang.ast.model.set.ModelSetEntity
 import io.sorne.tlang.astbuilder.BuildAst
 import io.sorne.tlang.interpreter.context.Scope
-import io.sorne.tlang.loader.{BuildModuleTree, Resource, ResourceLoader}
+import io.sorne.tlang.loader.remote.RemoteLoader
+import io.sorne.tlang.loader.{BuildModuleTree, FileResourceLoader, Resource, ResourceLoader, TBagManager}
 import io.sorne.tlang.{TLangLexer, TLangParser}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
 
 class ResolveContextTest extends AnyFunSuite {
+
+  implicit val loader: FileResourceLoader.type = FileResourceLoader
+  implicit val remoteLoader: RemoteLoader.type = RemoteLoader
+  implicit val tBagManager: TBagManager.type = TBagManager
 
   val defaultManifest: String =
     """name: MyProgram

@@ -3,16 +3,18 @@ package io.sorne.tlang.loader
 import io.sorne.tlang.astbuilder.BuildAst
 import io.sorne.tlang.libraries.Modules
 import io.sorne.tlang.loader.manifest.{Manifest, ManifestLoader}
+import io.sorne.tlang.loader.remote.RemoteLoader
 import io.sorne.tlang.{TLangLexer, TLangParser}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 
 import java.nio.file.Path
+import java.util.UUID.randomUUID
 import scala.collection.mutable
 
 
 object BuildModuleTree {
 
-  def build(rootDir: Path, mainFile: Option[String])(implicit resourceLoader: ResourceLoader): Either[LoaderError, Module] = {
+  def build(rootDir: Path, mainFile: Option[String], cacheId: String = randomUUID().toString)(implicit resourceLoader: ResourceLoader, remote: RemoteLoader, tBagManager: TBagManager): Either[LoaderError, Module] = {
     val resources = mutable.Map.empty[String, Resource]
     val (fromRoot, pkg, name) = mainFile match {
       case Some(value) =>
@@ -32,7 +34,7 @@ object BuildModuleTree {
         buildManifest(rootDir) match {
           case Left(error) => Left(error)
           case Right(manifest) =>
-            browseExternalResources(manifest) match {
+            browseExternalResources(manifest, cacheId) match {
               case Left(error) => Left(error)
               case Right(value) =>
                 val modules = if (value.nonEmpty) Some(value) else None
@@ -49,13 +51,15 @@ object BuildModuleTree {
     }
   }
 
-  def browseExternalResources(manifest: Manifest): Either[LoaderError, Map[String, Module]] = {
+  def browseExternalResources(manifest: Manifest, cacheId: String)(implicit resourceLoader: ResourceLoader, remote: RemoteLoader, tBagManager: TBagManager): Either[LoaderError, Map[String, Module]] = {
     val modules = mutable.Map.empty[String, Module]
     manifest.dependencies.foreach(_.foreach(dependency => {
       if (dependency.organisation == Modules.organisation) {
         Modules.findModule(dependency) match {
-          case Some(module) => modules.addOne(dependency.alias, module)
+          case Some(module) => modules.addOne(dependency.alias.getOrElse(module.manifest.name), module)
           case None =>
+
+            ModuleLoader.loadModule(dependency, cacheId)
         }
       }
     }))

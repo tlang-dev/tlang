@@ -1,14 +1,19 @@
 package io.sorne.tlang.loader
 
 import java.nio.file.Paths
-
 import io.sorne.tlang.ast.model.ModelBlock
-import io.sorne.tlang.loader.manifest.{Dependency, Stability, Manifest}
+import io.sorne.tlang.loader.manifest.{Dependency, Manifest, Stability}
+import io.sorne.tlang.loader.remote.RemoteLoader
 import org.scalatest.funsuite.AnyFunSuite
 
+import java.util.UUID.randomUUID
 import scala.collection.mutable
 
 class BuildModuleTreeTest extends AnyFunSuite {
+
+  implicit val loader: FileResourceLoader.type = FileResourceLoader
+  implicit val remoteLoader: RemoteLoader.type = RemoteLoader
+  implicit val tBagManager: TBagManager.type = TBagManager
 
   val defaultManifest: String =
     """name: MyProgram
@@ -202,10 +207,10 @@ class BuildModuleTreeTest extends AnyFunSuite {
 
   test("Browse external resources with TLang modules") {
     val manifest = Manifest("MyName", "MyProject", "MyOrg", "1.0.0", None, 1, Some(List(
-      Dependency("TLang", "IO", "Terminal", "1.0.0", Stability.ALPHA, 1, "terminal"),
-      Dependency("TLang", "Generator", "Generator", "1.0.0", Stability.ALPHA, 1, "generator"),
+      Dependency("TLang", "IO", "Terminal", "1.0.0", Stability.ALPHA, 1, Some("terminal")),
+      Dependency("TLang", "Generator", "Generator", "1.0.0", Stability.ALPHA, 1, Some("generator")),
     )))
-    val res = BuildModuleTree.browseExternalResources(manifest).toOption.get
+    val res = BuildModuleTree.browseExternalResources(manifest, randomUUID().toString).toOption.get
     assert(2 == res.size)
     assert("Terminal" == res("terminal").manifest.name)
     assert("Generator" == res("generator").manifest.name)

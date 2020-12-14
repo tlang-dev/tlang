@@ -1,13 +1,17 @@
 package io.sorne.tlang.resolver
 
 import java.nio.file.Paths
-
 import io.sorne.tlang.ast.common.value.TLangBool
 import io.sorne.tlang.ast.helper.HelperBlock
-import io.sorne.tlang.loader.{BuildModuleTree, ResourceLoader}
+import io.sorne.tlang.loader.remote.RemoteLoader
+import io.sorne.tlang.loader.{BuildModuleTree, FileResourceLoader, ResourceLoader, TBagManager}
 import org.scalatest.funsuite.AnyFunSuite
 
 class ResolveIfStatementTest extends AnyFunSuite {
+
+  implicit val loader: FileResourceLoader.type = FileResourceLoader
+  implicit val remoteLoader: RemoteLoader.type = RemoteLoader
+  implicit val tBagManager: TBagManager.type = TBagManager
 
   val defaultManifest: String =
     """name: MyProgram
