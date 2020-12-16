@@ -7,7 +7,7 @@ import io.sorne.tlang.generator.groovy.GroovyGenerator
 import io.sorne.tlang.generator.java.JavaGenerator
 import io.sorne.tlang.generator.json.JSONGenerator
 import io.sorne.tlang.generator.rust.RustGenerator
-import io.sorne.tlang.generator.scala.ScalaGenerator
+import io.sorne.tlang.generator.scalalang.ScalaGenerator
 import io.sorne.tlang.generator.xml.XMLGenerator
 import io.sorne.tlang.generator.yml.YMLGenerator
 import io.sorne.tlang.generator.{CodeGenerator, ValueMapper}

@@ -1,3 +1,3 @@
 package io.sorne.tlang.ast.tmpl
 
-case class TmplImplFor(name: String)
+case class TmplImplFor(var name: String)

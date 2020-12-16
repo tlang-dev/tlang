@@ -1,4 +1,4 @@
-package io.sorne.tlang.generator.scala
+package io.sorne.tlang.generator.scalalang
 
 import io.sorne.tlang.{TLangLexer, TLangParser}
 import io.sorne.tlang.astbuilder.BuildTmplBlock

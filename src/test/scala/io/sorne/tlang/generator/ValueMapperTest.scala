@@ -29,4 +29,8 @@ class ValueMapperTest extends AnyFunSuite {
     assert("Package2" == res.last.parts.last)
   }
 
+  test("") {
+
+  }
+
 }
