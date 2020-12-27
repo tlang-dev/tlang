@@ -1,3 +1,3 @@
 package io.sorne.tlang.ast.tmpl.call
 
-case class TmplCallFunc(name:String, currying: Option[List[TmplCurryParam]]) extends TmplCallObjType
+case class TmplCallFunc(var name:String, var currying: Option[List[TmplCurryParam]]) extends TmplCallObjType

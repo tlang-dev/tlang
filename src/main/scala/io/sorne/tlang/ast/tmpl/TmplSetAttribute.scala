@@ -1,3 +1,3 @@
 package io.sorne.tlang.ast.tmpl
 
-case class TmplSetAttribute(name: Option[String], value: TmplValueType)
+case class TmplSetAttribute(var name: Option[String], var value: TmplValueType)

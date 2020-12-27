@@ -53,7 +53,7 @@ class ScalaGeneratorTest extends AnyFunSuite {
     val parser = new TLangParser(tokens)
     val impl = BuildTmplBlock.build(parser.tmplBlock())
     val res = new ScalaGenerator().generate(impl)
-    assert(res.contains("myVar.myArray[5]"))
+    assert(res.contains("myVar.myArray(5)"))
   }
 
 }

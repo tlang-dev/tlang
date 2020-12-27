@@ -8,7 +8,6 @@ import io.sorne.tlang.ast.tmpl.func.{TmplFunc, TmplFuncCurry}
 import io.sorne.tlang.ast.tmpl.primitive._
 import org.antlr.v4.runtime.Token
 
-import scala.collection.mutable.ListBuffer
 import scala.jdk.CollectionConverters._
 
 object BuildTmplBlock {
@@ -16,7 +15,7 @@ object BuildTmplBlock {
   def build(tmpl: TmplBlockContext): TmplBlock = {
     val pkg = if (tmpl.tmplPkg() != null && !tmpl.tmplPkg().isEmpty) Some(buildPkg(tmpl.tmplPkg())) else None
     val uses: List[TmplUse] = buildUses(tmpl.tmplUses.asScala.toList)
-    new TmplBlock(tmpl.name.getText, tmpl.lang.getText,
+    TmplBlock(tmpl.name.getText, tmpl.lang.getText,
       if (tmpl.params != null && !tmpl.params.isEmpty) Some(tmpl.params.asScala.toList.map(_.getText)) else None,
       pkg, Some(uses),
       buildContent(tmpl.tmplContents.asScala.toList)
@@ -46,14 +45,17 @@ object BuildTmplBlock {
   }
 
   def buildImpl(impl: TmplImplContext): TmplImpl = {
-    TmplImpl(impl.name.getText, buildFor(impl.forName, impl.forNames), if (impl.tmplImplContents != null && !impl.tmplImplContents.isEmpty) buildContent(impl.tmplImplContents.asScala.toList) else None)
+    TmplImpl(buildAnnotations(impl.annots.asScala.toList), buildProps(impl.props),
+      impl.name.getText, buildFors(impl.forNames), buildWiths(impl.withNames), if (impl.tmplImplContents != null && !impl.tmplImplContents.isEmpty) buildContent(impl.tmplImplContents.asScala.toList) else None)
   }
 
-  def buildFor(for1: Token, fors: java.util.List[Token]): Option[List[TmplImplFor]] = {
-    val forsRet = new ListBuffer[TmplImplFor]
-    if (for1 != null && for1.getText != null && for1.getText.nonEmpty) forsRet += TmplImplFor(AstBuilderUtils.extraString(for1.getText))
-    if (fors != null) fors.asScala.foreach(token => forsRet += TmplImplFor(AstBuilderUtils.extraString(token.getText)))
-    if (forsRet.nonEmpty) Some(forsRet.toList)
+  def buildFors(fors: java.util.List[Token]): Option[List[TmplImplFor]] = {
+    if (fors != null && !fors.isEmpty) Some(fors.asScala.toList.map(token => TmplImplFor(AstBuilderUtils.extraString(token.getText))))
+    else None
+  }
+
+  def buildWiths(withs: java.util.List[Token]): Option[List[TmplImplWith]] = {
+    if (withs != null && !withs.isEmpty) Some(withs.asScala.toList.map(token => TmplImplWith(AstBuilderUtils.extraString(token.getText))))
     else None
   }
 
@@ -61,8 +63,22 @@ object BuildTmplBlock {
     val curries =
       if (func.curries != null && !func.curries.isEmpty) Some(func.curries.asScala.map(build).toList)
       else None
-    TmplFunc(func.name.getText, curries,
+    TmplFunc(buildAnnotations(func.annots.asScala.toList), buildProps(func.props), func.name.getText, curries,
       if (func.exprs != null && !func.exprs.isEmpty) Some(func.exprs.asScala.toList.map(buildExpression)) else None)
+  }
+
+  def buildAnnotations(annots: List[TmplAnnotContext]): Option[List[TmplAnnotation]] = {
+    if (annots.nonEmpty) Some(annots.map(annot => {
+      val params = annot.annotParams.asScala.toList.map(param => TmplAnnotationParam(param.name.getText, buildPrimitive(param.value)))
+      TmplAnnotation(annot.name.getText, if (params.nonEmpty) Some(params) else None)
+    }))
+    else None
+  }
+
+  def buildProps(props: TmplPropsContext): Option[TmplProp] = {
+    val elems = props.props.asScala.toList
+    if (elems.nonEmpty) Some(TmplProp(elems.map(_.getText)))
+    else None
   }
 
   def build(curry: TmplCurryingContext): TmplFuncCurry = {
@@ -187,7 +203,7 @@ object BuildTmplBlock {
       case text@_ if text.tmplTextValue() != null => buildText(text.tmplTextValue())
       case entity@_ if entity.tmplEntityValue() != null => buildEntity(entity.tmplEntityValue())
       case bool@_ if bool.tmplBoolValue() != null => buildBool(bool.tmplBoolValue())
-      case array@_ if array.tmplArrayValue() != null => buildArray(array.tmplArrayValue())
+      case array@_ if array.tmplArrayValue() != null => buildArray(None, array.tmplArrayValue())
     }
   }
 
@@ -197,8 +213,8 @@ object BuildTmplBlock {
       if (entity.attrs != null && !entity.attrs.isEmpty) Some(entity.attrs.asScala.toList.map(buildAttribute)) else None)
   }
 
-  def buildArray(array: TmplArrayValueContext): TmplArrayValue = {
-    TmplArrayValue(if (array.params != null && !array.params.isEmpty) Some(array.params.asScala.toList.map(buildSetAttribute)) else None)
+  def buildArray(`type`: Option[TmplType] = None, array: TmplArrayValueContext): TmplArrayValue = {
+    TmplArrayValue(`type`, if (array.params != null && !array.params.isEmpty) Some(array.params.asScala.toList.map(buildSetAttribute)) else None)
   }
 
   def buildString(string: TmplStringValueContext): TmplStringValue = TmplStringValue(AstBuilderUtils.extraString(string.value.getText))

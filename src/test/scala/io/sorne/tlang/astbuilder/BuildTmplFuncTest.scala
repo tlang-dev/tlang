@@ -96,7 +96,7 @@ class BuildTmplFuncTest extends AnyFunSuite {
   test("Test build func with currying") {
     val lexer = new TLangLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
-        | impl test {
+        |impl test {
         |func func1(myParam: MyType)(myParam2: MyType2[]) {
         |}
         |}}""".stripMargin))

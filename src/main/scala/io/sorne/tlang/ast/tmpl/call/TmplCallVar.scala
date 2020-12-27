@@ -1,3 +1,3 @@
 package io.sorne.tlang.ast.tmpl.call
 
-case class TmplCallVar(name: String) extends TmplCallObjType
+case class TmplCallVar(var name: String) extends TmplCallObjType

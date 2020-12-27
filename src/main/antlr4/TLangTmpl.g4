@@ -19,13 +19,21 @@ tmplPkg: 'pkg' parts+=ID ('.' parts+=ID)*;
 
 tmplUse: 'use' parts+=ID ('.' parts+=ID)*;
 
+tmplAnnot: '@' name=ID ('(' annotParams+=tmplAnnotParam (',' annotParams+=tmplAnnotParam)* ')')?;
+
+tmplAnnotParam:name=ID '=' value=tmplPrimitiveValue;
+
+tmplProps: ('[' (props+=ID)+ ']')?;
+
 tmplImpl:
-	'impl' name=ID (('for' forName=ID) (',' forNames+=ID)*)? '{'
+    (annots+=tmplAnnot)*
+	'impl' props=tmplProps  name=ID (('for' forProps=tmplProps  forNames+=ID) (',' forNames+=ID)* (('with' withProps=tmplProps  withNames+=ID) (',' withNames+=ID)*)?)? '{'
 	(tmplImplContents+=tmplContent)*
 	'}';
 
 tmplFunc:
-	'func' name=ID curries+=tmplCurrying* (':' types+=tmplType (',' types+=tmplType)*)? ('{'
+    (annots+=tmplAnnot)*
+	'func' props=tmplProps name=ID curries+=tmplCurrying* (':' types+=tmplType (',' types+=tmplType)*)? (':' ret=tmplMultiValue)?('{'
 	    exprs+=tmplExpression*
 	'}')?;
 
@@ -46,7 +54,9 @@ tmplGeneric:
 
 tmplExpression:	tmplVar | tmplCallObj | tmplValueType | tmplConditionBlock | tmplFunc;
 
-tmplVar: 'var' name=ID (':' type=tmplType)? ('=' value=tmplExpression)?;
+tmplVar:
+    (annots+=tmplAnnot)*
+    'var' name=ID (':' type=tmplType)? ('=' value=tmplExpression)?;
 
 tmplCallObj: objs+=tmplCallObjType ('.'objs+=tmplCallObjType)*;
 

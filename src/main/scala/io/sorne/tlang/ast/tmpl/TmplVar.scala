@@ -1,3 +1,3 @@
 package io.sorne.tlang.ast.tmpl
 
-case class TmplVar(name:String, `type`: TmplType, value: TmplExpression) extends TmplExpression
+case class TmplVar(var name: String, var `type`: TmplType, var value: TmplExpression) extends TmplExpression

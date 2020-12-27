@@ -91,7 +91,7 @@ object ScalaGenerator {
 
   def genCallArray(array: TmplCallArray): String = {
     val str = new StringBuilder
-    str ++= array.name ++= "[" ++= genValueType(array.elem) ++= "]"
+    str ++= array.name ++= "(" ++= genValueType(array.elem) ++= ")"
     str.toString
   }
 
