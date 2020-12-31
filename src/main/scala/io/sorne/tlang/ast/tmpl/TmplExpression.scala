@@ -1,3 +1,3 @@
 package io.sorne.tlang.ast.tmpl
 
-trait TmplExpression extends TmplContent
+trait TmplExpression extends TmplExprContent

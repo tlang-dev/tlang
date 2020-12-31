@@ -45,15 +45,16 @@ object JavaGenerator {
   def genFunc(func: TmplFunc): String = {
     val str = new StringBuilder
     str ++= genAnnotations(func.annots)
-    str ++= genOptionalProps(func.props, addSpace = true)
-    str ++= func.ret.fold("void")(multi => genValueType(multi.values.head)) ++= " "
+    str ++= func.props.fold("public")(prop => genProps(prop)) ++= " "
+    str ++= func.ret.fold("void")(ret => genType(ret.head)) ++= " "
     str ++= func.name ++= "("
     if (func.curries.isDefined) {
-      func.curries.get.head.params.foreach(params => params.map(genParam).mkString(", "))
+      func.curries.get.head.params.foreach(params => str ++= params.map(genParam).mkString(", "))
     }
     str ++= ")"
     if (func.content.isDefined) {
       str ++= " {\n"
+      str ++= genExprBlock(func.content.get)
       str ++= "\n}\n"
     }
     str.toString()
@@ -97,6 +98,7 @@ object JavaGenerator {
     val str = new StringBuilder
     str ++= `type`.name
     str ++= genGeneric(`type`.generic)
+    if (`type`.isArray) str ++= "[]"
     str.toString()
   }
 
@@ -106,6 +108,17 @@ object JavaGenerator {
       str ++= "<" ++ gen.get.types.map(genType).mkString(", ") ++= ">"
       str.toString()
     } else ""
+  }
+
+  def genExprContent(content: TmplExprContent): String = {
+    content match {
+      case block: TmplExprBlock => genExprBlock(block)
+      case expression: TmplExpression => genExpression(expression)
+    }
+  }
+
+  def genExprBlock(block: TmplExprBlock): String = {
+    block.exprs.map(genExpression).mkString("\n")
   }
 
   def genExpression(expr: TmplExpression): String = {
@@ -147,6 +160,8 @@ object JavaGenerator {
 
   def genVar(variable: TmplVar): String = {
     val str = new StringBuilder
+    str ++= genAnnotations(variable.annots)
+    variable.props.foreach(prop => str ++= genProps(prop, addSpace = true))
     str ++= genType(variable.`type`) ++= " " ++= variable.name ++= " = " + genExpression(variable.value) ++= ";\n"
     str.toString()
   }

@@ -33,12 +33,9 @@ tmplImpl:
 
 tmplFunc:
     (annots+=tmplAnnot)*
-	'func' props=tmplProps name=ID curries+=tmplCurrying* (':' types+=tmplType (',' types+=tmplType)*)? (':' ret=tmplMultiValue)?('{'
-	    exprs+=tmplExpression*
-	'}')?;
+	'func' props=tmplProps name=ID curries+=tmplCurrying* (':' types+=tmplType (',' types+=tmplType)*)? content=tmplExprBlock?;
 
-tmplCurrying:
-	'(' param=tmplCurryingParam ')';
+tmplCurrying: '(' param=tmplCurryingParam ')';
 
 tmplCurryingParam:
 	((params+=tmplParam) (',' params+=tmplParam)*)?;
@@ -52,11 +49,25 @@ tmplType:
 tmplGeneric:
 	(types+=tmplType (',' types+=tmplType)*);
 
-tmplExpression:	tmplVar | tmplCallObj | tmplValueType | tmplConditionBlock | tmplFunc;
+tmplExprContent: tmplExpression | tmplExprBlock;
+
+tmplExprBlock: '{' exprs+=tmplExpression* '}';
+
+tmplExpression:	tmplVar | tmplCallObj | tmplValueType | tmplConditionBlock | tmplFunc | tmplIf | tmplFor | tmplWhile | tmplDoWhile;
+
+tmplIf: 'if' '(' cond=tmplConditionBlock ')' content=tmplExprContent elseThen=tmplElse?;
+
+tmplElse: 'else' (tmplIf | tmplExprContent);
+
+tmplFor: 'for' '(' var=ID start=tmplValueType? type=('in' | 'to' | 'until') array=tmplValueType ')' content=tmplExprContent;
+
+tmplWhile: 'while' '(' cond=tmplConditionBlock ')' content=tmplExprContent;
+
+tmplDoWhile: 'do' content=tmplExprContent 'while' '(' cond=tmplConditionBlock ')';
 
 tmplVar:
     (annots+=tmplAnnot)*
-    'var' name=ID (':' type=tmplType)? ('=' value=tmplExpression)?;
+    'var' props=tmplProps name=ID (':' type=tmplType)? ('=' value=tmplExpression)?;
 
 tmplCallObj: objs+=tmplCallObjType ('.'objs+=tmplCallObjType)*;
 
@@ -93,7 +104,7 @@ tmplAttribute: ((attr=ID)? (':' type=tmplType)? value=tmplValueType);
 tmplMultiValue: '(' (values+=tmplValueType) (',' values+=tmplValueType)* ')';
 
 tmplEntityValue:
-	 ('(' ((params+=tmplAttribute) (',' params+=tmplAttribute)*) ')')? '{'
+	'new' ('(' ((params+=tmplAttribute) (',' params+=tmplAttribute)*) ')')? '{'
 	attrs+=tmplAttribute*
 	'}';
 
@@ -105,7 +116,6 @@ tmplConditionBlock:
 ;
 
 tmplCondition:
-    arg1=tmplSimpleValueType (mark=tmplConditionMark arg2=tmplSimpleValueType)? (link=('&&' | '||') next=tmplConditionBlock)*
-;
+    arg1=tmplSimpleValueType (mark=tmplConditionMark arg2=tmplSimpleValueType)? (link=('&&' | '||') next=tmplConditionBlock)*;
 
 tmplConditionMark: '==' | '!=' | '<' | '>' | '<=' | '>=';

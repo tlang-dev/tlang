@@ -75,8 +75,15 @@ object ValueMapper {
   def mapFunc(func: TmplFunc, values: Map[String, Value[_]]): TmplFunc = {
     func.name = mapString(func.name, values)
     func.curries = mapCurries(func.curries, values)
-    func.content = mapExpressions(func.content, values)
+    func.content = mapExprBlock(func.content, values)
     func
+  }
+
+  def mapExprBlock(block: Option[TmplExprBlock], values: Map[String, Value[_]]): Option[TmplExprBlock] = {
+    if (block.isDefined) {
+      val exprs = block.get.exprs.map(expr => mapExpression(expr, values))
+      Some(TmplExprBlock(exprs))
+    } else None
   }
 
   def mapCurries(curries: Option[List[TmplFuncCurry]], values: Map[String, Value[_]]): Option[List[TmplFuncCurry]] = {

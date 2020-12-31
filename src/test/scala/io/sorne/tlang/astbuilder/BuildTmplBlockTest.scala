@@ -4,7 +4,7 @@ import io.sorne.tlang.ast.helper.{ConditionLink, ConditionType}
 import io.sorne.tlang.ast.tmpl.call.{TmplCallArray, TmplCallFunc, TmplCallObj, TmplCallVar}
 import io.sorne.tlang.ast.tmpl.condition.TmplConditionBlock
 import io.sorne.tlang.ast.tmpl.primitive._
-import io.sorne.tlang.ast.tmpl.{TmplMultiValue, TmplVar}
+import io.sorne.tlang.ast.tmpl.{TmplExprBlock, TmplIf, TmplMultiValue, TmplVar}
 import io.sorne.tlang.{TLangLexer, TLangParser}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
@@ -206,7 +206,7 @@ class BuildTmplBlockTest extends AnyFunSuite {
   test("Entity") {
     val lexer = new TLangLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
-        |(1, param2 "value2") {
+        |new (1, param2 "value2") {
         |attr1 :Int[] [1,2,3]
         |}
         |}""".stripMargin))
@@ -223,6 +223,79 @@ class BuildTmplBlockTest extends AnyFunSuite {
     assert(1 == attr1.value.asInstanceOf[TmplArrayValue].params.get.head.value.asInstanceOf[TmplLongValue].value)
     assert(2 == attr1.value.asInstanceOf[TmplArrayValue].params.get(1).value.asInstanceOf[TmplLongValue].value)
     assert(3 == attr1.value.asInstanceOf[TmplArrayValue].params.get.last.value.asInstanceOf[TmplLongValue].value)
+  }
+
+  test("If") {
+    val lexer = new TLangLexer(CharStreams.fromString(
+      """tmpl[scala] myTmpl {
+        |if(1==1) callMyFunc()
+        |}""".stripMargin))
+    val tokens = new CommonTokenStream(lexer)
+    val parser = new TLangParser(tokens)
+    val ifStmt = BuildTmplBlock.build(parser.tmplBlock()).content.get.head.asInstanceOf[TmplIf]
+    val cond = ifStmt.cond.content.toOption.get
+    assert(ConditionType.EQUAL == cond.condition.get)
+    assert(1 == cond.statement1.asInstanceOf[TmplLongValue].value)
+    assert(1 == cond.statement2.get.asInstanceOf[TmplLongValue].value)
+    assert("callMyFunc" == ifStmt.content.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallFunc].name)
+  }
+
+  test("If with expression block") {
+    val lexer = new TLangLexer(CharStreams.fromString(
+      """tmpl[scala] myTmpl {
+        |if(1==1) {
+        |callMyFunc1()
+        |callMyFunc2()
+        |}
+        |}""".stripMargin))
+    val tokens = new CommonTokenStream(lexer)
+    val parser = new TLangParser(tokens)
+    val ifStmt = BuildTmplBlock.build(parser.tmplBlock()).content.get.head.asInstanceOf[TmplIf]
+    val cond = ifStmt.cond.content.toOption.get
+    val block = ifStmt.content.asInstanceOf[TmplExprBlock]
+    assert(ConditionType.EQUAL == cond.condition.get)
+    assert(1 == cond.statement1.asInstanceOf[TmplLongValue].value)
+    assert(1 == cond.statement2.get.asInstanceOf[TmplLongValue].value)
+    assert("callMyFunc1" == block.exprs.head.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallFunc].name)
+    assert("callMyFunc2" == block.exprs.last.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallFunc].name)
+  }
+
+  test("If else") {
+    val lexer = new TLangLexer(CharStreams.fromString(
+      """tmpl[scala] myTmpl {
+        |if(1==1) callMyFunc1() else callMyFunc2()
+        |}""".stripMargin))
+    val tokens = new CommonTokenStream(lexer)
+    val parser = new TLangParser(tokens)
+    val ifStmt = BuildTmplBlock.build(parser.tmplBlock()).content.get.head.asInstanceOf[TmplIf]
+    val cond = ifStmt.cond.content.toOption.get
+    val elseBlock = ifStmt.elseBlock.get.left.toOption.get
+    assert(ConditionType.EQUAL == cond.condition.get)
+    assert(1 == cond.statement1.asInstanceOf[TmplLongValue].value)
+    assert(1 == cond.statement2.get.asInstanceOf[TmplLongValue].value)
+    assert("callMyFunc1" == ifStmt.content.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallFunc].name)
+    assert("callMyFunc2" == elseBlock.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallFunc].name)
+  }
+
+  test("If else if") {
+    val lexer = new TLangLexer(CharStreams.fromString(
+      """tmpl[scala] myTmpl {
+        |if(1==1) callMyFunc1() else if(2==2) callMyFunc2()
+        |}""".stripMargin))
+    val tokens = new CommonTokenStream(lexer)
+    val parser = new TLangParser(tokens)
+    val ifStmt = BuildTmplBlock.build(parser.tmplBlock()).content.get.head.asInstanceOf[TmplIf]
+    val cond = ifStmt.cond.content.toOption.get
+    val elseIf = ifStmt.elseBlock.get.toOption.get
+    val cond2 = elseIf.cond.content.toOption.get
+    assert(ConditionType.EQUAL == cond.condition.get)
+    assert(1 == cond.statement1.asInstanceOf[TmplLongValue].value)
+    assert(1 == cond.statement2.get.asInstanceOf[TmplLongValue].value)
+    assert("callMyFunc1" == ifStmt.content.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallFunc].name)
+    assert(ConditionType.EQUAL == cond2.condition.get)
+    assert(2 == cond2.statement1.asInstanceOf[TmplLongValue].value)
+    assert(2 == cond2.statement2.get.asInstanceOf[TmplLongValue].value)
+    assert("callMyFunc2" == elseIf.content.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallFunc].name)
   }
 
 }

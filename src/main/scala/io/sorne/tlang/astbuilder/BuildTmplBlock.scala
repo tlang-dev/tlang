@@ -64,7 +64,8 @@ object BuildTmplBlock {
       if (func.curries != null && !func.curries.isEmpty) Some(func.curries.asScala.map(build).toList)
       else None
     TmplFunc(buildAnnotations(func.annots.asScala.toList), buildProps(func.props), func.name.getText, curries,
-      if (func.exprs != null && !func.exprs.isEmpty) Some(func.exprs.asScala.toList.map(buildExpression)) else None)
+      if (func.content != null) Some(buildExprBlock(func.content)) else None,
+      if (func.types != null && !func.types.isEmpty) Some(func.types.asScala.toList.map(buildType)) else None)
   }
 
   def buildAnnotations(annots: List[TmplAnnotContext]): Option[List[TmplAnnotation]] = {
@@ -103,6 +104,17 @@ object BuildTmplBlock {
     else None
   }
 
+  def buildExprContent(expr: TmplExprContentContext): TmplExprContent = {
+    expr match {
+      case block@_ if expr.tmplExprBlock() != null => buildExprBlock(block.tmplExprBlock())
+      case exp@_ if exp.tmplExpression() != null => buildExpression(expr.tmplExpression())
+    }
+  }
+
+  def buildExprBlock(block: TmplExprBlockContext): TmplExprBlock = {
+    TmplExprBlock(block.exprs.asScala.toList.map(buildExpression))
+  }
+
   def buildExpression(expr: TmplExpressionContext): TmplExpression = {
     expr match {
       case tmplVar@_ if tmplVar.tmplVar() != null => buildVar(tmplVar.tmplVar())
@@ -110,11 +122,24 @@ object BuildTmplBlock {
       case valueType@_ if valueType.tmplValueType() != null => buildValueType(valueType.tmplValueType())
       case cond@_ if cond.tmplConditionBlock() != null => buildConditionBlock(cond.tmplConditionBlock())
       case func@_ if func.tmplFunc() != null => buildFunc(func.tmplFunc())
+      case whileLoop@_ if whileLoop.tmplWhile() != null => BuildTmplLoop.buildWhile(whileLoop.tmplWhile())
+      case doWhile@_ if doWhile.tmplDoWhile() != null => BuildTmplLoop.buildDoWhile(doWhile.tmplDoWhile())
+      case ifStmt@_ if ifStmt.tmplIf() != null => buildIf(ifStmt.tmplIf())
     }
   }
 
+  def buildIf(ifStmt: TmplIfContext): TmplIf = {
+    val elseBlock = if (ifStmt.elseThen != null && !ifStmt.elseThen.isEmpty) {
+      ifStmt.elseThen match {
+        case ifBlock@_ if ifBlock.tmplIf() != null => Some(Right(buildIf(ifBlock.tmplIf())))
+        case elseBl@_ if elseBl.tmplExprContent() != null => Some(Left(buildExprContent(elseBl.tmplExprContent())))
+      }
+    } else None
+    TmplIf(buildConditionBlock(ifStmt.cond), buildExprContent(ifStmt.content), elseBlock)
+  }
+
   def buildVar(variable: TmplVarContext): TmplVar = {
-    TmplVar(variable.name.getText, buildType(variable.`type`), buildExpression(variable.value))
+    TmplVar(buildAnnotations(variable.annots.asScala.toList), buildProps(variable.props), variable.name.getText, buildType(variable.`type`), buildExpression(variable.value))
   }
 
   def buildCallObject(obj: TmplCallObjContext): TmplCallObj = {

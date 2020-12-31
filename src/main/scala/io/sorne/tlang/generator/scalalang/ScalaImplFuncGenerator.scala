@@ -10,7 +10,7 @@ object ScalaImplFuncGenerator {
     str ++= "def " ++= func.name
     str ++= genCurry(func.curries)
     str ++= " {\n"
-    str ++= ScalaGenerator.genExpressions(func.content)
+    //str ++= ScalaGenerator.genExpressions(func.content)
     str ++= "\n}\n\n"
     str.toString
   }
