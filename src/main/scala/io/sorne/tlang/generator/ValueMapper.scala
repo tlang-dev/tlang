@@ -31,8 +31,8 @@ object ValueMapper {
   def mapContent(content: Option[List[TmplContent]], values: Map[String, Value[_]]): Option[List[TmplContent]] = {
     if (content.isDefined) {
       val newContent: List[TmplContent] = content.get.map {
-        case expr: TmplExpression => mapExpression(expr, values)
         case func: TmplFunc => mapFunc(func, values)
+        case expr: TmplExpression => mapExpression(expr, values)
         case impl: TmplImpl => mapImpl(impl, values)
       }
       Some(newContent)

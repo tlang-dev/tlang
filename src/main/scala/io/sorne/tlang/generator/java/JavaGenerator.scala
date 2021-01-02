@@ -1,9 +1,11 @@
 package io.sorne.tlang.generator.java
 
+import io.sorne.tlang.ast.helper.{ConditionLink, ConditionType}
 import io.sorne.tlang.ast.tmpl._
 import io.sorne.tlang.ast.tmpl.call._
-import io.sorne.tlang.ast.tmpl.condition.TmplConditionBlock
+import io.sorne.tlang.ast.tmpl.condition.{TmplCondition, TmplConditionBlock}
 import io.sorne.tlang.ast.tmpl.func.TmplFunc
+import io.sorne.tlang.ast.tmpl.loop.{TmplDoWhile, TmplFor, TmplWhile}
 import io.sorne.tlang.ast.tmpl.primitive._
 import io.sorne.tlang.generator.CodeGenerator
 
@@ -27,8 +29,8 @@ object JavaGenerator {
 
   def genContent(impl: TmplContent): String = {
     impl match {
-      case expr: TmplExpression => genExpression(expr)
       case func: TmplFunc => genFunc(func)
+      case expr: TmplExpression => genExpression(expr)
       case impl: TmplImpl => genImpl(impl)
     }
   }
@@ -52,11 +54,8 @@ object JavaGenerator {
       func.curries.get.head.params.foreach(params => str ++= params.map(genParam).mkString(", "))
     }
     str ++= ")"
-    if (func.content.isDefined) {
-      str ++= " {\n"
-      str ++= genExprBlock(func.content.get)
-      str ++= "\n}\n"
-    }
+    if (func.content.isDefined) str ++= " " ++= genExprBlock(func.content.get)
+    else str ++= ";"
     str.toString()
   }
 
@@ -118,7 +117,9 @@ object JavaGenerator {
   }
 
   def genExprBlock(block: TmplExprBlock): String = {
-    block.exprs.map(genExpression).mkString("\n")
+    val str = new StringBuilder
+    str ++= "{\n" ++= block.exprs.map(genExpression).mkString("\n") ++= "\n}"
+    str.toString()
   }
 
   def genExpression(expr: TmplExpression): String = {
@@ -127,7 +128,44 @@ object JavaGenerator {
       case func: TmplFunc => genFunc(func)
       case valueType: TmplValueType => genValueType(valueType)
       case variable: TmplVar => genVar(variable)
+      case ifStmt: TmplIf => genIf(ifStmt)
+      case forLoop: TmplFor => genFor(forLoop)
+      case whileLoop: TmplWhile => genWhile(whileLoop)
+      case doWhile: TmplDoWhile => genDoWhile(doWhile)
     }
+  }
+
+  def genIf(ifStmt: TmplIf): String = {
+    val str = new StringBuilder
+    str ++= "if(" ++= genConditionBlock(ifStmt.cond) ++= ") "
+    str ++= genExprContent(ifStmt.content)
+    if (ifStmt.elseBlock.isDefined) ifStmt.elseBlock.get match {
+      case Left(elseBlock) => str ++= " else " ++= genExprContent(elseBlock)
+      case Right(ifBlock) => str ++= " else " ++= genIf(ifBlock)
+    }
+    str ++= "\n"
+    str.toString()
+  }
+
+  def genFor(forLoop: TmplFor): String = {
+    val str = new StringBuilder
+    str ++= "for(" ++= ") "
+    str ++= genExprContent(forLoop.content) ++= "\n"
+    str.toString()
+  }
+
+  def genWhile(whileLoop: TmplWhile): String = {
+    val str = new StringBuilder
+    str ++= "while(" ++= genConditionBlock(whileLoop.cond) ++= ") "
+    str ++= genExprContent(whileLoop.content) ++= "\n"
+    str.toString()
+  }
+
+  def genDoWhile(doWhile: TmplDoWhile): String = {
+    val str = new StringBuilder
+    str ++= "do " ++= genExprContent(doWhile.content)
+    str ++= " while(" ++= genConditionBlock(doWhile.cond) ++= ");\n"
+    str.toString()
   }
 
   def genCallObj(callObj: TmplCallObj): String = {
@@ -174,8 +212,59 @@ object JavaGenerator {
     }
   }
 
+  def genSimpleValueType(valueType: TmplSimpleValueType): String = {
+    valueType match {
+      case call: TmplCallObj => genCallObj(call)
+      case value: TmplPrimitiveValue => genPrimitive(value)
+    }
+  }
+
   def genConditionBlock(block: TmplConditionBlock): String = {
-    ""
+    val str = new StringBuilder
+    block.content match {
+      case Left(block) => str ++= "(" ++= genConditionBlock(block) ++= ")"
+      case Right(cond) => str ++= genCondition(cond)
+    }
+    str ++= genConditionLinkWithBlock(block.link, block.nextBlock)
+    str.toString()
+  }
+
+  def genCondition(cond: TmplCondition): String = {
+    val str = new StringBuilder
+    str ++= genSimpleValueType(cond.statement1)
+    if (cond.condition.isDefined) {
+      str ++= " " ++= genConditionType(cond.condition.get) ++= " "
+      str ++= genSimpleValueType(cond.statement2.get)
+    }
+    str ++= genConditionLinkWithBlock(cond.link, cond.nextBlock)
+    str.toString()
+  }
+
+  def genConditionLinkWithBlock(link: Option[ConditionLink.condition], nextBlock: Option[TmplConditionBlock]): String = {
+    val str = new StringBuilder
+    if (link.isDefined) {
+      str ++= " " ++= genConditionLink(link.get)
+      nextBlock.foreach(block => str ++= " " ++= genConditionBlock(block))
+    }
+    str.toString()
+  }
+
+  def genConditionType(cond: ConditionType.condition): String = {
+    cond match {
+      case io.sorne.tlang.ast.helper.ConditionType.EQUAL => "=="
+      case io.sorne.tlang.ast.helper.ConditionType.GREATER => ">"
+      case io.sorne.tlang.ast.helper.ConditionType.LESSER => "<"
+      case io.sorne.tlang.ast.helper.ConditionType.GREATER_OR_EQUAL => ">="
+      case io.sorne.tlang.ast.helper.ConditionType.LESSER_OR_EQUAL => "<="
+      case io.sorne.tlang.ast.helper.ConditionType.NOT_EQUAL => "!="
+    }
+  }
+
+  def genConditionLink(link: ConditionLink.condition): String = {
+    link match {
+      case io.sorne.tlang.ast.helper.ConditionLink.OR => "||"
+      case io.sorne.tlang.ast.helper.ConditionLink.AND => "&&"
+    }
   }
 
   def genPrimitive(primitive: TmplPrimitiveValue): String = {

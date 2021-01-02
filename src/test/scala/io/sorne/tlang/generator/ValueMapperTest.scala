@@ -3,8 +3,8 @@ package io.sorne.tlang.generator
 import io.sorne.tlang.ast.common.value.TLangString
 import io.sorne.tlang.ast.tmpl.call.{TmplCallArray, TmplCallFunc, TmplCallObj, TmplCallVar}
 import io.sorne.tlang.ast.tmpl.func.TmplFunc
-import io.sorne.tlang.ast.tmpl.primitive.TmplStringValue
-import io.sorne.tlang.ast.tmpl.{TmplGeneric, TmplImpl, TmplImplFor, TmplMultiValue, TmplPkg, TmplType, TmplUse, TmplVar}
+import io.sorne.tlang.ast.tmpl.primitive.{TmplStringValue, TmplTextValue}
+import io.sorne.tlang.ast.tmpl.{TmplGeneric, TmplImpl, TmplImplFor, TmplMultiValue, TmplPkg, TmplSetAttribute, TmplType, TmplUse, TmplVar}
 import org.scalatest.funsuite.AnyFunSuite
 
 class ValueMapperTest extends AnyFunSuite {
@@ -54,6 +54,38 @@ class ValueMapperTest extends AnyFunSuite {
     assert("MyFunc" == res.asInstanceOf[TmplFunc].name)
   }
 
+  test("Replace content with impl") {
+    val values = Map("name" -> new TLangString("MyImpl"))
+    val impl = Some(List(TmplImpl(None, None, "${name}", None, None, None)))
+    val res = ValueMapper.mapContent(impl, values).get.head.asInstanceOf[TmplImpl]
+    assert("MyImpl" == res.name)
+  }
+
+  test("Replace content with func") {
+    val values = Map("name" -> new TLangString("MyFunc"))
+    val func = Some(List(TmplFunc(None, None, "${name}", None, None)))
+    val res = ValueMapper.mapContent(func, values).get.head.asInstanceOf[TmplFunc]
+    assert("MyFunc" == res.name)
+  }
+
+  test("Replace content with call var") {
+    val values = Map("name" -> new TLangString("MyVar"))
+    val call = Some(List(TmplCallObj(List(TmplCallVar("${name}")))))
+    val res = ValueMapper.mapContent(call, values).get.head
+    assert("MyVar" == res.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallVar].name)
+  }
+
+  test("Replace expressions with call var") {
+    val values = Map("name" -> new TLangString("MyVar"))
+    val call = Some(List(TmplCallObj(List(TmplCallVar("${name}")))))
+    val res = ValueMapper.mapExpressions(call, values).get.head
+    assert("MyVar" == res.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallVar].name)
+  }
+
+  test("Replace expressions with none") {
+    assert(ValueMapper.mapExpressions(None, Map()).isEmpty)
+  }
+
   test("Replace call array") {
     val values = Map("name" -> new TLangString("MyCall"))
     val call = TmplCallObj(List(TmplCallArray("${name}", TmplStringValue("position1"))))
@@ -92,6 +124,18 @@ class ValueMapperTest extends AnyFunSuite {
     val res = ValueMapper.mapType(newType, values)
     assert("List" == res.name)
     assert("String" == res.generic.get.types.head.name)
+  }
+
+  test("Replace set attributes") {
+    val values = Map("name" -> new TLangString("MyAttr"), "value" -> new TLangString("MyValue"))
+    val attr = Some(List(TmplSetAttribute(Some("${name}"), TmplTextValue("${value}"))))
+    val res = ValueMapper.mapSetAttributes(attr, values).get.head
+    assert("MyAttr" == res.name.get)
+    assert("MyValue" == res.value.asInstanceOf[TmplTextValue].value)
+  }
+
+  test("Replace set attributes with none") {
+    assert(ValueMapper.mapSetAttributes(None, Map()).isEmpty)
   }
 
 }

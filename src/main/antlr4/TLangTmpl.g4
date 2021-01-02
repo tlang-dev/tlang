@@ -112,8 +112,7 @@ tmplConditionBlock:
      content=tmplCondition (link=('&&' | '||')  next=tmplConditionBlock)* |
     '(' content=tmplCondition ')' (link=('&&' | '||')  next=tmplConditionBlock)* |
     '(' content=tmplCondition (link=('&&' | '||')  next=tmplConditionBlock)* ')' |
-    '(' innerBlock=tmplConditionBlock ')' (link=('&&' | '||')  next=tmplConditionBlock)*
-;
+    '(' innerBlock=tmplConditionBlock ')' (link=('&&' | '||')  next=tmplConditionBlock)*;
 
 tmplCondition:
     arg1=tmplSimpleValueType (mark=tmplConditionMark arg2=tmplSimpleValueType)? (link=('&&' | '||') next=tmplConditionBlock)*;
