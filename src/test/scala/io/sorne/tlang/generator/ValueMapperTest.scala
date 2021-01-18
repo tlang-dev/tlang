@@ -16,6 +16,10 @@ class ValueMapperTest extends AnyFunSuite {
     assert("This is the first one to replace, obviously this is the second one, and finally, this is the last one" == res)
   }
 
+  test("Replace String in entity") {
+
+  }
+
   test("Replace in package") {
     val values = Map("one" -> new TLangString("Package1"), "two" -> new TLangString("Package2"))
     val res = ValueMapper.mapPkg(Some(new TmplPkg(List("${one}", "${two}"))), values).get

@@ -1,5 +1,6 @@
 package io.sorne.tlang.generator
 
+import io.sorne.tlang.ast.common.value.EntityValue
 import io.sorne.tlang.ast.tmpl._
 import io.sorne.tlang.ast.tmpl.call._
 import io.sorne.tlang.ast.tmpl.condition.TmplConditionBlock
@@ -183,18 +184,24 @@ object ValueMapper {
   }
 
   def mapString(str: String, values: Map[String, Value[_]]): String = {
-    var pos = str.indexOf("${")
-    val ret = new StringBuilder(str)
-    var end = 0
-    var search = ""
-    while (pos > -1) {
-      end = ret.indexOf("}", pos)
-      search = ret.substring(pos + 2, end)
-      val newVal = values(search).toString
-      ret.replace(pos, end + 1, newVal)
-      pos = ret.indexOf("${", pos + (newVal.length - (search.length + 3)))
-    }
-    ret.toString
+      var pos = str.indexOf("${")
+      val ret = new StringBuilder(str)
+      var end = 0
+      var search = ""
+      while (pos > -1) {
+        end = ret.indexOf("}", pos)
+        search = ret.substring(pos + 2, end)
+        val newVal = resolveValue(search, values)
+        ret.replace(pos, end + 1, newVal)
+        pos = ret.indexOf("${", pos + (newVal.length - (search.length + 3)))
+      }
+      ret.toString
+  }
+
+  def resolveValue(search:String, values: Map[String, Value[_]]): String = {
+    if(search.contains(".")) {
+
+    } else values(search).toString
   }
 
 }
