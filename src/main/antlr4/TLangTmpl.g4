@@ -17,7 +17,7 @@ tmplContent: tmplImpl | tmplFunc | tmplExpression;
 
 tmplPkg: 'pkg' parts+=ID ('.' parts+=ID)*;
 
-tmplUse: 'use' parts+=ID ('.' parts+=ID)*;
+tmplUse: 'use' parts+=ID ('.' parts+=ID)* ('as' alias=ID)?;
 
 tmplAnnot: '@' name=ID ('(' annotParams+=tmplAnnotParam (',' annotParams+=tmplAnnotParam)* ')')?;
 
