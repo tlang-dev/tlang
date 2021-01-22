@@ -12,7 +12,7 @@ class ValueMapperTest extends AnyFunSuite {
   test("Replace String") {
     val values = Map("one" -> new TLangString("This is the first one"), "two" -> new TLangString("the second one"), "three" -> new TLangString("the last one"))
     val str = "${one} to replace, obviously this is ${two}, and finally, this is ${three}"
-    val res = ValueMapper.mapString(str, values)
+    val res = ValueMapper.mapID(str, values)
     assert("This is the first one to replace, obviously this is the second one, and finally, this is the last one" == res)
   }
 
@@ -29,7 +29,7 @@ class ValueMapperTest extends AnyFunSuite {
 
   test("Replace in uses") {
     val values = Map("one" -> new TLangString("Package1"), "two" -> new TLangString("Package2"))
-    val res = ValueMapper.mapUses(Some(List(new TmplUse(List("${one}", "Package2")), new TmplUse(List("Package1", "${two}")))), values).get
+    val res = ValueMapper.mapUses(Some(List(TmplUse(List("${one}", "Package2")), new TmplUse(List("Package1", "${two}")))), values).get
     assert("Package1" == res.head.parts.head)
     assert("Package2" == res.head.parts.last)
     assert("Package1" == res.last.parts.head)

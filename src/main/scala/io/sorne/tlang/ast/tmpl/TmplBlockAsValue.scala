@@ -2,8 +2,9 @@ package io.sorne.tlang.ast.tmpl
 
 import io.sorne.tlang.ast.common.value.TLangType
 import io.sorne.tlang.interpreter.Value
+import io.sorne.tlang.interpreter.context.Context
 
-case class TmplBlockAsValue(block: TmplBlock, params: Map[String, Value[_]]) extends Value[TmplBlock] {
+case class TmplBlockAsValue(block: TmplBlock, context: Context) extends Value[TmplBlock] {
   override def getValue: TmplBlock = this.block
 
   override def getType: String = TmplBlockAsValue.getType
