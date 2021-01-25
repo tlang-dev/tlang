@@ -1,13 +1,13 @@
 grammar TLangTmpl;
 
-import TLangCommon, CommonLexer;
+import TLangCommon, TLangHelper, CommonLexer;
 
 	/*
  * Tmpl block (Template block)
  * The content of this block will be translated in the final language as it is
  */
 tmplBlock:
-	'tmpl' '[' lang=tmplID ']' name=tmplID ('('params+=tmplID (',' params+=tmplID)*')')? '{'
+	'tmpl' '[' lang=tmplID ']' name=tmplID ('('params += helperParam (',' params += helperParam)*')')? '{'
 	(tmplPakage=tmplPkg)?
 	(tmplUses+=tmplUse)*
 	(tmplContents+=tmplContent)*

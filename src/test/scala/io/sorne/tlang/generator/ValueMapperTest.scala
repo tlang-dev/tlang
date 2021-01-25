@@ -1,10 +1,11 @@
 package io.sorne.tlang.generator
 
+import io.sorne.tlang.ast.common.call.{CallObject, CallVarObject}
 import io.sorne.tlang.ast.common.value.TLangString
 import io.sorne.tlang.ast.tmpl.call.{TmplCallArray, TmplCallFunc, TmplCallObj, TmplCallVar}
 import io.sorne.tlang.ast.tmpl.func.TmplFunc
 import io.sorne.tlang.ast.tmpl.primitive.{TmplStringValue, TmplTextValue}
-import io.sorne.tlang.ast.tmpl.{TmplGeneric, TmplImpl, TmplImplFor, TmplMultiValue, TmplPkg, TmplSetAttribute, TmplType, TmplUse, TmplVar}
+import io.sorne.tlang.ast.tmpl.{TmplGeneric, TmplImpl, TmplImplFor, TmplInterpretedID, TmplMultiValue, TmplPkg, TmplSetAttribute, TmplType, TmplUse, TmplVar}
 import org.scalatest.funsuite.AnyFunSuite
 
 class ValueMapperTest extends AnyFunSuite {
@@ -124,7 +125,7 @@ class ValueMapperTest extends AnyFunSuite {
 
   test("Generic type") {
     val values = Map("type" -> new TLangString("List"), "generic" -> new TLangString("String"))
-    val newType = TmplType("${type}", Some(TmplGeneric(List(TmplType("${generic}")))))
+    val newType = TmplType(TmplInterpretedID(call=CallObject(List(CallVarObject("name")))), Some(TmplGeneric(List(TmplType(TmplInterpretedID(call=CallObject(List(CallVarObject("generic")))))))))
     val res = ValueMapper.mapType(newType, values)
     assert("List" == res.name)
     assert("String" == res.generic.get.types.head.name)

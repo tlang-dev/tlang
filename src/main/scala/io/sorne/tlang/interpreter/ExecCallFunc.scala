@@ -18,8 +18,8 @@ object ExecCallFunc extends Executor {
         ExecFunc.run(func, newContext)
       case None => ContextUtils.findTmpl(context, caller.name.get) match {
         case Some(tmpl) =>
-          val params: Map[String, Value[_]] = if (tmpl.params.nonEmpty) manageTmplParameters(caller, tmpl, context) else Map()
-          Right(Some(List(TmplBlockAsValue(tmpl.copy(), params))))
+          val newContext = manageTmplParameters(caller, tmpl, context)
+          Right(Some(List(TmplBlockAsValue(tmpl.copy(), newContext))))
         case None => Left(CallableNotFound(caller.name.get))
       }
     }
@@ -33,7 +33,7 @@ object ExecCallFunc extends Executor {
       caller.currying.get.zipWithIndex.foreach(param => {
         param._1.params.get.zipWithIndex.foreach(attr => {
           ExecStatement.run(attr._1.value, context) match {
-            case Left(value) => Left(value)
+            case Left(value) => //Left(value)
             case Right(optionVal) => optionVal match {
               case Some(value) => if (value.size == 1) vars.put(findParamName(param._2, attr._2, helperFunc), value.head)
               case None =>
@@ -49,15 +49,23 @@ object ExecCallFunc extends Executor {
     helperFunc.currying.get(curryPos).params(paramPos).param.getOrElse(paramPos.toString)
   }
 
-  private def manageTmplParameters(caller: CallFuncObject, tmpl: TmplBlock, context: Context): Map[String, Value[_]] = {
-    val params = mutable.Map.empty[String, Value[_]]
+  private def manageTmplParameters(caller: CallFuncObject, tmpl: TmplBlock, context: Context): Context = {
+    val vars: mutable.Map[String, Value[_]] = mutable.Map()
+    val funcs: mutable.Map[String, HelperFunc] = mutable.Map()
     for (param <- tmpl.params.get.zipWithIndex) {
-      ExecComplexValue.run(caller.currying.get.head.params.get(param._2).value, context) match {
+      ExecStatement.run(caller.currying.get.head.params.get(param._2).value, context) match {
         case Left(_) =>
-        case Right(value) => params.addOne(param._1, value.get.head)
+        case Right(optionVal) => optionVal match {
+          case None =>
+          case Some(value) => if (value.size == 1) vars.put(findTmplParamName(param._2, tmpl), value.head)
+        }
       }
     }
-    params.toMap
+    Context(context.scopes :+ Scope(vars, funcs))
+  }
+
+  private def findTmplParamName(paramPos:Int, tmplBlock: TmplBlock):String = {
+    tmplBlock.params.get(paramPos).param.getOrElse(paramPos.toString)
   }
 
 }

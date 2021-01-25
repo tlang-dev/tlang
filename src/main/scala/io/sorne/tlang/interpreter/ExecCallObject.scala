@@ -44,7 +44,7 @@ object ExecCallObject extends Executor {
           case Some(_) => ExecCallFunc.run(CallFuncObject(Some(name), func.currying), context)
           case None => Left(CallableNotFound(name))
         }
-      case variable: CallVarObject => findVar(callVar + "/" + variable.name, context)
+      case variable: CallVarObject => findVar(callVar.name + "/" + variable.name, context)
     }
   }
 

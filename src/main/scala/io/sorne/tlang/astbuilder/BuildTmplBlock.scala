@@ -15,7 +15,7 @@ object BuildTmplBlock {
     val pkg = if (tmpl.tmplPkg() != null && !tmpl.tmplPkg().isEmpty) Some(buildPkg(tmpl.tmplPkg())) else None
     val uses: List[TmplUse] = buildUses(tmpl.tmplUses.asScala.toList)
     TmplBlock(tmpl.name.getText, tmpl.lang.getText,
-      if (tmpl.params != null && !tmpl.params.isEmpty) Some(tmpl.params.asScala.toList.map(_.getText)) else None,
+      if (tmpl.params != null && !tmpl.params.isEmpty) Some(BuildHelperBlock.buildParams(tmpl.params.asScala.toList)) else None,
       pkg, Some(uses),
       buildContent(tmpl.tmplContents.asScala.toList)
     )

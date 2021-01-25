@@ -12,6 +12,6 @@ sealed trait TmplID {
   }
 }
 
-case class TmplInterpretedID(pre: Option[String], call: CallObject, post: Option[String]) extends TmplID
+case class TmplInterpretedID(pre: Option[String]=None, call: CallObject, post: Option[String]=None) extends TmplID
 
 case class TmplStringID(id: String) extends TmplID
