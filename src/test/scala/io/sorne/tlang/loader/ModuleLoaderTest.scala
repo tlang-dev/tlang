@@ -15,7 +15,9 @@ class ModuleLoaderTest extends AnyFunSuite {
       override def isDirectory(path: Path): Boolean = true
 
       override def findTBagFile(path: Path): Option[File] = Some(new File("/path/to/my/file.tbag"))
-    }
+
+     override def compress(dir: Path, dest: Path): Unit = ???
+   }
     val dep = Dependency("MyOrg", "MyProject", "MyProgram", "1.2.3", Stability.ALPHA, 0)
     val path = ModuleLoader.searchLocalRepo(dep).toOption.get.get
     assert(Paths.get("/path", "to", "my", "file.tbag") == path)
