@@ -52,19 +52,21 @@ object ExecCallFunc extends Executor {
   private def manageTmplParameters(caller: CallFuncObject, tmpl: TmplBlock, context: Context): Context = {
     val vars: mutable.Map[String, Value[_]] = mutable.Map()
     val funcs: mutable.Map[String, HelperFunc] = mutable.Map()
-    for (param <- tmpl.params.get.zipWithIndex) {
-      ExecStatement.run(caller.currying.get.head.params.get(param._2).value, context) match {
-        case Left(_) =>
-        case Right(optionVal) => optionVal match {
-          case None =>
-          case Some(value) => if (value.size == 1) vars.put(findTmplParamName(param._2, tmpl), value.head)
+    if (tmpl.params.isDefined) {
+      for (param <- tmpl.params.get.zipWithIndex) {
+        ExecStatement.run(caller.currying.get.head.params.get(param._2).value, context) match {
+          case Left(_) =>
+          case Right(optionVal) => optionVal match {
+            case None =>
+            case Some(value) => if (value.size == 1) vars.put(findTmplParamName(param._2, tmpl), value.head)
+          }
         }
       }
     }
     Context(context.scopes :+ Scope(vars, funcs))
   }
 
-  private def findTmplParamName(paramPos:Int, tmplBlock: TmplBlock):String = {
+  private def findTmplParamName(paramPos: Int, tmplBlock: TmplBlock): String = {
     tmplBlock.params.get(paramPos).param.getOrElse(paramPos.toString)
   }
 

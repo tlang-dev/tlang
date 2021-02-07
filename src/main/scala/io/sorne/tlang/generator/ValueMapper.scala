@@ -155,8 +155,8 @@ object ValueMapper {
 
   def mapPrimitive(primitive: TmplPrimitiveValue, context: Context): TmplPrimitiveValue = {
     primitive match {
-      case str: TmplStringValue => str
-      case text: TmplTextValue => text
+      case str: TmplStringValue => TmplStringValue(mapID(str.value, context))
+      case text: TmplTextValue => TmplTextValue(mapID(text.value, context))
       case _ => primitive
     }
   }
@@ -185,7 +185,7 @@ object ValueMapper {
     id match {
       case interId: TmplInterpretedID => ExecCallObject.run(interId.call, context) match {
         case Left(error) => TmplStringID(error.message)
-        case Right(value) => TmplStringID(interId.pre.getOrElse("") + value.fold("")(v => v.head.toString) + interId.post)
+        case Right(value) => TmplStringID(interId.pre.getOrElse("") + value.fold("")(v => v.head.toString) + interId.post.getOrElse(""))
       }
       case str: TmplStringID => TmplStringID(str.id)
     }

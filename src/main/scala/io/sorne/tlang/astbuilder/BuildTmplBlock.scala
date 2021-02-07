@@ -243,7 +243,17 @@ object BuildTmplBlock {
     case interId@_ if interId.tmplIntprID() != null => TmplInterpretedID(AstBuilderUtils.getText(interId.tmplIntprID().pre), BuildHelperStatement.buildCallObject(interId.tmplIntprID().callObj()), AstBuilderUtils.getText(interId.tmplIntprID().pos))
   }
 
-  def buildString(string: TmplStringValueContext): TmplStringValue = TmplStringValue(AstBuilderUtils.extraString(string.value.getText))
+  def buildString(str: TmplStringContext): TmplID = str match {
+    case id@_ if id.STRING() != null => TmplStringID(AstBuilderUtils.extraString(id.STRING().getSymbol.getText))
+    case interId@_ if interId.tmplIntprString() != null => TmplInterpretedID(AstBuilderUtils.getText(interId.tmplIntprString().pre), BuildHelperStatement.buildCallObject(interId.tmplIntprString().callObj()), AstBuilderUtils.getText(interId.tmplIntprString().pos))
+  }
+
+  def buildText(txt: TmplTextContext): TmplID = txt match {
+    case id@_ if id.TEXT() != null => TmplStringID(AstBuilderUtils.extraText(id.TEXT().getSymbol.getText))
+    case interId@_ if interId.tmplIntprText() != null => TmplInterpretedID(AstBuilderUtils.getText(interId.tmplIntprText().pre), BuildHelperStatement.buildCallObject(interId.tmplIntprText().callObj()), AstBuilderUtils.getText(interId.tmplIntprText().pos))
+  }
+
+  def buildString(string: TmplStringValueContext): TmplStringValue = TmplStringValue(buildString(string.value))
 
   def buildNumber(number: TmplNumberValueContext): TmplPrimitiveValue = {
     val value = number.value.getText
@@ -251,7 +261,7 @@ object BuildTmplBlock {
     else TmplLongValue(value.toLong)
   }
 
-  def buildText(text: TmplTextValueContext): TmplTextValue = TmplTextValue(AstBuilderUtils.extraText(text.value.getText))
+  def buildText(text: TmplTextValueContext): TmplTextValue = TmplTextValue(buildText(text.value))
 
   def buildBool(bool: TmplBoolValueContext): TmplBoolValue = TmplBoolValue(bool.value.getText == "true")
 

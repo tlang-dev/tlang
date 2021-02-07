@@ -1,8 +1,8 @@
 package io.sorne.tlang.interpreter
 
+import io.sorne.tlang.ast.common.call._
+import io.sorne.tlang.ast.common.value.TLangString
 import io.sorne.tlang.ast.helper._
-import io.sorne.tlang.ast.common.call.{CallFuncObject, CallFuncParam, CallObject, CallVarObject, SetAttribute}
-import io.sorne.tlang.ast.common.value.{ComplexAttribute, TLangString}
 import io.sorne.tlang.ast.tmpl.{TmplBlock, TmplBlockAsValue, TmplPkg, TmplStringID}
 import io.sorne.tlang.interpreter.context.{Context, Scope}
 import org.scalatest.funsuite.AnyFunSuite

@@ -89,11 +89,11 @@ tmplSimpleValueType: tmplCallObj | tmplPrimitiveValue;
 
 tmplPrimitiveValue: tmplStringValue | tmplNumberValue | tmplTextValue | tmplEntityValue | tmplBoolValue | tmplArrayValue;
 
-tmplStringValue: value=STRING;
+tmplStringValue: value=tmplString;
 
 tmplNumberValue: value=NUMBER;
 
-tmplTextValue: value=TEXT;
+tmplTextValue: value=tmplText;
 
 tmplBoolValue: value= 'true' | 'false';
 
@@ -122,3 +122,11 @@ tmplConditionMark: '==' | '!=' | '<' | '>' | '<=' | '>=';
 tmplID: ID | tmplIntprID;
 
 tmplIntprID: (pre=ID)? '${' callObj '}' (pos=ID)?;
+
+tmplString: STRING | tmplIntprString;
+
+tmplIntprString: 's"' (pre=ID)? '${' callObj '}' (pos=ID)? '"';
+
+tmplText: TEXT | tmplIntprText;
+
+tmplIntprText: 's"""' (pre=ID)? '${' callObj '}' (pos=ID)? '"""';

@@ -23,7 +23,7 @@ class BuildTmplLoopTest extends AnyFunSuite {
     assert(ConditionType.EQUAL == cond.condition.get)
     assert(1 == cond.statement1.asInstanceOf[TmplLongValue].value)
     assert(1 == cond.statement2.get.asInstanceOf[TmplLongValue].value)
-    assert("callMyFunc" == loop.content.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallFunc].name)
+    assert("callMyFunc" == loop.content.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallFunc].name.toString)
   }
 
   test("While with expression block") {
@@ -42,8 +42,8 @@ class BuildTmplLoopTest extends AnyFunSuite {
     assert(ConditionType.EQUAL == cond.condition.get)
     assert(1 == cond.statement1.asInstanceOf[TmplLongValue].value)
     assert(1 == cond.statement2.get.asInstanceOf[TmplLongValue].value)
-    assert("callMyFunc1" == block.exprs.head.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallFunc].name)
-    assert("callMyFunc2" == block.exprs.last.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallFunc].name)
+    assert("callMyFunc1" == block.exprs.head.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallFunc].name.toString)
+    assert("callMyFunc2" == block.exprs.last.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallFunc].name.toString)
   }
 
   test("Do while with expression") {
@@ -59,7 +59,7 @@ class BuildTmplLoopTest extends AnyFunSuite {
     assert(ConditionType.EQUAL == cond.condition.get)
     assert(1 == cond.statement1.asInstanceOf[TmplLongValue].value)
     assert(1 == cond.statement2.get.asInstanceOf[TmplLongValue].value)
-    assert("callMyFunc" == loop.content.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallFunc].name)
+    assert("callMyFunc" == loop.content.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallFunc].name.toString)
   }
 
   test("Do while with expression block") {
@@ -78,8 +78,8 @@ class BuildTmplLoopTest extends AnyFunSuite {
     assert(ConditionType.EQUAL == cond.condition.get)
     assert(1 == cond.statement1.asInstanceOf[TmplLongValue].value)
     assert(1 == cond.statement2.get.asInstanceOf[TmplLongValue].value)
-    assert("callMyFunc1" == block.exprs.head.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallFunc].name)
-    assert("callMyFunc2" == block.exprs.last.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallFunc].name)
+    assert("callMyFunc1" == block.exprs.head.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallFunc].name.toString)
+    assert("callMyFunc2" == block.exprs.last.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallFunc].name.toString)
   }
 
 }

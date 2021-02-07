@@ -53,7 +53,7 @@ class JavaGeneratorTest extends AnyFunSuite {
   test("Annotation before impl") {
     val impl = TmplImpl(Some(List(
       TmplAnnotation("MyAnnot1", None),
-      TmplAnnotation("MyAnnot2", Some(List(TmplAnnotationParam("param1", TmplStringValue("val1")), TmplAnnotationParam("param2", TmplStringValue("val2"))))))), None, TmplStringID("MyClass"), None, None)
+      TmplAnnotation("MyAnnot2", Some(List(TmplAnnotationParam("param1", TmplStringValue(TmplStringID("val1"))), TmplAnnotationParam("param2", TmplStringValue(TmplStringID("val2")))))))), None, TmplStringID("MyClass"), None, None)
     val res = JavaGenerator.genImpl(impl)
     assert(res.contains("@MyAnnot1\n" +
       "@MyAnnot2(param1 = \"val1\", param2 = \"val2\")\n" +
@@ -63,7 +63,7 @@ class JavaGeneratorTest extends AnyFunSuite {
   test("Annotation before func") {
     val impl = TmplFunc(Some(List(
       TmplAnnotation("MyAnnot1", None),
-      TmplAnnotation("MyAnnot2", Some(List(TmplAnnotationParam("param1", TmplStringValue("val1")), TmplAnnotationParam("param2", TmplStringValue("val2"))))))), None, TmplStringID("myFunc"), None, Some(TmplExprBlock(List())), None)
+      TmplAnnotation("MyAnnot2", Some(List(TmplAnnotationParam("param1", TmplStringValue(TmplStringID("val1"))), TmplAnnotationParam("param2", TmplStringValue(TmplStringID("val2")))))))), None, TmplStringID("myFunc"), None, Some(TmplExprBlock(List())), None)
     val res = JavaGenerator.genExpression(impl)
     assert(res.contains("@MyAnnot1\n" +
       "@MyAnnot2(param1 = \"val1\", param2 = \"val2\")\n" +

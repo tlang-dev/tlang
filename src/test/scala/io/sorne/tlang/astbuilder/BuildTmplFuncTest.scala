@@ -4,6 +4,7 @@ import io.sorne.tlang.ast.tmpl.func.TmplFunc
 import io.sorne.tlang.{TLangLexer, TLangParser}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
+
 import scala.jdk.CollectionConverters._
 
 class BuildTmplFuncTest extends AnyFunSuite {
@@ -18,7 +19,7 @@ class BuildTmplFuncTest extends AnyFunSuite {
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
     val impl = BuildTmplBlock.buildImpl(parser.tmplBlock().tmplContents.asScala.toList.head.tmplImpl())
-    assert("func1".equals(impl.content.get.head.asInstanceOf[TmplFunc].name))
+    assert("func1".equals(impl.content.get.head.asInstanceOf[TmplFunc].name.toString))
   }
 
   test("Test build func with ()") {
@@ -31,7 +32,7 @@ class BuildTmplFuncTest extends AnyFunSuite {
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
     val impl = BuildTmplBlock.buildImpl(parser.tmplBlock().tmplContents.asScala.toList.head.tmplImpl())
-    assert("func1".equals(impl.content.get.head.asInstanceOf[TmplFunc].name))
+    assert("func1".equals(impl.content.get.head.asInstanceOf[TmplFunc].name.toString))
   }
 
   test("Test build func with one parameter") {
@@ -46,9 +47,9 @@ class BuildTmplFuncTest extends AnyFunSuite {
     val impl = BuildTmplBlock.buildImpl(parser.tmplBlock().tmplContents.asScala.toList.head.tmplImpl())
     val func = impl.content.get.head.asInstanceOf[TmplFunc]
     val param = func.curries.get.head.params.get.head
-    assert("func1".equals(func.name))
+    assert("func1".equals(func.name.toString))
     assert("myParam".equals(param.name))
-    assert("MyType".equals(param.`type`.name))
+    assert("MyType".equals(param.`type`.name.toString))
     assert(!param.`type`.isArray)
     assert(param.`type`.generic.isEmpty)
   }
@@ -65,9 +66,9 @@ class BuildTmplFuncTest extends AnyFunSuite {
     val impl = BuildTmplBlock.buildImpl(parser.tmplBlock().tmplContents.asScala.toList.head.tmplImpl())
     val func = impl.content.get.head.asInstanceOf[TmplFunc]
     val param = func.curries.get.head.params.get.head
-    assert("func1".equals(func.name))
-    assert("myParam".equals(param.name))
-    assert("MyType".equals(param.`type`.name))
+    assert("func1" == func.name.toString)
+    assert("myParam" == param.name)
+    assert("MyType" == param.`type`.name.toString)
     assert(param.`type`.isArray)
     assert(param.`type`.generic.isEmpty)
   }
@@ -84,12 +85,12 @@ class BuildTmplFuncTest extends AnyFunSuite {
     val impl = BuildTmplBlock.buildImpl(parser.tmplBlock().tmplContents.asScala.toList.head.tmplImpl())
     val func = impl.content.get.head.asInstanceOf[TmplFunc]
     val param = func.curries.get.head.params.get.head
-    assert("func1".equals(func.name))
-    assert("myParam".equals(param.name))
-    assert("MyType".equals(param.`type`.name))
-    assert("AnotherType".equals(param.`type`.generic.head.types.head.name))
-    assert("YetAnotherType".equals(param.`type`.generic.head.types.last.name))
-    assert("AndSoOn".equals(param.`type`.generic.head.types.last.generic.get.types.head.name))
+    assert("func1" == func.name.toString)
+    assert("myParam" == param.name)
+    assert("MyType" == param.`type`.name.toString)
+    assert("AnotherType" == param.`type`.generic.head.types.head.name.toString)
+    assert("YetAnotherType" == param.`type`.generic.head.types.last.name.toString)
+    assert("AndSoOn" == param.`type`.generic.head.types.last.generic.get.types.head.name.toString)
     assert(!param.`type`.isArray)
   }
 
@@ -107,15 +108,15 @@ class BuildTmplFuncTest extends AnyFunSuite {
     val param1 = func.curries.get.head.params.get.head
     val param2 = func.curries.get.last.params.get.head
 
-    assert("func1".equals(func.name))
+    assert("func1" == func.name.toString)
 
-    assert("myParam".equals(param1.name))
-    assert("MyType".equals(param1.`type`.name))
+    assert("myParam" == param1.name)
+    assert("MyType" == param1.`type`.name.toString)
     assert(!param1.`type`.isArray)
     assert(param1.`type`.generic.isEmpty)
 
-    assert("myParam2".equals(param2.name))
-    assert("MyType2".equals(param2.`type`.name))
+    assert("myParam2" == param2.name)
+    assert("MyType2" == param2.`type`.name.toString)
     assert(param2.`type`.isArray)
     assert(param2.`type`.generic.isEmpty)
   }
