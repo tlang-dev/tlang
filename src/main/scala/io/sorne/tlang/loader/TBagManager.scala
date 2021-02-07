@@ -1,11 +1,14 @@
 package io.sorne.tlang.loader
 
+import org.apache.commons.compress.archivers.tar.{TarArchiveEntry, TarArchiveOutputStream}
 import org.apache.commons.compress.archivers.{ArchiveEntry, ArchiveInputStream, ArchiveStreamFactory}
 import org.apache.commons.compress.compressors.CompressorStreamFactory
+import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream
 import org.apache.commons.compress.utils.IOUtils
 
-import java.io.{BufferedInputStream, File, FileInputStream, FilenameFilter, InputStream}
-import java.nio.file.{Files, Path, Paths}
+import java.io._
+import java.nio.file.attribute.BasicFileAttributes
+import java.nio.file._
 import scala.annotation.tailrec
 
 trait TBagManager {
@@ -14,6 +17,8 @@ trait TBagManager {
   def isDirectory(path: Path): Boolean
 
   def findTBagFile(path: Path): Option[File]
+
+  def compress(dir: Path, dest: Path): Unit
 }
 
 object TBagManager extends TBagManager {
@@ -58,6 +63,52 @@ object TBagManager extends TBagManager {
     path.toFile.listFiles(new FilenameFilter {
       override def accept(file: File, name: String): Boolean = name.endsWith(".tbag")
     }).toList.headOption
+  }
+
+  override def compress(dir: Path, dest: Path): Unit = {
+    dest.getParent.toFile.mkdirs()
+    val out = Files.newOutputStream(dest)
+    val buffOut = new BufferedOutputStream(out)
+    val gzOut = new GzipCompressorOutputStream(buffOut)
+    val tarOut = new TarArchiveOutputStream(gzOut)
+    try {
+      Files.walkFileTree(dir, new SimpleFileVisitor[Path] {
+        override def visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult = {
+
+          if (attrs.isSymbolicLink) FileVisitResult.CONTINUE
+          else {
+
+            val targetFile = dir.relativize(file)
+
+            try {
+//              val tarEntry = new TarArchiveEntry(file.toFile, targetFile.toString)
+              val tarEntry = tarOut.createArchiveEntry(file.toFile, targetFile.toString)
+              tarOut.putArchiveEntry(tarEntry)
+              Files.copy(file, tarOut)
+              tarOut.closeArchiveEntry()
+            } catch {
+              case e: IOException =>
+                System.err.printf("Unable to tar.gz : %s%n%s%n", file, e)
+            }
+            FileVisitResult.CONTINUE
+          }
+        }
+
+        override def visitFileFailed(file: Path, exc: IOException): FileVisitResult = {
+          System.err.printf("Unable to tar.gz : %s%n%s%n", file, exc)
+          FileVisitResult.CONTINUE
+        }
+      })
+      tarOut.finish()
+    } finally {
+      if (gzOut != null) gzOut.close()
+      tarOut.close()
+      if (buffOut != null) buffOut.close()
+      if (out != null) out.close()
+
+
+      //      if (tarOut != null) tarOut.close()
+    }
   }
 
 }

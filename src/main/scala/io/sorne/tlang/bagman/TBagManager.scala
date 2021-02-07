@@ -29,22 +29,22 @@ object TBagManager {
         if (Files.isRegularFile(path)) {
           readManifest(path) match {
             case Left(error) => Left(error)
-            case Right(value) =>null
+            case Right(value) => null
           }
         } else Left(BGError("MANIFEST_NOT_FOUND", "The MANIFEST file does not exist"))
       }
     }
   }
 
-  def readManifest(path: Path): Either[BGError, Manifest] = {
-null
+  def readManifest(path: Path): Either[BGError, PkgManifest] = {
+    null
   }
 
-  def syncFiles(manifest: Manifest): Either[BGError, Unit] = {
+  def syncFiles(manifest: PkgManifest): Either[BGError, Unit] = {
     manifest.files.map(syncFile).find(_.isLeft).getOrElse(Right(()))
   }
 
-  def syncFile(file: ManifestFile): Either[BGError, Unit] = {
+  def syncFile(file: PkgManifestFile): Either[BGError, Unit] = {
     file.remote match {
       case Some(url) => file.local match {
         case Some(local) => fileDownloader(url, local) match {
@@ -65,7 +65,7 @@ null
   }
 
   def checksum(path: String, checksum: String): Either[BGError, Boolean] = {
-null
+    null
   }
 
 }
