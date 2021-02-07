@@ -6,7 +6,6 @@ import io.sorne.tlang.ast.tmpl.call._
 import io.sorne.tlang.ast.tmpl.condition.{TmplCondition, TmplConditionBlock}
 import io.sorne.tlang.ast.tmpl.func.{TmplFunc, TmplFuncCurry}
 import io.sorne.tlang.ast.tmpl.primitive._
-import org.antlr.v4.runtime.Token
 
 import scala.jdk.CollectionConverters._
 
@@ -16,14 +15,14 @@ object BuildTmplBlock {
     val pkg = if (tmpl.tmplPkg() != null && !tmpl.tmplPkg().isEmpty) Some(buildPkg(tmpl.tmplPkg())) else None
     val uses: List[TmplUse] = buildUses(tmpl.tmplUses.asScala.toList)
     TmplBlock(tmpl.name.getText, tmpl.lang.getText,
-      if (tmpl.params != null && !tmpl.params.isEmpty) Some(tmpl.params.asScala.toList.map(_.getText)) else None,
+      if (tmpl.params != null && !tmpl.params.isEmpty) Some(BuildHelperBlock.buildParams(tmpl.params.asScala.toList)) else None,
       pkg, Some(uses),
       buildContent(tmpl.tmplContents.asScala.toList)
     )
   }
 
   def buildPkg(pkg: TmplPkgContext): TmplPkg = {
-    new TmplPkg(pkg.parts.asScala.toList.map(_.getText))
+    new TmplPkg(pkg.parts.asScala.toList.map(buildId))
   }
 
   def buildUses(uses: List[TmplUseContext]): List[TmplUse] = {
@@ -32,7 +31,7 @@ object BuildTmplBlock {
   }
 
   def buildUse(use: TmplUseContext): TmplUse = {
-    new TmplUse(use.parts.asScala.toList.map(_.getText))
+    TmplUse(use.parts.asScala.toList.map(buildId))
   }
 
   def buildContent(content: List[TmplContentContext]): Option[List[TmplContent]] = {
@@ -46,16 +45,16 @@ object BuildTmplBlock {
 
   def buildImpl(impl: TmplImplContext): TmplImpl = {
     TmplImpl(buildAnnotations(impl.annots.asScala.toList), buildProps(impl.props),
-      impl.name.getText, buildFors(impl.forNames), buildWiths(impl.withNames), if (impl.tmplImplContents != null && !impl.tmplImplContents.isEmpty) buildContent(impl.tmplImplContents.asScala.toList) else None)
+      buildId(impl.name), buildFors(impl.forNames), buildWiths(impl.withNames), if (impl.tmplImplContents != null && !impl.tmplImplContents.isEmpty) buildContent(impl.tmplImplContents.asScala.toList) else None)
   }
 
-  def buildFors(fors: java.util.List[Token]): Option[List[TmplImplFor]] = {
-    if (fors != null && !fors.isEmpty) Some(fors.asScala.toList.map(token => TmplImplFor(AstBuilderUtils.extraString(token.getText))))
+  def buildFors(fors: java.util.List[TmplIDContext]): Option[List[TmplImplFor]] = {
+    if (fors != null && !fors.isEmpty) Some(fors.asScala.toList.map(id => TmplImplFor(buildId(id))))
     else None
   }
 
-  def buildWiths(withs: java.util.List[Token]): Option[List[TmplImplWith]] = {
-    if (withs != null && !withs.isEmpty) Some(withs.asScala.toList.map(token => TmplImplWith(AstBuilderUtils.extraString(token.getText))))
+  def buildWiths(withs: java.util.List[TmplIDContext]): Option[List[TmplImplWith]] = {
+    if (withs != null && !withs.isEmpty) Some(withs.asScala.toList.map(id => TmplImplWith(buildId(id))))
     else None
   }
 
@@ -63,7 +62,7 @@ object BuildTmplBlock {
     val curries =
       if (func.curries != null && !func.curries.isEmpty) Some(func.curries.asScala.map(build).toList)
       else None
-    TmplFunc(buildAnnotations(func.annots.asScala.toList), buildProps(func.props), func.name.getText, curries,
+    TmplFunc(buildAnnotations(func.annots.asScala.toList), buildProps(func.props), buildId(func.name), curries,
       if (func.content != null) Some(buildExprBlock(func.content)) else None,
       if (func.types != null && !func.types.isEmpty) Some(func.types.asScala.toList.map(buildType)) else None)
   }
@@ -96,10 +95,10 @@ object BuildTmplBlock {
   }
 
   def buildType(`type`: TmplTypeContext): TmplType = {
-    TmplType(`type`.`type`.getText, build(`type`.generic), `type`.array != null)
+    TmplType(buildId(`type`.`type`), buildGeneric(`type`.generic), `type`.array != null)
   }
 
-  def build(generic: TmplGenericContext): Option[TmplGeneric] = {
+  def buildGeneric(generic: TmplGenericContext): Option[TmplGeneric] = {
     if (generic != null && generic.types != null && !generic.types.isEmpty) Some(TmplGeneric(generic.types.asScala.map(buildType).toList))
     else None
   }
@@ -139,7 +138,7 @@ object BuildTmplBlock {
   }
 
   def buildVar(variable: TmplVarContext): TmplVar = {
-    TmplVar(buildAnnotations(variable.annots.asScala.toList), buildProps(variable.props), variable.name.getText, buildType(variable.`type`), buildExpression(variable.value))
+    TmplVar(buildAnnotations(variable.annots.asScala.toList), buildProps(variable.props), buildId(variable.name), buildType(variable.`type`), buildExpression(variable.value))
   }
 
   def buildCallObject(obj: TmplCallObjContext): TmplCallObj = {
@@ -155,11 +154,11 @@ object BuildTmplBlock {
   }
 
   def buildCallArray(array: TmplCallArrayContext): TmplCallArray = {
-    TmplCallArray(array.name.getText, buildValueType(array.elem))
+    TmplCallArray(buildId(array.name), buildValueType(array.elem))
   }
 
   def buildCallFunc(func: TmplCallFuncContext): TmplCallFunc = {
-    TmplCallFunc(func.name.getText, if (func.currying != null && !func.currying.isEmpty) Some(buildCallFuncCurrying(func.currying.asScala.toList)) else None)
+    TmplCallFunc(buildId(func.name), if (func.currying != null && !func.currying.isEmpty) Some(buildCallFuncCurrying(func.currying.asScala.toList)) else None)
   }
 
   def buildCallFuncCurrying(currying: List[TmplCurryParamsContext]): List[TmplCurryParam] = {
@@ -171,11 +170,11 @@ object BuildTmplBlock {
   }
 
   def buildSetAttribute(param: TmplSetAttributeContext): TmplSetAttribute = {
-    TmplSetAttribute(AstBuilderUtils.getText(param.name), buildValueType(param.value))
+    TmplSetAttribute(buildOptionId(param.name), buildValueType(param.value))
   }
 
   def buildCallVar(variable: TmplCallVariableContext): TmplCallVar = {
-    TmplCallVar(variable.name.getText)
+    TmplCallVar(buildId(variable.name))
   }
 
   def buildValueType(valueType: TmplValueTypeContext): TmplValueType = {
@@ -200,49 +199,61 @@ object BuildTmplBlock {
       if (block.next != null) Some(buildConditionBlock(block.next)) else None)
   }
 
-  def buildEitherCondition(block: TmplConditionBlockContext): Either[TmplConditionBlock, TmplCondition] = {
+  def buildEitherCondition(block: TmplConditionBlockContext): Either[TmplConditionBlock, TmplCondition] =
     if (block.innerBlock != null) Left(buildConditionBlock(block.innerBlock))
     else Right(buildCondition(block.content))
-  }
 
-  def buildCondition(condition: TmplConditionContext): TmplCondition = {
-    TmplCondition(buildSimpleValueType(condition.arg1),
-      if (condition.mark != null) Some(BuildHelperStatement.buildConditionType(condition.mark.getText)) else None,
-      if (condition.arg2 != null) Some(buildSimpleValueType(condition.arg2)) else None,
-      if (condition.link != null) Some(BuildHelperStatement.buildConditionLink(condition.link)) else None,
-      if (condition.next != null) Some(buildConditionBlock(condition.next)) else None)
-  }
+  def buildCondition(condition: TmplConditionContext): TmplCondition = TmplCondition(buildSimpleValueType(condition.arg1),
+    if (condition.mark != null) Some(BuildHelperStatement.buildConditionType(condition.mark.getText)) else None,
+    if (condition.arg2 != null) Some(buildSimpleValueType(condition.arg2)) else None,
+    if (condition.link != null) Some(BuildHelperStatement.buildConditionLink(condition.link)) else None,
+    if (condition.next != null) Some(buildConditionBlock(condition.next)) else None)
 
   def buildAttribute(attr: TmplAttributeContext): TmplAttribute = {
-    TmplAttribute(AstBuilderUtils.getText(attr.attr), if (attr.`type` != null) Some(buildType(attr.`type`)) else None, buildValueType(attr.value))
+    TmplAttribute(buildOptionId(attr.attr), if (attr.`type` != null) Some(buildType(attr.`type`)) else None, buildValueType(attr.value))
   }
 
-  def buildMultiValue(value: TmplMultiValueContext): TmplMultiValue = {
-    TmplMultiValue(value.values.asScala.toList.map(buildValueType))
+  def buildMultiValue(value: TmplMultiValueContext): TmplMultiValue = TmplMultiValue(value.values.asScala.toList.map(buildValueType))
+
+  def buildPrimitive(value: TmplPrimitiveValueContext): TmplPrimitiveValue = value match {
+    case string@_ if string.tmplStringValue() != null => buildString(string.tmplStringValue())
+    case number@_ if number.tmplNumberValue() != null => buildNumber(number.tmplNumberValue())
+    case text@_ if text.tmplTextValue() != null => buildText(text.tmplTextValue())
+    case entity@_ if entity.tmplEntityValue() != null => buildEntity(entity.tmplEntityValue())
+    case bool@_ if bool.tmplBoolValue() != null => buildBool(bool.tmplBoolValue())
+    case array@_ if array.tmplArrayValue() != null => buildArray(None, array.tmplArrayValue())
   }
 
-  def buildPrimitive(value: TmplPrimitiveValueContext): TmplPrimitiveValue = {
-    value match {
-      case string@_ if string.tmplStringValue() != null => buildString(string.tmplStringValue())
-      case number@_ if number.tmplNumberValue() != null => buildNumber(number.tmplNumberValue())
-      case text@_ if text.tmplTextValue() != null => buildText(text.tmplTextValue())
-      case entity@_ if entity.tmplEntityValue() != null => buildEntity(entity.tmplEntityValue())
-      case bool@_ if bool.tmplBoolValue() != null => buildBool(bool.tmplBoolValue())
-      case array@_ if array.tmplArrayValue() != null => buildArray(None, array.tmplArrayValue())
-    }
-  }
-
-  def buildEntity(entity: TmplEntityValueContext): TmplEntityValue = {
-    TmplEntityValue(
-      if (entity.params != null && !entity.params.isEmpty) Some(entity.params.asScala.toList.map(buildAttribute)) else None,
-      if (entity.attrs != null && !entity.attrs.isEmpty) Some(entity.attrs.asScala.toList.map(buildAttribute)) else None)
-  }
+  def buildEntity(entity: TmplEntityValueContext): TmplEntityValue = TmplEntityValue(
+    if (entity.params != null && !entity.params.isEmpty) Some(entity.params.asScala.toList.map(buildAttribute)) else None,
+    if (entity.attrs != null && !entity.attrs.isEmpty) Some(entity.attrs.asScala.toList.map(buildAttribute)) else None)
 
   def buildArray(`type`: Option[TmplType] = None, array: TmplArrayValueContext): TmplArrayValue = {
-    TmplArrayValue(`type`, if (array.params != null && !array.params.isEmpty) Some(array.params.asScala.toList.map(buildSetAttribute)) else None)
+    TmplArrayValue(`type`,
+      if (array.params != null && !array.params.isEmpty) Some(array.params.asScala.toList.map(buildSetAttribute)) else None)
   }
 
-  def buildString(string: TmplStringValueContext): TmplStringValue = TmplStringValue(AstBuilderUtils.extraString(string.value.getText))
+  def buildOptionId(id: TmplIDContext): Option[TmplID] = {
+    if (id != null && !id.isEmpty) Some(buildId(id))
+    else None
+  }
+
+  def buildId(id: TmplIDContext): TmplID = id match {
+    case id@_ if id.ID() != null => TmplStringID(id.ID().getSymbol.getText)
+    case interId@_ if interId.tmplIntprID() != null => TmplInterpretedID(AstBuilderUtils.getText(interId.tmplIntprID().pre), BuildHelperStatement.buildCallObject(interId.tmplIntprID().callObj()), AstBuilderUtils.getText(interId.tmplIntprID().pos))
+  }
+
+  def buildString(str: TmplStringContext): TmplID = str match {
+    case id@_ if id.STRING() != null => TmplStringID(AstBuilderUtils.extraString(id.STRING().getSymbol.getText))
+    case interId@_ if interId.tmplIntprString() != null => TmplInterpretedID(AstBuilderUtils.getText(interId.tmplIntprString().pre), BuildHelperStatement.buildCallObject(interId.tmplIntprString().callObj()), AstBuilderUtils.getText(interId.tmplIntprString().pos))
+  }
+
+  def buildText(txt: TmplTextContext): TmplID = txt match {
+    case id@_ if id.TEXT() != null => TmplStringID(AstBuilderUtils.extraText(id.TEXT().getSymbol.getText))
+    case interId@_ if interId.tmplIntprText() != null => TmplInterpretedID(AstBuilderUtils.getText(interId.tmplIntprText().pre), BuildHelperStatement.buildCallObject(interId.tmplIntprText().callObj()), AstBuilderUtils.getText(interId.tmplIntprText().pos))
+  }
+
+  def buildString(string: TmplStringValueContext): TmplStringValue = TmplStringValue(buildString(string.value))
 
   def buildNumber(number: TmplNumberValueContext): TmplPrimitiveValue = {
     val value = number.value.getText
@@ -250,7 +261,7 @@ object BuildTmplBlock {
     else TmplLongValue(value.toLong)
   }
 
-  def buildText(text: TmplTextValueContext): TmplTextValue = TmplTextValue(AstBuilderUtils.extraText(text.value.getText))
+  def buildText(text: TmplTextValueContext): TmplTextValue = TmplTextValue(buildText(text.value))
 
   def buildBool(bool: TmplBoolValueContext): TmplBoolValue = TmplBoolValue(bool.value.getText == "true")
 

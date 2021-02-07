@@ -7,7 +7,7 @@ object ScalaImplFuncGenerator {
 
   def gen(func: TmplFunc): String = {
     val str = new StringBuilder
-    str ++= "def " ++= func.name
+    str ++= "def " ++= func.name.toString
     str ++= genCurry(func.curries)
     str ++= " {\n"
     //str ++= ScalaGenerator.genExpressions(func.content)
@@ -38,7 +38,7 @@ object ScalaImplFuncGenerator {
   def genType(`type`: TmplType): String = {
     val str = new StringBuilder
     if (`type`.isArray) str ++= "Array["
-    str ++= `type`.name ++= genGeneric(`type`.generic)
+    str ++= `type`.name.toString ++= genGeneric(`type`.generic)
     if (`type`.isArray) str ++= "]"
     str.toString
   }

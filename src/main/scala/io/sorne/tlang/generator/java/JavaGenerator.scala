@@ -38,7 +38,7 @@ object JavaGenerator {
   def genImpl(impl: TmplImpl): String = {
     val str = new StringBuilder
     str ++= genAnnotations(impl.annots)
-    str ++= impl.props.fold("public class")(prop => genProps(prop)) ++= " " ++= impl.name ++= " {\n"
+    str ++= impl.props.fold("public class")(prop => genProps(prop)) ++= " " ++= impl.name.toString ++= " {\n"
     if (impl.content.isDefined) str ++= genContents(impl.content.get)
     str ++= "\n}\n\n"
     str.toString()
@@ -49,7 +49,7 @@ object JavaGenerator {
     str ++= genAnnotations(func.annots)
     str ++= func.props.fold("public")(prop => genProps(prop)) ++= " "
     str ++= func.ret.fold("void")(ret => genType(ret.head)) ++= " "
-    str ++= func.name ++= "("
+    str ++= func.name.toString ++= "("
     if (func.curries.isDefined) {
       func.curries.get.head.params.foreach(params => str ++= params.map(genParam).mkString(", "))
     }
@@ -95,7 +95,7 @@ object JavaGenerator {
 
   def genType(`type`: TmplType): String = {
     val str = new StringBuilder
-    str ++= `type`.name
+    str ++= `type`.name.toString
     str ++= genGeneric(`type`.generic)
     if (`type`.isArray) str ++= "[]"
     str.toString()
@@ -184,23 +184,23 @@ object JavaGenerator {
 
   def genCallArray(array: TmplCallArray): String = {
     val str = new StringBuilder
-    str ++= array.name ++= "[" ++= genValueType(array.elem) ++= "]"
+    str ++= array.name.toString ++= "[" ++= genValueType(array.elem) ++= "]"
     str.toString()
   }
 
   def genCallFunc(func: TmplCallFunc): String = {
     val str = new StringBuilder
-    str ++= func.name ++= "(" ++= ")"
+    str ++= func.name.toString ++= "(" ++= ")"
     str.toString()
   }
 
-  def genCallVar(variable: TmplCallVar): String = variable.name
+  def genCallVar(variable: TmplCallVar): String = variable.name.toString
 
   def genVar(variable: TmplVar): String = {
     val str = new StringBuilder
     str ++= genAnnotations(variable.annots)
     variable.props.foreach(prop => str ++= genProps(prop, addSpace = true))
-    str ++= genType(variable.`type`) ++= " " ++= variable.name ++= " = " + genExpression(variable.value) ++= ";\n"
+    str ++= genType(variable.`type`) ++= " " ++= variable.name.toString ++= " = " + genExpression(variable.value) ++= ";\n"
     str.toString()
   }
 

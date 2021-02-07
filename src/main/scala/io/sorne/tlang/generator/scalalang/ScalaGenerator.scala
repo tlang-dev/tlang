@@ -34,11 +34,11 @@ object ScalaGenerator {
 
   def genImpl(impl: TmplImpl): String = {
     val str = new StringBuilder
-    str ++= "class " ++= impl.name
+    str ++= "class " ++= impl.name.toString
     impl.fors.foreach(_.zipWithIndex.foreach {
-      case (for1, 0) => str ++= " extends " ++= for1.name
-      case (for1, 1) => str ++= " with " ++= for1.name
-      case (for1, _) => str ++= ", " ++= for1.name
+      case (for1, 0) => str ++= " extends " ++= for1.name.toString
+      case (for1, 1) => str ++= " with " ++= for1.name.toString
+      case (for1, _) => str ++= ", " ++= for1.name.toString
     })
     str ++= " {\n" ++= genImplContent(impl.content) ++= "}\n\n"
     str.toString
@@ -87,17 +87,17 @@ object ScalaGenerator {
     }
   }
 
-  def genCallVar(variable: TmplCallVar): String = variable.name
+  def genCallVar(variable: TmplCallVar): String = variable.name.toString
 
   def genCallArray(array: TmplCallArray): String = {
     val str = new StringBuilder
-    str ++= array.name ++= "(" ++= genValueType(array.elem) ++= ")"
+    str ++= array.name.toString ++= "(" ++= genValueType(array.elem) ++= ")"
     str.toString
   }
 
   def genCallFunc(func: TmplCallFunc): String = {
     val str = new StringBuilder
-    str ++= func.name ++= genCallCurrying(func)
+    str ++= func.name.toString ++= genCallCurrying(func)
     str.toString
   }
 
@@ -115,12 +115,12 @@ object ScalaGenerator {
 
   def genSetAttribute(attr: TmplSetAttribute): String = {
     val str = new StringBuilder
-    attr.name.foreach(str ++= _ ++= " = ")
+    attr.name.foreach(str ++= _.toString ++= " = ")
     str ++= genValueType(attr.value)
     str.toString
   }
 
-  def genComplexValueStatement(value: ComplexValueStatement[_]):String = {
+  def genComplexValueStatement(value: ComplexValueStatement[_]): String = {
     val str = new StringBuilder
 
     str.toString

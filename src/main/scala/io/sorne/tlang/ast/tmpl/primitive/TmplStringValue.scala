@@ -1,3 +1,5 @@
 package io.sorne.tlang.ast.tmpl.primitive
 
-case class TmplStringValue(var value: String) extends TmplPrimitiveValue
+import io.sorne.tlang.ast.tmpl.TmplID
+
+case class TmplStringValue(var value: TmplID) extends TmplPrimitiveValue

@@ -7,7 +7,7 @@ import io.sorne.tlang.ast.helper._
 import io.sorne.tlang.ast.model.{ModelBlock, ModelContent}
 import io.sorne.tlang.ast.tmpl.{TmplBlock, TmplBlockAsValue}
 import io.sorne.tlang.interpreter.Value
-import io.sorne.tlang.interpreter.context.Scope
+import io.sorne.tlang.interpreter.context.{Context, Scope}
 import io.sorne.tlang.loader.{BuildModuleTree, Module, Resource}
 
 object ResolveContext {
@@ -142,7 +142,7 @@ object ResolveContext {
               case None =>
             }
           }
-          case tmpl: TmplBlock => if (tmpl.name == name) elem = Some(TmplBlockAsValue(tmpl, Map()))
+          case tmpl: TmplBlock => if (tmpl.name == name) elem = Some(TmplBlockAsValue(tmpl, Context()))
         }
         i += 1
       }

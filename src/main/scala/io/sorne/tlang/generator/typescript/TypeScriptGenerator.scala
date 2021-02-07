@@ -12,7 +12,7 @@ import io.sorne.tlang.generator.CodeGenerator
 class TypeScriptGenerator extends CodeGenerator {
   override def generate(tmpl: TmplBlock): String = {
     val str = new StringBuilder()
-    tmpl.uses.foreach(_.foreach(use => str ++= "{ " ++= use.alias.get ++=" } from \"./" ++= use.parts.map(part => part.replace("up", "..")).mkString("/") ++="\";"))
+    tmpl.uses.foreach(_.foreach(use => str ++= "{ " ++= use.alias.get.toString ++=" } from \"./" ++= use.parts.map(part => part.toString.replace("up", "..")).mkString("/") ++="\";"))
     str.toString()
   }
 }
@@ -34,7 +34,7 @@ object TypeScriptGenerator {
   def genImpl(impl: TmplImpl): String = {
     val str = new StringBuilder
     str ++= genAnnotations(impl.annots)
-    str ++= impl.props.fold("export class")(prop => genProps(prop)) ++= " " ++= impl.name ++= " {\n"
+    str ++= impl.props.fold("export class")(prop => genProps(prop)) ++= " " ++= impl.name.toString ++= " {\n"
     if (impl.content.isDefined) str ++= genContents(impl.content.get)
     str ++= "\n}\n\n"
     str.toString()
@@ -44,7 +44,7 @@ object TypeScriptGenerator {
     val str = new StringBuilder
 //    str ++= genAnnotations(func.annots)
     str ++= func.props.fold("function")(prop => genProps(prop)) ++= " "
-    str ++= func.name ++= "("
+    str ++= func.name.toString ++= "("
     if (func.curries.isDefined) {
       func.curries.get.head.params.foreach(params => str ++= params.map(genParam).mkString(", "))
     }
@@ -86,7 +86,7 @@ object TypeScriptGenerator {
 
   def genType(`type`: TmplType): String = {
     val str = new StringBuilder
-    str ++= `type`.name
+    str ++= `type`.name.toString
     str ++= genGeneric(`type`.generic)
     if (`type`.isArray) str ++= "[]"
     str.toString()
@@ -175,23 +175,23 @@ object TypeScriptGenerator {
 
   def genCallArray(array: TmplCallArray): String = {
     val str = new StringBuilder
-    str ++= array.name ++= "[" ++= genValueType(array.elem) ++= "]"
+    str ++= array.name.toString ++= "[" ++= genValueType(array.elem) ++= "]"
     str.toString()
   }
 
   def genCallFunc(func: TmplCallFunc): String = {
     val str = new StringBuilder
-    str ++= func.name ++= "(" ++= ")"
+    str ++= func.name.toString ++= "(" ++= ")"
     str.toString()
   }
 
-  def genCallVar(variable: TmplCallVar): String = variable.name
+  def genCallVar(variable: TmplCallVar): String = variable.name.toString
 
   def genVar(variable: TmplVar): String = {
     val str = new StringBuilder
     str ++= genAnnotations(variable.annots)
     variable.props.foreach(prop => str ++= genProps(prop, addSpace = true))
-    str ++= genType(variable.`type`) ++= " " ++= variable.name ++= " = " + genExpression(variable.value) ++= ";\n"
+    str ++= genType(variable.`type`) ++= " " ++= variable.name.toString ++= " = " + genExpression(variable.value) ++= ";\n"
     str.toString()
   }
 
