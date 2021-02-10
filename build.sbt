@@ -1,8 +1,8 @@
-name := "io.sorne.tlang"
+name := "tlang"
 
 version := "0.1"
 
-scalaVersion := "2.13.3"
+scalaVersion := "2.13.4"
 
 libraryDependencies += "org.antlr" % "antlr4-runtime" % "4.8-1"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.0" % Test
@@ -15,7 +15,7 @@ libraryDependencies += "org.apache.commons" % "commons-compress" % "1.20"
 
 //antlr4 plugin
 antlr4Version in Antlr4 := "4.8-1"
-antlr4PackageName in Antlr4 := Some("io.sorne.tlang")
+antlr4PackageName in Antlr4 := Some("dev.tlang.tlang")
 enablePlugins(Antlr4Plugin)
 
 //Code coverage

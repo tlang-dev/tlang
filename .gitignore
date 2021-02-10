@@ -12,6 +12,7 @@ project/plugins/project/
 .history
 .cache
 .lib/
+.bsp
 
 ### Scala template
 *.class
