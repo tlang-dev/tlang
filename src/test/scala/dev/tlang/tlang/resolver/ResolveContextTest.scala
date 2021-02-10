@@ -8,17 +8,17 @@ import dev.tlang.tlang.loader.{BuildModuleTree, FileResourceLoader, ResourceLoad
 import dev.tlang.tlang.loader.remote.RemoteLoader
 
 import java.nio.file.Paths
-import io.sorne.tlang.ast.DomainUse
-import io.sorne.tlang.ast.common.call.{CallFuncObject, CallObject, CallVarObject}
-import io.sorne.tlang.ast.common.value.{AssignVar, EntityValue}
-import io.sorne.tlang.ast.helper.{HelperBlock, HelperContent, HelperFunc}
-import io.sorne.tlang.ast.model.ModelContent
-import io.sorne.tlang.ast.model.set.ModelSetEntity
-import io.sorne.tlang.astbuilder.BuildAst
-import io.sorne.tlang.interpreter.context.Scope
-import io.sorne.tlang.loader.remote.RemoteLoader
-import io.sorne.tlang.loader.{BuildModuleTree, FileResourceLoader, Resource, ResourceLoader, TBagManager}
-import io.sorne.tlang.{TLangLexer, TLangParser}
+import dev.tlang.tlang.ast.DomainUse
+import dev.tlang.tlang.ast.common.call.{CallFuncObject, CallObject, CallVarObject}
+import dev.tlang.tlang.ast.common.value.{AssignVar, EntityValue}
+import dev.tlang.tlang.ast.helper.{HelperBlock, HelperContent, HelperFunc}
+import dev.tlang.tlang.ast.model.ModelContent
+import dev.tlang.tlang.ast.model.set.ModelSetEntity
+import dev.tlang.tlang.astbuilder.BuildAst
+import dev.tlang.tlang.interpreter.context.Scope
+import dev.tlang.tlang.loader.remote.RemoteLoader
+import dev.tlang.tlang.loader.{BuildModuleTree, FileResourceLoader, Resource, ResourceLoader, TBagManager}
+import dev.tlang.tlang.{TLangLexer, TLangParser}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
 

@@ -3,9 +3,9 @@ package dev.tlang.tlang.interpreter
 import dev.tlang.tlang.ast.common.value.TLangBool
 import dev.tlang.tlang.ast.helper.{HelperIf, HelperStatement}
 import dev.tlang.tlang.interpreter.context.Context
-import io.sorne.tlang.ast.common.value.TLangBool
-import io.sorne.tlang.ast.helper.{HelperIf, HelperStatement}
-import io.sorne.tlang.interpreter.context.Context
+import dev.tlang.tlang.ast.common.value.TLangBool
+import dev.tlang.tlang.ast.helper.{HelperIf, HelperStatement}
+import dev.tlang.tlang.interpreter.context.Context
 
 object ExecIf extends Executor {
 

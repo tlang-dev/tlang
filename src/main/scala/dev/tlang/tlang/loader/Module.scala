@@ -1,7 +1,7 @@
 package dev.tlang.tlang.loader
 
 import dev.tlang.tlang.loader.manifest.Manifest
-import io.sorne.tlang.loader.manifest.Manifest
+import dev.tlang.tlang.loader.manifest.Manifest
 
 import scala.collection.immutable
 

@@ -1,13 +1,13 @@
 package dev.tlang.tlang.generator
 
-import io.sorne.tlang.ast.common.call.{CallObject, CallVarObject}
-import io.sorne.tlang.ast.common.value.TLangString
-import io.sorne.tlang.ast.tmpl.call.{TmplCallArray, TmplCallFunc, TmplCallObj, TmplCallVar}
-import io.sorne.tlang.ast.tmpl.func.TmplFunc
-import io.sorne.tlang.ast.tmpl.primitive.{TmplStringValue, TmplTextValue}
-import io.sorne.tlang.ast.tmpl._
-import io.sorne.tlang.interpreter.Value
-import io.sorne.tlang.interpreter.context.{Context, Scope}
+import dev.tlang.tlang.ast.common.call.{CallObject, CallVarObject}
+import dev.tlang.tlang.ast.common.value.TLangString
+import dev.tlang.tlang.ast.tmpl.call.{TmplCallArray, TmplCallFunc, TmplCallObj, TmplCallVar}
+import dev.tlang.tlang.ast.tmpl.func.TmplFunc
+import dev.tlang.tlang.ast.tmpl.primitive.{TmplStringValue, TmplTextValue}
+import dev.tlang.tlang.ast.tmpl._
+import dev.tlang.tlang.interpreter.Value
+import dev.tlang.tlang.interpreter.context.{Context, Scope}
 import org.scalatest.funsuite.AnyFunSuite
 
 import scala.collection.mutable

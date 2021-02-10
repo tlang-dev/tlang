@@ -1,7 +1,7 @@
 package dev.tlang.tlang.ast.common.value
 
 import dev.tlang.tlang.interpreter.Value
-import io.sorne.tlang.interpreter.Value
+import dev.tlang.tlang.interpreter.Value
 
 class TLangDouble(value: Double) extends PrimitiveValue[Double] {
   override def getValue: Double = value

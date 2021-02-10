@@ -1,8 +1,8 @@
 package dev.tlang.tlang.interpreter
 
 import dev.tlang.tlang.ast.common.value.TLangString
-import io.sorne.tlang.ast.common.value.TLangString
-import io.sorne.tlang.interpreter.context.Context
+import dev.tlang.tlang.ast.common.value.TLangString
+import dev.tlang.tlang.interpreter.context.Context
 import org.scalatest.funsuite.AnyFunSuite
 
 class ExecPrimitiveValueTest extends AnyFunSuite {

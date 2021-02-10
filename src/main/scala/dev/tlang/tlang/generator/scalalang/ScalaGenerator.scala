@@ -1,12 +1,12 @@
 package dev.tlang.tlang.generator.scalalang
 
-import io.sorne.tlang.ast.common.call.ComplexValueStatement
-import io.sorne.tlang.ast.tmpl._
-import io.sorne.tlang.ast.tmpl.call._
-import io.sorne.tlang.ast.tmpl.condition.{TmplCondition, TmplConditionBlock}
-import io.sorne.tlang.ast.tmpl.func.TmplFunc
-import io.sorne.tlang.ast.tmpl.primitive._
-import io.sorne.tlang.generator.CodeGenerator
+import dev.tlang.tlang.ast.common.call.ComplexValueStatement
+import dev.tlang.tlang.ast.tmpl._
+import dev.tlang.tlang.ast.tmpl.call._
+import dev.tlang.tlang.ast.tmpl.condition.{TmplCondition, TmplConditionBlock}
+import dev.tlang.tlang.ast.tmpl.func.TmplFunc
+import dev.tlang.tlang.ast.tmpl.primitive._
+import dev.tlang.tlang.generator.CodeGenerator
 
 class ScalaGenerator extends CodeGenerator {
 

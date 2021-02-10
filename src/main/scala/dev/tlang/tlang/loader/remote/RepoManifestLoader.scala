@@ -1,7 +1,7 @@
 package dev.tlang.tlang.loader.remote
 
 import dev.tlang.tlang.loader.manifest.ManifestLoader
-import io.sorne.tlang.loader.manifest.ManifestLoader
+import dev.tlang.tlang.loader.manifest.ManifestLoader
 
 object RepoManifestLoader {
 

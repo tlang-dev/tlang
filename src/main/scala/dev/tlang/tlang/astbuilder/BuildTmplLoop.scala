@@ -1,7 +1,7 @@
 package dev.tlang.tlang.astbuilder
 
-import io.sorne.tlang.TLangParser.{TmplDoWhileContext, TmplWhileContext}
-import io.sorne.tlang.ast.tmpl.loop.{TmplDoWhile, TmplWhile}
+import dev.tlang.tlang.TLangParser.{TmplDoWhileContext, TmplWhileContext}
+import dev.tlang.tlang.ast.tmpl.loop.{TmplDoWhile, TmplWhile}
 
 object BuildTmplLoop {
 

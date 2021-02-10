@@ -1,7 +1,7 @@
 package dev.tlang.tlang.lsp
 
-import io.sorne.tlang.lsp.context.{Context, CurrentFile}
-import io.sorne.tlang.lsp.indent.Indent
+import dev.tlang.tlang.lsp.context.{Context, CurrentFile}
+import dev.tlang.tlang.lsp.indent.Indent
 
 object TLangTextDocumentService {
 

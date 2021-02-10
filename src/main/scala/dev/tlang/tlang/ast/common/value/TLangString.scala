@@ -1,6 +1,6 @@
 package dev.tlang.tlang.ast.common.value
 
-import io.sorne.tlang.interpreter.Value
+import dev.tlang.tlang.interpreter.Value
 
 class TLangString(value: String) extends PrimitiveValue[String] {
   override def getValue: String = value

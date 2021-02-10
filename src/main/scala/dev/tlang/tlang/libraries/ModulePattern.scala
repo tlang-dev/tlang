@@ -1,9 +1,9 @@
 package dev.tlang.tlang.libraries
 
-import io.sorne.tlang.ast.helper.{HelperBlock, HelperFunc}
-import io.sorne.tlang.ast.{DomainExpose, DomainHeader, DomainModel}
-import io.sorne.tlang.loader.manifest.{Dependency, Manifest}
-import io.sorne.tlang.loader.{Module, Resource}
+import dev.tlang.tlang.ast.helper.{HelperBlock, HelperFunc}
+import dev.tlang.tlang.ast.{DomainExpose, DomainHeader, DomainModel}
+import dev.tlang.tlang.loader.manifest.{Dependency, Manifest}
+import dev.tlang.tlang.loader.{Module, Resource}
 
 abstract class ModulePattern {
 

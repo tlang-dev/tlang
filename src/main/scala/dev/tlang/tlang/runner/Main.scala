@@ -1,10 +1,10 @@
 package dev.tlang.tlang.runner
 
-import io.sorne.tlang.bagman.{FileResourceWriter, Packager, ResourceWriter}
-import io.sorne.tlang.loader.{FileResourceLoader, ModuleLoader, ResourceLoader, TBagManager}
+import dev.tlang.tlang.bagman.{FileResourceWriter, Packager, ResourceWriter}
+import dev.tlang.tlang.loader.{FileResourceLoader, ModuleLoader, ResourceLoader, TBagManager}
 
 import java.io.File
-import io.sorne.tlang.lsp.LSPServer
+import dev.tlang.tlang.lsp.LSPServer
 
 import java.nio.file.Paths
 

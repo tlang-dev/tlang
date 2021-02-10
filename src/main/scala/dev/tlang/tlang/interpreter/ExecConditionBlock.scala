@@ -1,9 +1,9 @@
 package dev.tlang.tlang.interpreter
 
-import io.sorne.tlang.ast.common.condition.{Condition, ConditionBlock}
-import io.sorne.tlang.ast.common.value.TLangBool
-import io.sorne.tlang.ast.helper.{ConditionLink, HelperStatement}
-import io.sorne.tlang.interpreter.context.Context
+import dev.tlang.tlang.ast.common.condition.{Condition, ConditionBlock}
+import dev.tlang.tlang.ast.common.value.TLangBool
+import dev.tlang.tlang.ast.helper.{ConditionLink, HelperStatement}
+import dev.tlang.tlang.interpreter.context.Context
 
 object ExecConditionBlock extends Executor {
 
@@ -54,12 +54,12 @@ object ExecConditionBlock extends Executor {
               if (state1.getType != state2.getType) Left(WrongType(state1.getType + " is of different type than " + state2.getType))
               else {
                 val res: Boolean = cond.condition.get match {
-                  case io.sorne.tlang.ast.helper.ConditionType.EQUAL => state1.compareTo(state2) == 0
-                  case io.sorne.tlang.ast.helper.ConditionType.GREATER => state1.compareTo(state2) > 0
-                  case io.sorne.tlang.ast.helper.ConditionType.LESSER => state1.compareTo(state2) < 0
-                  case io.sorne.tlang.ast.helper.ConditionType.GREATER_OR_EQUAL => state1.compareTo(state2) >= 0
-                  case io.sorne.tlang.ast.helper.ConditionType.LESSER_OR_EQUAL => state1.compareTo(state2) <= 0
-                  case io.sorne.tlang.ast.helper.ConditionType.NOT_EQUAL => state1.compareTo(state2) != 0
+                  case dev.tlang.tlang.ast.helper.ConditionType.EQUAL => state1.compareTo(state2) == 0
+                  case dev.tlang.tlang.ast.helper.ConditionType.GREATER => state1.compareTo(state2) > 0
+                  case dev.tlang.tlang.ast.helper.ConditionType.LESSER => state1.compareTo(state2) < 0
+                  case dev.tlang.tlang.ast.helper.ConditionType.GREATER_OR_EQUAL => state1.compareTo(state2) >= 0
+                  case dev.tlang.tlang.ast.helper.ConditionType.LESSER_OR_EQUAL => state1.compareTo(state2) <= 0
+                  case dev.tlang.tlang.ast.helper.ConditionType.NOT_EQUAL => state1.compareTo(state2) != 0
                 }
                 if (cond.link.isDefined) solveNextCondition(res, cond.link.get, cond.nextBlock.get, context) else Right(res)
               }

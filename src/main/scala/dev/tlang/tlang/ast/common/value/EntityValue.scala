@@ -1,8 +1,8 @@
 package dev.tlang.tlang.ast.common.value
 
 import dev.tlang.tlang.interpreter.Value
-import io.sorne.tlang.ast.model.set.ModelSetRefValue
-import io.sorne.tlang.interpreter.Value
+import dev.tlang.tlang.ast.model.set.ModelSetRefValue
+import dev.tlang.tlang.interpreter.Value
 
 case class EntityValue(`type`: Option[String], params: Option[List[ComplexAttribute]] = None, attrs: Option[List[ComplexAttribute]] = None)
   extends PrimitiveValue[EntityValue] with ModelSetRefValue {

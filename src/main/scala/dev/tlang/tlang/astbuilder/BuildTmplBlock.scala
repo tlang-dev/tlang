@@ -1,11 +1,11 @@
 package dev.tlang.tlang.astbuilder
 
-import io.sorne.tlang.TLangParser.{TmplExpressionContext, _}
-import io.sorne.tlang.ast.tmpl._
-import io.sorne.tlang.ast.tmpl.call._
-import io.sorne.tlang.ast.tmpl.condition.{TmplCondition, TmplConditionBlock}
-import io.sorne.tlang.ast.tmpl.func.{TmplFunc, TmplFuncCurry}
-import io.sorne.tlang.ast.tmpl.primitive._
+import dev.tlang.tlang.TLangParser.{TmplExpressionContext, _}
+import dev.tlang.tlang.ast.tmpl._
+import dev.tlang.tlang.ast.tmpl.call._
+import dev.tlang.tlang.ast.tmpl.condition.{TmplCondition, TmplConditionBlock}
+import dev.tlang.tlang.ast.tmpl.func.{TmplFunc, TmplFuncCurry}
+import dev.tlang.tlang.ast.tmpl.primitive._
 
 import scala.jdk.CollectionConverters._
 

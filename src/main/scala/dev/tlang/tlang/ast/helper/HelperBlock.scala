@@ -1,5 +1,5 @@
 package dev.tlang.tlang.ast.helper
 
-import io.sorne.tlang.ast.DomainBlock
+import dev.tlang.tlang.ast.DomainBlock
 
 case class HelperBlock(funcs: Option[List[HelperFunc]]) extends DomainBlock

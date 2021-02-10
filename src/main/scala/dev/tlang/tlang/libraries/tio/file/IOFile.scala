@@ -2,11 +2,11 @@ package dev.tlang.tlang.libraries.tio.file
 
 import java.io.{File, PrintWriter}
 
-import io.sorne.tlang.ast.common.call.CallFuncObject
-import io.sorne.tlang.ast.common.value.TLangString
-import io.sorne.tlang.ast.helper.HelperStatement
-import io.sorne.tlang.interpreter.context.Context
-import io.sorne.tlang.interpreter.{ExecComplexValue, ExecError, Executor, Value}
+import dev.tlang.tlang.ast.common.call.CallFuncObject
+import dev.tlang.tlang.ast.common.value.TLangString
+import dev.tlang.tlang.ast.helper.HelperStatement
+import dev.tlang.tlang.interpreter.context.Context
+import dev.tlang.tlang.interpreter.{ExecComplexValue, ExecError, Executor, Value}
 
 object IOFile extends Executor {
   override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value[_]]]] = {

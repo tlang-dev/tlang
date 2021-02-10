@@ -1,7 +1,7 @@
 package dev.tlang.tlang.lsp.context
 
 import dev.tlang.tlang.lsp.TLangTextDocumentService.Position
-import io.sorne.tlang.lsp.TLangTextDocumentService.Position
+import dev.tlang.tlang.lsp.TLangTextDocumentService.Position
 
 object ContentUtils {
 

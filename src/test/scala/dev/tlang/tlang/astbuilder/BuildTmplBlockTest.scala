@@ -5,12 +5,12 @@ import dev.tlang.tlang.ast.tmpl.{TmplExprBlock, TmplIf, TmplMultiValue, TmplVar}
 import dev.tlang.tlang.ast.tmpl.call.{TmplCallArray, TmplCallFunc, TmplCallObj, TmplCallVar}
 import dev.tlang.tlang.ast.tmpl.condition.TmplConditionBlock
 import dev.tlang.tlang.ast.tmpl.primitive.{TmplArrayValue, TmplBoolValue, TmplEntityValue, TmplLongValue, TmplStringValue}
-import io.sorne.tlang.ast.helper.{ConditionLink, ConditionType, HelperObjType}
-import io.sorne.tlang.ast.tmpl.call.{TmplCallArray, TmplCallFunc, TmplCallObj, TmplCallVar}
-import io.sorne.tlang.ast.tmpl.condition.TmplConditionBlock
-import io.sorne.tlang.ast.tmpl.primitive._
-import io.sorne.tlang.ast.tmpl.{TmplExprBlock, TmplIf, TmplMultiValue, TmplVar}
-import io.sorne.tlang.{TLangLexer, TLangParser}
+import dev.tlang.tlang.ast.helper.{ConditionLink, ConditionType, HelperObjType}
+import dev.tlang.tlang.ast.tmpl.call.{TmplCallArray, TmplCallFunc, TmplCallObj, TmplCallVar}
+import dev.tlang.tlang.ast.tmpl.condition.TmplConditionBlock
+import dev.tlang.tlang.ast.tmpl.primitive._
+import dev.tlang.tlang.ast.tmpl.{TmplExprBlock, TmplIf, TmplMultiValue, TmplVar}
+import dev.tlang.tlang.{TLangLexer, TLangParser}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -21,7 +21,7 @@ class BuildTmplBlockTest extends AnyFunSuite {
   test("Template name") {
     val lexer = new TLangLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
-        |use io.sorne.tlang
+        |use dev.tlang.tlang
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
@@ -34,7 +34,7 @@ class BuildTmplBlockTest extends AnyFunSuite {
   test("Template parameters") {
     val lexer = new TLangLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl (param1 String, param2 Bool) {
-        |use io.sorne.tlang
+        |use dev.tlang.tlang
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
@@ -49,26 +49,26 @@ class BuildTmplBlockTest extends AnyFunSuite {
   test("Test use in TmplBloc") {
     val lexer = new TLangLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
-        |use io.sorne.tlang
+        |use dev.tlang.tlang
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    assert("io.sorne.tlang" == BuildTmplBlock.buildUse(parser.tmplBlock().tmplUse().get(0)).parts.mkString("."))
+    assert("dev.tlang.tlang" == BuildTmplBlock.buildUse(parser.tmplBlock().tmplUse().get(0)).parts.mkString("."))
   }
 
   test("Test uses in TmplBloc") {
     val lexer = new TLangLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
-        |use io.sorne.tlang1
-        |use io.sorne.tlang2
-        |use io.sorne.tlang3
+        |use dev.tlang.tlang1
+        |use dev.tlang.tlang2
+        |use dev.tlang.tlang3
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
     val uses = BuildTmplBlock.buildUses(parser.tmplBlock().tmplUses.asScala.toList)
-    assert("io.sorne.tlang1" == uses.head.parts.mkString("."))
-    assert("io.sorne.tlang2" == uses(1).parts.mkString("."))
-    assert("io.sorne.tlang3" == uses.last.parts.mkString("."))
+    assert("dev.tlang.tlang1" == uses.head.parts.mkString("."))
+    assert("dev.tlang.tlang2" == uses(1).parts.mkString("."))
+    assert("dev.tlang.tlang3" == uses.last.parts.mkString("."))
   }
 
   test("Test uses in TmplBloc with empty list") {

@@ -4,10 +4,10 @@ import dev.tlang.tlang.ast.common.call.{CallFuncObject, CallObject, CallObjectTy
 import dev.tlang.tlang.ast.common.value.{ArrayValue, ComplexAttribute, EntityValue, TLangLong, TLangString}
 import dev.tlang.tlang.ast.helper.HelperStatement
 import dev.tlang.tlang.interpreter.context.{Context, ContextUtils}
-import io.sorne.tlang.ast.common.call._
-import io.sorne.tlang.ast.common.value._
-import io.sorne.tlang.ast.helper._
-import io.sorne.tlang.interpreter.context.{Context, ContextUtils}
+import dev.tlang.tlang.ast.common.call._
+import dev.tlang.tlang.ast.common.value._
+import dev.tlang.tlang.ast.helper._
+import dev.tlang.tlang.interpreter.context.{Context, ContextUtils}
 
 import scala.annotation.tailrec
 

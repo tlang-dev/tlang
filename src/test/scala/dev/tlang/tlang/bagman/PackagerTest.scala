@@ -2,8 +2,8 @@ package dev.tlang.tlang.bagman
 
 import dev.tlang.tlang.loader.{LoaderError, ResourceLoader, TBagManager}
 import dev.tlang.tlang.loader.manifest.Stability
-import io.sorne.tlang.loader.manifest.{Manifest, Stability}
-import io.sorne.tlang.loader.{LoaderError, ResourceLoader, TBagManager}
+import dev.tlang.tlang.loader.manifest.{Manifest, Stability}
+import dev.tlang.tlang.loader.{LoaderError, ResourceLoader, TBagManager}
 import org.scalatest.funsuite.AnyFunSuite
 
 import java.io.File

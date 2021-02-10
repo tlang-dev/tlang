@@ -1,10 +1,10 @@
 package dev.tlang.tlang.astbuilder
 
-import io.sorne.tlang.TLangParser._
-import io.sorne.tlang.ast.common.call
-import io.sorne.tlang.ast.common.call.{SetAttribute, _}
-import io.sorne.tlang.ast.common.condition.{Condition, ConditionBlock}
-import io.sorne.tlang.ast.helper._
+import dev.tlang.tlang.TLangParser._
+import dev.tlang.tlang.ast.common.call
+import dev.tlang.tlang.ast.common.call.{SetAttribute, _}
+import dev.tlang.tlang.ast.common.condition.{Condition, ConditionBlock}
+import dev.tlang.tlang.ast.helper._
 import org.antlr.v4.runtime.Token
 
 import scala.jdk.CollectionConverters._

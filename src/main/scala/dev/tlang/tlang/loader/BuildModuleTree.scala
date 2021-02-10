@@ -1,10 +1,10 @@
 package dev.tlang.tlang.loader
 
-import io.sorne.tlang.astbuilder.BuildAst
-import io.sorne.tlang.libraries.Modules
-import io.sorne.tlang.loader.manifest.{Manifest, ManifestLoader}
-import io.sorne.tlang.loader.remote.RemoteLoader
-import io.sorne.tlang.{TLangLexer, TLangParser}
+import dev.tlang.tlang.astbuilder.BuildAst
+import dev.tlang.tlang.libraries.Modules
+import dev.tlang.tlang.loader.manifest.{Manifest, ManifestLoader}
+import dev.tlang.tlang.loader.remote.RemoteLoader
+import dev.tlang.tlang.{TLangLexer, TLangParser}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 
 import java.nio.file.Path

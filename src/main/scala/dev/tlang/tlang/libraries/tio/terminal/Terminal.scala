@@ -1,8 +1,8 @@
 package dev.tlang.tlang.libraries.tio.terminal
 
-import io.sorne.tlang.ast.common.value.TLangString
-import io.sorne.tlang.ast.helper._
-import io.sorne.tlang.interpreter.context.{Context, ContextUtils}
+import dev.tlang.tlang.ast.common.value.TLangString
+import dev.tlang.tlang.ast.helper._
+import dev.tlang.tlang.interpreter.context.{Context, ContextUtils}
 
 object Terminal {
 

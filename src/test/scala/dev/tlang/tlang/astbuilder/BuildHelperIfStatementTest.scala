@@ -2,9 +2,9 @@ package dev.tlang.tlang.astbuilder
 
 import dev.tlang.tlang.ast.common.call.{CallObject, CallVarObject}
 import dev.tlang.tlang.ast.helper.{ConditionLink, ConditionType, HelperIf}
-import io.sorne.tlang.ast.common.call.{CallObject, CallVarObject}
-import io.sorne.tlang.ast.helper.{ConditionLink, ConditionType, HelperIf}
-import io.sorne.tlang.{TLangLexer, TLangParser}
+import dev.tlang.tlang.ast.common.call.{CallObject, CallVarObject}
+import dev.tlang.tlang.ast.helper.{ConditionLink, ConditionType, HelperIf}
+import dev.tlang.tlang.{TLangLexer, TLangParser}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
 

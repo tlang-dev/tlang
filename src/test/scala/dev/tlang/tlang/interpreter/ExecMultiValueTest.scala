@@ -1,9 +1,9 @@
 package dev.tlang.tlang.interpreter
 
 import dev.tlang.tlang.ast.common.value.TLangString
-import io.sorne.tlang.ast.common.call.{CallObject, CallVarObject}
-import io.sorne.tlang.ast.common.value.{MultiValue, TLangString}
-import io.sorne.tlang.interpreter.context.{Context, Scope}
+import dev.tlang.tlang.ast.common.call.{CallObject, CallVarObject}
+import dev.tlang.tlang.ast.common.value.{MultiValue, TLangString}
+import dev.tlang.tlang.interpreter.context.{Context, Scope}
 import org.scalatest.funsuite.AnyFunSuite
 
 import scala.collection.mutable

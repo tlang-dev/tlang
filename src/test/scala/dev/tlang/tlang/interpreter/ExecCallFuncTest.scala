@@ -2,11 +2,11 @@ package dev.tlang.tlang.interpreter
 
 import dev.tlang.tlang.ast.common.value.TLangString
 import dev.tlang.tlang.ast.tmpl.{TmplBlockAsValue, TmplStringID}
-import io.sorne.tlang.ast.common.call._
-import io.sorne.tlang.ast.common.value.TLangString
-import io.sorne.tlang.ast.helper._
-import io.sorne.tlang.ast.tmpl.{TmplBlock, TmplBlockAsValue, TmplPkg, TmplStringID}
-import io.sorne.tlang.interpreter.context.{Context, Scope}
+import dev.tlang.tlang.ast.common.call._
+import dev.tlang.tlang.ast.common.value.TLangString
+import dev.tlang.tlang.ast.helper._
+import dev.tlang.tlang.ast.tmpl.{TmplBlock, TmplBlockAsValue, TmplPkg, TmplStringID}
+import dev.tlang.tlang.interpreter.context.{Context, Scope}
 import org.scalatest.funsuite.AnyFunSuite
 
 import scala.collection.mutable

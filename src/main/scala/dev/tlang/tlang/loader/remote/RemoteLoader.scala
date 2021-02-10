@@ -1,7 +1,7 @@
 package dev.tlang.tlang.loader.remote
 
 import dev.tlang.tlang.loader.manifest.Dependency
-import io.sorne.tlang.loader.manifest.Dependency
+import dev.tlang.tlang.loader.manifest.Dependency
 
 import java.nio.file.Path
 import scala.util.Try

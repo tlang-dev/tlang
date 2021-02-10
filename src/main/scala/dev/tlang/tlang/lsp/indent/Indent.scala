@@ -5,9 +5,9 @@ import dev.tlang.tlang.lsp.TLangTextDocumentService.TextEdit
 import dev.tlang.tlang.lsp.context.ContentUtils
 
 import java.util.regex.Pattern
-import io.sorne.tlang.lsp.TLangTextDocumentService.TextEdit
-import io.sorne.tlang.lsp.context.ContentUtils
-import io.sorne.tlang.lsp.{LSPError, TLangTextDocumentService}
+import dev.tlang.tlang.lsp.TLangTextDocumentService.TextEdit
+import dev.tlang.tlang.lsp.context.ContentUtils
+import dev.tlang.tlang.lsp.{LSPError, TLangTextDocumentService}
 
 import scala.annotation.tailrec
 import scala.collection.mutable.ListBuffer

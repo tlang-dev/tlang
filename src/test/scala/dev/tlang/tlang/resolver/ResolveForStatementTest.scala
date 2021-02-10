@@ -6,10 +6,10 @@ import dev.tlang.tlang.loader.{BuildModuleTree, FileResourceLoader, ResourceLoad
 import dev.tlang.tlang.loader.remote.RemoteLoader
 
 import java.nio.file.Paths
-import io.sorne.tlang.ast.common.value.{ArrayValue, TLangLong, TLangString}
-import io.sorne.tlang.ast.helper.HelperBlock
-import io.sorne.tlang.loader.remote.RemoteLoader
-import io.sorne.tlang.loader.{BuildModuleTree, FileResourceLoader, ResourceLoader, TBagManager}
+import dev.tlang.tlang.ast.common.value.{ArrayValue, TLangLong, TLangString}
+import dev.tlang.tlang.ast.helper.HelperBlock
+import dev.tlang.tlang.loader.remote.RemoteLoader
+import dev.tlang.tlang.loader.{BuildModuleTree, FileResourceLoader, ResourceLoader, TBagManager}
 import org.scalatest.funsuite.AnyFunSuite
 
 class ResolveForStatementTest extends AnyFunSuite {

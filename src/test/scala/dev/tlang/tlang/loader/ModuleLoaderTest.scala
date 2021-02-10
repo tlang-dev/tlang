@@ -1,7 +1,7 @@
 package dev.tlang.tlang.loader
 
 import dev.tlang.tlang.loader.manifest.Stability
-import io.sorne.tlang.loader.manifest.{Dependency, Stability}
+import dev.tlang.tlang.loader.manifest.{Dependency, Stability}
 import org.scalatest.funsuite.AnyFunSuite
 
 import java.io.File

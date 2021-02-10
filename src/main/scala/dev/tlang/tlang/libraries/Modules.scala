@@ -1,10 +1,10 @@
 package dev.tlang.tlang.libraries
 
 import dev.tlang.tlang.libraries.tio.terminal.TerminalModule
-import io.sorne.tlang.libraries.generator.GenModule
-import io.sorne.tlang.libraries.tio.terminal.TerminalModule
-import io.sorne.tlang.loader.Module
-import io.sorne.tlang.loader.manifest.{Dependency, Stability}
+import dev.tlang.tlang.libraries.generator.GenModule
+import dev.tlang.tlang.libraries.tio.terminal.TerminalModule
+import dev.tlang.tlang.loader.Module
+import dev.tlang.tlang.loader.manifest.{Dependency, Stability}
 
 object Modules {
 

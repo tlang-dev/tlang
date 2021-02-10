@@ -1,7 +1,7 @@
 package dev.tlang.tlang.ast.common.value
 
-import io.sorne.tlang.ast.common.call.{CallObject, ComplexValueStatement}
-import io.sorne.tlang.interpreter.Value
+import dev.tlang.tlang.ast.common.call.{CallObject, ComplexValueStatement}
+import dev.tlang.tlang.interpreter.Value
 
 case class MultiValue(values: List[Value[_]]) extends ComplexValueStatement[MultiValue] {
   override def getValue: MultiValue = this

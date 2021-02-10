@@ -1,6 +1,6 @@
 package dev.tlang.tlang.lsp.context
 
-import io.sorne.tlang.lsp.TLangTextDocumentService.Position
+import dev.tlang.tlang.lsp.TLangTextDocumentService.Position
 import org.scalatest.funsuite.AnyFunSuite
 
 class ContentUtilsTest extends AnyFunSuite {

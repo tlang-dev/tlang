@@ -1,18 +1,18 @@
 package dev.tlang.tlang.libraries.generator
 
-import io.sorne.tlang.ast.common.value.TLangString
-import io.sorne.tlang.ast.helper._
-import io.sorne.tlang.ast.tmpl.TmplBlockAsValue
-import io.sorne.tlang.generator.groovy.GroovyGenerator
-import io.sorne.tlang.generator.java.JavaGenerator
-import io.sorne.tlang.generator.json.JSONGenerator
-import io.sorne.tlang.generator.rust.RustGenerator
-import io.sorne.tlang.generator.scalalang.ScalaGenerator
-import io.sorne.tlang.generator.xml.XMLGenerator
-import io.sorne.tlang.generator.yml.YMLGenerator
-import io.sorne.tlang.generator.{CodeGenerator, ValueMapper}
-import io.sorne.tlang.interpreter._
-import io.sorne.tlang.interpreter.context.{Context, ContextUtils}
+import dev.tlang.tlang.ast.common.value.TLangString
+import dev.tlang.tlang.ast.helper._
+import dev.tlang.tlang.ast.tmpl.TmplBlockAsValue
+import dev.tlang.tlang.generator.groovy.GroovyGenerator
+import dev.tlang.tlang.generator.java.JavaGenerator
+import dev.tlang.tlang.generator.json.JSONGenerator
+import dev.tlang.tlang.generator.rust.RustGenerator
+import dev.tlang.tlang.generator.scalalang.ScalaGenerator
+import dev.tlang.tlang.generator.xml.XMLGenerator
+import dev.tlang.tlang.generator.yml.YMLGenerator
+import dev.tlang.tlang.generator.{CodeGenerator, ValueMapper}
+import dev.tlang.tlang.interpreter._
+import dev.tlang.tlang.interpreter.context.{Context, ContextUtils}
 
 object Generator {
 

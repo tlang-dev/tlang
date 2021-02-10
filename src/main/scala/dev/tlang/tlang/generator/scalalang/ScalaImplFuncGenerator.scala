@@ -1,7 +1,7 @@
 package dev.tlang.tlang.generator.scalalang
 
-import io.sorne.tlang.ast.tmpl.func.{TmplFunc, TmplFuncCurry}
-import io.sorne.tlang.ast.tmpl.{TmplGeneric, TmplParam, TmplType}
+import dev.tlang.tlang.ast.tmpl.func.{TmplFunc, TmplFuncCurry}
+import dev.tlang.tlang.ast.tmpl.{TmplGeneric, TmplParam, TmplType}
 
 object ScalaImplFuncGenerator {
 

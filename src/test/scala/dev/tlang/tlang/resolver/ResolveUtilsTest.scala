@@ -1,8 +1,8 @@
 package dev.tlang.tlang.resolver
 
-import io.sorne.tlang.ast.{DomainModel, DomainUse}
-import io.sorne.tlang.loader.{Module, Resource}
-import io.sorne.tlang.loader.manifest.Manifest
+import dev.tlang.tlang.ast.{DomainModel, DomainUse}
+import dev.tlang.tlang.loader.{Module, Resource}
+import dev.tlang.tlang.loader.manifest.Manifest
 import org.scalatest.funsuite.AnyFunSuite
 
 import scala.collection.immutable

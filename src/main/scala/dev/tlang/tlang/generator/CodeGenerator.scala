@@ -1,6 +1,6 @@
 package dev.tlang.tlang.generator
 
-import io.sorne.tlang.ast.tmpl.TmplBlock
+import dev.tlang.tlang.ast.tmpl.TmplBlock
 
 trait CodeGenerator {
 

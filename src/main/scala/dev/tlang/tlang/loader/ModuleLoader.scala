@@ -2,8 +2,8 @@ package dev.tlang.tlang.loader
 
 import dev.tlang.tlang.loader.manifest.Dependency
 import dev.tlang.tlang.loader.remote.RemoteLoader
-import io.sorne.tlang.loader.manifest.Dependency
-import io.sorne.tlang.loader.remote.RemoteLoader
+import dev.tlang.tlang.loader.manifest.Dependency
+import dev.tlang.tlang.loader.remote.RemoteLoader
 
 import java.lang
 import java.nio.file.{Path, Paths}
@@ -15,9 +15,9 @@ object ModuleLoader {
   val tLanFolder: Path = Paths.get(userHome, ".tlang")
   val tLandRepo: Path = Paths.get(tLanFolder.toString, "repo")
 
-  def loadModule(dependency: Dependency, cacheId: String)(implicit resourceLoader: ResourceLoader, remote: RemoteLoader, tBagManager: TBagManager): Either[LoaderError, lang.Module] = {
+  def loadModule(dependency: Dependency, cacheId: String)(implicit resourceLoader: ResourceLoader, remote: RemoteLoader, tBagManager: TBagManager): Either[LoaderError, Module] = {
 
-    def callExtractTBag(tBag: Path): Either[LoaderError, lang.Module] = {
+    def callExtractTBag(tBag: Path): Either[LoaderError, Module] = {
       extractTBagInCache(tBag, cacheId) match {
         case Left(error) => Left(error)
         case Right(path) => loadModuleInCache(path, cacheId)
@@ -39,7 +39,7 @@ object ModuleLoader {
     }
   }
 
-  def loadModuleInCache(tBag: Path, cacheId: String)(implicit resourceLoader: ResourceLoader, remote: RemoteLoader, tBagManager: TBagManager): Either[LoaderError, lang.Module] = {
+  def loadModuleInCache(tBag: Path, cacheId: String)(implicit resourceLoader: ResourceLoader, remote: RemoteLoader, tBagManager: TBagManager): Either[LoaderError, Module] = {
     BuildModuleTree.build(tBag, None, cacheId)
   }
 

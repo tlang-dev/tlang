@@ -1,8 +1,8 @@
 package dev.tlang.tlang.astbuilder
 
-import io.sorne.tlang.TLangParser._
-import io.sorne.tlang.ast.common.call.{ComplexValueStatement, SimpleValueStatement}
-import io.sorne.tlang.ast.common.value._
+import dev.tlang.tlang.TLangParser._
+import dev.tlang.tlang.ast.common.call.{ComplexValueStatement, SimpleValueStatement}
+import dev.tlang.tlang.ast.common.value._
 
 import scala.jdk.CollectionConverters._
 

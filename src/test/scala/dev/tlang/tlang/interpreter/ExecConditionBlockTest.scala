@@ -1,10 +1,10 @@
 package dev.tlang.tlang.interpreter
 
-import io.sorne.tlang.ast.common.call.{CallObject, CallVarObject}
-import io.sorne.tlang.ast.common.condition.{Condition, ConditionBlock}
-import io.sorne.tlang.ast.common.value.{TLangBool, TLangLong}
-import io.sorne.tlang.ast.helper.{ConditionLink, ConditionType}
-import io.sorne.tlang.interpreter.context.{Context, Scope}
+import dev.tlang.tlang.ast.common.call.{CallObject, CallVarObject}
+import dev.tlang.tlang.ast.common.condition.{Condition, ConditionBlock}
+import dev.tlang.tlang.ast.common.value.{TLangBool, TLangLong}
+import dev.tlang.tlang.ast.helper.{ConditionLink, ConditionType}
+import dev.tlang.tlang.interpreter.context.{Context, Scope}
 import org.scalatest.funsuite.AnyFunSuite
 
 import scala.collection.mutable

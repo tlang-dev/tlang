@@ -1,8 +1,8 @@
 package dev.tlang.tlang.ast.tmpl
 
 import dev.tlang.tlang.ast.helper.HelperParam
-import io.sorne.tlang.ast.DomainBlock
-import io.sorne.tlang.ast.helper.HelperParam
+import dev.tlang.tlang.ast.DomainBlock
+import dev.tlang.tlang.ast.helper.HelperParam
 
 case class TmplBlock(name: String, lang: String,
                      var params: Option[List[HelperParam]],

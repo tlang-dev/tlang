@@ -1,13 +1,13 @@
 package dev.tlang.tlang.generator.java
 
-import io.sorne.tlang.ast.helper.{ConditionLink, ConditionType}
-import io.sorne.tlang.ast.tmpl._
-import io.sorne.tlang.ast.tmpl.call._
-import io.sorne.tlang.ast.tmpl.condition.{TmplCondition, TmplConditionBlock}
-import io.sorne.tlang.ast.tmpl.func.TmplFunc
-import io.sorne.tlang.ast.tmpl.loop.{TmplDoWhile, TmplFor, TmplWhile}
-import io.sorne.tlang.ast.tmpl.primitive._
-import io.sorne.tlang.generator.CodeGenerator
+import dev.tlang.tlang.ast.helper.{ConditionLink, ConditionType}
+import dev.tlang.tlang.ast.tmpl._
+import dev.tlang.tlang.ast.tmpl.call._
+import dev.tlang.tlang.ast.tmpl.condition.{TmplCondition, TmplConditionBlock}
+import dev.tlang.tlang.ast.tmpl.func.TmplFunc
+import dev.tlang.tlang.ast.tmpl.loop.{TmplDoWhile, TmplFor, TmplWhile}
+import dev.tlang.tlang.ast.tmpl.primitive._
+import dev.tlang.tlang.generator.CodeGenerator
 
 class JavaGenerator extends CodeGenerator {
   override def generate(tmpl: TmplBlock): String = {
@@ -251,19 +251,19 @@ object JavaGenerator {
 
   def genConditionType(cond: ConditionType.condition): String = {
     cond match {
-      case io.sorne.tlang.ast.helper.ConditionType.EQUAL => "=="
-      case io.sorne.tlang.ast.helper.ConditionType.GREATER => ">"
-      case io.sorne.tlang.ast.helper.ConditionType.LESSER => "<"
-      case io.sorne.tlang.ast.helper.ConditionType.GREATER_OR_EQUAL => ">="
-      case io.sorne.tlang.ast.helper.ConditionType.LESSER_OR_EQUAL => "<="
-      case io.sorne.tlang.ast.helper.ConditionType.NOT_EQUAL => "!="
+      case dev.tlang.tlang.ast.helper.ConditionType.EQUAL => "=="
+      case dev.tlang.tlang.ast.helper.ConditionType.GREATER => ">"
+      case dev.tlang.tlang.ast.helper.ConditionType.LESSER => "<"
+      case dev.tlang.tlang.ast.helper.ConditionType.GREATER_OR_EQUAL => ">="
+      case dev.tlang.tlang.ast.helper.ConditionType.LESSER_OR_EQUAL => "<="
+      case dev.tlang.tlang.ast.helper.ConditionType.NOT_EQUAL => "!="
     }
   }
 
   def genConditionLink(link: ConditionLink.condition): String = {
     link match {
-      case io.sorne.tlang.ast.helper.ConditionLink.OR => "||"
-      case io.sorne.tlang.ast.helper.ConditionLink.AND => "&&"
+      case dev.tlang.tlang.ast.helper.ConditionLink.OR => "||"
+      case dev.tlang.tlang.ast.helper.ConditionLink.AND => "&&"
     }
   }
 

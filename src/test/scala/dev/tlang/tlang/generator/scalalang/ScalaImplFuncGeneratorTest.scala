@@ -2,9 +2,9 @@ package dev.tlang.tlang.generator.scalalang
 
 import dev.tlang.tlang.ast.tmpl.func.TmplFunc
 import dev.tlang.tlang.astbuilder.BuildTmplBlock
-import io.sorne.tlang.ast.tmpl.func.TmplFunc
-import io.sorne.tlang.astbuilder.BuildTmplBlock
-import io.sorne.tlang.{TLangLexer, TLangParser}
+import dev.tlang.tlang.ast.tmpl.func.TmplFunc
+import dev.tlang.tlang.astbuilder.BuildTmplBlock
+import dev.tlang.tlang.{TLangLexer, TLangParser}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
 

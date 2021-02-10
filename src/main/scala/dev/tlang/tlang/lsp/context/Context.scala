@@ -1,6 +1,6 @@
 package dev.tlang.tlang.lsp.context
 
-import io.sorne.tlang.lsp.TLangTextDocumentService
+import dev.tlang.tlang.lsp.TLangTextDocumentService
 
 class Context(var currentFile: CurrentFile) {
 

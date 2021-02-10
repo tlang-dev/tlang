@@ -2,13 +2,13 @@ package dev.tlang.tlang.resolver
 
 import dev.tlang.tlang.loader
 import dev.tlang.tlang.loader.Resource
-import io.sorne.tlang.ast.DomainUse
-import io.sorne.tlang.ast.common.call.{CallFuncObject, CallObject, SimpleValueStatement}
-import io.sorne.tlang.ast.common.condition.{Condition, ConditionBlock}
-import io.sorne.tlang.ast.common.value.{ArrayValue, AssignVar, EntityValue, MultiValue}
-import io.sorne.tlang.ast.helper.{HelperFor, HelperIf, HelperStatement}
-import io.sorne.tlang.interpreter.context.Scope
-import io.sorne.tlang.loader.{Module, Resource}
+import dev.tlang.tlang.ast.DomainUse
+import dev.tlang.tlang.ast.common.call.{CallFuncObject, CallObject, SimpleValueStatement}
+import dev.tlang.tlang.ast.common.condition.{Condition, ConditionBlock}
+import dev.tlang.tlang.ast.common.value.{ArrayValue, AssignVar, EntityValue, MultiValue}
+import dev.tlang.tlang.ast.helper.{HelperFor, HelperIf, HelperStatement}
+import dev.tlang.tlang.interpreter.context.Scope
+import dev.tlang.tlang.loader.{Module, Resource}
 
 object ResolveStatement {
 

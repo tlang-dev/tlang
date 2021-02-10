@@ -1,8 +1,8 @@
 package dev.tlang.tlang.lsp.indent
 
 import dev.tlang.tlang.lsp.TLangTextDocumentService.TextEdit
-import io.sorne.tlang.lsp.TLangTextDocumentService
-import io.sorne.tlang.lsp.TLangTextDocumentService.Position
+import dev.tlang.tlang.lsp.TLangTextDocumentService
+import dev.tlang.tlang.lsp.TLangTextDocumentService.Position
 import org.scalatest.funsuite.AnyFunSuite
 
 import scala.collection.mutable.ListBuffer

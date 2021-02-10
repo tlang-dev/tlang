@@ -1,11 +1,11 @@
 package dev.tlang.tlang.libraries.generator
 
 import dev.tlang.tlang.ast.common.value.TLangString
-import io.sorne.tlang.ast.common.call._
-import io.sorne.tlang.ast.common.value.TLangString
-import io.sorne.tlang.ast.tmpl.{TmplBlock, TmplBlockAsValue, TmplPkg, TmplStringID}
-import io.sorne.tlang.interpreter.context.{Context, Scope}
-import io.sorne.tlang.interpreter.{ElementNotFound, ExecCallFunc}
+import dev.tlang.tlang.ast.common.call._
+import dev.tlang.tlang.ast.common.value.TLangString
+import dev.tlang.tlang.ast.tmpl.{TmplBlock, TmplBlockAsValue, TmplPkg, TmplStringID}
+import dev.tlang.tlang.interpreter.context.{Context, Scope}
+import dev.tlang.tlang.interpreter.{ElementNotFound, ExecCallFunc}
 import org.scalatest.funsuite.AnyFunSuite
 
 import scala.collection.mutable

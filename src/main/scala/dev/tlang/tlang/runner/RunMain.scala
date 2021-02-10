@@ -1,12 +1,12 @@
 package dev.tlang.tlang.runner
 
 import dev.tlang.tlang.interpreter.ExecFunc
-import io.sorne.tlang.ast.helper.{HelperBlock, HelperFunc}
-import io.sorne.tlang.interpreter.ExecFunc
-import io.sorne.tlang.interpreter.context.Context
-import io.sorne.tlang.loader.remote.RemoteLoader
-import io.sorne.tlang.loader.{BuildModuleTree, FileResourceLoader, Module, TBagManager}
-import io.sorne.tlang.resolver.ResolveContext
+import dev.tlang.tlang.ast.helper.{HelperBlock, HelperFunc}
+import dev.tlang.tlang.interpreter.ExecFunc
+import dev.tlang.tlang.interpreter.context.Context
+import dev.tlang.tlang.loader.remote.RemoteLoader
+import dev.tlang.tlang.loader.{BuildModuleTree, FileResourceLoader, Module, TBagManager}
+import dev.tlang.tlang.resolver.ResolveContext
 
 import java.io.File
 import java.nio.file.Paths

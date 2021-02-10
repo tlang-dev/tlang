@@ -1,13 +1,13 @@
 package dev.tlang.tlang.generator.typescript
 
-import io.sorne.tlang.ast.helper.{ConditionLink, ConditionType}
-import io.sorne.tlang.ast.tmpl.call.{TmplCallArray, TmplCallFunc, TmplCallObj, TmplCallObjType, TmplCallVar}
-import io.sorne.tlang.ast.tmpl.condition.{TmplCondition, TmplConditionBlock}
-import io.sorne.tlang.ast.tmpl.func.TmplFunc
-import io.sorne.tlang.ast.tmpl.loop.{TmplDoWhile, TmplFor, TmplWhile}
-import io.sorne.tlang.ast.tmpl.primitive.{TmplArrayValue, TmplBoolValue, TmplDoubleValue, TmplLongValue, TmplPrimitiveValue, TmplStringValue}
-import io.sorne.tlang.ast.tmpl.{TmplAnnotation, TmplBlock, TmplContent, TmplExprBlock, TmplExprContent, TmplExpression, TmplGeneric, TmplIf, TmplImpl, TmplParam, TmplProp, TmplSetAttribute, TmplSimpleValueType, TmplType, TmplValueType, TmplVar}
-import io.sorne.tlang.generator.CodeGenerator
+import dev.tlang.tlang.ast.helper.{ConditionLink, ConditionType}
+import dev.tlang.tlang.ast.tmpl.call.{TmplCallArray, TmplCallFunc, TmplCallObj, TmplCallObjType, TmplCallVar}
+import dev.tlang.tlang.ast.tmpl.condition.{TmplCondition, TmplConditionBlock}
+import dev.tlang.tlang.ast.tmpl.func.TmplFunc
+import dev.tlang.tlang.ast.tmpl.loop.{TmplDoWhile, TmplFor, TmplWhile}
+import dev.tlang.tlang.ast.tmpl.primitive.{TmplArrayValue, TmplBoolValue, TmplDoubleValue, TmplLongValue, TmplPrimitiveValue, TmplStringValue}
+import dev.tlang.tlang.ast.tmpl.{TmplAnnotation, TmplBlock, TmplContent, TmplExprBlock, TmplExprContent, TmplExpression, TmplGeneric, TmplIf, TmplImpl, TmplParam, TmplProp, TmplSetAttribute, TmplSimpleValueType, TmplType, TmplValueType, TmplVar}
+import dev.tlang.tlang.generator.CodeGenerator
 
 class TypeScriptGenerator extends CodeGenerator {
   override def generate(tmpl: TmplBlock): String = {
@@ -242,19 +242,19 @@ object TypeScriptGenerator {
 
   def genConditionType(cond: ConditionType.condition): String = {
     cond match {
-      case io.sorne.tlang.ast.helper.ConditionType.EQUAL => "=="
-      case io.sorne.tlang.ast.helper.ConditionType.GREATER => ">"
-      case io.sorne.tlang.ast.helper.ConditionType.LESSER => "<"
-      case io.sorne.tlang.ast.helper.ConditionType.GREATER_OR_EQUAL => ">="
-      case io.sorne.tlang.ast.helper.ConditionType.LESSER_OR_EQUAL => "<="
-      case io.sorne.tlang.ast.helper.ConditionType.NOT_EQUAL => "!="
+      case dev.tlang.tlang.ast.helper.ConditionType.EQUAL => "=="
+      case dev.tlang.tlang.ast.helper.ConditionType.GREATER => ">"
+      case dev.tlang.tlang.ast.helper.ConditionType.LESSER => "<"
+      case dev.tlang.tlang.ast.helper.ConditionType.GREATER_OR_EQUAL => ">="
+      case dev.tlang.tlang.ast.helper.ConditionType.LESSER_OR_EQUAL => "<="
+      case dev.tlang.tlang.ast.helper.ConditionType.NOT_EQUAL => "!="
     }
   }
 
   def genConditionLink(link: ConditionLink.condition): String = {
     link match {
-      case io.sorne.tlang.ast.helper.ConditionLink.OR => "||"
-      case io.sorne.tlang.ast.helper.ConditionLink.AND => "&&"
+      case dev.tlang.tlang.ast.helper.ConditionLink.OR => "||"
+      case dev.tlang.tlang.ast.helper.ConditionLink.AND => "&&"
     }
   }
 

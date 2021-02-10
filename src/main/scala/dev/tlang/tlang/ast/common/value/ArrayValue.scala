@@ -1,6 +1,6 @@
 package dev.tlang.tlang.ast.common.value
 
-import io.sorne.tlang.interpreter.Value
+import dev.tlang.tlang.interpreter.Value
 
 case class ArrayValue(tbl: Option[List[SimpleAttribute]]) extends PrimitiveValue[ArrayValue] {
   override def getValue: ArrayValue = this

@@ -1,12 +1,12 @@
 package dev.tlang.tlang.generator
 
-import io.sorne.tlang.ast.tmpl._
-import io.sorne.tlang.ast.tmpl.call._
-import io.sorne.tlang.ast.tmpl.condition.TmplConditionBlock
-import io.sorne.tlang.ast.tmpl.func.{TmplFunc, TmplFuncCurry}
-import io.sorne.tlang.ast.tmpl.primitive.{TmplPrimitiveValue, TmplStringValue, TmplTextValue}
-import io.sorne.tlang.interpreter.ExecCallObject
-import io.sorne.tlang.interpreter.context.Context
+import dev.tlang.tlang.ast.tmpl._
+import dev.tlang.tlang.ast.tmpl.call._
+import dev.tlang.tlang.ast.tmpl.condition.TmplConditionBlock
+import dev.tlang.tlang.ast.tmpl.func.{TmplFunc, TmplFuncCurry}
+import dev.tlang.tlang.ast.tmpl.primitive.{TmplPrimitiveValue, TmplStringValue, TmplTextValue}
+import dev.tlang.tlang.interpreter.ExecCallObject
+import dev.tlang.tlang.interpreter.context.Context
 
 object ValueMapper {
 

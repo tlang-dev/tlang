@@ -5,9 +5,9 @@ import dev.tlang.tlang.loader.manifest.Stability
 import dev.tlang.tlang.loader.remote.RemoteLoader
 
 import java.nio.file.Paths
-import io.sorne.tlang.ast.model.ModelBlock
-import io.sorne.tlang.loader.manifest.{Dependency, Manifest, Stability}
-import io.sorne.tlang.loader.remote.RemoteLoader
+import dev.tlang.tlang.ast.model.ModelBlock
+import dev.tlang.tlang.loader.manifest.{Dependency, Manifest, Stability}
+import dev.tlang.tlang.loader.remote.RemoteLoader
 import org.scalatest.funsuite.AnyFunSuite
 
 import java.util.UUID.randomUUID

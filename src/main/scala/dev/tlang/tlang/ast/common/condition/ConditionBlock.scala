@@ -1,10 +1,10 @@
 package dev.tlang.tlang.ast.common.condition
 
 import dev.tlang.tlang.ast.common.value.TLangType
-import io.sorne.tlang.ast.common.call.ComplexValueStatement
-import io.sorne.tlang.ast.common.value.TLangType
-import io.sorne.tlang.ast.helper.ConditionLink
-import io.sorne.tlang.interpreter.Value
+import dev.tlang.tlang.ast.common.call.ComplexValueStatement
+import dev.tlang.tlang.ast.common.value.TLangType
+import dev.tlang.tlang.ast.helper.ConditionLink
+import dev.tlang.tlang.interpreter.Value
 
 case class ConditionBlock(content: Either[ConditionBlock, Condition], link: Option[ConditionLink.condition] = None, nextBlock: Option[ConditionBlock] = None) extends ComplexValueStatement[ConditionBlock] {
   override def getValue: ConditionBlock = this

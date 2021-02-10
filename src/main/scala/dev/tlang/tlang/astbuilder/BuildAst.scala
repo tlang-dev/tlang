@@ -1,7 +1,7 @@
 package dev.tlang.tlang.astbuilder
 
-import io.sorne.tlang.TLangParser._
-import io.sorne.tlang.ast._
+import dev.tlang.tlang.TLangParser._
+import dev.tlang.tlang.ast._
 
 import scala.jdk.CollectionConverters._
 

@@ -1,14 +1,14 @@
 package dev.tlang.tlang.resolver
 
-import io.sorne.tlang.ast.DomainUse
-import io.sorne.tlang.ast.common.call.{CallFuncObject, CallObject, CallObjectType, CallVarObject}
-import io.sorne.tlang.ast.common.value.PrimitiveValue
-import io.sorne.tlang.ast.helper._
-import io.sorne.tlang.ast.model.{ModelBlock, ModelContent}
-import io.sorne.tlang.ast.tmpl.{TmplBlock, TmplBlockAsValue}
-import io.sorne.tlang.interpreter.Value
-import io.sorne.tlang.interpreter.context.{Context, Scope}
-import io.sorne.tlang.loader.{BuildModuleTree, Module, Resource}
+import dev.tlang.tlang.ast.DomainUse
+import dev.tlang.tlang.ast.common.call.{CallFuncObject, CallObject, CallObjectType, CallVarObject}
+import dev.tlang.tlang.ast.common.value.PrimitiveValue
+import dev.tlang.tlang.ast.helper._
+import dev.tlang.tlang.ast.model.{ModelBlock, ModelContent}
+import dev.tlang.tlang.ast.tmpl.{TmplBlock, TmplBlockAsValue}
+import dev.tlang.tlang.interpreter.Value
+import dev.tlang.tlang.interpreter.context.{Context, Scope}
+import dev.tlang.tlang.loader.{BuildModuleTree, Module, Resource}
 
 object ResolveContext {
 

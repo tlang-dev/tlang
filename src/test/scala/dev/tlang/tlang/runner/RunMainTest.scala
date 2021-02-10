@@ -1,12 +1,12 @@
 package dev.tlang.tlang.runner
 
 import dev.tlang.tlang.loader.manifest.Stability
-import io.sorne.tlang.ast.DomainModel
-import io.sorne.tlang.ast.helper.{HelperBlock, HelperContent, HelperFunc, HelperInternalFunc}
-import io.sorne.tlang.interpreter.context.Context
-import io.sorne.tlang.loader.manifest.Stability
-import io.sorne.tlang.loader.{Module, Resource}
-import io.sorne.tlang.loader.manifest.Manifest
+import dev.tlang.tlang.ast.DomainModel
+import dev.tlang.tlang.ast.helper.{HelperBlock, HelperContent, HelperFunc, HelperInternalFunc}
+import dev.tlang.tlang.interpreter.context.Context
+import dev.tlang.tlang.loader.manifest.Stability
+import dev.tlang.tlang.loader.{Module, Resource}
+import dev.tlang.tlang.loader.manifest.Manifest
 import org.scalatest.funsuite.AnyFunSuite
 
 import scala.collection.immutable

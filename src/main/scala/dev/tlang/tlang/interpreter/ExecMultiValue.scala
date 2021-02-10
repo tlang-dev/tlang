@@ -4,10 +4,10 @@ import dev.tlang.tlang.ast.common.call.ComplexValueStatement
 import dev.tlang.tlang.ast.common.value.MultiValue
 import dev.tlang.tlang.ast.helper.HelperStatement
 import dev.tlang.tlang.interpreter.context.Context
-import io.sorne.tlang.ast.common.call.ComplexValueStatement
-import io.sorne.tlang.ast.common.value.MultiValue
-import io.sorne.tlang.ast.helper.HelperStatement
-import io.sorne.tlang.interpreter.context.Context
+import dev.tlang.tlang.ast.common.call.ComplexValueStatement
+import dev.tlang.tlang.ast.common.value.MultiValue
+import dev.tlang.tlang.ast.helper.HelperStatement
+import dev.tlang.tlang.interpreter.context.Context
 
 import scala.collection.mutable.ListBuffer
 

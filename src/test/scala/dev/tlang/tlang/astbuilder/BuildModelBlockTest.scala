@@ -2,9 +2,9 @@ package dev.tlang.tlang.astbuilder
 
 import dev.tlang.tlang.ast.common.value.{ArrayValue, TLangString}
 import dev.tlang.tlang.ast.model.set.{ModelSetArray, ModelSetEntity, ModelSetFuncDef, ModelSetRef, ModelSetType}
-import io.sorne.tlang.ast.common.value.{ArrayValue, ComplexAttribute, TLangString}
-import io.sorne.tlang.ast.model.set.{ModelSetArray, ModelSetEntity, ModelSetFuncDef, ModelSetRef, ModelSetType}
-import io.sorne.tlang.{TLangLexer, TLangParser}
+import dev.tlang.tlang.ast.common.value.{ArrayValue, ComplexAttribute, TLangString}
+import dev.tlang.tlang.ast.model.set.{ModelSetArray, ModelSetEntity, ModelSetFuncDef, ModelSetRef, ModelSetType}
+import dev.tlang.tlang.{TLangLexer, TLangParser}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
 

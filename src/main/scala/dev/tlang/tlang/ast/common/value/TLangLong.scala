@@ -1,7 +1,7 @@
 package dev.tlang.tlang.ast.common.value
 
 import dev.tlang.tlang.interpreter.Value
-import io.sorne.tlang.interpreter.Value
+import dev.tlang.tlang.interpreter.Value
 
 class TLangLong(value: Long) extends PrimitiveValue[Long] {
   override def getValue: Long = value

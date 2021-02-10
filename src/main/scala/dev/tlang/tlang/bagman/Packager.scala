@@ -1,7 +1,7 @@
 package dev.tlang.tlang.bagman
 
-import io.sorne.tlang.loader.manifest.{Manifest, Stability}
-import io.sorne.tlang.loader.{BuildModuleTree, FileResourceLoader, ModuleLoader, ResourceLoader, TBagManager}
+import dev.tlang.tlang.loader.manifest.{Manifest, Stability}
+import dev.tlang.tlang.loader.{BuildModuleTree, FileResourceLoader, ModuleLoader, ResourceLoader, TBagManager}
 
 import java.net.URL
 import java.nio.file.{Path, Paths}

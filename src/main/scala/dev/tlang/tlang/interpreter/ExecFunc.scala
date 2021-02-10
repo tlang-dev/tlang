@@ -1,7 +1,7 @@
 package dev.tlang.tlang.interpreter
 
-import io.sorne.tlang.ast.helper.{HelperFunc, HelperStatement}
-import io.sorne.tlang.interpreter.context.Context
+import dev.tlang.tlang.ast.helper.{HelperFunc, HelperStatement}
+import dev.tlang.tlang.interpreter.context.Context
 
 object ExecFunc extends Executor {
   override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value[_]]]] = {

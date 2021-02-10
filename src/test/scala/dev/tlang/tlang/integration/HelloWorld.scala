@@ -1,7 +1,7 @@
 package dev.tlang.tlang.integration
 
 import dev.tlang.tlang.loader.ResourceLoader
-import io.sorne.tlang.loader.ResourceLoader
+import dev.tlang.tlang.loader.ResourceLoader
 import org.scalatest.funsuite.AnyFunSuite
 
 class HelloWorld extends AnyFunSuite {

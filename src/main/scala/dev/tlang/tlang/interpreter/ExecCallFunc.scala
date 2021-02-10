@@ -4,10 +4,10 @@ import dev.tlang.tlang.ast.common.call.CallFuncObject
 import dev.tlang.tlang.ast.helper.{HelperFunc, HelperStatement}
 import dev.tlang.tlang.ast.tmpl.TmplBlock
 import dev.tlang.tlang.interpreter.context.{Context, ContextUtils}
-import io.sorne.tlang.ast.common.call.CallFuncObject
-import io.sorne.tlang.ast.helper.{HelperFunc, HelperStatement}
-import io.sorne.tlang.ast.tmpl.{TmplBlock, TmplBlockAsValue}
-import io.sorne.tlang.interpreter.context.{Context, ContextUtils, Scope}
+import dev.tlang.tlang.ast.common.call.CallFuncObject
+import dev.tlang.tlang.ast.helper.{HelperFunc, HelperStatement}
+import dev.tlang.tlang.ast.tmpl.{TmplBlock, TmplBlockAsValue}
+import dev.tlang.tlang.interpreter.context.{Context, ContextUtils, Scope}
 
 import scala.collection.mutable
 

@@ -1,7 +1,7 @@
 package dev.tlang.tlang.astbuilder
 
-import io.sorne.tlang.ast.helper.{HelperArrayType, HelperFuncType, HelperObjType}
-import io.sorne.tlang.{TLangLexer, TLangParser}
+import dev.tlang.tlang.ast.helper.{HelperArrayType, HelperFuncType, HelperObjType}
+import dev.tlang.tlang.{TLangLexer, TLangParser}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
 

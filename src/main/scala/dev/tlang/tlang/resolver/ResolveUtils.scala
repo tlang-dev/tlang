@@ -1,11 +1,11 @@
 package dev.tlang.tlang.resolver
 
 import dev.tlang.tlang.loader.{Module, Resource}
-import io.sorne.tlang.ast.DomainUse
-import io.sorne.tlang.ast.common.value.AssignVar
-import io.sorne.tlang.ast.helper.HelperFunc
-import io.sorne.tlang.ast.model.ModelContent
-import io.sorne.tlang.loader.{Module, Resource}
+import dev.tlang.tlang.ast.DomainUse
+import dev.tlang.tlang.ast.common.value.AssignVar
+import dev.tlang.tlang.ast.helper.HelperFunc
+import dev.tlang.tlang.ast.model.ModelContent
+import dev.tlang.tlang.loader.{Module, Resource}
 
 object ResolveUtils {
 

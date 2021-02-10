@@ -1,6 +1,6 @@
 package dev.tlang.tlang.ast.tmpl
 
-import io.sorne.tlang.ast.common.call.CallObject
+import dev.tlang.tlang.ast.common.call.CallObject
 
 sealed trait TmplID {
 

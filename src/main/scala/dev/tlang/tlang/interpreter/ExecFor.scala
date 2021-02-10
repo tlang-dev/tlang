@@ -1,8 +1,8 @@
 package dev.tlang.tlang.interpreter
 
-import io.sorne.tlang.ast.common.value.{ArrayValue, TLangLong}
-import io.sorne.tlang.ast.helper.{ForType, HelperFor, HelperStatement}
-import io.sorne.tlang.interpreter.context.{Context, Scope}
+import dev.tlang.tlang.ast.common.value.{ArrayValue, TLangLong}
+import dev.tlang.tlang.ast.helper.{ForType, HelperFor, HelperStatement}
+import dev.tlang.tlang.interpreter.context.{Context, Scope}
 
 object ExecFor extends Executor {
 
@@ -32,8 +32,8 @@ object ExecFor extends Executor {
     val start = ExecSimpleValue.run(forStatement.start.get, context).toOption.get.get.head.asInstanceOf[TLangLong].getValue
     val end = ExecSimpleValue.run(forStatement.array, context).toOption.get.get.head.asInstanceOf[TLangLong].getValue
     val realEnd = forStatement.forType match {
-      case io.sorne.tlang.ast.helper.ForType.TO => end
-      case io.sorne.tlang.ast.helper.ForType.UNTIL => end - 1
+      case dev.tlang.tlang.ast.helper.ForType.TO => end
+      case dev.tlang.tlang.ast.helper.ForType.UNTIL => end - 1
     }
     val newScope = Scope()
     val newContext = Context(context.scopes :+ newScope)

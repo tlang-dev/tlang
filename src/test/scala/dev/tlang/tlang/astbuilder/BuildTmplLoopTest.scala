@@ -5,12 +5,12 @@ import dev.tlang.tlang.ast.tmpl.TmplExprBlock
 import dev.tlang.tlang.ast.tmpl.call.{TmplCallFunc, TmplCallObj}
 import dev.tlang.tlang.ast.tmpl.loop.{TmplDoWhile, TmplWhile}
 import dev.tlang.tlang.ast.tmpl.primitive.TmplLongValue
-import io.sorne.tlang.ast.helper.ConditionType
-import io.sorne.tlang.ast.tmpl.TmplExprBlock
-import io.sorne.tlang.ast.tmpl.call.{TmplCallFunc, TmplCallObj}
-import io.sorne.tlang.ast.tmpl.loop.{TmplDoWhile, TmplWhile}
-import io.sorne.tlang.ast.tmpl.primitive.TmplLongValue
-import io.sorne.tlang.{TLangLexer, TLangParser}
+import dev.tlang.tlang.ast.helper.ConditionType
+import dev.tlang.tlang.ast.tmpl.TmplExprBlock
+import dev.tlang.tlang.ast.tmpl.call.{TmplCallFunc, TmplCallObj}
+import dev.tlang.tlang.ast.tmpl.loop.{TmplDoWhile, TmplWhile}
+import dev.tlang.tlang.ast.tmpl.primitive.TmplLongValue
+import dev.tlang.tlang.{TLangLexer, TLangParser}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
 
