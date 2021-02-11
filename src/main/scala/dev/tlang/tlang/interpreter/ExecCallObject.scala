@@ -7,6 +7,7 @@ import dev.tlang.tlang.interpreter.context.{Context, ContextUtils}
 import dev.tlang.tlang.ast.common.call._
 import dev.tlang.tlang.ast.common.value._
 import dev.tlang.tlang.ast.helper._
+import dev.tlang.tlang.ast.tmpl.TmplBlockAsValue
 import dev.tlang.tlang.interpreter.context.{Context, ContextUtils}
 
 import scala.annotation.tailrec
@@ -46,7 +47,10 @@ object ExecCallObject extends Executor {
         val name = callVar.name + "/" + func.name.get
         ContextUtils.findFunc(context, name) match {
           case Some(_) => ExecCallFunc.run(CallFuncObject(Some(name), func.currying), context)
-          case None => Left(CallableNotFound(name))
+          case None => ContextUtils.findTmpl(context, name) match {
+            case Some(tmpl) => Right(Some(List(TmplBlockAsValue(tmpl.copy(), context))))
+            case None =>Left(CallableNotFound(name))
+          }
         }
       case variable: CallVarObject => findVar(callVar.name + "/" + variable.name, context)
     }

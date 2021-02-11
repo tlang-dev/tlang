@@ -1,6 +1,5 @@
 package dev.tlang.tlang.runner
 
-import dev.tlang.tlang.interpreter.ExecFunc
 import dev.tlang.tlang.ast.helper.{HelperBlock, HelperFunc}
 import dev.tlang.tlang.interpreter.ExecFunc
 import dev.tlang.tlang.interpreter.context.Context
@@ -19,10 +18,10 @@ object RunMain {
   implicit val tBagManager: TBagManager.type = TBagManager
 
   def runDir(name: String): Unit = {
-    val newName = name.split(File.separator).mkString("/")
+//    val newName = name.split(File.separator).mkString("/")
     val uuid = randomUUID().toString
     //BuildModuleTree.build(Paths.get(parts.slice(0, parts.size - 1).mkString(File.separator)), Some(parts.last)) match {
-    BuildModuleTree.build(Paths.get(newName), None, uuid) match {
+    BuildModuleTree.build(new File(name).toPath, None, uuid) match {
       case Left(error) => println("Error while loading the program (" + error.code + "): " + error.message)
       case Right(module) => runMainFile(module)
     }

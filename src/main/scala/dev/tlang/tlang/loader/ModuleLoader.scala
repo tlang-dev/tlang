@@ -2,11 +2,9 @@ package dev.tlang.tlang.loader
 
 import dev.tlang.tlang.loader.manifest.Dependency
 import dev.tlang.tlang.loader.remote.RemoteLoader
-import dev.tlang.tlang.loader.manifest.Dependency
-import dev.tlang.tlang.loader.remote.RemoteLoader
 
-import java.lang
 import java.nio.file.{Path, Paths}
+import java.util.UUID.randomUUID
 import scala.util.{Failure, Success}
 
 object ModuleLoader {
@@ -44,7 +42,7 @@ object ModuleLoader {
   }
 
   def searchLocalRepo(dependency: Dependency)(implicit tBagManager: TBagManager): Either[LoaderError, Option[Path]] = {
-    val depFolder = Paths.get(tLandRepo.toString, dependency.organisation, dependency.project, dependency.name, dependency.stability.toString, dependency.version, dependency.releaseNumber.toString)
+    val depFolder = Paths.get(tLandRepo.toString, dependency.organisation, dependency.project, dependency.name, dependency.version, dependency.stability.toString.toLowerCase, dependency.releaseNumber.toString)
     if (tBagManager.isDirectory(depFolder)) {
       tBagManager.findTBagFile(depFolder) match {
         case Some(tBag) => Right(Some(tBag.toPath))
@@ -65,7 +63,8 @@ object ModuleLoader {
   }
 
   def extractTBagInCache(tBag: Path, cacheId: String): Either[LoaderError, Path] = {
-    val dest = Paths.get(tLanFolder.toString, ".cache", cacheId)
+    val uuid = randomUUID().toString
+    val dest = Paths.get(tLanFolder.toString, ".cache", cacheId, uuid)
     TBagManager.extract(tBag, dest)
     Right(dest)
   }

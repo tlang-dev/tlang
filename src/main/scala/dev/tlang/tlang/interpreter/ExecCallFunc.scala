@@ -2,10 +2,6 @@ package dev.tlang.tlang.interpreter
 
 import dev.tlang.tlang.ast.common.call.CallFuncObject
 import dev.tlang.tlang.ast.helper.{HelperFunc, HelperStatement}
-import dev.tlang.tlang.ast.tmpl.TmplBlock
-import dev.tlang.tlang.interpreter.context.{Context, ContextUtils}
-import dev.tlang.tlang.ast.common.call.CallFuncObject
-import dev.tlang.tlang.ast.helper.{HelperFunc, HelperStatement}
 import dev.tlang.tlang.ast.tmpl.{TmplBlock, TmplBlockAsValue}
 import dev.tlang.tlang.interpreter.context.{Context, ContextUtils, Scope}
 
@@ -49,7 +45,7 @@ object ExecCallFunc extends Executor {
     Context(context.scopes :+ Scope(vars, funcs))
   }
 
-  private def findParamName(curryPos: Int, paramPos: Int, helperFunc: HelperFunc): String = {
+  def findParamName(curryPos: Int, paramPos: Int, helperFunc: HelperFunc): String = {
     helperFunc.currying.get(curryPos).params(paramPos).param.getOrElse(paramPos.toString)
   }
 
@@ -70,7 +66,7 @@ object ExecCallFunc extends Executor {
     Context(context.scopes :+ Scope(vars, funcs))
   }
 
-  private def findTmplParamName(paramPos: Int, tmplBlock: TmplBlock): String = {
+  def findTmplParamName(paramPos: Int, tmplBlock: TmplBlock): String = {
     tmplBlock.params.get(paramPos).param.getOrElse(paramPos.toString)
   }
 

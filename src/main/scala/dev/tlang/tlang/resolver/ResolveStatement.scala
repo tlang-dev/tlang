@@ -1,14 +1,15 @@
 package dev.tlang.tlang.resolver
 
-import dev.tlang.tlang.loader
-import dev.tlang.tlang.loader.Resource
 import dev.tlang.tlang.ast.DomainUse
 import dev.tlang.tlang.ast.common.call.{CallFuncObject, CallObject, SimpleValueStatement}
 import dev.tlang.tlang.ast.common.condition.{Condition, ConditionBlock}
 import dev.tlang.tlang.ast.common.value.{ArrayValue, AssignVar, EntityValue, MultiValue}
-import dev.tlang.tlang.ast.helper.{HelperFor, HelperIf, HelperStatement}
+import dev.tlang.tlang.ast.helper.{HelperFor, HelperFunc, HelperIf, HelperStatement}
+import dev.tlang.tlang.ast.tmpl.TmplBlockAsValue
 import dev.tlang.tlang.interpreter.context.Scope
-import dev.tlang.tlang.loader.{Module, Resource}
+import dev.tlang.tlang.interpreter.{ExecCallFunc, Value}
+import dev.tlang.tlang.loader
+import dev.tlang.tlang.loader.Resource
 
 object ResolveStatement {
 
@@ -29,9 +30,9 @@ object ResolveStatement {
     } else Right(())
   }
 
-  def resolveStatement(statement: HelperStatement, module: loader.Module, uses: List[DomainUse], scope: Scope, currentResource: Resource): Either[ResolverError, Unit] = {
+  def resolveStatement(statement: HelperStatement, module: loader.Module, uses: List[DomainUse], scope: Scope, currentResource: Resource, newName: Option[String] = None): Either[ResolverError, Unit] = {
     statement match {
-      case call: CallObject => ResolveContext.resolveCallObject(call, module, uses, scope, currentResource)
+      case call: CallObject => ResolveContext.resolveCallObject(call, module, uses, scope, currentResource, newName)
       case assignVar: AssignVar => resolveAssignVar(assignVar, module, uses, scope, currentResource)
       case helperIf: HelperIf => resolveIf(helperIf, module, uses, scope, currentResource)
       case helperFor: HelperFor => resolveFor(helperFor, module, uses, scope, currentResource)
@@ -96,8 +97,14 @@ object ResolveStatement {
     Right(())
   }
 
-  def resolveCallFuncObjectParams(call: CallFuncObject, module: loader.Module, uses: List[DomainUse], scope: Scope, currentResource: Resource): Either[ResolverError, Unit] = {
-    call.currying.foreach(_.foreach(curry => curry.params.foreach(_.foreach(param => resolveStatement(param.value, module, uses, scope, currentResource)))))
+  def resolveCallFuncObjectParams(call: CallFuncObject, called: Value[_], module: loader.Module, uses: List[DomainUse], scope: Scope, currentResource: Resource): Either[ResolverError, Unit] = {
+    call.currying.foreach(_.zipWithIndex.foreach(curry => curry._1.params.foreach(_.zipWithIndex.foreach(param => {
+      val paramName = called match {
+        case func: HelperFunc => ExecCallFunc.findParamName(curry._2, param._2, func)
+        case tmpl: TmplBlockAsValue => ExecCallFunc.findTmplParamName(param._2, tmpl.block)
+      }
+      resolveStatement(param._1.value, module, uses, scope, currentResource, Some(paramName))
+    }))))
     Right(())
   }
 

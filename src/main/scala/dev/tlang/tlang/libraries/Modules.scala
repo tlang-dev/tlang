@@ -1,6 +1,5 @@
 package dev.tlang.tlang.libraries
 
-import dev.tlang.tlang.libraries.tio.terminal.TerminalModule
 import dev.tlang.tlang.libraries.generator.GenModule
 import dev.tlang.tlang.libraries.tio.terminal.TerminalModule
 import dev.tlang.tlang.loader.Module

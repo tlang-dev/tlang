@@ -54,14 +54,16 @@ object BuildModuleTree {
   def browseExternalResources(manifest: Manifest, cacheId: String)(implicit resourceLoader: ResourceLoader, remote: RemoteLoader, tBagManager: TBagManager): Either[LoaderError, Map[String, Module]] = {
     val modules = mutable.Map.empty[String, Module]
     manifest.dependencies.foreach(_.foreach(dependency => {
-      if (dependency.organisation == Modules.organisation) {
+//      if (dependency.organisation == Modules.organisation) {
         Modules.findModule(dependency) match {
           case Some(module) => modules.addOne(dependency.alias.getOrElse(module.manifest.name), module)
           case None =>
-
-            ModuleLoader.loadModule(dependency, cacheId)
+            ModuleLoader.loadModule(dependency, cacheId) match {
+              case Left(error) => println("CANNOT GET MODULE:" + error.message)
+              case Right(module) => modules.addOne(dependency.alias.getOrElse(module.manifest.name), module)
+            }
         }
-      }
+//      }
     }))
     Right(modules.toMap)
   }
