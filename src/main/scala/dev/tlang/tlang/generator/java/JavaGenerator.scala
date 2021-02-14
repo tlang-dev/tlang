@@ -55,7 +55,7 @@ object JavaGenerator {
     }
     str ++= ")"
     if (func.content.isDefined) str ++= " " ++= genExprBlock(func.content.get)
-    else str ++= ";"
+    else str ++= ";\n\n"
     str.toString()
   }
 

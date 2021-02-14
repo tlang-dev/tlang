@@ -1,12 +1,14 @@
 package dev.tlang.tlang.generator
 
-import dev.tlang.tlang.ast.tmpl._
+import dev.tlang.tlang.ast.common.value.TLangString
 import dev.tlang.tlang.ast.tmpl.call._
 import dev.tlang.tlang.ast.tmpl.condition.TmplConditionBlock
 import dev.tlang.tlang.ast.tmpl.func.{TmplFunc, TmplFuncCurry}
 import dev.tlang.tlang.ast.tmpl.primitive.{TmplPrimitiveValue, TmplStringValue, TmplTextValue}
+import dev.tlang.tlang.ast.tmpl.{TmplStringID, _}
 import dev.tlang.tlang.interpreter.ExecCallObject
 import dev.tlang.tlang.interpreter.context.Context
+import dev.tlang.tlang.libraries.generator.Generator
 
 object ValueMapper {
 
@@ -77,6 +79,7 @@ object ValueMapper {
     func.name = mapID(func.name, context)
     func.curries = mapCurries(func.curries, context)
     func.content = mapExprBlock(func.content, context)
+    func.ret = mapTypes(func.ret, context)
     func
   }
 
@@ -88,7 +91,20 @@ object ValueMapper {
   }
 
   def mapCurries(curries: Option[List[TmplFuncCurry]], context: Context): Option[List[TmplFuncCurry]] = {
-    curries
+    if (curries.isDefined) Some(curries.get.map(c => mapFuncCurry(c, context)))
+    else None
+  }
+
+  def mapFuncCurry(curry: TmplFuncCurry, context: Context): TmplFuncCurry = {
+    if (curry.params.isDefined) {
+      curry.params = Some(curry.params.get.map(p => mapParam(p, context)))
+    }
+    curry
+  }
+
+  def mapParam(param: TmplParam, context: Context): TmplParam = {
+    param.`type` = mapType(param.`type`, context)
+    param
   }
 
   def mapCallObj(call: TmplCallObj, context: Context): TmplCallObj = {
@@ -168,6 +184,11 @@ object ValueMapper {
     variable
   }
 
+  def mapTypes(types: Option[List[TmplType]], context: Context): Option[List[TmplType]] = {
+    if (types.isDefined) Some(types.get.map(t => mapType(t, context)))
+    else None
+  }
+
   def mapType(`type`: TmplType, context: Context): TmplType = {
     `type`.name = mapID(`type`.name, context)
     `type`.generic = mapGeneric(`type`.generic, context)
@@ -185,7 +206,13 @@ object ValueMapper {
     id match {
       case interId: TmplInterpretedID => ExecCallObject.run(interId.call, context) match {
         case Left(error) => TmplStringID(error.message)
-        case Right(value) => TmplStringID(interId.pre.getOrElse("") + value.fold("")(v => v.head.toString) + interId.post.getOrElse(""))
+        case Right(value) => if (value.isDefined) {
+          value.get.head match {
+            case str: TLangString => TmplStringID(interId.pre.getOrElse("") + str.getValue + interId.post.getOrElse(""))
+            case block: TmplBlockAsValue => TmplStringID(interId.pre.getOrElse("") + Generator.generate(block, context) + interId.post.getOrElse(""))
+            case _ => TmplStringID(interId.pre.getOrElse("") + value.get.head.toString + interId.post.getOrElse(""))
+          }
+        } else TmplStringID("Undefined")
       }
       case str: TmplStringID => TmplStringID(str.id)
     }

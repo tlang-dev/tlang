@@ -2,8 +2,6 @@ package dev.tlang.tlang.ast.tmpl
 
 import dev.tlang.tlang.ast.common.value.TLangType
 import dev.tlang.tlang.interpreter.Value
-import dev.tlang.tlang.ast.common.value.TLangType
-import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.interpreter.context.Context
 
 case class TmplBlockAsValue(block: TmplBlock, context: Context) extends Value[TmplBlock] {

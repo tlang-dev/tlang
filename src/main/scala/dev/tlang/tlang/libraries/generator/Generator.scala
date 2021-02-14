@@ -8,6 +8,7 @@ import dev.tlang.tlang.generator.java.JavaGenerator
 import dev.tlang.tlang.generator.json.JSONGenerator
 import dev.tlang.tlang.generator.rust.RustGenerator
 import dev.tlang.tlang.generator.scalalang.ScalaGenerator
+import dev.tlang.tlang.generator.typescript.TypeScriptGenerator
 import dev.tlang.tlang.generator.xml.XMLGenerator
 import dev.tlang.tlang.generator.yml.YMLGenerator
 import dev.tlang.tlang.generator.{CodeGenerator, ValueMapper}
@@ -19,6 +20,7 @@ object Generator {
   val generators: Map[String, CodeGenerator] = Map(
     "scala" -> new ScalaGenerator(),
     "java" -> new JavaGenerator(),
+    "typescript" -> new TypeScriptGenerator(),
     "groovy" -> new GroovyGenerator(),
     "json" -> new JSONGenerator(),
     "rust" -> new RustGenerator(),

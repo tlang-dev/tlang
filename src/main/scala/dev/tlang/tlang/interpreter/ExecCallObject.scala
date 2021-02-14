@@ -1,12 +1,8 @@
 package dev.tlang.tlang.interpreter
 
-import dev.tlang.tlang.ast.common.call.{CallFuncObject, CallObject, CallObjectType, CallVarObject, SimpleValueStatement}
-import dev.tlang.tlang.ast.common.value.{ArrayValue, ComplexAttribute, EntityValue, TLangLong, TLangString}
-import dev.tlang.tlang.ast.helper.HelperStatement
-import dev.tlang.tlang.interpreter.context.{Context, ContextUtils}
-import dev.tlang.tlang.ast.common.call._
+import dev.tlang.tlang.ast.common.call.{CallFuncObject, CallObject, CallObjectType, CallVarObject, SimpleValueStatement, _}
 import dev.tlang.tlang.ast.common.value._
-import dev.tlang.tlang.ast.helper._
+import dev.tlang.tlang.ast.helper.HelperStatement
 import dev.tlang.tlang.ast.tmpl.TmplBlockAsValue
 import dev.tlang.tlang.interpreter.context.{Context, ContextUtils}
 
@@ -49,7 +45,7 @@ object ExecCallObject extends Executor {
           case Some(_) => ExecCallFunc.run(CallFuncObject(Some(name), func.currying), context)
           case None => ContextUtils.findTmpl(context, name) match {
             case Some(tmpl) => Right(Some(List(TmplBlockAsValue(tmpl.copy(), context))))
-            case None =>Left(CallableNotFound(name))
+            case None => Left(CallableNotFound(name))
           }
         }
       case variable: CallVarObject => findVar(callVar.name + "/" + variable.name, context)
@@ -63,6 +59,7 @@ object ExecCallObject extends Executor {
         case None => Left(CallableNotFound(name))
       }
       case caller: CallFuncObject => ExecCallFunc.run(caller, context)
+      case refFunc: CallRefFuncObject => Right(Some(List(refFunc)))
       case CallVarObject(name) => findVar(name, context)
       case _ => Left(NotImplemented())
     }
@@ -79,6 +76,7 @@ object ExecCallObject extends Executor {
     statement match {
       case CallArrayObject(_, position) => resolveArrayInCallable(position, callable, context)
       //case caller: HelperCallFuncObject => resolveFunc(caller, callable, context)
+      case refFunc: CallRefFuncObject => Right(Some(List(refFunc)))
       case CallVarObject(name) => resolveCallback(name, callable, context)
       case _ => Left(NotImplemented())
     }

@@ -1,7 +1,5 @@
 package dev.tlang.tlang.interpreter
 
-import dev.tlang.tlang.ast.common.value.{TLangLong, TLangString}
-import dev.tlang.tlang.ast.helper.ForType
 import dev.tlang.tlang.ast.common.call.{CallObject, CallVarObject}
 import dev.tlang.tlang.ast.common.value.{ArrayValue, SimpleAttribute, TLangLong, TLangString}
 import dev.tlang.tlang.ast.helper.{ForType, HelperContent, HelperFor, HelperInternalFunc}

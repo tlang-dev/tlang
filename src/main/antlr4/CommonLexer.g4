@@ -13,6 +13,15 @@ STRING :   '"' ( ESCAPED_QUOTE | ~('\n'|'\r') )*? '"';
 
 NUMBER     : '0'..'9'+ ('.' '0'..'9'+)?;
 
+COMMENT
+    : '/*' .*? '*/' -> skip
+;
+
+LINE_COMMENT
+    : '//' ~[\r\n]* -> skip
+;
+
+
 
 //ML_COMMENT : '/*' -> '*/';
 //SL_COMMENT : '//' !('\n'|'\r')* ('\r'? '\n')?;

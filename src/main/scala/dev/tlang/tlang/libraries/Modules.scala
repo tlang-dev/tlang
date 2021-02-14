@@ -1,6 +1,7 @@
 package dev.tlang.tlang.libraries
 
 import dev.tlang.tlang.libraries.generator.GenModule
+import dev.tlang.tlang.libraries.tio.file.IOFileModule
 import dev.tlang.tlang.libraries.tio.terminal.TerminalModule
 import dev.tlang.tlang.loader.Module
 import dev.tlang.tlang.loader.manifest.{Dependency, Stability}
@@ -15,6 +16,7 @@ object Modules {
   val tLangModules: Map[String, Module] = Map(
     TerminalModule.getModuleName -> TerminalModule.getModule,
     GenModule.getModuleName -> GenModule.getModule,
+    IOFileModule.getModuleName -> IOFileModule.getModule
   )
 
   def findModule(dependency: Dependency): Option[Module] = {

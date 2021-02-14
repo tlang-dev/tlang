@@ -1,5 +1,6 @@
 package dev.tlang.tlang.interpreter.context
 
+import dev.tlang.tlang.ast.common.call.CallRefFuncObject
 import dev.tlang.tlang.ast.helper.HelperFunc
 import dev.tlang.tlang.ast.tmpl.TmplBlock
 import dev.tlang.tlang.interpreter.Value
@@ -34,6 +35,16 @@ object ContextUtils {
       i += 1
     }
     tmpl
+  }
+
+  def findRefFunc(context: Context, name: String): Option[CallRefFuncObject] = {
+    var i = 0
+    var ref: Option[CallRefFuncObject] = None
+    while (ref.isEmpty && i < context.scopes.length) {
+      context.scopes(i).refFunctions.get(name).foreach(value => ref = Some(value))
+      i += 1
+    }
+    ref
   }
 
 }
