@@ -8,18 +8,21 @@ import dev.tlang.tlang.ast.tmpl.func.TmplFunc
 import dev.tlang.tlang.ast.tmpl.loop.{TmplDoWhile, TmplFor, TmplWhile}
 import dev.tlang.tlang.ast.tmpl.primitive._
 import dev.tlang.tlang.generator.CodeGenerator
+import dev.tlang.tlang.generator.java.JavaGenerator.genBlock
 
 class JavaGenerator extends CodeGenerator {
-  override def generate(tmpl: TmplBlock): String = {
+  override def generate(tmpl: TmplBlock): String = genBlock(tmpl)
+}
+
+object JavaGenerator {
+
+  def genBlock(tmpl: TmplBlock): String = {
     val str = new StringBuilder()
     tmpl.pkg.foreach(str ++= "package " ++= _.parts.mkString(".") ++= ";\n\n")
     tmpl.uses.foreach(_.foreach(str ++= "import " ++= _.parts.mkString(".") ++= ";\n"))
     tmpl.content.foreach(str ++= JavaGenerator.genContents(_))
     str.toString
   }
-}
-
-object JavaGenerator {
 
   def genContents(impls: List[TmplContent]): String = {
     var str = new StringBuilder
@@ -132,7 +135,17 @@ object JavaGenerator {
       case forLoop: TmplFor => genFor(forLoop)
       case whileLoop: TmplWhile => genWhile(whileLoop)
       case doWhile: TmplDoWhile => genDoWhile(doWhile)
+      case incl: TmplInclude => genInclude(incl)
     }
+  }
+
+  def genInclude(include: TmplInclude): String = {
+    val str = new StringBuilder
+    include.results.foreach {
+      case Left(tLangStr) => str ++= tLangStr.getValue ++= "\n"
+      case Right(block) => str ++= genBlock(block.block)
+    }
+    str.toString()
   }
 
   def genIf(ifStmt: TmplIf): String = {
@@ -200,7 +213,9 @@ object JavaGenerator {
     val str = new StringBuilder
     str ++= genAnnotations(variable.annots)
     variable.props.foreach(prop => str ++= genProps(prop, addSpace = true))
-    str ++= genType(variable.`type`) ++= " " ++= variable.name.toString ++= " = " + genExpression(variable.value) ++= ";\n"
+    str ++= genType(variable.`type`) ++= " " ++= variable.name.toString
+    variable.value.foreach(str ++= " = " + genExpression(_))
+    str ++= ";\n"
     str.toString()
   }
 

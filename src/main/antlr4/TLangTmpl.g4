@@ -53,7 +53,7 @@ tmplExprContent: tmplExpression | tmplExprBlock;
 
 tmplExprBlock: '{' exprs+=tmplExpression* '}';
 
-tmplExpression:	tmplVar | tmplCallObj | tmplValueType | tmplConditionBlock | tmplFunc | tmplIf | tmplFor | tmplWhile | tmplDoWhile;
+tmplExpression:	tmplVar | tmplCallObj | tmplValueType | tmplConditionBlock | tmplFunc | tmplIf | tmplFor | tmplWhile | tmplDoWhile | tmplInclude;
 
 tmplIf: 'if' '(' cond=tmplConditionBlock ')' content=tmplExprContent elseThen=tmplElse?;
 
@@ -118,6 +118,10 @@ tmplCondition:
     arg1=tmplSimpleValueType (mark=tmplConditionMark arg2=tmplSimpleValueType)? (link=('&&' | '||') next=tmplConditionBlock)*;
 
 tmplConditionMark: '==' | '!=' | '<' | '>' | '<=' | '>=';
+
+tmplInclude: '<<' ((calls+=callObj)*) '>>';
+
+//tmplIncludeBlock: '{' (calls+=callObj)* '}';
 
 tmplID: ID | tmplIntprID;
 

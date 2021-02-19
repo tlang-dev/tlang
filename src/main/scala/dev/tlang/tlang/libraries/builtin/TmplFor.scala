@@ -10,7 +10,7 @@ import scala.collection.mutable.ListBuffer
 
 object TmplFor {
 
-  def tmplForFunc: HelperFunc = HelperFunc("for", Some(List(HelperCurrying(List(HelperParam(Some("array"), HelperObjType(ArrayValue.getType)), HelperParam(Some("refFunc"), HelperObjType(CallRefFuncObject.getType)))))), None, HelperContent(Some(List(
+  def tmplForFunc: HelperFunc = HelperFunc("forEach", Some(List(HelperCurrying(List(HelperParam(Some("array"), HelperObjType(ArrayValue.getType)), HelperParam(Some("refFunc"), HelperObjType(CallRefFuncObject.getType)))))), None, HelperContent(Some(List(
     HelperInternalFunc((context: Context) => {
       ContextUtils.findVar(context, "array") match {
         case Some(arrayVar) => ContextUtils.findRefFunc(context, "refFunc") match {

@@ -20,7 +20,7 @@ object ExecCallFunc extends Executor {
       case None => ContextUtils.findTmpl(context, caller.name.get) match {
         case Some(tmpl) =>
           val newContext = manageTmplParameters(caller, tmpl, context)
-          Right(Some(List(TmplBlockAsValue(tmpl.copy(), newContext))))
+          Right(Some(List(TmplBlockAsValue(tmpl.copy(), Context(newContext.scopes :+ tmpl.scope)))))
         case None => ContextUtils.findRefFunc(context, caller.name.get) match {
           case Some(refFunc) =>
             val newCaller = mergeCallers(caller, refFunc)

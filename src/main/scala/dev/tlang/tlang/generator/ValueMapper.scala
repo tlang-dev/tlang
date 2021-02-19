@@ -10,6 +10,8 @@ import dev.tlang.tlang.interpreter.ExecCallObject
 import dev.tlang.tlang.interpreter.context.Context
 import dev.tlang.tlang.libraries.generator.Generator
 
+import scala.collection.mutable.ListBuffer
+
 object ValueMapper {
 
   def map(blockAsValue: TmplBlockAsValue): TmplBlockAsValue = {
@@ -55,7 +57,24 @@ object ValueMapper {
       case func: TmplFunc => mapFunc(func, context)
       case valueType: TmplValueType => mapValueType(valueType, context)
       case variable: TmplVar => mapVar(variable, context)
+      case incl: TmplInclude => mapInclude(incl, context)
+      case _ => expr
     }
+  }
+
+  def mapInclude(tmplInclude: TmplInclude, context: Context): TmplInclude = {
+    val contents = ListBuffer.empty[Either[TLangString, TmplBlockAsValue]]
+    for (expr <- tmplInclude.calls) {
+      ExecCallObject.run(expr, context) match {
+        case Left(error) => println(error.message)
+        case Right(value) => value.get.head match {
+          case str: TLangString => contents.addOne(Left(str))
+          case block: TmplBlockAsValue => contents.addOne(Right(map(block)))
+        }
+      }
+    }
+    tmplInclude.results = contents.toList
+    tmplInclude
   }
 
   def mapImpl(impl: TmplImpl, context: Context): TmplImpl = {
@@ -180,7 +199,7 @@ object ValueMapper {
   def mapVar(variable: TmplVar, context: Context): TmplVar = {
     variable.name = mapID(variable.name, context)
     variable.`type` = mapType(variable.`type`, context)
-    variable.value = mapExpression(variable.value, context)
+    variable.value = if (variable.value.isDefined) Some(mapExpression(variable.value.get, context)) else None
     variable
   }
 
@@ -215,6 +234,7 @@ object ValueMapper {
         } else TmplStringID("Undefined")
       }
       case str: TmplStringID => TmplStringID(str.id)
+      //      case block: TmplBlockID =>
     }
     //      var pos = str.indexOf("${")
     //      val ret = new StringBuilder(str)

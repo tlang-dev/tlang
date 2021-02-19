@@ -23,6 +23,7 @@ object ResolveContext {
       ast.body.foreach {
         case HelperBlock(funcs) => funcs.foreach(resolveFuncs(_, module, uses, resource._2))
         case ModelBlock(content) => resolveModel(content, module, uses, resource._2)
+        case block: TmplBlock => ResolveTmpl.resolveTmpl(block, module, uses, resource._2)
         case _ => Right(())
       }
     })
