@@ -71,7 +71,7 @@ class JavaGeneratorTest extends AnyFunSuite {
   }
 
   test("New variable in TmplBlock") {
-    val block = TmplBlock("test", "java", None, None, None, Some(List(TmplVar(None, Some(TmplProp(List("private", "final"))), TmplStringID("myVar"), TmplType(TmplStringID("List"), Some(TmplGeneric(List(TmplType(TmplStringID("String"), None, isArray = true))))), TmplLongValue(5)))))
+    val block = TmplBlock("test", "java", None, None, None, Some(List(TmplVar(None, Some(TmplProp(List("private", "final"))), TmplStringID("myVar"), TmplType(TmplStringID("List"), Some(TmplGeneric(List(TmplType(TmplStringID("String"), None, isArray = true))))), Some(TmplLongValue(5))))))
     val res = new JavaGenerator().generate(block)
     assert(res.contains("private final List<String[]> myVar = 5;"))
   }

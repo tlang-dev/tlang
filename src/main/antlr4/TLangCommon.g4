@@ -24,9 +24,9 @@ boolValue: value= 'true' | 'false';
 
 arrayValue: '[' (params+=simpleAttribute)? (',' params+=simpleAttribute)* ']';
 
-callObj: objs+=callObjType ('.'objs+=callObjType)*;
+callObj: objs+=callObjType ('.' objs+=callObjType)*;
 
-callObjType: callArray | callFunc | callVariable;
+callObjType: callArray | (ref='&')? callFunc | callVariable;
 
 callArray: name=ID '[' elem=simpleValueType ']';
 

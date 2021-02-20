@@ -1,7 +1,7 @@
 package dev.tlang.tlang.resolver
 
 import dev.tlang.tlang.ast.DomainUse
-import dev.tlang.tlang.ast.common.call.{CallFuncObject, CallObject, CallObjectType, CallVarObject}
+import dev.tlang.tlang.ast.common.call._
 import dev.tlang.tlang.ast.common.value.PrimitiveValue
 import dev.tlang.tlang.ast.helper._
 import dev.tlang.tlang.ast.model.{ModelBlock, ModelContent}
@@ -52,7 +52,13 @@ object ResolveContext {
         case Right(value) =>
           val stmt = call.statements(level)
           stmt match {
-            case funcObject: CallFuncObject => ResolveStatement.resolveCallFuncObjectParams(funcObject, value.get, module, uses, scope, currentResource)
+            case funcObject: CallFuncObject => ResolveStatement.resolveCallFuncObjectParams(funcObject.currying, value.get, module, uses, scope, currentResource)
+            case funcObject: CallRefFuncObject =>
+              value.get match {
+                case tmpl: TmplBlockAsValue => funcObject.func = Some(Right(tmpl.block))
+                case func: HelperFunc => funcObject.func = Some(Left(func))
+              }
+              ResolveStatement.resolveCallFuncObjectParams(funcObject.currying, value.get, module, uses, scope, currentResource)
             case _ => Right(())
           }
       }
@@ -94,6 +100,8 @@ object ResolveContext {
 
       case _: CallFuncObject =>
         callNextLevel(currentResource, sameResource = true, List(), 0)
+      case _: CallRefFuncObject =>
+        callNextLevel(currentResource, sameResource = true, List(), 0)
       case _ => Right(())
     }
 
@@ -105,6 +113,7 @@ object ResolveContext {
     val callName: Option[String] = statements(nextStatement) match {
       case varObj: CallVarObject => Some(varObj.name)
       case funcObj: CallFuncObject => funcObj.name
+      case refFuncObj: CallRefFuncObject => refFuncObj.name
       case _ => None
     }
 
@@ -158,6 +167,7 @@ object ResolveContext {
     nextCaller match {
       case CallFuncObject(name, _) => browseBody(name.get)
       case CallVarObject(name) => browseBody(name)
+      case CallRefFuncObject(name, _, _) => browseBody(name.get)
       case _ => Right(None)
     }
 

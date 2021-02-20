@@ -19,22 +19,24 @@ object ExecCallFunc extends Executor {
         ExecFunc.run(func, newContext)
       case None => ContextUtils.findTmpl(context, caller.name.get) match {
         case Some(tmpl) =>
-          val newContext = manageTmplParameters(caller, tmpl, context)
-          Right(Some(List(TmplBlockAsValue(tmpl.copy(), Context(newContext.scopes :+ tmpl.scope)))))
-        case None => ContextUtils.findRefFunc(context, caller.name.get) match {
+          val tmplCopy = tmpl.deepCopy()
+          val newContext = manageTmplParameters(caller, tmplCopy, context)
+          Right(Some(List(TmplBlockAsValue(tmplCopy, Context(newContext.scopes :+ tmplCopy.scope)))))
+        case None => //Left(CallableNotFound(caller.name.get))
+          ContextUtils.findRefFunc(context, caller.name.get) match {
           case Some(refFunc) =>
             val newCaller = mergeCallers(caller, refFunc)
             ExecCallRefFunc.run(newCaller, context)
-          //            refFunc.func.get match {
-          //              case Left(func) =>
-          //                val newCaller = mergeCallers(caller, refFunc)
-          //                val newContext = manageParameters(newCaller, func, context)
-          //                ExecFunc.run(func, newContext)
-          //              case Right(tmpl) =>
-          //                val newCaller = mergeCallers(caller, refFunc)
-          //                val newContext = manageTmplParameters(newCaller, tmpl, context)
-          //                Right(Some(List(TmplBlockAsValue(tmpl.copy(), newContext))))
-          //            }
+//                      refFunc.func.get match {
+//                        case Left(func) =>
+//                          val newCaller = mergeCallers(caller, refFunc)
+//                          val newContext = manageParameters(newCaller, func, context)
+//                          ExecFunc.run(func, newContext)
+//                        case Right(tmpl) =>
+//                          val newCaller = mergeCallers(caller, refFunc)
+//                          val newContext = manageTmplParameters(newCaller, tmpl, context)
+//                          Right(Some(List(TmplBlockAsValue(tmpl.copy(), newContext))))
+//                      }
           case None => Left(CallableNotFound(caller.name.get))
         }
       }
@@ -43,21 +45,26 @@ object ExecCallFunc extends Executor {
 
   def manageParameters(caller: CallFuncObject, helperFunc: HelperFunc, context: Context): Context = {
     val vars: mutable.Map[String, Value[_]] = mutable.Map()
-    val funcs: mutable.Map[String, HelperFunc] = mutable.Map()
+    val refFuncs: mutable.Map[String, CallRefFuncObject] = mutable.Map()
     if (caller.currying.isDefined) {
       caller.currying.get.zipWithIndex.foreach(param => {
         param._1.params.get.zipWithIndex.foreach(attr => {
           ExecStatement.run(attr._1.value, context) match {
             case Left(value) => //Left(value)
             case Right(optionVal) => optionVal match {
-              case Some(value) => if (value.size == 1) vars.put(findParamName(param._2, attr._2, helperFunc), value.head)
+              case Some(value) => if (value.size == 1) {
+                value.head match {
+                  case refFuncObject: CallRefFuncObject => refFuncs.put(findParamName(param._2, attr._2, helperFunc), refFuncObject)
+                  case _ => vars.put(findParamName(param._2, attr._2, helperFunc), value.head)
+                }
+              }
               case None =>
             }
           }
         })
       })
     }
-    Context(context.scopes :+ Scope(vars, funcs))
+    Context(context.scopes :+ Scope(variables = vars, refFunctions = refFuncs))
   }
 
   def findParamName(curryPos: Int, paramPos: Int, helperFunc: HelperFunc): String = {
@@ -105,8 +112,8 @@ object ExecCallFunc extends Executor {
           } else newCurry.addOne(CallFuncParam(None))
         }
       }
-      CallRefFuncObject(Some(newCurry.toList), refFuncCaller.func)
-    } else CallRefFuncObject(None, refFuncCaller.func)
+      CallRefFuncObject(refFuncCaller.name, Some(newCurry.toList), refFuncCaller.func)
+    } else CallRefFuncObject(refFuncCaller.name, None, refFuncCaller.func)
   }
 
 }

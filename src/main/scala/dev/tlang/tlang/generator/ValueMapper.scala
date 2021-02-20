@@ -14,7 +14,7 @@ import scala.collection.mutable.ListBuffer
 
 object ValueMapper {
 
-  def map(blockAsValue: TmplBlockAsValue): TmplBlockAsValue = {
+  def mapBlock(blockAsValue: TmplBlockAsValue): TmplBlockAsValue = {
     val block = blockAsValue.block
     val con = blockAsValue.context
     block.pkg = mapPkg(block.pkg, con)
@@ -67,9 +67,9 @@ object ValueMapper {
     for (expr <- tmplInclude.calls) {
       ExecCallObject.run(expr, context) match {
         case Left(error) => println(error.message)
-        case Right(value) => value.get.head match {
+        case Right(value) => value.get.foreach {
           case str: TLangString => contents.addOne(Left(str))
-          case block: TmplBlockAsValue => contents.addOne(Right(map(block)))
+          case block: TmplBlockAsValue => contents.addOne(Right(mapBlock(block)))
         }
       }
     }

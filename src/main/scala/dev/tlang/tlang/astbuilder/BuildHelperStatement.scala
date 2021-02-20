@@ -24,12 +24,18 @@ object BuildHelperStatement {
     CallObject(call.objs.asScala.toList.map {
       case obj@_ if obj.callVariable() != null => CallVarObject(obj.callVariable().name.getText)
       case obj@_ if obj.callArray() != null => CallArrayObject(obj.callArray().name.getText, BuildCommon.buildSimpleValueType(None, obj.callArray().elem))
-      case obj@_ if obj.callFunc() != null => buildCallFunc(obj.callFunc())
+      case obj@_ if obj.callFunc() != null && obj.ref == null => buildCallFunc(obj.callFunc())
+      case obj@_ if obj.callFunc() != null && obj.ref != null => buildCallRefFunc(obj.callFunc())
     })
   }
 
   def buildCallFunc(func: CallFuncContext): CallFuncObject = {
     CallFuncObject(if (func.name != null) Some(func.name.getText) else None,
+      buildCallFuncParam(func.currying.asScala.toList))
+  }
+
+  def buildCallRefFunc(func: CallFuncContext): CallRefFuncObject = {
+    CallRefFuncObject(if (func.name != null) Some(func.name.getText) else None,
       buildCallFuncParam(func.currying.asScala.toList))
   }
 

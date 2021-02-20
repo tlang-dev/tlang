@@ -43,9 +43,9 @@ class ExecCallFuncTest extends AnyFunSuite {
 
   test("Merge callers") {
     val refFuncCaller = CallRefFuncObject(Some(List(
-      CallFuncParam(Some(List(SetAttribute(None, LazyValue(None, TLangString)), SetAttribute(None, new TLangString("c1p2")), SetAttribute(None, new TLangString("c1p3"))))),
-      CallFuncParam(Some(List(SetAttribute(None, new TLangString("c2p1")), SetAttribute(None, LazyValue(None, TLangString)), SetAttribute(None, new TLangString("c2p3"))))),
-      CallFuncParam(Some(List(SetAttribute(None, new TLangString("c3p1")), SetAttribute(None, new TLangString("c3p2")), SetAttribute(None, LazyValue(None, TLangString))))),
+      CallFuncParam(Some(List(SetAttribute(None, LazyValue(None, Some(TLangString))), SetAttribute(None, new TLangString("c1p2")), SetAttribute(None, new TLangString("c1p3"))))),
+      CallFuncParam(Some(List(SetAttribute(None, new TLangString("c2p1")), SetAttribute(None, LazyValue(None, Some(TLangString))), SetAttribute(None, new TLangString("c2p3"))))),
+      CallFuncParam(Some(List(SetAttribute(None, new TLangString("c3p1")), SetAttribute(None, new TLangString("c3p2")), SetAttribute(None, LazyValue(None, Some(TLangString)))))),
     )))
 
     val funcCaller = CallFuncObject(None, Some(List(

@@ -130,7 +130,7 @@ object ResolveTmpl {
         if (callFuncObject.name.isDefined && BuiltIntLibs.buildIntLibs.contains(callFuncObject.name.get)) {
           val func = BuiltIntLibs.buildIntLibs(callFuncObject.name.get)
           scope.functions.addOne(func.name, func)
-          ResolveStatement.resolveCallFuncObjectParams(callFuncObject, func, module, uses, scope, currentResource)
+          ResolveStatement.resolveCallFuncObjectParams(callFuncObject.currying, func, module, uses, scope, currentResource)
           Right(())
         } else ResolveContext.resolveCallObject(call, module, uses, scope, currentResource)
       case _ => ResolveContext.resolveCallObject(call, module, uses, scope, currentResource)

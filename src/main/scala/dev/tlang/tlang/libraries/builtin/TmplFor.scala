@@ -4,7 +4,7 @@ import dev.tlang.tlang.ast.common.call.{CallFuncObject, CallFuncParam, CallRefFu
 import dev.tlang.tlang.ast.common.value.{ArrayValue, TLangLong}
 import dev.tlang.tlang.ast.helper._
 import dev.tlang.tlang.interpreter.context.{Context, ContextUtils, Scope}
-import dev.tlang.tlang.interpreter.{ExecCallFunc, ExecCallRefFunc, ExecError, ExecFunc, Value}
+import dev.tlang.tlang.interpreter.{ExecCallFunc, ExecError, Value}
 
 import scala.collection.mutable.ListBuffer
 

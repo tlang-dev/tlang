@@ -5,7 +5,7 @@ import dev.tlang.tlang.ast.helper.HelperFunc
 import dev.tlang.tlang.ast.tmpl.TmplBlock
 import dev.tlang.tlang.interpreter.Value
 
-case class CallRefFuncObject(currying: Option[List[CallFuncParam]], var func: Option[Either[HelperFunc, TmplBlock]] = None) extends CallObjectType with Value[CallRefFuncObject] {
+case class CallRefFuncObject(name: Option[String], currying: Option[List[CallFuncParam]], var func: Option[Either[HelperFunc, TmplBlock]] = None) extends CallObjectType with Value[CallRefFuncObject] {
   override def getValue: CallRefFuncObject = this
 
   override def getType: String = CallRefFuncObject.getType

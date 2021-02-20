@@ -25,7 +25,7 @@ class TmplForTest extends AnyFunSuite {
       })
     ))))
 
-    val call = CallRefFuncObject(Some(List(CallFuncParam(Some(List(SetAttribute(value = LazyValue(None, TLangString))))))), Some(Left(calledFunc)))
+    val call = CallRefFuncObject(Some(List(CallFuncParam(Some(List(SetAttribute(value = LazyValue(None, Some(TLangString)))))))), Some(Left(calledFunc)))
 
     val context = Context(List(Scope(
       variables = mutable.Map("array" -> array),

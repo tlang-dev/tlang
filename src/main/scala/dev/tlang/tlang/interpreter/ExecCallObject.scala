@@ -49,6 +49,7 @@ object ExecCallObject extends Executor {
           }
         }
       case variable: CallVarObject => findVar(callVar.name + "/" + variable.name, context)
+      case refFunc: CallRefFuncObject => Right(Some(List(refFunc)))
     }
   }
 
