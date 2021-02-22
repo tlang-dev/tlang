@@ -13,6 +13,7 @@ import dev.tlang.tlang.loader.{BuildModuleTree, Module, Resource}
 object ResolveContext {
 
   def resolveContext(module: Module): Either[ResolverError, Unit] = {
+    module.extResources.foreach(_.foreach(module => resolveContext(module._2)))
     module.resources.foreach(resource => {
       val ast = resource._2.ast
       val uses: List[DomainUse] = ast.header match {

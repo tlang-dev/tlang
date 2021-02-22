@@ -24,21 +24,21 @@ object ExecCallFunc extends Executor {
           Right(Some(List(TmplBlockAsValue(tmplCopy, Context(newContext.scopes :+ tmplCopy.scope)))))
         case None => //Left(CallableNotFound(caller.name.get))
           ContextUtils.findRefFunc(context, caller.name.get) match {
-          case Some(refFunc) =>
-            val newCaller = mergeCallers(caller, refFunc)
-            ExecCallRefFunc.run(newCaller, context)
-//                      refFunc.func.get match {
-//                        case Left(func) =>
-//                          val newCaller = mergeCallers(caller, refFunc)
-//                          val newContext = manageParameters(newCaller, func, context)
-//                          ExecFunc.run(func, newContext)
-//                        case Right(tmpl) =>
-//                          val newCaller = mergeCallers(caller, refFunc)
-//                          val newContext = manageTmplParameters(newCaller, tmpl, context)
-//                          Right(Some(List(TmplBlockAsValue(tmpl.copy(), newContext))))
-//                      }
-          case None => Left(CallableNotFound(caller.name.get))
-        }
+            case Some(refFunc) =>
+              val newCaller = mergeCallers(caller, refFunc)
+              ExecCallRefFunc.run(newCaller, context)
+            //                      refFunc.func.get match {
+            //                        case Left(func) =>
+            //                          val newCaller = mergeCallers(caller, refFunc)
+            //                          val newContext = manageParameters(newCaller, func, context)
+            //                          ExecFunc.run(func, newContext)
+            //                        case Right(tmpl) =>
+            //                          val newCaller = mergeCallers(caller, refFunc)
+            //                          val newContext = manageTmplParameters(newCaller, tmpl, context)
+            //                          Right(Some(List(TmplBlockAsValue(tmpl.copy(), newContext))))
+            //                      }
+            case None => Left(CallableNotFound(caller.name.get))
+          }
       }
     }
   }
@@ -64,7 +64,7 @@ object ExecCallFunc extends Executor {
         })
       })
     }
-    Context(context.scopes :+ Scope(variables = vars, refFunctions = refFuncs))
+    Context(context.scopes :+ Scope(variables = vars, refFunctions = refFuncs) :+ helperFunc.scope)
   }
 
   def findParamName(curryPos: Int, paramPos: Int, helperFunc: HelperFunc): String = {

@@ -13,7 +13,7 @@ object ExecStatement extends Executor {
       case stmt: HelperIf => ExecIf.run(stmt, context)
       case stmt: CallObject => ExecCallObject.run(stmt, context)
       case stmt: HelperFor => ExecFor.run(stmt, context)
-      case stmt: HelperFunc => ExecFunc.run(stmt, context)
+      case stmt: HelperFunc => ExecFunc.run(stmt, Context(List(stmt.scope)))
       case stmt: ConditionBlock => ExecConditionBlock.run(stmt, context)
       case stmt: HelperInternalFunc => ExecInternalFunc.run(stmt, context)
       case stmt: AssignVar => ExecAssignVar.run(stmt, context)

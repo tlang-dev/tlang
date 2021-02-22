@@ -97,7 +97,7 @@ object ResolveStatement {
     Right(())
   }
 
-  def resolveCallFuncObjectParams( currying: Option[List[CallFuncParam]], called: Value[_], module: loader.Module, uses: List[DomainUse], scope: Scope, currentResource: Resource): Either[ResolverError, Unit] = {
+  def resolveCallFuncObjectParams(currying: Option[List[CallFuncParam]], called: Value[_], module: loader.Module, uses: List[DomainUse], scope: Scope, currentResource: Resource): Either[ResolverError, Unit] = {
     currying.foreach(_.zipWithIndex.foreach(curry => curry._1.params.foreach(_.zipWithIndex.foreach(param => {
       val paramName = called match {
         case func: HelperFunc => ExecCallFunc.findParamName(curry._2, param._2, func)
