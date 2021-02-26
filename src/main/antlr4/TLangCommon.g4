@@ -6,11 +6,13 @@ import CommonLexer;
 
 assignVar: 'let' name=ID (':' type=ID)? '=' value=complexValueType;
 
-complexValueType: callObj | primitiveValue | conditionBlock | multiValue;
+complexValueType: callObj | primitiveValue | conditionBlock | multiValue | lazyValue;
 
 simpleValueType: callObj | primitiveValue;
 
 primitiveValue: stringValue | numberValue | textValue | entityValue | boolValue | arrayValue;
+
+lazyValue: '_';
 
 stringValue: value=STRING;
 
@@ -22,15 +24,13 @@ boolValue: value= 'true' | 'false';
 
 arrayValue: '[' (params+=simpleAttribute)? (',' params+=simpleAttribute)* ']';
 
-callObj: objs+=callObjType ('.'objs+=callObjType)*;
+callObj: objs+=callObjType ('.' objs+=callObjType)*;
 
-callObjType: callArray | callFunc | callVariable;
+callObjType: callArray | (ref='&')? callFunc | callVariable;
 
 callArray: name=ID '[' elem=simpleValueType ']';
 
-callFunc:
-    ((name=ID) | '_') (currying += curryParams)+
-;
+callFunc: ((name=ID) | '_') (currying += curryParams)+;
 
 curryParams:'(' (params+=setAttribute (',' params+=setAttribute)*)? ')';
 

@@ -71,13 +71,13 @@ class JavaGeneratorTest extends AnyFunSuite {
   }
 
   test("New variable in TmplBlock") {
-    val block = TmplBlock("test", "java", None, None, None, Some(List(TmplVar(None, Some(TmplProp(List("private", "final"))), TmplStringID("myVar"), TmplType(TmplStringID("List"), Some(TmplGeneric(List(TmplType(TmplStringID("String"), None, isArray = true))))), TmplLongValue(5)))))
+    val block = TmplBlock("test", "java", None, None, None, Some(List(TmplVar(None, Some(TmplProp(List("private", "final"))), TmplStringID("myVar"), TmplType(TmplStringID("List"), Some(TmplGeneric(List(TmplType(TmplStringID("String"), None, isArray = true))))), Some(TmplLongValue(5))))))
     val res = new JavaGenerator().generate(block)
     assert(res.contains("private final List<String[]> myVar = 5;"))
   }
 
   test("Func with parameters and returns") {
-    val content = TmplFunc(None, None, TmplStringID("myFunc"), Some(List(TmplFuncCurry(Some(List(TmplParam("myDouble", TmplType(TmplStringID("Double"))), TmplParam("myString", TmplType(TmplStringID("String")))))))),
+    val content = TmplFunc(None, None, TmplStringID("myFunc"), Some(List(TmplFuncCurry(Some(List(TmplParam(TmplStringID("myDouble"), TmplType(TmplStringID("Double"))), TmplParam(TmplStringID("myString"), TmplType(TmplStringID("String")))))))),
       Some(TmplExprBlock(List(TmplCallObj(List(TmplCallVar(TmplStringID("myVar"))))))), Some(List(TmplType(TmplStringID("boolean")))))
     val res = JavaGenerator.genContent(content)
     assert(res.contains("public boolean myFunc(Double myDouble, String myString) {\n" +
@@ -88,7 +88,7 @@ class JavaGeneratorTest extends AnyFunSuite {
   test("If with one expression") {
     val cond = TmplConditionBlock(Right(TmplCondition(TmplLongValue(1), Some(ConditionType.EQUAL), Some(TmplLongValue(1)))))
     val ifStmt = TmplIf(cond, TmplCallObj(List(TmplCallVar(TmplStringID("myVar")))), None)
-    val res = JavaGenerator.genExpression(ifStmt)
+    val res = JavaGenerator.genExpression(ifStmt, endOfStatement = true)
     assert(res.contains("if(1 == 1) myVar;"))
   }
 

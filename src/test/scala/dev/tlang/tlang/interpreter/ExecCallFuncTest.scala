@@ -1,8 +1,7 @@
 package dev.tlang.tlang.interpreter
 
-import dev.tlang.tlang.ast.common.value.{LazyValue, TLangString}
 import dev.tlang.tlang.ast.common.call._
-import dev.tlang.tlang.ast.common.value.TLangString
+import dev.tlang.tlang.ast.common.value.{LazyValue, TLangString}
 import dev.tlang.tlang.ast.helper._
 import dev.tlang.tlang.ast.tmpl.{TmplBlock, TmplBlockAsValue, TmplPkg, TmplStringID}
 import dev.tlang.tlang.interpreter.context.{Context, Scope}
@@ -42,16 +41,16 @@ class ExecCallFuncTest extends AnyFunSuite {
   }
 
   test("Merge callers") {
-    val refFuncCaller = CallRefFuncObject(Some(List(
-      CallFuncParam(Some(List(SetAttribute(None, LazyValue(None, TLangString)), SetAttribute(None, new TLangString("c1p2")), SetAttribute(None, new TLangString("c1p3"))))),
-      CallFuncParam(Some(List(SetAttribute(None, new TLangString("c2p1")), SetAttribute(None, LazyValue(None, TLangString)), SetAttribute(None, new TLangString("c2p3"))))),
-      CallFuncParam(Some(List(SetAttribute(None, new TLangString("c3p1")), SetAttribute(None, new TLangString("c3p2")), SetAttribute(None, LazyValue(None, TLangString))))),
+    val refFuncCaller = CallRefFuncObject(None, Some(List(
+      CallFuncParam(Some(List(SetAttribute(None, LazyValue(None, Some(TLangString))), SetAttribute(None, new TLangString("c1p2")), SetAttribute(None, new TLangString("c1p3"))))),
+      CallFuncParam(Some(List(SetAttribute(None, new TLangString("c2p1")), SetAttribute(None, LazyValue(None, Some(TLangString))), SetAttribute(None, new TLangString("c2p3"))))),
+      CallFuncParam(Some(List(SetAttribute(None, new TLangString("c3p1")), SetAttribute(None, new TLangString("c3p2")), SetAttribute(None, LazyValue(None, Some(TLangString)))))),
     )))
 
     val funcCaller = CallFuncObject(None, Some(List(
-      CallFuncParam(Some(List(SetAttribute(None, new TLangString(("c1p1")))))),
-      CallFuncParam(Some(List(SetAttribute(None, new TLangString(("c2p2")))))),
-      CallFuncParam(Some(List(SetAttribute(None, new TLangString(("c3p3")))))),
+      CallFuncParam(Some(List(SetAttribute(None, new TLangString("c1p1"))))),
+      CallFuncParam(Some(List(SetAttribute(None, new TLangString("c2p2"))))),
+      CallFuncParam(Some(List(SetAttribute(None, new TLangString("c3p3"))))),
     )))
 
     val res = ExecCallFunc.mergeCallers(funcCaller, refFuncCaller).currying.get

@@ -133,11 +133,11 @@ class ValueMapperTest extends AnyFunSuite {
       "type" -> new TLangString("String"),
       "value" -> new TLangString("MyValue"))
     val context = Context(List(Scope(values, mutable.Map(), mutable.Map())))
-    val newVar = TmplVar(None, None, TmplInterpretedID(call = CallObject(List(CallVarObject("name")))), TmplType(TmplInterpretedID(call = CallObject(List(CallVarObject("type"))))), TmplMultiValue(List(TmplStringValue(TmplInterpretedID(call = CallObject(List(CallVarObject("value"))))))))
+    val newVar = TmplVar(None, None, TmplInterpretedID(call = CallObject(List(CallVarObject("name")))), TmplType(TmplInterpretedID(call = CallObject(List(CallVarObject("type"))))), Some(TmplMultiValue(List(TmplStringValue(TmplInterpretedID(call = CallObject(List(CallVarObject("value")))))))))
     val res = ValueMapper.mapExpression(newVar, context).asInstanceOf[TmplVar]
     assert("MyVar" == res.name.toString)
     assert("String" == res.`type`.name.toString)
-    assert("MyValue" == res.value.asInstanceOf[TmplMultiValue].values.head.asInstanceOf[TmplStringValue].value.toString)
+    assert("MyValue" == res.value.get.asInstanceOf[TmplMultiValue].values.head.asInstanceOf[TmplStringValue].value.toString)
   }
 
   test("Generic type") {

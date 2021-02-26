@@ -28,6 +28,7 @@ object BuildCommon {
       case value@_ if value.primitiveValue() != null => buildPrimitiveValue(`type`, value.primitiveValue())
       case condition@_ if condition.conditionBlock() != null => BuildHelperStatement.buildConditionBlock(condition.conditionBlock())
       case multi@_ if multi.multiValue() != null => buildMultiValue(multi.multiValue())
+      case lazyVal@_ if lazyVal.lazyValue() != null => LazyValue(None, None)
     }
   }
 

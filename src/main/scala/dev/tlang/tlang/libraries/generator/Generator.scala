@@ -45,7 +45,7 @@ object Generator {
     generators.get(block.block.lang) match {
       case None => Left(ElementNotFound("This language does not exist: " + block.block.lang))
       case Some(generator) =>
-        val newBlock = ValueMapper.map(block)
+        val newBlock = ValueMapper.mapBlock(block)
         Right(new TLangString(generator.generate(newBlock.block)))
     }
   }

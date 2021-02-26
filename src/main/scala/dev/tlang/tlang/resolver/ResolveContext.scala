@@ -1,7 +1,7 @@
 package dev.tlang.tlang.resolver
 
 import dev.tlang.tlang.ast.DomainUse
-import dev.tlang.tlang.ast.common.call.{CallFuncObject, CallObject, CallObjectType, CallVarObject}
+import dev.tlang.tlang.ast.common.call._
 import dev.tlang.tlang.ast.common.value.PrimitiveValue
 import dev.tlang.tlang.ast.helper._
 import dev.tlang.tlang.ast.model.{ModelBlock, ModelContent}
@@ -13,6 +13,7 @@ import dev.tlang.tlang.loader.{BuildModuleTree, Module, Resource}
 object ResolveContext {
 
   def resolveContext(module: Module): Either[ResolverError, Unit] = {
+    module.extResources.foreach(_.foreach(module => resolveContext(module._2)))
     module.resources.foreach(resource => {
       val ast = resource._2.ast
       val uses: List[DomainUse] = ast.header match {
@@ -23,6 +24,7 @@ object ResolveContext {
       ast.body.foreach {
         case HelperBlock(funcs) => funcs.foreach(resolveFuncs(_, module, uses, resource._2))
         case ModelBlock(content) => resolveModel(content, module, uses, resource._2)
+        case block: TmplBlock => ResolveTmpl.resolveTmpl(block, module, uses, resource._2)
         case _ => Right(())
       }
     })
@@ -51,7 +53,13 @@ object ResolveContext {
         case Right(value) =>
           val stmt = call.statements(level)
           stmt match {
-            case funcObject: CallFuncObject => ResolveStatement.resolveCallFuncObjectParams(funcObject, value.get, module, uses, scope, currentResource)
+            case funcObject: CallFuncObject => ResolveStatement.resolveCallFuncObjectParams(funcObject.currying, value.get, module, uses, scope, currentResource)
+            case funcObject: CallRefFuncObject =>
+              value.get match {
+                case tmpl: TmplBlockAsValue => funcObject.func = Some(Right(tmpl.block))
+                case func: HelperFunc => funcObject.func = Some(Left(func))
+              }
+              ResolveStatement.resolveCallFuncObjectParams(funcObject.currying, value.get, module, uses, scope, currentResource)
             case _ => Right(())
           }
       }
@@ -93,6 +101,8 @@ object ResolveContext {
 
       case _: CallFuncObject =>
         callNextLevel(currentResource, sameResource = true, List(), 0)
+      case _: CallRefFuncObject =>
+        callNextLevel(currentResource, sameResource = true, List(), 0)
       case _ => Right(())
     }
 
@@ -104,6 +114,7 @@ object ResolveContext {
     val callName: Option[String] = statements(nextStatement) match {
       case varObj: CallVarObject => Some(varObj.name)
       case funcObj: CallFuncObject => funcObj.name
+      case refFuncObj: CallRefFuncObject => refFuncObj.name
       case _ => None
     }
 
@@ -157,6 +168,7 @@ object ResolveContext {
     nextCaller match {
       case CallFuncObject(name, _) => browseBody(name.get)
       case CallVarObject(name) => browseBody(name)
+      case CallRefFuncObject(name, _, _) => browseBody(name.get)
       case _ => Right(None)
     }
 

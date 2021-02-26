@@ -1,9 +1,9 @@
 package dev.tlang.tlang.resolver
 
 import dev.tlang.tlang.ast.DomainUse
-import dev.tlang.tlang.ast.common.call.{CallFuncObject, CallObject, SimpleValueStatement}
+import dev.tlang.tlang.ast.common.call.{CallFuncObject, CallFuncParam, CallObject, SimpleValueStatement}
 import dev.tlang.tlang.ast.common.condition.{Condition, ConditionBlock}
-import dev.tlang.tlang.ast.common.value.{ArrayValue, AssignVar, EntityValue, MultiValue}
+import dev.tlang.tlang.ast.common.value.{ArrayValue, AssignVar, EntityValue, LazyValue, MultiValue}
 import dev.tlang.tlang.ast.helper.{HelperFor, HelperFunc, HelperIf, HelperStatement}
 import dev.tlang.tlang.ast.tmpl.TmplBlockAsValue
 import dev.tlang.tlang.interpreter.context.Scope
@@ -97,8 +97,8 @@ object ResolveStatement {
     Right(())
   }
 
-  def resolveCallFuncObjectParams(call: CallFuncObject, called: Value[_], module: loader.Module, uses: List[DomainUse], scope: Scope, currentResource: Resource): Either[ResolverError, Unit] = {
-    call.currying.foreach(_.zipWithIndex.foreach(curry => curry._1.params.foreach(_.zipWithIndex.foreach(param => {
+  def resolveCallFuncObjectParams(currying: Option[List[CallFuncParam]], called: Value[_], module: loader.Module, uses: List[DomainUse], scope: Scope, currentResource: Resource): Either[ResolverError, Unit] = {
+    currying.foreach(_.zipWithIndex.foreach(curry => curry._1.params.foreach(_.zipWithIndex.foreach(param => {
       val paramName = called match {
         case func: HelperFunc => ExecCallFunc.findParamName(curry._2, param._2, func)
         case tmpl: TmplBlockAsValue => ExecCallFunc.findTmplParamName(param._2, tmpl.block)

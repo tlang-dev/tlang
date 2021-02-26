@@ -91,7 +91,7 @@ object BuildTmplBlock {
   }
 
   def build(param: TmplParamContext): TmplParam = {
-    TmplParam(param.name.getText, buildType(param.`type`))
+    TmplParam(buildId(param.name), buildType(param.`type`))
   }
 
   def buildType(`type`: TmplTypeContext): TmplType = {
@@ -124,7 +124,18 @@ object BuildTmplBlock {
       case whileLoop@_ if whileLoop.tmplWhile() != null => BuildTmplLoop.buildWhile(whileLoop.tmplWhile())
       case doWhile@_ if doWhile.tmplDoWhile() != null => BuildTmplLoop.buildDoWhile(doWhile.tmplDoWhile())
       case ifStmt@_ if ifStmt.tmplIf() != null => buildIf(ifStmt.tmplIf())
+      case incl@_ if incl.tmplInclude() != null => buildInclude(incl.tmplInclude())
+      case ret@_ if ret.tmplReturn() != null => buildReturn(ret.tmplReturn())
+      case affect@_ if affect.tmplAffect() != null => buildAffect(affect.tmplAffect())
     }
+  }
+
+  def buildInclude(include: TmplIncludeContext): TmplInclude = {
+    //    include match {
+    //      case incl@_ if incl.callObj() != null => TmplInclude(List(BuildHelperStatement.buildCallObject(incl.callObj())))
+    //      case block@_ if block.tmplIncludeBlock() != null => TmplInclude(block.tmplIncludeBlock().calls.asScala.toList.map(BuildHelperStatement.buildCallObject))
+    //    }
+    TmplInclude(include.calls.asScala.toList.map(BuildHelperStatement.buildCallObject))
   }
 
   def buildIf(ifStmt: TmplIfContext): TmplIf = {
@@ -138,7 +149,15 @@ object BuildTmplBlock {
   }
 
   def buildVar(variable: TmplVarContext): TmplVar = {
-    TmplVar(buildAnnotations(variable.annots.asScala.toList), buildProps(variable.props), buildId(variable.name), buildType(variable.`type`), buildExpression(variable.value))
+    TmplVar(buildAnnotations(variable.annots.asScala.toList), buildProps(variable.props), buildId(variable.name), buildType(variable.`type`), if (variable.value != null) Some(buildExpression(variable.value)) else None)
+  }
+
+  def buildReturn(ret: TmplReturnContext): TmplReturn = {
+    TmplReturn(buildCallObject(ret.call))
+  }
+
+  def buildAffect(affect: TmplAffectContext): TmplAffect = {
+    TmplAffect(buildCallObject(affect.variable), buildCallObject(affect.value))
   }
 
   def buildCallObject(obj: TmplCallObjContext): TmplCallObj = {

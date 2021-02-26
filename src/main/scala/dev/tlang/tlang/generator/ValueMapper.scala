@@ -10,9 +10,11 @@ import dev.tlang.tlang.interpreter.ExecCallObject
 import dev.tlang.tlang.interpreter.context.Context
 import dev.tlang.tlang.libraries.generator.Generator
 
+import scala.collection.mutable.ListBuffer
+
 object ValueMapper {
 
-  def map(blockAsValue: TmplBlockAsValue): TmplBlockAsValue = {
+  def mapBlock(blockAsValue: TmplBlockAsValue): TmplBlockAsValue = {
     val block = blockAsValue.block
     val con = blockAsValue.context
     block.pkg = mapPkg(block.pkg, con)
@@ -55,7 +57,26 @@ object ValueMapper {
       case func: TmplFunc => mapFunc(func, context)
       case valueType: TmplValueType => mapValueType(valueType, context)
       case variable: TmplVar => mapVar(variable, context)
+      case incl: TmplInclude => mapInclude(incl, context)
+      case ret: TmplReturn => mapReturn(ret, context)
+      case affect: TmplAffect => mapAffect(affect, context)
+      case _ => expr
     }
+  }
+
+  def mapInclude(tmplInclude: TmplInclude, context: Context): TmplInclude = {
+    val contents = ListBuffer.empty[Either[TLangString, TmplBlockAsValue]]
+    for (expr <- tmplInclude.calls) {
+      ExecCallObject.run(expr, context) match {
+        case Left(error) => println(error.message)
+        case Right(value) => value.get.foreach {
+          case str: TLangString => contents.addOne(Left(str))
+          case block: TmplBlockAsValue => contents.addOne(Right(mapBlock(block)))
+        }
+      }
+    }
+    tmplInclude.results = contents.toList
+    tmplInclude
   }
 
   def mapImpl(impl: TmplImpl, context: Context): TmplImpl = {
@@ -103,8 +124,20 @@ object ValueMapper {
   }
 
   def mapParam(param: TmplParam, context: Context): TmplParam = {
+    param.name = mapID(param.name, context)
     param.`type` = mapType(param.`type`, context)
     param
+  }
+
+  def mapReturn(ret: TmplReturn, context: Context): TmplReturn = {
+    ret.call = mapCallObj(ret.call, context)
+    ret
+  }
+
+  def mapAffect(affect: TmplAffect, context: Context): TmplAffect = {
+    affect.variable = mapCallObj(affect.variable, context)
+    affect.value = mapCallObj(affect.value, context)
+    affect
   }
 
   def mapCallObj(call: TmplCallObj, context: Context): TmplCallObj = {
@@ -180,7 +213,7 @@ object ValueMapper {
   def mapVar(variable: TmplVar, context: Context): TmplVar = {
     variable.name = mapID(variable.name, context)
     variable.`type` = mapType(variable.`type`, context)
-    variable.value = mapExpression(variable.value, context)
+    variable.value = if (variable.value.isDefined) Some(mapExpression(variable.value.get, context)) else None
     variable
   }
 
@@ -215,6 +248,7 @@ object ValueMapper {
         } else TmplStringID("Undefined")
       }
       case str: TmplStringID => TmplStringID(str.id)
+      case _: TmplBlockID => TmplStringID("Undefined")
     }
     //      var pos = str.indexOf("${")
     //      val ret = new StringBuilder(str)

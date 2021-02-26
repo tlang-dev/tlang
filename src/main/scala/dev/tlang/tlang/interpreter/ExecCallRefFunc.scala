@@ -13,8 +13,9 @@ object ExecCallRefFunc extends Executor {
         val newContext = ExecCallFunc.manageParameters(CallFuncObject(None, caller.currying), func, context)
         ExecFunc.run(func, newContext)
       case Right(tmpl) =>
-        val newContext = ExecCallFunc.manageTmplParameters(CallFuncObject(None, caller.currying), tmpl, context)
-        Right(Some(List(TmplBlockAsValue(tmpl.copy(), newContext))))
+        val tmplCopy = tmpl.deepCopy()
+        val newContext = ExecCallFunc.manageTmplParameters(CallFuncObject(None, caller.currying), tmplCopy, context)
+        Right(Some(List(TmplBlockAsValue(tmplCopy, newContext))))
     }
   }
 }

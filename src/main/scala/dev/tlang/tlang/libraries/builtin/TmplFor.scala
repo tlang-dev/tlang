@@ -4,13 +4,13 @@ import dev.tlang.tlang.ast.common.call.{CallFuncObject, CallFuncParam, CallRefFu
 import dev.tlang.tlang.ast.common.value.{ArrayValue, TLangLong}
 import dev.tlang.tlang.ast.helper._
 import dev.tlang.tlang.interpreter.context.{Context, ContextUtils, Scope}
-import dev.tlang.tlang.interpreter.{ExecCallFunc, ExecCallRefFunc, ExecError, ExecFunc, Value}
+import dev.tlang.tlang.interpreter.{ExecCallFunc, ExecError, Value}
 
 import scala.collection.mutable.ListBuffer
 
 object TmplFor {
 
-  def tmplForFunc: HelperFunc = HelperFunc("for", Some(List(HelperCurrying(List(HelperParam(Some("array"), HelperObjType(ArrayValue.getType)), HelperParam(Some("refFunc"), HelperObjType(CallRefFuncObject.getType)))))), None, HelperContent(Some(List(
+  def tmplForFunc: HelperFunc = HelperFunc("forEach", Some(List(HelperCurrying(List(HelperParam(Some("array"), HelperObjType(ArrayValue.getType)), HelperParam(Some("refFunc"), HelperObjType(CallRefFuncObject.getType)))))), None, HelperContent(Some(List(
     HelperInternalFunc((context: Context) => {
       ContextUtils.findVar(context, "array") match {
         case Some(arrayVar) => ContextUtils.findRefFunc(context, "refFunc") match {

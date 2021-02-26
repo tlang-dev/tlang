@@ -8,18 +8,21 @@ import dev.tlang.tlang.ast.tmpl.func.TmplFunc
 import dev.tlang.tlang.ast.tmpl.loop.{TmplDoWhile, TmplFor, TmplWhile}
 import dev.tlang.tlang.ast.tmpl.primitive._
 import dev.tlang.tlang.generator.CodeGenerator
+import dev.tlang.tlang.generator.java.JavaGenerator.genBlock
 
 class JavaGenerator extends CodeGenerator {
-  override def generate(tmpl: TmplBlock): String = {
+  override def generate(tmpl: TmplBlock): String = genBlock(tmpl)
+}
+
+object JavaGenerator {
+
+  def genBlock(tmpl: TmplBlock): String = {
     val str = new StringBuilder()
     tmpl.pkg.foreach(str ++= "package " ++= _.parts.mkString(".") ++= ";\n\n")
     tmpl.uses.foreach(_.foreach(str ++= "import " ++= _.parts.mkString(".") ++= ";\n"))
     tmpl.content.foreach(str ++= JavaGenerator.genContents(_))
     str.toString
   }
-}
-
-object JavaGenerator {
 
   def genContents(impls: List[TmplContent]): String = {
     var str = new StringBuilder
@@ -54,7 +57,7 @@ object JavaGenerator {
       func.curries.get.head.params.foreach(params => str ++= params.map(genParam).mkString(", "))
     }
     str ++= ")"
-    if (func.content.isDefined) str ++= " " ++= genExprBlock(func.content.get)
+    if (func.content.isDefined) str ++= " " ++= genExprBlock(func.content.get) ++= "\n\n"
     else str ++= ";\n\n"
     str.toString()
   }
@@ -89,7 +92,7 @@ object JavaGenerator {
 
   def genParam(param: TmplParam): String = {
     val str = new StringBuilder
-    str ++= genType(param.`type`) ++= " " ++= param.name
+    str ++= genType(param.`type`) ++= " " ++= param.name.toString
     str.toString()
   }
 
@@ -109,38 +112,69 @@ object JavaGenerator {
     } else ""
   }
 
-  def genExprContent(content: TmplExprContent): String = {
+  def genExprContent(content: TmplExprContent, endOfStatement: Boolean = false, newLine: Boolean = false): String = {
     content match {
       case block: TmplExprBlock => genExprBlock(block)
-      case expression: TmplExpression => genExpression(expression)
+      case expression: TmplExpression => genExpression(expression, endOfStatement, newLine)
     }
   }
 
   def genExprBlock(block: TmplExprBlock): String = {
     val str = new StringBuilder
-    str ++= "{\n" ++= block.exprs.map(genExpression).mkString("\n") ++= "\n}"
+    str ++= "{\n" ++= block.exprs.map(b => genExpression(b, endOfStatement = true)).mkString("\n") ++= "\n}"
     str.toString()
   }
 
-  def genExpression(expr: TmplExpression): String = {
+  def genExpression(expr: TmplExpression, endOfStatement: Boolean = false, newLine: Boolean = false): String = {
     expr match {
-      case call: TmplCallObj => genCallObj(call)
+      case call: TmplCallObj => genEndOfStatement(genCallObj(call), endOfStatement, newLine)
       case func: TmplFunc => genFunc(func)
       case valueType: TmplValueType => genValueType(valueType)
-      case variable: TmplVar => genVar(variable)
+      case variable: TmplVar => genEndOfStatement(genVar(variable), endOfStatement, newLine)
       case ifStmt: TmplIf => genIf(ifStmt)
       case forLoop: TmplFor => genFor(forLoop)
       case whileLoop: TmplWhile => genWhile(whileLoop)
       case doWhile: TmplDoWhile => genDoWhile(doWhile)
+      case incl: TmplInclude => genInclude(incl)
+      case ret: TmplReturn => genEndOfStatement(genReturn(ret), endOfStatement, newLine)
+      case affect: TmplAffect => genEndOfStatement(genAffect(affect), endOfStatement, newLine)
     }
+  }
+
+  def genEndOfStatement(statement: String, endOfStatement: Boolean, newLine: Boolean): String = {
+    var ret = statement
+    if (endOfStatement) ret = ret + ";"
+    if (newLine) ret = ret + "\n"
+    ret
+  }
+
+  def genInclude(include: TmplInclude): String = {
+    val str = new StringBuilder
+    include.results.foreach {
+      case Left(tLangStr) => str ++= tLangStr.getValue ++= "\n"
+      case Right(block) => str ++= genBlock(block.block)
+    }
+    str.toString()
+  }
+
+  def genAffect(affect: TmplAffect): String = {
+    val str = new StringBuilder
+    str ++= genCallObj(affect.variable) ++= " = " ++= genCallObj(affect.value) ++= ";"
+    str.toString()
+  }
+
+  def genReturn(ret: TmplReturn): String = {
+    val str = new StringBuilder
+    str ++= "return " ++= genCallObj(ret.call) ++= ";"
+    str.toString()
   }
 
   def genIf(ifStmt: TmplIf): String = {
     val str = new StringBuilder
     str ++= "if(" ++= genConditionBlock(ifStmt.cond) ++= ") "
-    str ++= genExprContent(ifStmt.content)
+    str ++= genExprContent(ifStmt.content, ifStmt.content.isInstanceOf[TmplExpression])
     if (ifStmt.elseBlock.isDefined) ifStmt.elseBlock.get match {
-      case Left(elseBlock) => str ++= " else " ++= genExprContent(elseBlock)
+      case Left(elseBlock) => str ++= " else " ++= genExprContent(elseBlock, elseBlock.isInstanceOf[TmplExpression])
       case Right(ifBlock) => str ++= " else " ++= genIf(ifBlock)
     }
     str ++= "\n"
@@ -157,20 +191,20 @@ object JavaGenerator {
   def genWhile(whileLoop: TmplWhile): String = {
     val str = new StringBuilder
     str ++= "while(" ++= genConditionBlock(whileLoop.cond) ++= ") "
-    str ++= genExprContent(whileLoop.content) ++= "\n"
+    str ++= genExprContent(whileLoop.content, whileLoop.content.isInstanceOf[TmplExpression]) ++= "\n"
     str.toString()
   }
 
   def genDoWhile(doWhile: TmplDoWhile): String = {
     val str = new StringBuilder
-    str ++= "do " ++= genExprContent(doWhile.content)
+    str ++= "do " ++= genExprContent(doWhile.content, doWhile.content.isInstanceOf[TmplExpression])
     str ++= " while(" ++= genConditionBlock(doWhile.cond) ++= ");\n"
     str.toString()
   }
 
   def genCallObj(callObj: TmplCallObj): String = {
     val str = new StringBuilder
-    str ++= callObj.calls.map(genCallObjType).mkString(".") ++= ";"
+    str ++= callObj.calls.map(genCallObjType).mkString(".")
     str.toString()
   }
 
@@ -200,7 +234,9 @@ object JavaGenerator {
     val str = new StringBuilder
     str ++= genAnnotations(variable.annots)
     variable.props.foreach(prop => str ++= genProps(prop, addSpace = true))
-    str ++= genType(variable.`type`) ++= " " ++= variable.name.toString ++= " = " + genExpression(variable.value) ++= ";\n"
+    str ++= genType(variable.`type`) ++= " " ++= variable.name.toString
+    variable.value.foreach(str ++= " = " + genExpression(_))
+    str ++= ";\n"
     str.toString()
   }
 

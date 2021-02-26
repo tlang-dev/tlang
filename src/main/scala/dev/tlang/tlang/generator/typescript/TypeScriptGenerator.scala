@@ -12,7 +12,7 @@ import dev.tlang.tlang.generator.CodeGenerator
 class TypeScriptGenerator extends CodeGenerator {
   override def generate(tmpl: TmplBlock): String = {
     val str = new StringBuilder()
-    tmpl.uses.foreach(_.foreach(use => str ++= "{ " ++= use.alias.get.toString ++=" } from \"./" ++= use.parts.map(part => part.toString.replace("up", "..")).mkString("/") ++="\";"))
+    tmpl.uses.foreach(_.foreach(use => str ++= "{ " ++= use.alias.get.toString ++= " } from \"./" ++= use.parts.map(part => part.toString.replace("up", "..")).mkString("/") ++= "\";"))
     str.toString()
   }
 }
@@ -42,7 +42,7 @@ object TypeScriptGenerator {
 
   def genFunc(func: TmplFunc): String = {
     val str = new StringBuilder
-//    str ++= genAnnotations(func.annots)
+    //    str ++= genAnnotations(func.annots)
     str ++= func.props.fold("function")(prop => genProps(prop)) ++= " "
     str ++= func.name.toString ++= "("
     if (func.curries.isDefined) {
@@ -80,7 +80,7 @@ object TypeScriptGenerator {
 
   def genParam(param: TmplParam): String = {
     val str = new StringBuilder
-    str ++=  param.name ++= ": " ++= genType(param.`type`)
+    str ++= param.name.toString ++= ": " ++= genType(param.`type`)
     str.toString()
   }
 
@@ -191,7 +191,9 @@ object TypeScriptGenerator {
     val str = new StringBuilder
     str ++= genAnnotations(variable.annots)
     variable.props.foreach(prop => str ++= genProps(prop, addSpace = true))
-    str ++= genType(variable.`type`) ++= " " ++= variable.name.toString ++= " = " + genExpression(variable.value) ++= ";\n"
+    str ++= genType(variable.`type`) ++= " " ++= variable.name.toString
+    variable.value.foreach(str ++= " = " + genExpression(_))
+    str ++= ";\n"
     str.toString()
   }
 

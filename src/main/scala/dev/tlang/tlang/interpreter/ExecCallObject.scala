@@ -44,11 +44,12 @@ object ExecCallObject extends Executor {
         ContextUtils.findFunc(context, name) match {
           case Some(_) => ExecCallFunc.run(CallFuncObject(Some(name), func.currying), context)
           case None => ContextUtils.findTmpl(context, name) match {
-            case Some(tmpl) => Right(Some(List(TmplBlockAsValue(tmpl.copy(), context))))
+            case Some(tmpl) => Right(Some(List(TmplBlockAsValue(tmpl.copy(), Context(context.scopes :+ tmpl.scope)))))
             case None => Left(CallableNotFound(name))
           }
         }
       case variable: CallVarObject => findVar(callVar.name + "/" + variable.name, context)
+      case refFunc: CallRefFuncObject => Right(Some(List(refFunc)))
     }
   }
 
