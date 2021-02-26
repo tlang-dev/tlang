@@ -91,7 +91,7 @@ object BuildTmplBlock {
   }
 
   def build(param: TmplParamContext): TmplParam = {
-    TmplParam(param.name.getText, buildType(param.`type`))
+    TmplParam(buildId(param.name), buildType(param.`type`))
   }
 
   def buildType(`type`: TmplTypeContext): TmplType = {
@@ -125,6 +125,8 @@ object BuildTmplBlock {
       case doWhile@_ if doWhile.tmplDoWhile() != null => BuildTmplLoop.buildDoWhile(doWhile.tmplDoWhile())
       case ifStmt@_ if ifStmt.tmplIf() != null => buildIf(ifStmt.tmplIf())
       case incl@_ if incl.tmplInclude() != null => buildInclude(incl.tmplInclude())
+      case ret@_ if ret.tmplReturn() != null => buildReturn(ret.tmplReturn())
+      case affect@_ if affect.tmplAffect() != null => buildAffect(affect.tmplAffect())
     }
   }
 
@@ -148,6 +150,14 @@ object BuildTmplBlock {
 
   def buildVar(variable: TmplVarContext): TmplVar = {
     TmplVar(buildAnnotations(variable.annots.asScala.toList), buildProps(variable.props), buildId(variable.name), buildType(variable.`type`), if (variable.value != null) Some(buildExpression(variable.value)) else None)
+  }
+
+  def buildReturn(ret: TmplReturnContext): TmplReturn = {
+    TmplReturn(buildCallObject(ret.call))
+  }
+
+  def buildAffect(affect: TmplAffectContext): TmplAffect = {
+    TmplAffect(buildCallObject(affect.variable), buildCallObject(affect.value))
   }
 
   def buildCallObject(obj: TmplCallObjContext): TmplCallObj = {

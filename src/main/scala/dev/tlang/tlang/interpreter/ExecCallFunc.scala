@@ -85,7 +85,7 @@ object ExecCallFunc extends Executor {
         }
       }
     }
-    Context(context.scopes :+ Scope(vars, funcs))
+    Context(context.scopes :+ Scope(vars, funcs) :+ tmpl.scope)
   }
 
   def findTmplParamName(paramPos: Int, tmplBlock: TmplBlock): String = {

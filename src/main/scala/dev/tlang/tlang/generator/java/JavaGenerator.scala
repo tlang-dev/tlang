@@ -57,7 +57,7 @@ object JavaGenerator {
       func.curries.get.head.params.foreach(params => str ++= params.map(genParam).mkString(", "))
     }
     str ++= ")"
-    if (func.content.isDefined) str ++= " " ++= genExprBlock(func.content.get)
+    if (func.content.isDefined) str ++= " " ++= genExprBlock(func.content.get) ++= "\n\n"
     else str ++= ";\n\n"
     str.toString()
   }
@@ -92,7 +92,7 @@ object JavaGenerator {
 
   def genParam(param: TmplParam): String = {
     val str = new StringBuilder
-    str ++= genType(param.`type`) ++= " " ++= param.name
+    str ++= genType(param.`type`) ++= " " ++= param.name.toString
     str.toString()
   }
 
@@ -136,6 +136,8 @@ object JavaGenerator {
       case whileLoop: TmplWhile => genWhile(whileLoop)
       case doWhile: TmplDoWhile => genDoWhile(doWhile)
       case incl: TmplInclude => genInclude(incl)
+      case ret: TmplReturn => genReturn(ret)
+      case affect: TmplAffect => genAffect(affect)
     }
   }
 
@@ -145,6 +147,18 @@ object JavaGenerator {
       case Left(tLangStr) => str ++= tLangStr.getValue ++= "\n"
       case Right(block) => str ++= genBlock(block.block)
     }
+    str.toString()
+  }
+
+  def genAffect(affect: TmplAffect): String = {
+    val str = new StringBuilder
+    str ++= genCallObj(affect.variable) ++= " = " ++= genCallObj(affect.value) ++= ";"
+    str.toString()
+  }
+
+  def genReturn(ret: TmplReturn): String = {
+    val str = new StringBuilder
+    str ++= "return " ++= genCallObj(ret.call) ++= ";"
     str.toString()
   }
 
@@ -183,7 +197,7 @@ object JavaGenerator {
 
   def genCallObj(callObj: TmplCallObj): String = {
     val str = new StringBuilder
-    str ++= callObj.calls.map(genCallObjType).mkString(".") ++= ";"
+    str ++= callObj.calls.map(genCallObjType).mkString(".")
     str.toString()
   }
 

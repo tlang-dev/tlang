@@ -58,6 +58,8 @@ object ValueMapper {
       case valueType: TmplValueType => mapValueType(valueType, context)
       case variable: TmplVar => mapVar(variable, context)
       case incl: TmplInclude => mapInclude(incl, context)
+      case ret: TmplReturn => mapReturn(ret, context)
+      case affect: TmplAffect => mapAffect(affect, context)
       case _ => expr
     }
   }
@@ -122,8 +124,20 @@ object ValueMapper {
   }
 
   def mapParam(param: TmplParam, context: Context): TmplParam = {
+    param.name = mapID(param.name, context)
     param.`type` = mapType(param.`type`, context)
     param
+  }
+
+  def mapReturn(ret: TmplReturn, context: Context): TmplReturn = {
+    ret.call = mapCallObj(ret.call, context)
+    ret
+  }
+
+  def mapAffect(affect: TmplAffect, context: Context): TmplAffect = {
+    affect.variable = mapCallObj(affect.variable, context)
+    affect.value = mapCallObj(affect.value, context)
+    affect
   }
 
   def mapCallObj(call: TmplCallObj, context: Context): TmplCallObj = {
@@ -234,7 +248,7 @@ object ValueMapper {
         } else TmplStringID("Undefined")
       }
       case str: TmplStringID => TmplStringID(str.id)
-      //      case block: TmplBlockID =>
+      case _: TmplBlockID => TmplStringID("Undefined")
     }
     //      var pos = str.indexOf("${")
     //      val ret = new StringBuilder(str)

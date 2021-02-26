@@ -77,7 +77,7 @@ class JavaGeneratorTest extends AnyFunSuite {
   }
 
   test("Func with parameters and returns") {
-    val content = TmplFunc(None, None, TmplStringID("myFunc"), Some(List(TmplFuncCurry(Some(List(TmplParam("myDouble", TmplType(TmplStringID("Double"))), TmplParam("myString", TmplType(TmplStringID("String")))))))),
+    val content = TmplFunc(None, None, TmplStringID("myFunc"), Some(List(TmplFuncCurry(Some(List(TmplParam(TmplStringID("myDouble"), TmplType(TmplStringID("Double"))), TmplParam(TmplStringID("myString"), TmplType(TmplStringID("String")))))))),
       Some(TmplExprBlock(List(TmplCallObj(List(TmplCallVar(TmplStringID("myVar"))))))), Some(List(TmplType(TmplStringID("boolean")))))
     val res = JavaGenerator.genContent(content)
     assert(res.contains("public boolean myFunc(Double myDouble, String myString) {\n" +

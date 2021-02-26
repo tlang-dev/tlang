@@ -80,7 +80,7 @@ object TypeScriptGenerator {
 
   def genParam(param: TmplParam): String = {
     val str = new StringBuilder
-    str ++= param.name ++= ": " ++= genType(param.`type`)
+    str ++= param.name.toString ++= ": " ++= genType(param.`type`)
     str.toString()
   }
 

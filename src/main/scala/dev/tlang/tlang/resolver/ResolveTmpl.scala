@@ -40,9 +40,9 @@ object ResolveTmpl {
   def resolveContent(content: TmplContent, module: Module, uses: List[DomainUse], currentResource: Resource, scope: Scope): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
     content match {
-      case expr: TmplExprContent => resolveExprContent(expr, module, uses, currentResource, scope)
       case func: TmplFunc => resolveFunc(func, module, uses, currentResource, scope)
       case impl: TmplImpl => resolveImpl(impl, module, uses, currentResource, scope)
+      case expr: TmplExprContent => resolveExprContent(expr, module, uses, currentResource, scope)
     }
     if (errors.nonEmpty) Left(errors.toList)
     else Right(())
@@ -119,6 +119,7 @@ object ResolveTmpl {
     tmplID match {
       case TmplInterpretedID(_, call, _) => resolveCallObj(call, module, uses, currentResource, scope)
       case TmplBlockID(block) => resolveTmpl(block, module, uses, currentResource)
+      case _ =>
     }
     if (errors.nonEmpty) Left(errors.toList)
     else Right(())
