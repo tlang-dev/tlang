@@ -132,7 +132,7 @@ class BuildTmplBlockTest extends AnyFunSuite {
     val res = BuildTmplBlock.build(parser.tmplBlock()).content.get.head.asInstanceOf[TmplVar]
     assert("myVar" == res.name.toString)
     assert("String" == res.`type`.name.toString)
-    assert("myValue" == res.value.asInstanceOf[TmplStringValue].value.toString)
+    assert("myValue" == res.value.get.asInstanceOf[TmplStringValue].value.toString)
   }
 
   test("Call var") {

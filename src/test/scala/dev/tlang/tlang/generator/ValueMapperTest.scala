@@ -137,7 +137,7 @@ class ValueMapperTest extends AnyFunSuite {
     val res = ValueMapper.mapExpression(newVar, context).asInstanceOf[TmplVar]
     assert("MyVar" == res.name.toString)
     assert("String" == res.`type`.name.toString)
-    assert("MyValue" == res.value.asInstanceOf[TmplMultiValue].values.head.asInstanceOf[TmplStringValue].value.toString)
+    assert("MyValue" == res.value.get.asInstanceOf[TmplMultiValue].values.head.asInstanceOf[TmplStringValue].value.toString)
   }
 
   test("Generic type") {

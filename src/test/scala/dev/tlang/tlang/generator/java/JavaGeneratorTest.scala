@@ -88,7 +88,7 @@ class JavaGeneratorTest extends AnyFunSuite {
   test("If with one expression") {
     val cond = TmplConditionBlock(Right(TmplCondition(TmplLongValue(1), Some(ConditionType.EQUAL), Some(TmplLongValue(1)))))
     val ifStmt = TmplIf(cond, TmplCallObj(List(TmplCallVar(TmplStringID("myVar")))), None)
-    val res = JavaGenerator.genExpression(ifStmt)
+    val res = JavaGenerator.genExpression(ifStmt, endOfStatement = true)
     assert(res.contains("if(1 == 1) myVar;"))
   }
 

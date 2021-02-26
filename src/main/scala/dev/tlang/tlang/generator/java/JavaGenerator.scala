@@ -112,33 +112,40 @@ object JavaGenerator {
     } else ""
   }
 
-  def genExprContent(content: TmplExprContent): String = {
+  def genExprContent(content: TmplExprContent, endOfStatement: Boolean = false, newLine: Boolean = false): String = {
     content match {
       case block: TmplExprBlock => genExprBlock(block)
-      case expression: TmplExpression => genExpression(expression)
+      case expression: TmplExpression => genExpression(expression, endOfStatement, newLine)
     }
   }
 
   def genExprBlock(block: TmplExprBlock): String = {
     val str = new StringBuilder
-    str ++= "{\n" ++= block.exprs.map(genExpression).mkString("\n") ++= "\n}"
+    str ++= "{\n" ++= block.exprs.map(b => genExpression(b, endOfStatement = true)).mkString("\n") ++= "\n}"
     str.toString()
   }
 
-  def genExpression(expr: TmplExpression): String = {
+  def genExpression(expr: TmplExpression, endOfStatement: Boolean = false, newLine: Boolean = false): String = {
     expr match {
-      case call: TmplCallObj => genCallObj(call)
+      case call: TmplCallObj => genEndOfStatement(genCallObj(call), endOfStatement, newLine)
       case func: TmplFunc => genFunc(func)
       case valueType: TmplValueType => genValueType(valueType)
-      case variable: TmplVar => genVar(variable)
+      case variable: TmplVar => genEndOfStatement(genVar(variable), endOfStatement, newLine)
       case ifStmt: TmplIf => genIf(ifStmt)
       case forLoop: TmplFor => genFor(forLoop)
       case whileLoop: TmplWhile => genWhile(whileLoop)
       case doWhile: TmplDoWhile => genDoWhile(doWhile)
       case incl: TmplInclude => genInclude(incl)
-      case ret: TmplReturn => genReturn(ret)
-      case affect: TmplAffect => genAffect(affect)
+      case ret: TmplReturn => genEndOfStatement(genReturn(ret), endOfStatement, newLine)
+      case affect: TmplAffect => genEndOfStatement(genAffect(affect), endOfStatement, newLine)
     }
+  }
+
+  def genEndOfStatement(statement: String, endOfStatement: Boolean, newLine: Boolean): String = {
+    var ret = statement
+    if (endOfStatement) ret = ret + ";"
+    if (newLine) ret = ret + "\n"
+    ret
   }
 
   def genInclude(include: TmplInclude): String = {
@@ -165,9 +172,9 @@ object JavaGenerator {
   def genIf(ifStmt: TmplIf): String = {
     val str = new StringBuilder
     str ++= "if(" ++= genConditionBlock(ifStmt.cond) ++= ") "
-    str ++= genExprContent(ifStmt.content)
+    str ++= genExprContent(ifStmt.content, ifStmt.content.isInstanceOf[TmplExpression])
     if (ifStmt.elseBlock.isDefined) ifStmt.elseBlock.get match {
-      case Left(elseBlock) => str ++= " else " ++= genExprContent(elseBlock)
+      case Left(elseBlock) => str ++= " else " ++= genExprContent(elseBlock, elseBlock.isInstanceOf[TmplExpression])
       case Right(ifBlock) => str ++= " else " ++= genIf(ifBlock)
     }
     str ++= "\n"
@@ -184,13 +191,13 @@ object JavaGenerator {
   def genWhile(whileLoop: TmplWhile): String = {
     val str = new StringBuilder
     str ++= "while(" ++= genConditionBlock(whileLoop.cond) ++= ") "
-    str ++= genExprContent(whileLoop.content) ++= "\n"
+    str ++= genExprContent(whileLoop.content, whileLoop.content.isInstanceOf[TmplExpression]) ++= "\n"
     str.toString()
   }
 
   def genDoWhile(doWhile: TmplDoWhile): String = {
     val str = new StringBuilder
-    str ++= "do " ++= genExprContent(doWhile.content)
+    str ++= "do " ++= genExprContent(doWhile.content, doWhile.content.isInstanceOf[TmplExpression])
     str ++= " while(" ++= genConditionBlock(doWhile.cond) ++= ");\n"
     str.toString()
   }

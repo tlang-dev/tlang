@@ -120,7 +120,7 @@ tmplCondition:
 
 tmplConditionMark: '==' | '!=' | '<' | '>' | '<=' | '>=';
 
-tmplInclude: '<<' ((calls+=callObj)*) '>>';
+tmplInclude: '<[' ((calls+=callObj)*) ']>';
 
 tmplReturn: 'return' call=tmplCallObj;
 
