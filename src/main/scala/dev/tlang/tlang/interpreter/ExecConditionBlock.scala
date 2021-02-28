@@ -11,7 +11,7 @@ object ExecConditionBlock extends Executor {
     val block = statement.asInstanceOf[ConditionBlock]
     solveConditionBlock(block, context) match {
       case Left(error) => Left(error)
-      case Right(value) => Right(Some(List(new TLangBool(value))))
+      case Right(value) => Right(Some(List(new TLangBool(None, value))))
     }
   }
 

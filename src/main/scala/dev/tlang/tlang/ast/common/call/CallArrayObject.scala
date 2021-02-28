@@ -1,3 +1,7 @@
 package dev.tlang.tlang.ast.common.call
 
-case class CallArrayObject(name: String, position: SimpleValueStatement[_]) extends CallObjectType
+import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
+
+case class CallArrayObject(context: Option[ContextContent], name: String, position: SimpleValueStatement[_]) extends CallObjectType with AstContext {
+  override def getContext: Option[ContextContent] = context
+}

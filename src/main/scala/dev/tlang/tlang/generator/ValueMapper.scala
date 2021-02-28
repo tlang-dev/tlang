@@ -107,7 +107,7 @@ object ValueMapper {
   def mapExprBlock(block: Option[TmplExprBlock], context: Context): Option[TmplExprBlock] = {
     if (block.isDefined) {
       val exprs = block.get.exprs.map(expr => mapExpression(expr, context))
-      Some(TmplExprBlock(exprs))
+      Some(TmplExprBlock(block.get.context, exprs))
     } else None
   }
 
@@ -163,7 +163,7 @@ object ValueMapper {
 
   def mapCallFuncCurryParams(params: Option[List[TmplCurryParam]], context: Context): Option[List[TmplCurryParam]] = {
     if (params.isDefined) {
-      val curry: List[TmplCurryParam] = params.get.map(p => TmplCurryParam(mapSetAttributes(p.params, context)))
+      val curry: List[TmplCurryParam] = params.get.map(p => TmplCurryParam(p.context, mapSetAttributes(p.params, context)))
       Some(curry)
     } else None
   }
@@ -204,8 +204,8 @@ object ValueMapper {
 
   def mapPrimitive(primitive: TmplPrimitiveValue, context: Context): TmplPrimitiveValue = {
     primitive match {
-      case str: TmplStringValue => TmplStringValue(mapID(str.value, context))
-      case text: TmplTextValue => TmplTextValue(mapID(text.value, context))
+      case str: TmplStringValue => TmplStringValue(str.context, mapID(str.value, context))
+      case text: TmplTextValue => TmplTextValue(text.context, mapID(text.value, context))
       case _ => primitive
     }
   }
@@ -238,17 +238,17 @@ object ValueMapper {
   def mapID(id: TmplID, context: Context): TmplStringID = {
     id match {
       case interId: TmplInterpretedID => ExecCallObject.run(interId.call, context) match {
-        case Left(error) => TmplStringID(error.message)
+        case Left(error) => TmplStringID(interId.context, error.message)
         case Right(value) => if (value.isDefined) {
           value.get.head match {
-            case str: TLangString => TmplStringID(interId.pre.getOrElse("") + str.getValue + interId.post.getOrElse(""))
-            case block: TmplBlockAsValue => TmplStringID(interId.pre.getOrElse("") + Generator.generate(block, context) + interId.post.getOrElse(""))
-            case _ => TmplStringID(interId.pre.getOrElse("") + value.get.head.toString + interId.post.getOrElse(""))
+            case str: TLangString => TmplStringID(interId.context, interId.pre.getOrElse("") + str.getValue + interId.post.getOrElse(""))
+            case block: TmplBlockAsValue => TmplStringID(interId.context, interId.pre.getOrElse("") + Generator.generate(block, context) + interId.post.getOrElse(""))
+            case _ => TmplStringID(interId.context, interId.pre.getOrElse("") + value.get.head.toString + interId.post.getOrElse(""))
           }
-        } else TmplStringID("Undefined")
+        } else TmplStringID(interId.context, "Undefined")
       }
-      case str: TmplStringID => TmplStringID(str.id)
-      case _: TmplBlockID => TmplStringID("Undefined")
+      case str: TmplStringID => TmplStringID(str.context, str.id)
+      case block: TmplBlockID => TmplStringID(block.context, "Undefined")
     }
     //      var pos = str.indexOf("${")
     //      val ret = new StringBuilder(str)

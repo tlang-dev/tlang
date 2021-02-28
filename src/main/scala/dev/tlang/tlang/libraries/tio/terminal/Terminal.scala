@@ -6,7 +6,7 @@ import dev.tlang.tlang.interpreter.context.{Context, ContextUtils}
 
 object Terminal {
 
-  def printlnFunc: HelperFunc = HelperFunc("println", Some(List(HelperCurrying(List(HelperParam(Some("str"), HelperObjType(TLangString.getType)))))), None, HelperContent(Some(List(
+  def printlnFunc: HelperFunc = HelperFunc(None, "println", Some(List(HelperCurrying(None, List(HelperParam(None, Some("str"), HelperObjType(None, TLangString.getType)))))), None, HelperContent(None, Some(List(
     HelperInternalFunc((context: Context) => {
       ContextUtils.findVar(context, "str") match {
         case Some(str) => if (str.getType == TLangString.getType) println(str.asInstanceOf[TLangString].getValue)

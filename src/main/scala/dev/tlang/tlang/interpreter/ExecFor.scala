@@ -22,7 +22,7 @@ object ExecFor extends Executor {
     val newContext = Context(context.scopes :+ newScope)
     for (i <- 0 until end) {
       val elem = array(i).value
-      newScope.variables.update("_i", new TLangLong(i))
+      newScope.variables.update("_i", new TLangLong(None, i))
       newScope.variables.update(forStatement.variable, elem)
       ExecContent.run(forStatement.body, newContext)
     }
@@ -38,7 +38,7 @@ object ExecFor extends Executor {
     val newScope = Scope()
     val newContext = Context(context.scopes :+ newScope)
     for (i <- start to realEnd) {
-      newScope.variables.update(forStatement.variable, new TLangLong(i))
+      newScope.variables.update(forStatement.variable, new TLangLong(None, i))
       ExecContent.run(forStatement.body, newContext)
     }
   }

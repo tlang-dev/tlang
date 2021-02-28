@@ -1,5 +1,9 @@
 package dev.tlang.tlang.ast.tmpl.primitive
 
-case class TmplBoolValue(value: Boolean) extends TmplPrimitiveValue {
-  override def deepCopy(): TmplBoolValue = TmplBoolValue(if (value) true else false)
+import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
+
+case class TmplBoolValue(context: Option[ContextContent], value: Boolean) extends TmplPrimitiveValue with AstContext {
+  override def deepCopy(): TmplBoolValue = TmplBoolValue(context, if (value) true else false)
+
+  override def getContext: Option[ContextContent] = context
 }

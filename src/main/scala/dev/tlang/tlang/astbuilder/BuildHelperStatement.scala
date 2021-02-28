@@ -5,73 +5,75 @@ import dev.tlang.tlang.ast.common.call
 import dev.tlang.tlang.ast.common.call.{SetAttribute, _}
 import dev.tlang.tlang.ast.common.condition.{Condition, ConditionBlock}
 import dev.tlang.tlang.ast.helper._
+import dev.tlang.tlang.astbuilder.BuildAst.addContext
+import dev.tlang.tlang.astbuilder.context.ContextResource
 import org.antlr.v4.runtime.Token
 
 import scala.jdk.CollectionConverters._
 
 object BuildHelperStatement {
 
-  def build(statements: List[HelperStatementContext]): List[HelperStatement] = {
+  def build(resource: ContextResource, statements: List[HelperStatementContext]): List[HelperStatement] = {
     statements.map {
-      case statement@_ if statement.assignVar() != null => BuildCommon.buildAssignVar(statement.assignVar())
-      case statement@_ if statement.complexValueType() != null => BuildCommon.buildComplexValueType(None, statement.complexValueType())
-      case statement@_ if statement.helperIf() != null => buildIf(statement.helperIf())
-      case statement@_ if statement.helperFor() != null => buildFor(statement.helperFor())
+      case statement@_ if statement.assignVar() != null => BuildCommon.buildAssignVar(resource, statement.assignVar())
+      case statement@_ if statement.complexValueType() != null => BuildCommon.buildComplexValueType(resource, None, statement.complexValueType())
+      case statement@_ if statement.helperIf() != null => buildIf(resource, statement.helperIf())
+      case statement@_ if statement.helperFor() != null => buildFor(resource, statement.helperFor())
     }
   }
 
-  def buildCallObject(call: CallObjContext): CallObject = {
-    CallObject(call.objs.asScala.toList.map {
-      case obj@_ if obj.callVariable() != null => CallVarObject(obj.callVariable().name.getText)
-      case obj@_ if obj.callArray() != null => CallArrayObject(obj.callArray().name.getText, BuildCommon.buildSimpleValueType(None, obj.callArray().elem))
-      case obj@_ if obj.callFunc() != null && obj.ref == null => buildCallFunc(obj.callFunc())
-      case obj@_ if obj.callFunc() != null && obj.ref != null => buildCallRefFunc(obj.callFunc())
+  def buildCallObject(resource: ContextResource, call: CallObjContext): CallObject = {
+    CallObject(addContext(resource, call), call.objs.asScala.toList.map {
+      case obj@_ if obj.callVariable() != null => CallVarObject(addContext(resource, obj.callVariable()), obj.callVariable().name.getText)
+      case obj@_ if obj.callArray() != null => CallArrayObject(addContext(resource, obj.callArray()), obj.callArray().name.getText, BuildCommon.buildSimpleValueType(resource, None, obj.callArray().elem))
+      case obj@_ if obj.callFunc() != null && obj.ref == null => buildCallFunc(resource, obj.callFunc())
+      case obj@_ if obj.callFunc() != null && obj.ref != null => buildCallRefFunc(resource, obj.callFunc())
     })
   }
 
-  def buildCallFunc(func: CallFuncContext): CallFuncObject = {
-    CallFuncObject(if (func.name != null) Some(func.name.getText) else None,
-      buildCallFuncParam(func.currying.asScala.toList))
+  def buildCallFunc(resource: ContextResource, func: CallFuncContext): CallFuncObject = {
+    CallFuncObject(addContext(resource, func), if (func.name != null) Some(func.name.getText) else None,
+      buildCallFuncParam(resource, func.currying.asScala.toList))
   }
 
-  def buildCallRefFunc(func: CallFuncContext): CallRefFuncObject = {
-    CallRefFuncObject(if (func.name != null) Some(func.name.getText) else None,
-      buildCallFuncParam(func.currying.asScala.toList))
+  def buildCallRefFunc(resource: ContextResource, func: CallFuncContext): CallRefFuncObject = {
+    CallRefFuncObject(addContext(resource, func), if (func.name != null) Some(func.name.getText) else None,
+      buildCallFuncParam(resource, func.currying.asScala.toList))
   }
 
-  def buildCallFuncParam(params: List[CurryParamsContext]): Option[List[CallFuncParam]] = {
-    if (params.nonEmpty) Some(params.map(param => CallFuncParam(
-      if (param.params != null && !param.params.isEmpty) Some(param.params.asScala.toList.map(buildSetAttribute)) else None)))
+  def buildCallFuncParam(resource: ContextResource, params: List[CurryParamsContext]): Option[List[CallFuncParam]] = {
+    if (params.nonEmpty) Some(params.map(param => CallFuncParam(addContext(resource, param),
+      if (param.params != null && !param.params.isEmpty) Some(param.params.asScala.toList.map(param => buildSetAttribute(resource, param))) else None)))
     else None
   }
 
-  def buildSetAttribute(attr: SetAttributeContext): SetAttribute = {
-    call.SetAttribute(AstBuilderUtils.getText(attr.attr), BuildCommon.buildComplexValueType(None, attr.value))
+  def buildSetAttribute(resource: ContextResource, attr: SetAttributeContext): SetAttribute = {
+    call.SetAttribute(addContext(resource, attr), AstBuilderUtils.getText(attr.attr), BuildCommon.buildComplexValueType(resource, None, attr.value))
   }
 
-  def buildIf(anIf: HelperIfContext): HelperIf = {
-    HelperIf(buildConditionBlock(anIf.cond),
-      if (!anIf.body.content.isEmpty) Some(BuildHelperBlock.buildContent(anIf.body)) else None,
-      if (anIf.orElse != null) Some(BuildHelperBlock.buildContent(anIf.orElse.body)) else None)
+  def buildIf(resource: ContextResource, anIf: HelperIfContext): HelperIf = {
+    HelperIf(addContext(resource, anIf), buildConditionBlock(resource, anIf.cond),
+      if (!anIf.body.content.isEmpty) Some(BuildHelperBlock.buildContent(resource, anIf.body)) else None,
+      if (anIf.orElse != null) Some(BuildHelperBlock.buildContent(resource, anIf.orElse.body)) else None)
   }
 
-  def buildConditionBlock(block: ConditionBlockContext): ConditionBlock = {
-    ConditionBlock(buildEitherCondition(block),
+  def buildConditionBlock(resource: ContextResource, block: ConditionBlockContext): ConditionBlock = {
+    ConditionBlock(addContext(resource, block), buildEitherCondition(resource, block),
       if (block.link != null) Some(buildConditionLink(block.link)) else None,
-      if (block.next != null) Some(buildConditionBlock(block.next)) else None)
+      if (block.next != null) Some(buildConditionBlock(resource, block.next)) else None)
   }
 
-  def buildEitherCondition(block: ConditionBlockContext): Either[ConditionBlock, Condition] = {
-    if (block.innerBlock != null) Left(buildConditionBlock(block.innerBlock))
-    else Right(buildCondition(block.content))
+  def buildEitherCondition(resource: ContextResource, block: ConditionBlockContext): Either[ConditionBlock, Condition] = {
+    if (block.innerBlock != null) Left(buildConditionBlock(resource, block.innerBlock))
+    else Right(buildCondition(resource, block.content))
   }
 
-  def buildCondition(condition: ConditionContext): Condition = {
-    Condition(BuildCommon.buildSimpleValueType(None, condition.arg1),
+  def buildCondition(resource: ContextResource, condition: ConditionContext): Condition = {
+    Condition(addContext(resource, condition), BuildCommon.buildSimpleValueType(resource, None, condition.arg1),
       if (condition.mark != null) Some(buildConditionType(condition.mark.getText)) else None,
-      if (condition.arg2 != null) Some(BuildCommon.buildSimpleValueType(None, condition.arg2)) else None,
+      if (condition.arg2 != null) Some(BuildCommon.buildSimpleValueType(resource, None, condition.arg2)) else None,
       if (condition.link != null) Some(buildConditionLink(condition.link)) else None,
-      if (condition.next != null) Some(buildConditionBlock(condition.next)) else None)
+      if (condition.next != null) Some(buildConditionBlock(resource, condition.next)) else None)
   }
 
   def buildConditionLink(link: Token): ConditionLink.condition = {
@@ -92,12 +94,12 @@ object BuildHelperStatement {
     }
   }
 
-  def buildFor(aFor: HelperForContext): HelperFor = {
-    HelperFor(aFor.`var`.getText,
-      if (aFor.start != null) Some(BuildCommon.buildSimpleValueType(None, aFor.start)) else None,
+  def buildFor(resource: ContextResource, aFor: HelperForContext): HelperFor = {
+    HelperFor(addContext(resource, aFor), aFor.`var`.getText,
+      if (aFor.start != null) Some(BuildCommon.buildSimpleValueType(resource, None, aFor.start)) else None,
       buildForType(aFor.`type`),
-      BuildCommon.buildSimpleValueType(None, aFor.array),
-      BuildHelperBlock.buildContent(aFor.body)
+      BuildCommon.buildSimpleValueType(resource, None, aFor.array),
+      BuildHelperBlock.buildContent(resource, aFor.body)
     )
   }
 

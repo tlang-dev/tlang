@@ -1,5 +1,9 @@
 package dev.tlang.tlang.ast.tmpl
 
-case class TmplMultiValue(var values: List[TmplValueType]) extends TmplValueType {
-  override def deepCopy(): TmplMultiValue = TmplMultiValue(values.map(_.deepCopy().asInstanceOf[TmplValueType]))
+import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
+
+case class TmplMultiValue(context: Option[ContextContent], var values: List[TmplValueType]) extends TmplValueType with AstContext {
+  override def deepCopy(): TmplMultiValue = TmplMultiValue(context, values.map(_.deepCopy().asInstanceOf[TmplValueType]))
+
+  override def getContext: Option[ContextContent] = context
 }

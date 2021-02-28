@@ -1,13 +1,5 @@
 package dev.tlang.tlang.resolver
 
-import dev.tlang.tlang.ast.common.value.EntityValue
-import dev.tlang.tlang.ast.helper.{HelperBlock, HelperFunc}
-import dev.tlang.tlang.ast.model.ModelContent
-import dev.tlang.tlang.astbuilder.BuildAst
-import dev.tlang.tlang.loader.{BuildModuleTree, FileResourceLoader, ResourceLoader, TBagManager}
-import dev.tlang.tlang.loader.remote.RemoteLoader
-
-import java.nio.file.Paths
 import dev.tlang.tlang.ast.DomainUse
 import dev.tlang.tlang.ast.common.call.{CallFuncObject, CallObject, CallVarObject}
 import dev.tlang.tlang.ast.common.value.{AssignVar, EntityValue}
@@ -17,10 +9,12 @@ import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.astbuilder.BuildAst
 import dev.tlang.tlang.interpreter.context.Scope
 import dev.tlang.tlang.loader.remote.RemoteLoader
-import dev.tlang.tlang.loader.{BuildModuleTree, FileResourceLoader, Resource, ResourceLoader, TBagManager}
+import dev.tlang.tlang.loader._
 import dev.tlang.tlang.{TLangLexer, TLangParser}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
+
+import java.nio.file.Paths
 
 class ResolveContextTest extends AnyFunSuite {
 
@@ -125,7 +119,7 @@ class ResolveContextTest extends AnyFunSuite {
     val caller = CallObject(List(CallVarObject("MyFile"), CallVarObject("myEntity")))
     val scope = Scope()
     val func = HelperFunc("aFunc", None, None, HelperContent(Some(List(caller))), scope)
-    ResolveContext.resolveFuncs(List(func), module, uses, module.resources.head._2)
+    ResolveFunc.resolveFuncs(List(func), module, uses, module.resources.head._2)
     assert("MyFile/myEntity" == scope.variables.head._1)
     assert("MyEntity" == scope.variables.head._2.getType)
   }
@@ -154,7 +148,7 @@ class ResolveContextTest extends AnyFunSuite {
     val uses = List(DomainUse(List("MyPackage", "MyFile")))
     val caller = CallObject(List(CallVarObject("MyFile"), CallVarObject("myEntity")))
     val scope = Scope()
-    ResolveStatement.resolveStatements(Some(List(caller)), module, uses, scope, module.resources.head._2)
+    BrowseHelperStatement.browseStatements(Some(List(caller)), module, uses, scope, module.resources.head._2)
     assert("MyFile/myEntity" == scope.variables.head._1)
     assert("MyEntity" == scope.variables.head._2.getType)
   }
@@ -183,7 +177,7 @@ class ResolveContextTest extends AnyFunSuite {
     val uses = List(DomainUse(List("MyPackage", "MyFile")))
     val caller = CallObject(List(CallVarObject("MyFile"), CallVarObject("myEntity")))
     val scope = Scope()
-    ResolveContext.resolveCallObject(caller, module, uses, scope, module.resources.head._2).toOption.get
+    FollowCallObject.followCallObject(caller, module, uses, scope, module.resources.head._2).toOption.get
     assert("MyFile/myEntity" == scope.variables.head._1)
     assert("MyEntity" == scope.variables.head._2.getType)
   }
@@ -213,7 +207,7 @@ class ResolveContextTest extends AnyFunSuite {
     val uses = List(DomainUse(List("MyFile")))
     val caller = CallObject(List(CallVarObject("MyFile"), CallVarObject("myFunc")))
     val scope = Scope()
-    ResolveContext.resolveCallObject(caller, module, uses, scope, module.resources.head._2).toOption.get
+    FollowCallObject.followCallObject(caller, module, uses, scope, module.resources.head._2).toOption.get
     assert("MyFile/myFunc" == scope.functions.head._1)
     assert("myFunc" == scope.functions.head._2.getValue.name)
   }

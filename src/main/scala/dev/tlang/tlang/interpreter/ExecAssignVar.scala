@@ -1,8 +1,5 @@
 package dev.tlang.tlang.interpreter
 
-import dev.tlang.tlang.ast.common.value.AssignVar
-import dev.tlang.tlang.ast.helper.HelperStatement
-import dev.tlang.tlang.interpreter.context.Context
 import dev.tlang.tlang.ast.common.value.{AssignVar, MultiValue}
 import dev.tlang.tlang.ast.helper.HelperStatement
 import dev.tlang.tlang.interpreter.context.Context
@@ -22,7 +19,7 @@ object ExecAssignVar extends Executor {
             context.scopes.last.variables.addOne(varStatement.name -> value.head)
             Right(Some(List(value.head)))
           } else {
-            val values = MultiValue(value)
+            val values = MultiValue(None, value)
             context.scopes.last.variables.addOne(varStatement.name -> values)
             Right(Some(value))
           }

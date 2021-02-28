@@ -117,8 +117,8 @@ object ResolveTmpl {
   def resolveTmplId(tmplID: TmplID, module: Module, uses: List[DomainUse], currentResource: Resource, scope: Scope): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
     tmplID match {
-      case TmplInterpretedID(_, call, _) => resolveCallObj(call, module, uses, currentResource, scope)
-      case TmplBlockID(block) => resolveTmpl(block, module, uses, currentResource)
+      case TmplInterpretedID(_, _, call, _) => resolveCallObj(call, module, uses, currentResource, scope)
+      case TmplBlockID(_, block) => resolveTmpl(block, module, uses, currentResource)
       case _ =>
     }
     if (errors.nonEmpty) Left(errors.toList)
@@ -131,10 +131,10 @@ object ResolveTmpl {
         if (callFuncObject.name.isDefined && BuiltIntLibs.buildIntLibs.contains(callFuncObject.name.get)) {
           val func = BuiltIntLibs.buildIntLibs(callFuncObject.name.get)
           scope.functions.addOne(func.name, func)
-          ResolveStatement.resolveCallFuncObjectParams(callFuncObject.currying, func, module, uses, scope, currentResource)
+          BrowseHelperStatement.browseCallFuncObjectParams(callFuncObject.currying, func, module, uses, scope, currentResource)
           Right(())
-        } else ResolveContext.resolveCallObject(call, module, uses, scope, currentResource)
-      case _ => ResolveContext.resolveCallObject(call, module, uses, scope, currentResource)
+        } else FollowCallObject.followCallObject(call, module, uses, scope, currentResource)
+      case _ => FollowCallObject.followCallObject(call, module, uses, scope, currentResource)
     }
     Right(())
   }

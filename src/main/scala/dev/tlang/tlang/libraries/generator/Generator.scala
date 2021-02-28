@@ -28,15 +28,15 @@ object Generator {
     "yml" -> new YMLGenerator(),
   )
 
-  def generateFunc: HelperFunc = HelperFunc("generate", Some(List(HelperCurrying(List(HelperParam(Some("block"), HelperObjType(TmplBlockAsValue.getType)))))),
-    Some(List(HelperObjType(TLangString.getType))), HelperContent(Some(List(
+  def generateFunc: HelperFunc = HelperFunc(None, "generate", Some(List(HelperCurrying(None, List(HelperParam(None, Some("block"), HelperObjType(None, TmplBlockAsValue.getType)))))),
+    Some(List(HelperObjType(None, TLangString.getType))), HelperContent(None, Some(List(
       HelperInternalFunc((context: Context) => {
         ContextUtils.findVar(context, "block") match {
           case Some(block) => generate(block.asInstanceOf[TmplBlockAsValue], context) match {
-            case Left(_) => Right(Some(List(new TLangString(""))))
+            case Left(_) => Right(Some(List(new TLangString(None, ""))))
             case Right(value) => Right(Some(List(value)))
           }
-          case None => Right(Some(List(new TLangString(""))))
+          case None => Right(Some(List(new TLangString(None, ""))))
         }
       })
     ))))
@@ -46,7 +46,7 @@ object Generator {
       case None => Left(ElementNotFound("This language does not exist: " + block.block.lang))
       case Some(generator) =>
         val newBlock = ValueMapper.mapBlock(block)
-        Right(new TLangString(generator.generate(newBlock.block)))
+        Right(new TLangString(None, generator.generate(newBlock.block)))
     }
   }
 

@@ -99,7 +99,7 @@ object ExecCallFunc extends Executor {
         for (curry <- refFuncCaller.currying.get.zipWithIndex) {
           if (curry._1.params.isDefined) {
             val params = ListBuffer.empty[SetAttribute]
-            var i = 0;
+            var i = 0
             for (param <- curry._1.params.get) {
               if (param.value.isInstanceOf[LazyValue[_]]) {
                 params.addOne(funCaller.currying.get(curry._2).params.get(i))
@@ -108,12 +108,12 @@ object ExecCallFunc extends Executor {
                 params.addOne(param)
               }
             }
-            newCurry.addOne(CallFuncParam(Some(params.toList)))
-          } else newCurry.addOne(CallFuncParam(None))
+            newCurry.addOne(CallFuncParam(None, Some(params.toList)))
+          } else newCurry.addOne(CallFuncParam(None, None))
         }
       }
-      CallRefFuncObject(refFuncCaller.name, Some(newCurry.toList), refFuncCaller.func)
-    } else CallRefFuncObject(refFuncCaller.name, None, refFuncCaller.func)
+      CallRefFuncObject(None, refFuncCaller.name, Some(newCurry.toList), refFuncCaller.func)
+    } else CallRefFuncObject(None, refFuncCaller.name, None, refFuncCaller.func)
   }
 
 }
