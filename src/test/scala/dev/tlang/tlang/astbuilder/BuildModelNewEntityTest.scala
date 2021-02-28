@@ -1,11 +1,14 @@
 package dev.tlang.tlang.astbuilder
 
 import dev.tlang.tlang.ast.common.value.{ArrayValue, AssignVar, EntityValue, TLangString}
+import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.{TLangLexer, TLangParser}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
 
 class BuildModelNewEntityTest extends AnyFunSuite {
+
+  val fakeContext: ContextResource = ContextResource("", "", "", "")
 
   test("Test new entity without type") {
     val lexer = new TLangLexer(CharStreams.fromString(
@@ -15,7 +18,7 @@ class BuildModelNewEntityTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val newEntity = BuildModelBlock.build(parser.modelBlock()).content.get.head.asInstanceOf[AssignVar]
+    val newEntity = BuildModelBlock.build(fakeContext, parser.modelBlock()).content.get.head.asInstanceOf[AssignVar]
     assert("firstEntity".equals(newEntity.name))
   }
 
@@ -27,7 +30,7 @@ class BuildModelNewEntityTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val newEntity = BuildModelBlock.build(parser.modelBlock()).content.get.head.asInstanceOf[AssignVar]
+    val newEntity = BuildModelBlock.build(fakeContext, parser.modelBlock()).content.get.head.asInstanceOf[AssignVar]
     assert("firstEntity".equals(newEntity.name))
     assert("AnyEntity".equals(newEntity.`type`.get))
   }
@@ -41,7 +44,7 @@ class BuildModelNewEntityTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val newEntity = BuildModelBlock.build(parser.modelBlock()).content.get.head.asInstanceOf[AssignVar]
+    val newEntity = BuildModelBlock.build(fakeContext, parser.modelBlock()).content.get.head.asInstanceOf[AssignVar]
     val params = newEntity.value.getValue.asInstanceOf[EntityValue].params
     assert("firstEntity".equals(newEntity.name))
     assert("AnyEntity".equals(newEntity.`type`.get))

@@ -4,11 +4,14 @@ import dev.tlang.tlang.ast.common.call.{CallObject, CallVarObject}
 import dev.tlang.tlang.ast.helper.{ConditionLink, ConditionType, HelperIf}
 import dev.tlang.tlang.ast.common.call.{CallObject, CallVarObject}
 import dev.tlang.tlang.ast.helper.{ConditionLink, ConditionType, HelperIf}
+import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.{TLangLexer, TLangParser}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
 
 class BuildHelperIfStatementTest extends AnyFunSuite {
+
+  val fakeContext: ContextResource = ContextResource("", "", "", "")
 
   test("Simple if with one var") {
     val lexer = new TLangLexer(CharStreams.fromString(
@@ -24,7 +27,7 @@ class BuildHelperIfStatementTest extends AnyFunSuite {
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val func = BuildHelperBlock.build(parser.helperBlock()).funcs.get.head
+    val func = BuildHelperBlock.build(fakeContext, parser.helperBlock()).funcs.get.head
     val ifStmt = func.block.content.get.head.asInstanceOf[HelperIf]
     val trueStmt = ifStmt.ifTrue
     val elseStmt = ifStmt.ifFalse
@@ -50,7 +53,7 @@ class BuildHelperIfStatementTest extends AnyFunSuite {
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val func = BuildHelperBlock.build(parser.helperBlock()).funcs.get.head
+    val func = BuildHelperBlock.build(fakeContext, parser.helperBlock()).funcs.get.head
     val ifStmt = func.block.content.get.head.asInstanceOf[HelperIf]
     assert("myVar" == ifStmt.condition.content.toOption.get.statement1.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
     assert("myVar2" == ifStmt.condition.content.toOption.get.statement2.get.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
@@ -70,7 +73,7 @@ class BuildHelperIfStatementTest extends AnyFunSuite {
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val func = BuildHelperBlock.build(parser.helperBlock()).funcs.get.head
+    val func = BuildHelperBlock.build(fakeContext, parser.helperBlock()).funcs.get.head
     val ifStmt = func.block.content.get.head.asInstanceOf[HelperIf]
     assert("myVar" == ifStmt.condition.content.toOption.get.statement1.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
     assert("myVar2" == ifStmt.condition.content.toOption.get.statement2.get.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
@@ -88,7 +91,7 @@ class BuildHelperIfStatementTest extends AnyFunSuite {
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val func = BuildHelperBlock.build(parser.helperBlock()).funcs.get.head
+    val func = BuildHelperBlock.build(fakeContext, parser.helperBlock()).funcs.get.head
     val ifStmt = func.block.content.get.head.asInstanceOf[HelperIf]
     assert("myVar" == ifStmt.condition.content.toOption.get.statement1.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
     assert("myVar2" == ifStmt.condition.content.toOption.get.statement2.get.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
@@ -106,7 +109,7 @@ class BuildHelperIfStatementTest extends AnyFunSuite {
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val func = BuildHelperBlock.build(parser.helperBlock()).funcs.get.head
+    val func = BuildHelperBlock.build(fakeContext, parser.helperBlock()).funcs.get.head
     val ifStmt = func.block.content.get.head.asInstanceOf[HelperIf]
     assert("myVar" == ifStmt.condition.content.toOption.get.statement1.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
     assert("myVar2" == ifStmt.condition.content.toOption.get.statement2.get.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
@@ -124,7 +127,7 @@ class BuildHelperIfStatementTest extends AnyFunSuite {
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val func = BuildHelperBlock.build(parser.helperBlock()).funcs.get.head
+    val func = BuildHelperBlock.build(fakeContext, parser.helperBlock()).funcs.get.head
     val ifStmt = func.block.content.get.head.asInstanceOf[HelperIf]
     assert("myVar" == ifStmt.condition.content.toOption.get.statement1.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
     assert("myVar2" == ifStmt.condition.content.toOption.get.statement2.get.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
@@ -142,7 +145,7 @@ class BuildHelperIfStatementTest extends AnyFunSuite {
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val func = BuildHelperBlock.build(parser.helperBlock()).funcs.get.head
+    val func = BuildHelperBlock.build(fakeContext, parser.helperBlock()).funcs.get.head
     val ifStmt = func.block.content.get.head.asInstanceOf[HelperIf]
     assert("myVar" == ifStmt.condition.content.toOption.get.statement1.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
     assert("myVar2" == ifStmt.condition.content.toOption.get.statement2.get.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
@@ -160,7 +163,7 @@ class BuildHelperIfStatementTest extends AnyFunSuite {
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val func = BuildHelperBlock.build(parser.helperBlock()).funcs.get.head
+    val func = BuildHelperBlock.build(fakeContext, parser.helperBlock()).funcs.get.head
     val ifStmt = func.block.content.get.head.asInstanceOf[HelperIf]
     val cond1 = ifStmt.condition.content.toOption.get
     val cond2 = cond1.nextBlock.get
@@ -183,7 +186,7 @@ class BuildHelperIfStatementTest extends AnyFunSuite {
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val func = BuildHelperBlock.build(parser.helperBlock()).funcs.get.head
+    val func = BuildHelperBlock.build(fakeContext, parser.helperBlock()).funcs.get.head
     val ifStmt = func.block.content.get.head.asInstanceOf[HelperIf]
     val cond1 = ifStmt.condition.content.toOption.get
     val cond2 = cond1.nextBlock.get
@@ -212,7 +215,7 @@ class BuildHelperIfStatementTest extends AnyFunSuite {
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val func = BuildHelperBlock.build(parser.helperBlock()).funcs.get.head
+    val func = BuildHelperBlock.build(fakeContext, parser.helperBlock()).funcs.get.head
     val ifStmt = func.block.content.get.head.asInstanceOf[HelperIf]
     val cond1 = ifStmt.condition.content
     val cond2 = ifStmt.condition.nextBlock.get
@@ -236,7 +239,7 @@ class BuildHelperIfStatementTest extends AnyFunSuite {
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val func = BuildHelperBlock.build(parser.helperBlock()).funcs.get.head
+    val func = BuildHelperBlock.build(fakeContext, parser.helperBlock()).funcs.get.head
     val ifStmt = func.block.content.get.head.asInstanceOf[HelperIf]
     val cond1 = ifStmt.condition.content
     assert("myVar" == cond1.toOption.get.statement1.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
@@ -259,7 +262,7 @@ class BuildHelperIfStatementTest extends AnyFunSuite {
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val func = BuildHelperBlock.build(parser.helperBlock()).funcs.get.head
+    val func = BuildHelperBlock.build(fakeContext, parser.helperBlock()).funcs.get.head
     val ifStmt = func.block.content.get.head.asInstanceOf[HelperIf]
     val block1 = ifStmt.condition.content.left.toOption.get
     val block2 = block1.content.toOption.get

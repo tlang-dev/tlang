@@ -6,11 +6,14 @@ import dev.tlang.tlang.ast.helper.{ForType, HelperFor}
 import dev.tlang.tlang.ast.common.call.{CallObject, CallVarObject}
 import dev.tlang.tlang.ast.common.value.{TLangLong, TLangString}
 import dev.tlang.tlang.ast.helper.{ForType, HelperFor}
+import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.{TLangLexer, TLangParser}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
 
 class BuildHelperForStatementTest extends AnyFunSuite {
+
+  val fakeContext: ContextResource = ContextResource("", "", "", "")
 
   test("For 1 to 10") {
     val lexer = new TLangLexer(CharStreams.fromString(
@@ -24,7 +27,7 @@ class BuildHelperForStatementTest extends AnyFunSuite {
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val func = BuildHelperBlock.build(parser.helperBlock()).funcs.get.head
+    val func = BuildHelperBlock.build(fakeContext, parser.helperBlock()).funcs.get.head
     val forStmt = func.block.content.get.head.asInstanceOf[HelperFor]
     assert("i" == forStmt.variable)
     assert(1 == forStmt.start.get.asInstanceOf[TLangLong].getValue)
@@ -44,7 +47,7 @@ class BuildHelperForStatementTest extends AnyFunSuite {
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val func = BuildHelperBlock.build(parser.helperBlock()).funcs.get.head
+    val func = BuildHelperBlock.build(fakeContext, parser.helperBlock()).funcs.get.head
     val forStmt = func.block.content.get.head.asInstanceOf[HelperFor]
     assert("i" == forStmt.variable)
     assert(0 == forStmt.start.get.asInstanceOf[TLangLong].getValue)
@@ -64,7 +67,7 @@ class BuildHelperForStatementTest extends AnyFunSuite {
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val func = BuildHelperBlock.build(parser.helperBlock()).funcs.get.head
+    val func = BuildHelperBlock.build(fakeContext, parser.helperBlock()).funcs.get.head
     val forStmt = func.block.content.get.head.asInstanceOf[HelperFor]
     assert("i" == forStmt.variable)
     assert(forStmt.start.isEmpty)

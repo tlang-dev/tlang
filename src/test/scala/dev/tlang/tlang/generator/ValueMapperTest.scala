@@ -15,9 +15,9 @@ import scala.collection.mutable
 class ValueMapperTest extends AnyFunSuite {
 
   test("Replace String") {
-    val values: mutable.Map[String, Value[_]] = mutable.Map("one" -> new TLangString("This is the replacement"))
+    val values: mutable.Map[String, Value[_]] = mutable.Map("one" -> new TLangString(None, "This is the replacement"))
     val context = Context(List(Scope(values, mutable.Map(), mutable.Map())))
-    val res = ValueMapper.mapID(TmplInterpretedID(call = CallObject(List(CallVarObject("one")))), context)
+    val res = ValueMapper.mapID(TmplInterpretedID(None, call = CallObject(None,List(CallVarObject(None, "one")))), context)
     assert("This is the replacement" == res.id)
   }
 

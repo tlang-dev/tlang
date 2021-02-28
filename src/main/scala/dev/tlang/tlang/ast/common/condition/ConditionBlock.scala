@@ -18,4 +18,5 @@ case class ConditionBlock(context: Option[ContextContent],content: Either[Condit
 
 object ConditionBlock extends TLangType {
   override def getType: String = getClass.getName
+
 }

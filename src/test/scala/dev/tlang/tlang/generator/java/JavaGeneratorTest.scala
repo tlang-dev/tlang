@@ -8,11 +8,14 @@ import dev.tlang.tlang.ast.tmpl.func.{TmplFunc, TmplFuncCurry}
 import dev.tlang.tlang.ast.tmpl.loop.{TmplDoWhile, TmplFor, TmplWhile}
 import dev.tlang.tlang.ast.tmpl.primitive.{TmplLongValue, TmplStringValue}
 import dev.tlang.tlang.astbuilder.BuildTmplBlock
+import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.{TLangLexer, TLangParser}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
 
 class JavaGeneratorTest extends AnyFunSuite {
+
+  val fakeContext: ContextResource = ContextResource("", "", "", "")
 
   test("Package") {
     val lexer = new TLangLexer(CharStreams.fromString(
@@ -21,7 +24,7 @@ class JavaGeneratorTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val impl = BuildTmplBlock.build(parser.tmplBlock())
+    val impl = BuildTmplBlock.build(fakeContext, parser.tmplBlock())
     assert(new JavaGenerator().generate(impl).contains("package my.package;"))
   }
 
@@ -33,27 +36,27 @@ class JavaGeneratorTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val impl = BuildTmplBlock.build(parser.tmplBlock())
+    val impl = BuildTmplBlock.build(fakeContext, parser.tmplBlock())
     assert(new JavaGenerator().generate(impl).contains("import my.package1;"))
     assert(new JavaGenerator().generate(impl).contains("import my.package2;"))
   }
 
   test("Simple class") {
-    val impl = TmplImpl(None, None, TmplStringID("MyClass"), None, None)
+    val impl = TmplImpl(None, None, None, TmplStringID(None, "MyClass"), None, None)
     val res = JavaGenerator.genImpl(impl)
     assert(res.contains("public class MyClass {"))
   }
 
   test("Simple interface") {
-    val impl = TmplImpl(None, Some(TmplProp(List("public", "interface"))), TmplStringID("MyInterface"), None, None)
+    val impl = TmplImpl(None, None, Some(TmplProp(None, List("public", "interface"))), TmplStringID(None, "MyInterface"), None, None)
     val res = JavaGenerator.genContent(impl)
     assert(res.contains("public interface MyInterface {"))
   }
 
   test("Annotation before impl") {
-    val impl = TmplImpl(Some(List(
-      TmplAnnotation("MyAnnot1", None),
-      TmplAnnotation("MyAnnot2", Some(List(TmplAnnotationParam("param1", TmplStringValue(TmplStringID("val1"))), TmplAnnotationParam("param2", TmplStringValue(TmplStringID("val2")))))))), None, TmplStringID("MyClass"), None, None)
+    val impl = TmplImpl(None, Some(List(
+      TmplAnnotation(None, "MyAnnot1", None),
+      TmplAnnotation(None, "MyAnnot2", Some(List(TmplAnnotationParam(None, "param1", TmplStringValue(None, TmplStringID(None, "val1"))), TmplAnnotationParam(None, "param2", TmplStringValue(None,TmplStringID(None,"val2")))))))), None, TmplStringID(None, "MyClass"), None, None)
     val res = JavaGenerator.genImpl(impl)
     assert(res.contains("@MyAnnot1\n" +
       "@MyAnnot2(param1 = \"val1\", param2 = \"val2\")\n" +
@@ -61,9 +64,9 @@ class JavaGeneratorTest extends AnyFunSuite {
   }
 
   test("Annotation before func") {
-    val impl = TmplFunc(Some(List(
-      TmplAnnotation("MyAnnot1", None),
-      TmplAnnotation("MyAnnot2", Some(List(TmplAnnotationParam("param1", TmplStringValue(TmplStringID("val1"))), TmplAnnotationParam("param2", TmplStringValue(TmplStringID("val2")))))))), None, TmplStringID("myFunc"), None, Some(TmplExprBlock(List())), None)
+    val impl = TmplFunc(None, Some(List(
+      TmplAnnotation(None, "MyAnnot1", None),
+      TmplAnnotation(None, "MyAnnot2", Some(List(TmplAnnotationParam(None, "param1", TmplStringValue(None, TmplStringID(None, "val1"))), TmplAnnotationParam(None, "param2", TmplStringValue(None, TmplStringID(None, "val2")))))))), None, TmplStringID(None, "myFunc"), None, Some(TmplExprBlock(None, List())), None)
     val res = JavaGenerator.genExpression(impl)
     assert(res.contains("@MyAnnot1\n" +
       "@MyAnnot2(param1 = \"val1\", param2 = \"val2\")\n" +
@@ -71,14 +74,14 @@ class JavaGeneratorTest extends AnyFunSuite {
   }
 
   test("New variable in TmplBlock") {
-    val block = TmplBlock("test", "java", None, None, None, Some(List(TmplVar(None, Some(TmplProp(List("private", "final"))), TmplStringID("myVar"), TmplType(TmplStringID("List"), Some(TmplGeneric(List(TmplType(TmplStringID("String"), None, isArray = true))))), Some(TmplLongValue(5))))))
+    val block = TmplBlock(None, "test", "java", None, None, None, Some(List(TmplVar(None, Some(TmplProp(None, List("private", "final"))), TmplStringID(None, "myVar"), TmplType(None, TmplStringID(None, "List"), Some(TmplGeneric(None, List(TmplType(None, TmplStringID(None, "String"), None, isArray = true))))), Some(TmplLongValue(None,5))))))
     val res = new JavaGenerator().generate(block)
     assert(res.contains("private final List<String[]> myVar = 5;"))
   }
 
   test("Func with parameters and returns") {
-    val content = TmplFunc(None, None, TmplStringID("myFunc"), Some(List(TmplFuncCurry(Some(List(TmplParam(TmplStringID("myDouble"), TmplType(TmplStringID("Double"))), TmplParam(TmplStringID("myString"), TmplType(TmplStringID("String")))))))),
-      Some(TmplExprBlock(List(TmplCallObj(List(TmplCallVar(TmplStringID("myVar"))))))), Some(List(TmplType(TmplStringID("boolean")))))
+    val content = TmplFunc(None, None, TmplStringID(None, "myFunc"), Some(List(TmplFuncCurry(None, Some(List(TmplParam(None, TmplStringID(None, "myDouble"), TmplType(None, TmplStringID(None, "Double"))), TmplParam(None, TmplStringID(None, "myString"), TmplType(None, TmplStringID(None, "String")))))))),
+      Some(TmplExprBlock(None, List(TmplCallObj(None, List(TmplCallVar(None, TmplStringID(None, "myVar"))))))), Some(List(TmplType(None, TmplStringID(None, "boolean")))))
     val res = JavaGenerator.genContent(content)
     assert(res.contains("public boolean myFunc(Double myDouble, String myString) {\n" +
       "myVar;\n" +
@@ -86,64 +89,64 @@ class JavaGeneratorTest extends AnyFunSuite {
   }
 
   test("If with one expression") {
-    val cond = TmplConditionBlock(Right(TmplCondition(TmplLongValue(1), Some(ConditionType.EQUAL), Some(TmplLongValue(1)))))
-    val ifStmt = TmplIf(cond, TmplCallObj(List(TmplCallVar(TmplStringID("myVar")))), None)
+    val cond = TmplConditionBlock(None, Right(TmplCondition(None, TmplLongValue(None, 1), Some(ConditionType.EQUAL), Some(TmplLongValue(None, 1)))))
+    val ifStmt = TmplIf(None, cond, TmplCallObj(None, List(TmplCallVar(None, TmplStringID(None, "myVar")))), None)
     val res = JavaGenerator.genExpression(ifStmt, endOfStatement = true)
     assert(res.contains("if(1 == 1) myVar;"))
   }
 
   test("If with expression and else expression") {
-    val cond = TmplConditionBlock(Right(TmplCondition(TmplLongValue(1), Some(ConditionType.LESSER), Some(TmplLongValue(1)))))
-    val ifStmt = TmplIf(cond, TmplCallObj(List(TmplCallVar(TmplStringID("myVar")))), Some(Left(TmplCallObj(List(TmplCallFunc(TmplStringID("myFunc"), None))))))
+    val cond = TmplConditionBlock(None, Right(TmplCondition(None, TmplLongValue(None, 1), Some(ConditionType.LESSER), Some(TmplLongValue(None, 1)))))
+    val ifStmt = TmplIf(None, cond, TmplCallObj(None, List(TmplCallVar(None, TmplStringID(None, "myVar")))), Some(Left(TmplCallObj(None, List(TmplCallFunc(None, TmplStringID(None, "myFunc"), None))))))
     val res = JavaGenerator.genExpression(ifStmt)
     assert(res.contains("if(1 < 1) myVar; else myFunc();"))
   }
 
   test("If with expression block and else block") {
-    val cond = TmplConditionBlock(Right(TmplCondition(TmplLongValue(1), Some(ConditionType.GREATER), Some(TmplLongValue(1)))))
-    val ifStmt = TmplIf(cond, TmplExprBlock(List(TmplCallObj(List(TmplCallVar(TmplStringID("myVar")))))), Some(Left(TmplExprBlock(List(TmplCallObj(List(TmplCallFunc(TmplStringID("myFunc"), None))))))))
+    val cond = TmplConditionBlock(None, Right(TmplCondition(None, TmplLongValue(None, 1), Some(ConditionType.GREATER), Some(TmplLongValue(None, 1)))))
+    val ifStmt = TmplIf(None, cond, TmplExprBlock(None, List(TmplCallObj(None, List(TmplCallVar(None, TmplStringID(None, "myVar")))))), Some(Left(TmplExprBlock(None, List(TmplCallObj(None, List(TmplCallFunc(None, TmplStringID(None, "myFunc"), None))))))))
     val res = JavaGenerator.genExpression(ifStmt)
     assert(res.contains("if(1 > 1) {\nmyVar;\n} else {\nmyFunc();\n}"))
   }
 
   test("If with expression and else if expression") {
-    val cond = TmplConditionBlock(Right(TmplCondition(TmplLongValue(1), Some(ConditionType.GREATER_OR_EQUAL), Some(TmplLongValue(1)))))
-    val cond2 = TmplConditionBlock(Right(TmplCondition(TmplLongValue(1), Some(ConditionType.LESSER_OR_EQUAL), Some(TmplLongValue(1)))))
-    val ifStmt = TmplIf(cond, TmplCallObj(List(TmplCallVar(TmplStringID("myVar")))), Some(Right(TmplIf(cond2, TmplCallObj(List(TmplCallFunc(TmplStringID("myFunc"), None))), None))))
+    val cond = TmplConditionBlock(None, Right(TmplCondition(None, TmplLongValue(None, 1), Some(ConditionType.GREATER_OR_EQUAL), Some(TmplLongValue(None, 1)))))
+    val cond2 = TmplConditionBlock(None, Right(TmplCondition(None, TmplLongValue(None, 1), Some(ConditionType.LESSER_OR_EQUAL), Some(TmplLongValue(None, 1)))))
+    val ifStmt = TmplIf(None, cond, TmplCallObj(None, List(TmplCallVar(None, TmplStringID(None, "myVar")))), Some(Right(TmplIf(None, cond2, TmplCallObj(None, List(TmplCallFunc(None, TmplStringID(None, "myFunc"), None))), None))))
     val res = JavaGenerator.genExpression(ifStmt)
     assert(res.contains("if(1 >= 1) myVar; else if(1 <= 1) myFunc();"))
   }
 
   test("While") {
-    val cond = TmplConditionBlock(Right(TmplCondition(TmplLongValue(1), Some(ConditionType.NOT_EQUAL), Some(TmplLongValue(1)))))
-    val whileLoop = TmplWhile(cond, TmplCallObj(List(TmplCallFunc(TmplStringID("myFunc"), None))))
+    val cond = TmplConditionBlock(None, Right(TmplCondition(None, TmplLongValue(None, 1), Some(ConditionType.NOT_EQUAL), Some(TmplLongValue(None, 1)))))
+    val whileLoop = TmplWhile(cond, TmplCallObj(None, List(TmplCallFunc(None, TmplStringID(None, "myFunc"), None))))
     val res = JavaGenerator.genExpression(whileLoop)
     assert("while(1 != 1) myFunc();\n" == res)
   }
 
   test("Do while") {
-    val cond = TmplConditionBlock(Right(TmplCondition(TmplLongValue(1), Some(ConditionType.NOT_EQUAL), Some(TmplLongValue(1)))))
-    val whileLoop = TmplDoWhile(TmplCallObj(List(TmplCallFunc(TmplStringID("myFunc"), None))), cond)
+    val cond = TmplConditionBlock(None, Right(TmplCondition(None, TmplLongValue(None, 1), Some(ConditionType.NOT_EQUAL), Some(TmplLongValue(None, 1)))))
+    val whileLoop = TmplDoWhile(None, TmplCallObj(None, List(TmplCallFunc(None, TmplStringID(None, "myFunc"), None))), cond)
     val res = JavaGenerator.genExpression(whileLoop)
     assert("do myFunc(); while(1 != 1);\n" == res)
   }
 
   test("For") {
-    val forLoop = TmplFor(TmplExprBlock(List(TmplCallObj(List(TmplCallFunc(TmplStringID("myFunc"), None))))))
+    val forLoop = TmplFor(TmplExprBlock(None, List(TmplCallObj(None, List(TmplCallFunc(None, TmplStringID(None, "myFunc"), None))))))
     val res = JavaGenerator.genExpression(forLoop)
     assert("for() {\nmyFunc();\n}\n" == res)
   }
 
   test("Condition block with OR") {
-    val cond = TmplConditionBlock(Left(TmplConditionBlock(Right(TmplCondition(TmplLongValue(1), Some(ConditionType.NOT_EQUAL), Some(TmplLongValue(1)))))))
-    val cond2 = TmplConditionBlock(Right(TmplCondition(TmplLongValue(1), Some(ConditionType.EQUAL), Some(TmplLongValue(1)))), Some(ConditionLink.OR), Some(cond))
+    val cond = TmplConditionBlock(None, Left(TmplConditionBlock(None, Right(TmplCondition(None, TmplLongValue(None, 1), Some(ConditionType.NOT_EQUAL), Some(TmplLongValue(None, 1)))))))
+    val cond2 = TmplConditionBlock(None, Right(TmplCondition(None, TmplLongValue(None, 1), Some(ConditionType.EQUAL), Some(TmplLongValue(None, 1)))), Some(ConditionLink.OR), Some(cond))
     val res = JavaGenerator.genValueType(cond2)
     assert("1 == 1 || (1 != 1)" == res)
   }
 
   test("Condition block with AND") {
-    val cond = TmplConditionBlock(Left(TmplConditionBlock(Right(TmplCondition(TmplLongValue(1), Some(ConditionType.NOT_EQUAL), Some(TmplLongValue(1)))))))
-    val cond2 = TmplConditionBlock(Right(TmplCondition(TmplLongValue(1), Some(ConditionType.EQUAL), Some(TmplLongValue(1)))), Some(ConditionLink.AND), Some(cond))
+    val cond = TmplConditionBlock(None, Left(TmplConditionBlock(None, Right(TmplCondition(None, TmplLongValue(None,1), Some(ConditionType.NOT_EQUAL), Some(TmplLongValue(None, 1)))))))
+    val cond2 = TmplConditionBlock(None, Right(TmplCondition(None, TmplLongValue(None, 1), Some(ConditionType.EQUAL), Some(TmplLongValue(None, 1)))), Some(ConditionLink.AND), Some(cond))
     val res = JavaGenerator.genValueType(cond2)
     assert("1 == 1 && (1 != 1)" == res)
   }

@@ -2,11 +2,14 @@ package dev.tlang.tlang.astbuilder
 
 import dev.tlang.tlang.ast.common.call.{CallArrayObject, CallObject, CallVarObject}
 import dev.tlang.tlang.ast.common.value.{TLangLong, TLangString}
+import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.{TLangLexer, TLangParser}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
 
 class BuildHelperStatementTest extends AnyFunSuite {
+
+  val fakeContext: ContextResource = ContextResource("", "", "", "")
 
   test("Call simple var") {
     val lexer = new TLangLexer(CharStreams.fromString(
@@ -18,7 +21,7 @@ class BuildHelperStatementTest extends AnyFunSuite {
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val func = BuildHelperBlock.build(parser.helperBlock()).funcs.get.head
+    val func = BuildHelperBlock.build(fakeContext, parser.helperBlock()).funcs.get.head
     assert("myVar" == func.block.content.get.head.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
   }
 
@@ -34,7 +37,7 @@ class BuildHelperStatementTest extends AnyFunSuite {
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val func = BuildHelperBlock.build(parser.helperBlock()).funcs.get.head
+    val func = BuildHelperBlock.build(fakeContext, parser.helperBlock()).funcs.get.head
     val array1 = func.block.content.get.head.asInstanceOf[CallObject].statements.head.asInstanceOf[CallArrayObject]
     val array2 = func.block.content.get(1).asInstanceOf[CallObject].statements.head.asInstanceOf[CallArrayObject]
     val array3 = func.block.content.get.last.asInstanceOf[CallObject].statements.head.asInstanceOf[CallArrayObject]
@@ -56,7 +59,7 @@ class BuildHelperStatementTest extends AnyFunSuite {
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val func = BuildHelperBlock.build(parser.helperBlock()).funcs.get.head
+    val func = BuildHelperBlock.build(fakeContext, parser.helperBlock()).funcs.get.head
     assert("myValue" == func.block.content.get.head.asInstanceOf[TLangString].getValue)
   }
 
@@ -70,7 +73,7 @@ class BuildHelperStatementTest extends AnyFunSuite {
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val func = BuildHelperBlock.build(parser.helperBlock()).funcs.get.head
+    val func = BuildHelperBlock.build(fakeContext, parser.helperBlock()).funcs.get.head
     assert(1337 == func.block.content.get.head.asInstanceOf[TLangLong].getValue)
   }
 
