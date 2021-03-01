@@ -12,22 +12,22 @@ class ExecCallRefFuncTest extends AnyFunSuite {
   test("Call func") {
     var res = ""
 
-    val calledFunc = HelperFunc("myFunc", Some(List(HelperCurrying(List(HelperParam(Some("param1"), HelperObjType(TLangString.getType)))))), None, HelperContent(Some(List(
+    val calledFunc = HelperFunc(None, "myFunc", Some(List(HelperCurrying(None, List(HelperParam(None, Some("param1"), HelperObjType(None, TLangString.getType)))))), None, HelperContent(None, Some(List(
       HelperInternalFunc((context: Context) => {
         res += context.scopes.head.variables("param1").asInstanceOf[TLangString].getValue
         Right(None)
       })
     ))))
 
-    val call = CallRefFuncObject(None,Some(List(CallFuncParam(Some(List(SetAttribute(value = new TLangString("myValue"))))))), Some(Left(calledFunc)))
+    val call = CallRefFuncObject(None, None, Some(List(CallFuncParam(None, Some(List(SetAttribute(None, value = new TLangString(None, "myValue"))))))), Some(Left(calledFunc)))
 
     ExecCallRefFunc.run(call, Context())
     assert("myValue" == res)
   }
 
   test("Call tmpl") {
-    val calledTmpl = TmplBlock("myTmpl", "scala", Some(List(HelperParam(Some("param1"), HelperObjType(TLangString.getType)))), Some(new TmplPkg(List(TmplStringID("myPackage")))))
-    val call = CallRefFuncObject(None, Some(List(CallFuncParam(Some(List(SetAttribute(value = new TLangString("myValue"))))))), Some(Right(calledTmpl)))
+    val calledTmpl = TmplBlock(None, "myTmpl", "scala", Some(List(HelperParam(None, Some("param1"), HelperObjType(None, TLangString.getType)))), Some(new TmplPkg(List(TmplStringID(None, "myPackage")))))
+    val call = CallRefFuncObject(None, None, Some(List(CallFuncParam(None, Some(List(SetAttribute(None, value = new TLangString(None, "myValue"))))))), Some(Right(calledTmpl)))
 
     val res = ExecCallRefFunc.run(call, Context()).toOption.get.get.head.asInstanceOf[TmplBlockAsValue]
     assert("myPackage" == res.block.pkg.get.parts.head.asInstanceOf[TmplStringID].id)

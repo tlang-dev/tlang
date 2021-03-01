@@ -56,7 +56,7 @@ class JavaGeneratorTest extends AnyFunSuite {
   test("Annotation before impl") {
     val impl = TmplImpl(None, Some(List(
       TmplAnnotation(None, "MyAnnot1", None),
-      TmplAnnotation(None, "MyAnnot2", Some(List(TmplAnnotationParam(None, "param1", TmplStringValue(None, TmplStringID(None, "val1"))), TmplAnnotationParam(None, "param2", TmplStringValue(None,TmplStringID(None,"val2")))))))), None, TmplStringID(None, "MyClass"), None, None)
+      TmplAnnotation(None, "MyAnnot2", Some(List(TmplAnnotationParam(None, "param1", TmplStringValue(None, TmplStringID(None, "val1"))), TmplAnnotationParam(None, "param2", TmplStringValue(None, TmplStringID(None, "val2")))))))), None, TmplStringID(None, "MyClass"), None, None)
     val res = JavaGenerator.genImpl(impl)
     assert(res.contains("@MyAnnot1\n" +
       "@MyAnnot2(param1 = \"val1\", param2 = \"val2\")\n" +
@@ -74,13 +74,13 @@ class JavaGeneratorTest extends AnyFunSuite {
   }
 
   test("New variable in TmplBlock") {
-    val block = TmplBlock(None, "test", "java", None, None, None, Some(List(TmplVar(None, Some(TmplProp(None, List("private", "final"))), TmplStringID(None, "myVar"), TmplType(None, TmplStringID(None, "List"), Some(TmplGeneric(None, List(TmplType(None, TmplStringID(None, "String"), None, isArray = true))))), Some(TmplLongValue(None,5))))))
+    val block = TmplBlock(None, "test", "java", None, None, None, Some(List(TmplVar(None, None, Some(TmplProp(None, List("private", "final"))), TmplStringID(None, "myVar"), TmplType(None, TmplStringID(None, "List"), Some(TmplGeneric(None, List(TmplType(None, TmplStringID(None, "String"), None, isArray = true))))), Some(TmplLongValue(None, 5))))))
     val res = new JavaGenerator().generate(block)
     assert(res.contains("private final List<String[]> myVar = 5;"))
   }
 
   test("Func with parameters and returns") {
-    val content = TmplFunc(None, None, TmplStringID(None, "myFunc"), Some(List(TmplFuncCurry(None, Some(List(TmplParam(None, TmplStringID(None, "myDouble"), TmplType(None, TmplStringID(None, "Double"))), TmplParam(None, TmplStringID(None, "myString"), TmplType(None, TmplStringID(None, "String")))))))),
+    val content = TmplFunc(None, None, None, TmplStringID(None, "myFunc"), Some(List(TmplFuncCurry(None, Some(List(TmplParam(None, TmplStringID(None, "myDouble"), TmplType(None, TmplStringID(None, "Double"))), TmplParam(None, TmplStringID(None, "myString"), TmplType(None, TmplStringID(None, "String")))))))),
       Some(TmplExprBlock(None, List(TmplCallObj(None, List(TmplCallVar(None, TmplStringID(None, "myVar"))))))), Some(List(TmplType(None, TmplStringID(None, "boolean")))))
     val res = JavaGenerator.genContent(content)
     assert(res.contains("public boolean myFunc(Double myDouble, String myString) {\n" +
@@ -119,7 +119,7 @@ class JavaGeneratorTest extends AnyFunSuite {
 
   test("While") {
     val cond = TmplConditionBlock(None, Right(TmplCondition(None, TmplLongValue(None, 1), Some(ConditionType.NOT_EQUAL), Some(TmplLongValue(None, 1)))))
-    val whileLoop = TmplWhile(cond, TmplCallObj(None, List(TmplCallFunc(None, TmplStringID(None, "myFunc"), None))))
+    val whileLoop = TmplWhile(None, cond, TmplCallObj(None, List(TmplCallFunc(None, TmplStringID(None, "myFunc"), None))))
     val res = JavaGenerator.genExpression(whileLoop)
     assert("while(1 != 1) myFunc();\n" == res)
   }
@@ -145,7 +145,7 @@ class JavaGeneratorTest extends AnyFunSuite {
   }
 
   test("Condition block with AND") {
-    val cond = TmplConditionBlock(None, Left(TmplConditionBlock(None, Right(TmplCondition(None, TmplLongValue(None,1), Some(ConditionType.NOT_EQUAL), Some(TmplLongValue(None, 1)))))))
+    val cond = TmplConditionBlock(None, Left(TmplConditionBlock(None, Right(TmplCondition(None, TmplLongValue(None, 1), Some(ConditionType.NOT_EQUAL), Some(TmplLongValue(None, 1)))))))
     val cond2 = TmplConditionBlock(None, Right(TmplCondition(None, TmplLongValue(None, 1), Some(ConditionType.EQUAL), Some(TmplLongValue(None, 1)))), Some(ConditionLink.AND), Some(cond))
     val res = JavaGenerator.genValueType(cond2)
     assert("1 == 1 && (1 != 1)" == res)
