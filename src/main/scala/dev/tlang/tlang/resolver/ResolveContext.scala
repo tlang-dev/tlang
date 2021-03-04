@@ -14,7 +14,8 @@ import scala.collection.mutable.ListBuffer
 
 object ResolveContext {
 
-  def resolveContext(module: Module): Either[ResolverError, Unit] = {
+  def resolveContext(module: Module): Either[List[ResolverError], Unit] = {
+    val errors = ListBuffer.empty[ResolverError]
     module.extResources.foreach(_.foreach(module => resolveContext(module._2)))
     module.resources.foreach(resource => {
       val ast = resource._2.ast
@@ -24,13 +25,14 @@ object ResolveContext {
       }
 
       ast.body.foreach {
-        case HelperBlock(_, funcs) => funcs.foreach(ResolveFunc.resolveFuncs(_, module, uses, resource._2))
-        case ModelBlock(_, content) => resolveModel(content, module, uses, resource._2)
-        case block: TmplBlock => ResolveTmpl.resolveTmpl(block, module, uses, resource._2)
+        case HelperBlock(_, funcs) => funcs.foreach(func => extractErrors(errors, BrowseFunc.resolveFuncs(func, module, uses, resource._2)))
+        case ModelBlock(_, content) => extractErrors(errors, resolveModel(content, module, uses, resource._2))
+        case block: TmplBlock => extractErrors(errors, ResolveTmpl.resolveTmpl(block, module, uses, resource._2))
         case _ => Right(())
       }
     })
-    Right(())
+    if (errors.nonEmpty) Left(errors.toList)
+    else Right(())
   }
 
 
@@ -80,7 +82,7 @@ object ResolveContext {
             case None =>
           }
         }
-        case tmpl: TmplBlock => if (tmpl.name == name) elem = Some(TmplBlockAsValue(tmpl, Context()))
+        case tmpl: TmplBlock => if (tmpl.name == name) elem = Some(TmplBlockAsValue(tmpl.context, tmpl, Context()))
       }
       if (errors.nonEmpty) Left(errors.toList)
       else Right(elem)
@@ -108,7 +110,7 @@ object ResolveContext {
       case Left(error) => Left(error)
       case Right(value) => if (value.isDefined) {
         addValueInScope(lastName, value.get, previousNames, scope)
-      } else Left(List(ResourceNotFound("Value is empty")))
+      } else Left(List(ResourceNotFound(value.get.getContext, if (previousNames.nonEmpty) BuildModuleTree.createPkg(previousNames.mkString("/"), lastName) else lastName)))
     }
   }
 

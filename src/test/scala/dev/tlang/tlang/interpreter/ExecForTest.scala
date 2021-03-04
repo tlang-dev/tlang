@@ -59,7 +59,7 @@ class ExecForTest extends AnyFunSuite {
         array.addOne(context.scopes.last.variables("elem").asInstanceOf[TLangString].getValue)
         Right(None)
       })))))
-    val scope = Scope(variables = mutable.Map("myArray" -> ArrayValue(Some(List(
+    val scope = Scope(variables = mutable.Map("myArray" -> ArrayValue(None, Some(List(
       SimpleAttribute(None, None, None, new TLangString(None, "One")),
       SimpleAttribute(None, None, None, new TLangString(None, "Two")),
       SimpleAttribute(None, None, None, new TLangString(None, "Three"))

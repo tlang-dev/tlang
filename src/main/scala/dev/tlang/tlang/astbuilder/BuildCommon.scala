@@ -39,7 +39,7 @@ object BuildCommon {
       case string@_ if string.stringValue() != null => new TLangString(addContext(resource, string.stringValue()), AstBuilderUtils.extraString(string.stringValue().value.getText))
       case number@_ if number.numberValue() != null =>
         val numbVal = number.numberValue().value.getText
-        if (numbVal.contains(".")) new TLangDouble(numbVal.toDouble) else new TLangLong(addContext(resource, number.numberValue()), numbVal.toLong)
+        if (numbVal.contains(".")) new TLangDouble(addContext(resource, number.numberValue()), numbVal.toDouble) else new TLangLong(addContext(resource, number.numberValue()), numbVal.toLong)
       case text@_ if text.textValue() != null => new TLangString(addContext(resource, text.textValue()), AstBuilderUtils.extraText(text.textValue().value.getText))
       case entity@_ if entity.entityValue() != null => buildEntityValue(resource, `type`, entity.entityValue())
       case bool@_ if bool.boolValue() != null => new TLangBool(addContext(resource, bool.boolValue()), bool.boolValue().value.getText == "true")
@@ -48,7 +48,7 @@ object BuildCommon {
   }
 
   def buildArray(resource: ContextResource, array: ArrayValueContext): ArrayValue = {
-    ArrayValue(if (array.params != null) buildSimpleAttributes(resource, array.params.asScala.toList) else None)
+    ArrayValue(addContext(resource, array), if (array.params != null) buildSimpleAttributes(resource, array.params.asScala.toList) else None)
   }
 
   def buildSimpleValueTypes(resource: ContextResource, types: List[SimpleValueTypeContext]): Option[List[SimpleValueStatement[_]]] = {

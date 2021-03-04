@@ -14,7 +14,7 @@ class TmplForTest extends AnyFunSuite {
   test("Simple for") {
     var res = ""
 
-    val array = ArrayValue(Some(List(SimpleAttribute(None, value = new TLangString(None, "val1")),
+    val array = ArrayValue(None, Some(List(SimpleAttribute(None, value = new TLangString(None, "val1")),
       SimpleAttribute(None, value = new TLangString(None, "val2")),
       SimpleAttribute(None, value = new TLangString(None, "val3")))))
 

@@ -1,9 +1,9 @@
 package dev.tlang.tlang.ast.common.value
 
-import dev.tlang.tlang.interpreter.Value
+import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
 
-class TLangDouble(value: Double) extends PrimitiveValue[Double] {
+class TLangDouble(context: Option[ContextContent], value: Double) extends PrimitiveValue[Double] {
   override def getValue: Double = value
 
   override def getType: String = TLangDouble.getType
@@ -12,6 +12,7 @@ class TLangDouble(value: Double) extends PrimitiveValue[Double] {
 
   override def toString: String = getValue.toString
 
+  override def getContext: Option[ContextContent] = context
 }
 
 object TLangDouble extends TLangType {

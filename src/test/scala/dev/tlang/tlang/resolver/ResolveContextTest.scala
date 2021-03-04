@@ -122,7 +122,7 @@ class ResolveContextTest extends AnyFunSuite {
     val caller = CallObject(None, List(CallVarObject(None, "MyFile"), CallVarObject(None, "myEntity")))
     val scope = Scope()
     val func = HelperFunc(None, "aFunc", None, None, HelperContent(None, Some(List(caller))), scope)
-    ResolveFunc.resolveFuncs(List(func), module, uses, module.resources.head._2)
+    BrowseFunc.resolveFuncs(List(func), module, uses, module.resources.head._2)
     assert("MyFile/myEntity" == scope.variables.head._1)
     assert("MyEntity" == scope.variables.head._2.getType)
   }

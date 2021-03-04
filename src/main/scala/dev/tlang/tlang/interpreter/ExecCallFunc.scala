@@ -21,7 +21,7 @@ object ExecCallFunc extends Executor {
         case Some(tmpl) =>
           val tmplCopy = tmpl.deepCopy()
           val newContext = manageTmplParameters(caller, tmplCopy, context)
-          Right(Some(List(TmplBlockAsValue(tmplCopy, Context(newContext.scopes :+ tmplCopy.scope)))))
+          Right(Some(List(TmplBlockAsValue(tmplCopy.getContext, tmplCopy, Context(newContext.scopes :+ tmplCopy.scope)))))
         case None => //Left(CallableNotFound(caller.name.get))
           ContextUtils.findRefFunc(context, caller.name.get) match {
             case Some(refFunc) =>

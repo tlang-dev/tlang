@@ -1,6 +1,6 @@
 package dev.tlang.tlang.resolver
 
-object ResolveSetEntity {
+object BrowseSetEntity {
 
 
 }

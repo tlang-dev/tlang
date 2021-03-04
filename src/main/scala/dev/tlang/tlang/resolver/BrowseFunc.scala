@@ -6,7 +6,7 @@ import dev.tlang.tlang.loader.{Module, Resource}
 
 import scala.collection.mutable.ListBuffer
 
-object ResolveFunc {
+object BrowseFunc {
 
   def resolveFuncs(funcs: List[HelperFunc], module: Module, uses: List[DomainUse], currentResource: Resource): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]

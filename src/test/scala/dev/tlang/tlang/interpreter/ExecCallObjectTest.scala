@@ -20,7 +20,7 @@ class ExecCallObjectTest extends AnyFunSuite {
   }
 
   test("Get variable from array by index") {
-    val array = ArrayValue(Some(List(
+    val array = ArrayValue(None, Some(List(
       SimpleAttribute(None, value = new TLangString(None, value = "value1")),
       SimpleAttribute(None, value = new TLangString(None, value = "value2")),
       SimpleAttribute(None, value = new TLangString(None, value = "value3"))
@@ -33,7 +33,7 @@ class ExecCallObjectTest extends AnyFunSuite {
   }
 
   test("Get variable from array by name") {
-    val array = ArrayValue(Some(List(
+    val array = ArrayValue(None, Some(List(
       SimpleAttribute(None, Some("myPosition1"), value = new TLangString(None, value = "value1")),
       SimpleAttribute(None, Some("myPosition2"), value = new TLangString(None, value = "value2")),
       SimpleAttribute(None, Some("myPosition3"), value = new TLangString(None, value = "value3"))
@@ -118,7 +118,7 @@ class ExecCallObjectTest extends AnyFunSuite {
   }
 
   test("Call array from entity") {
-    val array = ArrayValue(Some(List(
+    val array = ArrayValue(None, Some(List(
       SimpleAttribute(None, Some("myPosition1"), None, new TLangString(None, value = "value1")),
       SimpleAttribute(None, Some("myPosition2"), None, new TLangString(None, value = "value2")),
       SimpleAttribute(None, Some("myPosition3"), None, new TLangString(None, value = "value3"))

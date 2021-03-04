@@ -38,7 +38,7 @@ object FollowCallObject {
       uses.foreach(use => {
         if (use.parts.last == varObj.name) {
           ResolveUtils.findResource(use, module) match {
-            case None => errors.addOne(ResourceNotFound("Cannot find " + use.parts.mkString("/")))
+            case None => errors.addOne(ResourceNotFound(use.context, use.parts.mkString("/")))
             case Some(resource) =>
               extractErrors(errors, callNextLevel(resource, sameResource = false, List(use.parts.last), 1))
           }

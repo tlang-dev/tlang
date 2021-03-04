@@ -1,6 +1,8 @@
 package dev.tlang.tlang.interpreter
 
-trait Value[T] {
+import dev.tlang.tlang.astbuilder.context.AstContext
+
+trait Value[T] extends AstContext {
 
   def getValue: T
 
