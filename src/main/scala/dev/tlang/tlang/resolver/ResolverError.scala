@@ -26,3 +26,5 @@ object TypeError {
     ResolverError.genMessage(context) + "Actual type: " + actual + ", expected: " + expected
   }
 }
+
+case class DoesNotExist(context: Option[ContextContent], call: String) extends ResolverError("DoesNotExist", "'" + call + "' does not exist")

@@ -17,7 +17,7 @@ class ExecIfTest extends AnyFunSuite {
     val statement = HelperIf(None, ConditionBlock(None, Right(condition.Condition(None, CallObject(None, List(CallVarObject(None, "var1")))))), ifTrue = Some(HelperContent(None, Some(List(CallObject(None, List(CallVarObject(None, "var1"))))))))
     val res = ExecIf.run(statement, context).toOption.get
     assert(res.isDefined)
-    assert(res.get.head.asInstanceOf[TLangBool].getValue)
+    assert(res.get.head.asInstanceOf[TLangBool].getElement)
   }
 
   test("If with false boolean first statement") {
@@ -25,7 +25,7 @@ class ExecIfTest extends AnyFunSuite {
     val statement = HelperIf(None, ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var1")))))), ifFalse = Some(HelperContent(None, Some(List(CallObject(None, List(CallVarObject(None, "var1"))))))))
     val res = ExecIf.run(statement, context).toOption.get
     assert(res.isDefined)
-    assert(!res.get.head.asInstanceOf[TLangBool].getValue)
+    assert(!res.get.head.asInstanceOf[TLangBool].getElement)
   }
 
   test("If wrong type") {

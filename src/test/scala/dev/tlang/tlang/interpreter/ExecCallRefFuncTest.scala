@@ -14,7 +14,7 @@ class ExecCallRefFuncTest extends AnyFunSuite {
 
     val calledFunc = HelperFunc(None, "myFunc", Some(List(HelperCurrying(None, List(HelperParam(None, Some("param1"), HelperObjType(None, TLangString.getType)))))), None, HelperContent(None, Some(List(
       HelperInternalFunc((context: Context) => {
-        res += context.scopes.head.variables("param1").asInstanceOf[TLangString].getValue
+        res += context.scopes.head.variables("param1").asInstanceOf[TLangString].getElement
         Right(None)
       })
     ))))
@@ -31,7 +31,7 @@ class ExecCallRefFuncTest extends AnyFunSuite {
 
     val res = ExecCallRefFunc.run(call, Context()).toOption.get.get.head.asInstanceOf[TmplBlockAsValue]
     assert("myPackage" == res.block.pkg.get.parts.head.asInstanceOf[TmplStringID].id)
-    assert("myValue" == res.context.scopes.head.variables.head._2.asInstanceOf[TLangString].getValue)
+    assert("myValue" == res.context.scopes.head.variables.head._2.asInstanceOf[TLangString].getElement)
   }
 
 }

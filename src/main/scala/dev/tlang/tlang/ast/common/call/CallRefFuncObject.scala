@@ -7,7 +7,7 @@ import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
 import dev.tlang.tlang.interpreter.Value
 
 case class CallRefFuncObject(context: Option[ContextContent], name: Option[String], currying: Option[List[CallFuncParam]], var func: Option[Either[HelperFunc, TmplBlock]] = None) extends CallObjectType with Value[CallRefFuncObject] with AstContext {
-  override def getValue: CallRefFuncObject = this
+  override def getElement: CallRefFuncObject = this
 
   override def getType: String = CallRefFuncObject.getType
 

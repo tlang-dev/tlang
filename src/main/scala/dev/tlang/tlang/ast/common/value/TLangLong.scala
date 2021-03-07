@@ -4,13 +4,13 @@ import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
 import dev.tlang.tlang.interpreter.Value
 
 class TLangLong(context: Option[ContextContent], value: Long) extends PrimitiveValue[Long] with AstContext {
-  override def getValue: Long = value
+  override def getElement: Long = value
 
   override def getType: String = TLangLong.getType
 
-  override def compareTo(value: Value[Long]): Int = this.value.compareTo(value.getValue)
+  override def compareTo(value: Value[Long]): Int = this.value.compareTo(value.getElement)
 
-  override def toString: String = getValue.toString
+  override def toString: String = getElement.toString
 
   override def getContext: Option[ContextContent] = context
 }

@@ -9,7 +9,7 @@ object Terminal {
   def printlnFunc: HelperFunc = HelperFunc(None, "println", Some(List(HelperCurrying(None, List(HelperParam(None, Some("str"), HelperObjType(None, TLangString.getType)))))), None, HelperContent(None, Some(List(
     HelperInternalFunc((context: Context) => {
       ContextUtils.findVar(context, "str") match {
-        case Some(str) => if (str.getType == TLangString.getType) println(str.asInstanceOf[TLangString].getValue)
+        case Some(str) => if (str.getType == TLangString.getType) println(str.asInstanceOf[TLangString].getElement)
         case None =>
       }
       Right(None)

@@ -29,7 +29,7 @@ class ExecCallObjectTest extends AnyFunSuite {
     val statement = CallObject(None, List(CallArrayObject(None, "var1", new TLangLong(None, 1))))
     val res = ExecCallObject.run(statement, context).toOption.get.get
     assert(res.head.isInstanceOf[TLangString])
-    assert("value2".equals(res.head.asInstanceOf[TLangString].getValue))
+    assert("value2".equals(res.head.asInstanceOf[TLangString].getElement))
   }
 
   test("Get variable from array by name") {
@@ -42,7 +42,7 @@ class ExecCallObjectTest extends AnyFunSuite {
     val statement = CallObject(None, List(CallArrayObject(None, "var1", new TLangString(None, "myPosition2"))))
     val res = ExecCallObject.run(statement, context).toOption.get.get
     assert(res.head.isInstanceOf[TLangString])
-    assert("value2".equals(res.head.asInstanceOf[TLangString].getValue))
+    assert("value2".equals(res.head.asInstanceOf[TLangString].getElement))
   }
 
   test("Get variable from params in entity") {
@@ -55,7 +55,7 @@ class ExecCallObjectTest extends AnyFunSuite {
     val statement = CallObject(None, List(CallVarObject(None, "var1"), CallVarObject(None, "attr2")))
     val res = ExecCallObject.run(statement, context).toOption.get.get
     assert(res.head.isInstanceOf[TLangString])
-    assert("value2".equals(res.head.asInstanceOf[TLangString].getValue))
+    assert("value2".equals(res.head.asInstanceOf[TLangString].getElement))
   }
 
   test("Get variable from attrs in entity") {
@@ -68,7 +68,7 @@ class ExecCallObjectTest extends AnyFunSuite {
     val statement = CallObject(None, List(CallVarObject(None, "var1"), CallVarObject(None, "attr2")))
     val res = ExecCallObject.run(statement, context).toOption.get.get
     assert(res.head.isInstanceOf[TLangString])
-    assert("value2".equals(res.head.asInstanceOf[TLangString].getValue))
+    assert("value2".equals(res.head.asInstanceOf[TLangString].getElement))
   }
 
   test("Call function with one parameter") {
@@ -79,7 +79,7 @@ class ExecCallObjectTest extends AnyFunSuite {
     val statement = CallObject(None, List(CallFuncObject(None, Some("myFunc"), Some(List(CallFuncParam(None, Some(List(caller))))))))
     val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangString(None, "MyValue")), functions = mutable.Map("myFunc" -> funcDef))))
     val res = ExecCallObject.run(statement, context).toOption.get.get
-    assert("MyValue".equals(res.head.asInstanceOf[TLangString].getValue))
+    assert("MyValue".equals(res.head.asInstanceOf[TLangString].getElement))
   }
 
   test("Call function with currying") {
@@ -98,8 +98,8 @@ class ExecCallObjectTest extends AnyFunSuite {
     )))))
     val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangString(None, "MyValue"), "var2" -> new TLangString(None, "MyValue2")), functions = mutable.Map("myFunc" -> funcDef))))
     val res = ExecCallObject.run(statement, context).toOption.get.get
-    assert("MyValue".equals(res.head.asInstanceOf[TLangString].getValue))
-    assert("MyValue2".equals(res.last.asInstanceOf[TLangString].getValue))
+    assert("MyValue".equals(res.head.asInstanceOf[TLangString].getElement))
+    assert("MyValue2".equals(res.last.asInstanceOf[TLangString].getElement))
   }
 
   test("Call function from entity") {
@@ -114,7 +114,7 @@ class ExecCallObjectTest extends AnyFunSuite {
     val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangString(None, "MyValue"), "myEntity" -> myEntity), functions = mutable.Map("myFunc" -> funcDef))))
     val statement = CallObject(None, List(CallVarObject(None, "myEntity"), CallVarObject(None, "attr1")))
     val res = ExecCallObject.run(statement, context).toOption.get.get
-    assert("MyValue".equals(res.head.asInstanceOf[TLangString].getValue))
+    assert("MyValue".equals(res.head.asInstanceOf[TLangString].getElement))
   }
 
   test("Call array from entity") {
@@ -131,7 +131,7 @@ class ExecCallObjectTest extends AnyFunSuite {
     val statement = CallObject(None, List(CallVarObject(None, "myEntity"), CallVarObject(None, "attr1")))
     val res = ExecCallObject.run(statement, context).toOption.get.get
     assert(res.head.isInstanceOf[TLangString])
-    assert("value2".equals(res.head.asInstanceOf[TLangString].getValue))
+    assert("value2".equals(res.head.asInstanceOf[TLangString].getElement))
   }
 
   test("Function called inside a function") {
@@ -148,7 +148,7 @@ class ExecCallObjectTest extends AnyFunSuite {
     val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangString(None, "MyValue")), functions = mutable.Map("myFunc2" -> funcDef2, "myFunc1" -> funcDef1))))
     val res = ExecCallObject.run(statement, context)
     val res2 = res.toOption.get.get
-    assert("MyValue".equals(res2.head.asInstanceOf[TLangString].getValue))
+    assert("MyValue".equals(res2.head.asInstanceOf[TLangString].getElement))
   }
 
   test("Call function in other resources") {
@@ -159,7 +159,7 @@ class ExecCallObjectTest extends AnyFunSuite {
     val statement = CallObject(None, List(CallVarObject(None, "myResource"), CallFuncObject(None, Some("myFunc"), Some(List(CallFuncParam(None, Some(List(caller))))))))
     val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangString(None, "MyValue")), functions = mutable.Map("myResource/myFunc" -> funcDef))))
     val res = ExecCallObject.run(statement, context).toOption.get.get
-    assert("MyValue".equals(res.head.asInstanceOf[TLangString].getValue))
+    assert("MyValue".equals(res.head.asInstanceOf[TLangString].getElement))
   }
 
   /* For now the returned functions are directly executed, a reference will be needed.

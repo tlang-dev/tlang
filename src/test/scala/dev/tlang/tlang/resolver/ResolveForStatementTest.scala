@@ -57,7 +57,7 @@ class ResolveForStatementTest extends AnyFunSuite {
 
     val scope = module.resources(module.mainFile).ast.body.head.asInstanceOf[HelperBlock].funcs.get.head.scope
     assert("MyFile/start" == scope.variables.head._1)
-    assert(1 == scope.variables.head._2.asInstanceOf[TLangLong].getValue)
+    assert(1 == scope.variables.head._2.asInstanceOf[TLangLong].getElement)
   }
 
   test("Resolve array in for") {
@@ -91,11 +91,11 @@ class ResolveForStatementTest extends AnyFunSuite {
     val scope = module.resources(module.mainFile).ast.body.head.asInstanceOf[HelperBlock].funcs.get.head.scope
     assert("MyFile/array" == scope.variables.head._1)
     val array = scope.variables.head._2.asInstanceOf[ArrayValue].tbl.get
-    assert(1 == array.head.value.asInstanceOf[TLangLong].getValue)
-    assert(2 == array(1).value.asInstanceOf[TLangLong].getValue)
-    assert(3 == array(2).value.asInstanceOf[TLangLong].getValue)
-    assert(4 == array(3).value.asInstanceOf[TLangLong].getValue)
-    assert(5 == array.last.value.asInstanceOf[TLangLong].getValue)
+    assert(1 == array.head.value.asInstanceOf[TLangLong].getElement)
+    assert(2 == array(1).value.asInstanceOf[TLangLong].getElement)
+    assert(3 == array(2).value.asInstanceOf[TLangLong].getElement)
+    assert(4 == array(3).value.asInstanceOf[TLangLong].getElement)
+    assert(5 == array.last.value.asInstanceOf[TLangLong].getElement)
   }
 
   test("Resolve content in for") {
@@ -129,7 +129,7 @@ class ResolveForStatementTest extends AnyFunSuite {
 
     val scope = module.resources(module.mainFile).ast.body.head.asInstanceOf[HelperBlock].funcs.get.head.scope
     assert("MyFile/content" == scope.variables.head._1)
-    assert("content" == scope.variables.head._2.asInstanceOf[TLangString].getValue)
+    assert("content" == scope.variables.head._2.asInstanceOf[TLangString].getElement)
   }
 
 }

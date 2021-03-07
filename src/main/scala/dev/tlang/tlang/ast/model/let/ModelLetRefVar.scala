@@ -5,12 +5,12 @@ import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
 
 case class ModelLetRefVar(context: Option[ContextContent], variable: Value[_]) extends ModelLetRefType[ModelLetRefVar] {
-  override def getValue: ModelLetRefVar = this
+  override def getElement: ModelLetRefVar = this
 
   override def getType: String = ModelLetRefVar.getType
 
   override def compareTo(value: Value[ModelLetRefVar]): Int = {
-    if (variable.getType == value.getType) variable.asInstanceOf[Value[ModelLetRefVar]].compareTo(value.getValue)
+    if (variable.getType == value.getType) variable.asInstanceOf[Value[ModelLetRefVar]].compareTo(value.getElement)
     else -1
   }
 

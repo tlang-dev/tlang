@@ -7,11 +7,11 @@ import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
 
 case class ModelLetRefFunc(context: Option[ContextContent], func: HelperFunc, currying: Option[List[CallFuncParam]]) extends ModelLetRefType[ModelLetRefFunc] {
-  override def getValue: ModelLetRefFunc = this
+  override def getElement: ModelLetRefFunc = this
 
   override def getType: String = ModelLetRefFunc.getType
 
-  override def compareTo(value: Value[ModelLetRefFunc]): Int = func.name.compareTo(value.getValue.func.name)
+  override def compareTo(value: Value[ModelLetRefFunc]): Int = func.name.compareTo(value.getElement.func.name)
 
   override def getContext: Option[ContextContent] = context
 }

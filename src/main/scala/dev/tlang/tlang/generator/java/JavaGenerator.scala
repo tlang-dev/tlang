@@ -151,7 +151,7 @@ object JavaGenerator {
   def genInclude(include: TmplInclude): String = {
     val str = new StringBuilder
     include.results.foreach {
-      case Left(tLangStr) => str ++= tLangStr.getValue ++= "\n"
+      case Left(tLangStr) => str ++= tLangStr.getElement ++= "\n"
       case Right(block) => str ++= genBlock(block.block)
     }
     str.toString()

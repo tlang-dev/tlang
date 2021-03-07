@@ -5,7 +5,7 @@ import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
 import dev.tlang.tlang.interpreter.Value
 
 case class MultiValue(context: Option[ContextContent], values: List[Value[_]]) extends ComplexValueStatement[MultiValue] with AstContext {
-  override def getValue: MultiValue = this
+  override def getElement: MultiValue = this
 
   override def getType: String = MultiValue.getType
 

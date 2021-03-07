@@ -241,7 +241,7 @@ object ValueMapper {
         case Left(error) => TmplStringID(interId.context, error.message)
         case Right(value) => if (value.isDefined) {
           value.get.head match {
-            case str: TLangString => TmplStringID(interId.context, interId.pre.getOrElse("") + str.getValue + interId.post.getOrElse(""))
+            case str: TLangString => TmplStringID(interId.context, interId.pre.getOrElse("") + str.getElement + interId.post.getOrElse(""))
             case block: TmplBlockAsValue => TmplStringID(interId.context, interId.pre.getOrElse("") + Generator.generate(block, context) + interId.post.getOrElse(""))
             case _ => TmplStringID(interId.context, interId.pre.getOrElse("") + value.get.head.toString + interId.post.getOrElse(""))
           }

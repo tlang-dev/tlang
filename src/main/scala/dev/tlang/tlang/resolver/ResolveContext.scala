@@ -97,7 +97,7 @@ object ResolveContext {
 
   }
 
-  def resolveModel(contents: Option[List[ModelContent]], module: Module, uses: List[DomainUse], currentResource: Resource): Either[List[ResolverError], Unit] = {
+  def resolveModel(contents: Option[List[ModelContent[_]]], module: Module, uses: List[DomainUse], currentResource: Resource): Either[List[ResolverError], Unit] = {
     contents.foreach(_.foreach {
       //case assign: AssignVar => ResolveStatement.resolveAssignVar(assign, module, uses, scope, currentResource)
       case _ => Right(())

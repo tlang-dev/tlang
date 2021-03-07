@@ -20,7 +20,7 @@ class ExecForTest extends AnyFunSuite {
       new TLangLong(None, 10),
       HelperContent(None, Some(List(HelperInternalFunc((context: Context) => {
         count += 1
-        variable = context.scopes.head.variables("index").asInstanceOf[TLangLong].getValue.toInt
+        variable = context.scopes.head.variables("index").asInstanceOf[TLangLong].getElement.toInt
         Right(None)
       })))))
     ExecFor.run(forStatement, Context(List()))
@@ -37,7 +37,7 @@ class ExecForTest extends AnyFunSuite {
       new TLangLong(None, 10),
       HelperContent(None, Some(List(HelperInternalFunc((context: Context) => {
         count += 1
-        variable = context.scopes.head.variables("index").asInstanceOf[TLangLong].getValue.toInt
+        variable = context.scopes.head.variables("index").asInstanceOf[TLangLong].getElement.toInt
         Right(None)
       })))))
     ExecFor.run(forStatement, Context(List()))
@@ -55,8 +55,8 @@ class ExecForTest extends AnyFunSuite {
       CallObject(None, List(CallVarObject(None, "myArray"))),
       HelperContent(None, Some(List(HelperInternalFunc((context: Context) => {
         count += 1
-        variable = context.scopes.last.variables("_i").asInstanceOf[TLangLong].getValue.toInt
-        array.addOne(context.scopes.last.variables("elem").asInstanceOf[TLangString].getValue)
+        variable = context.scopes.last.variables("_i").asInstanceOf[TLangLong].getElement.toInt
+        array.addOne(context.scopes.last.variables("elem").asInstanceOf[TLangString].getElement)
         Right(None)
       })))))
     val scope = Scope(variables = mutable.Map("myArray" -> ArrayValue(None, Some(List(

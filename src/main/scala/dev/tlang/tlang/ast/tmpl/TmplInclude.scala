@@ -6,7 +6,7 @@ import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
 
 case class TmplInclude(context: Option[ContextContent], calls: List[CallObject], var results: List[Either[TLangString, TmplBlockAsValue]] = List()) extends TmplExpression with AstContext {
   override def deepCopy(): TmplInclude = TmplInclude(context, calls, results.map {
-    case Left(value) => Left(new TLangString(context, value.getValue))
+    case Left(value) => Left(new TLangString(context, value.getElement))
     case Right(value) => Right(value.deepCopy())
   })
 

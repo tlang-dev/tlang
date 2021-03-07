@@ -19,7 +19,7 @@ object ResolveUtils {
     func
   }
 
-  def findInVars(contents: List[ModelContent], name: String): Option[AssignVar] = {
+  def findInVars(contents: List[ModelContent[_]], name: String): Option[AssignVar] = {
     var i = 0
     var entity: Option[AssignVar] = None
     while (entity.isEmpty && i < contents.size) {

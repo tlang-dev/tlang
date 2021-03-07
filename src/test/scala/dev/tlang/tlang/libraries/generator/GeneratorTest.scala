@@ -14,7 +14,7 @@ class GeneratorTest extends AnyFunSuite {
   test("Simple generation") {
     val block = TmplBlock(None, "myBlock", "scala", None, Some(new TmplPkg(List(TmplStringID(None, "myPackage")))))
     val blockAsValue = TmplBlockAsValue(None, block, Context())
-    val res = Generator.generate(blockAsValue, Context()).toOption.get.getValue
+    val res = Generator.generate(blockAsValue, Context()).toOption.get.getElement
     assert(res.contains("package myPackage"))
   }
 
@@ -30,7 +30,7 @@ class GeneratorTest extends AnyFunSuite {
     val blockAsValue = TmplBlockAsValue(None, block, Context())
     val context = Context(List(Scope(variables = mutable.Map("myTmpl" -> blockAsValue), functions = mutable.Map("generate" -> Generator.generateFunc))))
     val caller = CallFuncObject(None, Some("generate"), Some(List(CallFuncParam(None, Some(List(SetAttribute(None, value = CallObject(None, List(CallVarObject(None, "myTmpl"))))))))))
-    val res = ExecCallFunc.run(caller, context).toOption.get.get.head.asInstanceOf[TLangString].getValue
+    val res = ExecCallFunc.run(caller, context).toOption.get.get.head.asInstanceOf[TLangString].getElement
     assert(res.contains("package myPackage"))
   }
 

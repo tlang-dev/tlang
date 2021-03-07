@@ -212,7 +212,7 @@ class ResolveContextTest extends AnyFunSuite {
     val scope = Scope()
     FollowCallObject.followCallObject(caller, module, uses, scope, module.resources.head._2).toOption.get
     assert("MyFile/myFunc" == scope.functions.head._1)
-    assert("myFunc" == scope.functions.head._2.getValue.name)
+    assert("myFunc" == scope.functions.head._2.getElement.name)
   }
 
   test("Follow func call") {
@@ -285,7 +285,7 @@ class ResolveContextTest extends AnyFunSuite {
     val block = BuildAst.build(fakeContext, parser.domainModel())
     val resource = Resource("", "", "", "Main", block)
 
-    val entityType = ResolveContext.findInResource(resource, CallVarObject(None,"myEntity2")).toOption.get.get.asInstanceOf[EntityValue].`type`.get
+    val entityType = ResolveContext.findInResource(resource, CallVarObject(None, "myEntity2")).toOption.get.get.asInstanceOf[EntityValue].`type`.get
     assert("AnyEntity2" == entityType)
   }
 
@@ -301,7 +301,7 @@ class ResolveContextTest extends AnyFunSuite {
   }
 
   test("Find var") {
-    val contents: List[ModelContent] = List(
+    val contents: List[ModelContent[_]] = List(
       ModelSetEntity(None, "myEntity", None, None),
       AssignVar(None, "myEntity", None, EntityValue(None, None, None)),
       AssignVar(None, "myEntity2", None, EntityValue(None, None, None)),
@@ -323,7 +323,7 @@ class ResolveContextTest extends AnyFunSuite {
   }
 
   test("Find empty var") {
-    val contents: List[ModelContent] = List(
+    val contents: List[ModelContent[_]] = List(
       ModelSetEntity(None, "myEntity", None, None),
       AssignVar(None, "myEntity", None, EntityValue(None, None, None)),
       AssignVar(None, "myEntity2", None, EntityValue(None, None, None)),

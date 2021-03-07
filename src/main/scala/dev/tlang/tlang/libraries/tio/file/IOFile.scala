@@ -14,7 +14,7 @@ object IOFile {
     HelperInternalFunc((context: Context) => {
       ContextUtils.findVar(context, "file") match {
         case Some(file) => ContextUtils.findVar(context, "content") match {
-          case Some(content) => write(file.asInstanceOf[TLangString].getValue, content.asInstanceOf[TLangString].getValue)
+          case Some(content) => write(file.asInstanceOf[TLangString].getElement, content.asInstanceOf[TLangString].getElement)
           case None => println("Variable 'content' not found in context")
         }
         case None => println("Variable 'file' not found in context")

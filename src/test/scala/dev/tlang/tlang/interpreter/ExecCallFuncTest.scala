@@ -19,7 +19,7 @@ class ExecCallFuncTest extends AnyFunSuite {
     val funcCaller = CallFuncObject(None, Some("myFunc"), Some(List(CallFuncParam(None, Some(List(caller))))))
     val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangString(None, "MyValue")), functions = mutable.Map("myFunc" -> funcDef))))
     val res = ExecCallFunc.run(funcCaller, context).toOption.get.get
-    assert("MyValue" == res.head.asInstanceOf[TLangString].getValue)
+    assert("MyValue" == res.head.asInstanceOf[TLangString].getElement)
   }
 
   test("Call template without parameters") {
@@ -36,7 +36,7 @@ class ExecCallFuncTest extends AnyFunSuite {
     val tmplCaller = CallFuncObject(None, Some("myTmpl"), Some(List(CallFuncParam(None, Some(List(caller))))))
     val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangString(None, "MyValue")), templates = mutable.Map("myTmpl" -> block))))
     val res = ExecCallFunc.run(tmplCaller, context).toOption.get.get.head.asInstanceOf[TmplBlockAsValue]
-    assert("MyValue" == res.context.scopes.head.variables.head._2.asInstanceOf[TLangString].getValue)
+    assert("MyValue" == res.context.scopes.head.variables.head._2.asInstanceOf[TLangString].getElement)
     assert("myPackage" == res.block.pkg.get.parts.head.asInstanceOf[TmplStringID].id)
   }
 
@@ -54,15 +54,15 @@ class ExecCallFuncTest extends AnyFunSuite {
     )))
 
     val res = ExecCallFunc.mergeCallers(funcCaller, refFuncCaller).currying.get
-    assert("c1p1" == res.head.params.get.head.value.asInstanceOf[TLangString].getValue)
-    assert("c1p2" == res.head.params.get(1).value.asInstanceOf[TLangString].getValue)
-    assert("c1p3" == res.head.params.get.last.value.asInstanceOf[TLangString].getValue)
-    assert("c2p1" == res(1).params.get.head.value.asInstanceOf[TLangString].getValue)
-    assert("c2p2" == res(1).params.get(1).value.asInstanceOf[TLangString].getValue)
-    assert("c2p3" == res(1).params.get.last.value.asInstanceOf[TLangString].getValue)
-    assert("c3p1" == res.last.params.get.head.value.asInstanceOf[TLangString].getValue)
-    assert("c3p2" == res.last.params.get(1).value.asInstanceOf[TLangString].getValue)
-    assert("c3p3" == res.last.params.get.last.value.asInstanceOf[TLangString].getValue)
+    assert("c1p1" == res.head.params.get.head.value.asInstanceOf[TLangString].getElement)
+    assert("c1p2" == res.head.params.get(1).value.asInstanceOf[TLangString].getElement)
+    assert("c1p3" == res.head.params.get.last.value.asInstanceOf[TLangString].getElement)
+    assert("c2p1" == res(1).params.get.head.value.asInstanceOf[TLangString].getElement)
+    assert("c2p2" == res(1).params.get(1).value.asInstanceOf[TLangString].getElement)
+    assert("c2p3" == res(1).params.get.last.value.asInstanceOf[TLangString].getElement)
+    assert("c3p1" == res.last.params.get.head.value.asInstanceOf[TLangString].getElement)
+    assert("c3p2" == res.last.params.get(1).value.asInstanceOf[TLangString].getElement)
+    assert("c3p3" == res.last.params.get.last.value.asInstanceOf[TLangString].getElement)
   }
 
 }

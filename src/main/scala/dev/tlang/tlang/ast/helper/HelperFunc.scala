@@ -7,11 +7,11 @@ import dev.tlang.tlang.interpreter.context.Scope
 
 case class HelperFunc(context: Option[ContextContent], name: String, currying: Option[List[HelperCurrying]] = None,
                       returns: Option[List[HelperParamType]] = None, block: HelperContent, scope: Scope = Scope()) extends HelperStatement with Value[HelperFunc] with AstContext {
-  override def getValue: HelperFunc = this
+  override def getElement: HelperFunc = this
 
   override def getType: String = HelperFunc.getType
 
-  override def compareTo(value: Value[HelperFunc]): Int = this.name.compareTo(value.getValue.name)
+  override def compareTo(value: Value[HelperFunc]): Int = this.name.compareTo(value.getElement.name)
 
   override def getContext: Option[ContextContent] = context
 }

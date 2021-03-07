@@ -18,9 +18,9 @@ class ExecMultiValueTest extends AnyFunSuite {
       varToCall,
       new TLangString(None, "myValue3")))
     val res = ExecMultiValue.run(statement, context).toOption.get.get
-    assert("myValue1" == res.head.asInstanceOf[TLangString].getValue)
-    assert("myValue2" == res(1).asInstanceOf[TLangString].getValue)
-    assert("myValue3" == res.last.asInstanceOf[TLangString].getValue)
+    assert("myValue1" == res.head.asInstanceOf[TLangString].getElement)
+    assert("myValue2" == res(1).asInstanceOf[TLangString].getElement)
+    assert("myValue3" == res.last.asInstanceOf[TLangString].getElement)
   }
 
 }

@@ -21,7 +21,7 @@ class TmplForTest extends AnyFunSuite {
     val calledFunc = HelperFunc(None, "anyFunc", Some(List(HelperCurrying(None, List(HelperParam(None, Some("param1"), HelperObjType(None, TLangString.getType)))))), None, HelperContent(None, Some(List(
       HelperInternalFunc((context: Context) => {
         //        res += context.scopes.last.variables("param1").asInstanceOf[TLangString].getValue
-        res += ContextUtils.findVar(context, "param1").get.asInstanceOf[TLangString].getValue
+        res += ContextUtils.findVar(context, "param1").get.asInstanceOf[TLangString].getElement
         Right(None)
       })
     ))))

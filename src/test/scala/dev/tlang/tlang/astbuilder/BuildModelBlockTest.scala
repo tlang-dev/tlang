@@ -237,10 +237,10 @@ class BuildModelBlockTest extends AnyFunSuite {
     val ref = setEntity.attrs.get.head.value.asInstanceOf[ModelSetRef]
     val array = ref.currying.get.head.values.last.asInstanceOf[ArrayValue].tbl.get
     assert("anyFunc" == ref.refs.head)
-    assert("myValue" == ref.currying.get.head.values.head.asInstanceOf[TLangString].getValue)
-    assert("1" == array.head.value.asInstanceOf[TLangString].getValue)
-    assert("2" == array(1).value.asInstanceOf[TLangString].getValue)
-    assert("3" == array.last.value.asInstanceOf[TLangString].getValue)
+    assert("myValue" == ref.currying.get.head.values.head.asInstanceOf[TLangString].getElement)
+    assert("1" == array.head.value.asInstanceOf[TLangString].getElement)
+    assert("2" == array(1).value.asInstanceOf[TLangString].getElement)
+    assert("3" == array.last.value.asInstanceOf[TLangString].getElement)
   }
 
 }

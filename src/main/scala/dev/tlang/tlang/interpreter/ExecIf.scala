@@ -15,7 +15,7 @@ object ExecIf extends Executor {
       case Left(value) => Left(value)
       case Right(value) => value match {
         case Some(valType) => if (valType.size == 1) valType.head match {
-          case bool: TLangBool => if (bool.getValue) execIfTrue(ifStatement, context) else execIfFalse(ifStatement, context)
+          case bool: TLangBool => if (bool.getElement) execIfTrue(ifStatement, context) else execIfFalse(ifStatement, context)
         } else Left(WrongNumberOfArguments("expected 1 got " + valType.size))
         case None => Left(NotACondition())
       }

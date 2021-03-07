@@ -29,8 +29,8 @@ object ExecFor extends Executor {
   }
 
   def runFor(forStatement: HelperFor, context: Context): Unit = {
-    val start = ExecSimpleValue.run(forStatement.start.get, context).toOption.get.get.head.asInstanceOf[TLangLong].getValue
-    val end = ExecSimpleValue.run(forStatement.array, context).toOption.get.get.head.asInstanceOf[TLangLong].getValue
+    val start = ExecSimpleValue.run(forStatement.start.get, context).toOption.get.get.head.asInstanceOf[TLangLong].getElement
+    val end = ExecSimpleValue.run(forStatement.array, context).toOption.get.get.head.asInstanceOf[TLangLong].getElement
     val realEnd = forStatement.forType match {
       case dev.tlang.tlang.ast.helper.ForType.TO => end
       case dev.tlang.tlang.ast.helper.ForType.UNTIL => end - 1

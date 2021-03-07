@@ -4,13 +4,13 @@ import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
 import dev.tlang.tlang.interpreter.Value
 
 class TLangBool(context: Option[ContextContent], value: Boolean) extends PrimitiveValue[Boolean]() with AstContext {
-  override def getValue: Boolean = value
+  override def getElement: Boolean = value
 
   override def getType: String = TLangBool.getType
 
-  override def compareTo(value: Value[Boolean]): Int = this.value.compareTo(value.getValue)
+  override def compareTo(value: Value[Boolean]): Int = this.value.compareTo(value.getElement)
 
-  override def toString: String = if (getValue) "true" else "false"
+  override def toString: String = if (getElement) "true" else "false"
 
   override def getContext: Option[ContextContent] = context
 }

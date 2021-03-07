@@ -7,7 +7,7 @@ import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
 import dev.tlang.tlang.interpreter.Value
 
 case class ConditionBlock(context: Option[ContextContent],content: Either[ConditionBlock, Condition], link: Option[ConditionLink.condition] = None, nextBlock: Option[ConditionBlock] = None) extends ComplexValueStatement[ConditionBlock] with AstContext{
-  override def getValue: ConditionBlock = this
+  override def getElement: ConditionBlock = this
 
   override def getType: String = ConditionBlock.getType
 

@@ -100,11 +100,11 @@ object ExecCallObject extends Executor {
     def resolve(posValue: Value[_]): Either[ExecError, Option[List[Value[_]]]] = {
       array.tbl match {
         case Some(array) => posValue match {
-          case long: TLangLong => Right(Some(List(array(long.getValue.toInt).value)))
+          case long: TLangLong => Right(Some(List(array(long.getElement.toInt).value)))
           case str: TLangString =>
-            val callRes = array.find(elem => elem.attr.isDefined && elem.attr.get.equals(str.getValue))
+            val callRes = array.find(elem => elem.attr.isDefined && elem.attr.get.equals(str.getElement))
             if (callRes.isDefined) Right(Some(List(callRes.get.value)))
-            else Left(CallableNotFound(posValue.getValue.toString))
+            else Left(CallableNotFound(posValue.getElement.toString))
           case _ => Left(WrongType("Should be Int or String instead of " + posValue.getType))
 
         }

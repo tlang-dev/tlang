@@ -17,7 +17,7 @@ class ExecFuncTest extends AnyFunSuite {
     val block = HelperContent(None, Some(List(caller)))
     val statement = HelperFunc(None, "myFunc", block = block)
     val res = ExecFunc.run(statement, context).toOption.get.get
-    assert(res.head.asInstanceOf[TLangBool].getValue)
+    assert(res.head.asInstanceOf[TLangBool].getElement)
   }
 
 }
