@@ -22,3 +22,6 @@ enablePlugins(Antlr4Plugin)
 coverageMinimum := 80
 coverageFailOnMinimum := false
 coverageHighlighting := true
+
+//scala native
+enablePlugins(ScalaNativePlugin)
