@@ -22,3 +22,7 @@ enablePlugins(Antlr4Plugin)
 coverageMinimum := 80
 coverageFailOnMinimum := false
 coverageHighlighting := true
+
+enablePlugins(GraalVMNativeImagePlugin)
+
+mainClass in Compile := Some("dev.tlang.tlang.runner.TLang")

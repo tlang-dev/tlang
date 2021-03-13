@@ -8,7 +8,7 @@ import dev.tlang.tlang.lsp.LSPServer
 
 import java.nio.file.Paths
 
-object Main {
+object TLang {
 
   val TLANG_VERSION = "0.1"
   val FILE_EXTENSION = "tlang"
@@ -17,7 +17,7 @@ object Main {
     val newArgs = args.toList.slice(1, args.length)
     if (args != null && args.length > 0) {
       args(0) match {
-        case "run" => run(newArgs)
+        case "run" => runDir(newArgs)
         case "lsp" => runLSP(newArgs)
         case "pack" => pack(newArgs)
         case "push" => push(newArgs)
@@ -27,7 +27,7 @@ object Main {
     }
   }
 
-  def run(args: List[String]): Unit = {
+  def runDir(args: List[String]): Unit = {
     if (args.nonEmpty) {
       val path = new File(args.head)
       if (path.exists() && path.isFile && path.getName.endsWith("." + FILE_EXTENSION)) {
