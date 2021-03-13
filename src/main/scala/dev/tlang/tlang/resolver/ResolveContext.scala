@@ -4,7 +4,7 @@ import dev.tlang.tlang.ast.DomainUse
 import dev.tlang.tlang.ast.common.call._
 import dev.tlang.tlang.ast.common.value.PrimitiveValue
 import dev.tlang.tlang.ast.helper._
-import dev.tlang.tlang.ast.model.{ModelBlock, ModelContent}
+import dev.tlang.tlang.ast.model.ModelBlock
 import dev.tlang.tlang.ast.tmpl.{TmplBlock, TmplBlockAsValue}
 import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.interpreter.context.{Context, Scope}
@@ -26,7 +26,7 @@ object ResolveContext {
 
       ast.body.foreach {
         case HelperBlock(_, funcs) => funcs.foreach(func => extractErrors(errors, BrowseFunc.resolveFuncs(func, module, uses, resource._2)))
-        case ModelBlock(_, content) => extractErrors(errors, resolveModel(content, module, uses, resource._2))
+        case model: ModelBlock => extractErrors(errors, ResolveModel.resolveModel(model, module, uses, resource._2))
         case block: TmplBlock => extractErrors(errors, ResolveTmpl.resolveTmpl(block, module, uses, resource._2))
         case _ => Right(())
       }
@@ -66,43 +66,34 @@ object ResolveContext {
   }
 
   def findInResource(resource: Resource, nextCaller: CallObjectType): Either[List[ResolverError], Option[Value[_]]] = {
-    def browseBody(name: String): Either[List[ResolverError], Option[Value[_]]] = {
-      val errors = ListBuffer.empty[ResolverError]
-      var elem: Option[Value[_]] = None
-      resource.ast.body.foreach {
-        case HelperBlock(_, funcs) => if (funcs.isDefined) {
-          ResolveUtils.findInFuncs(funcs.get, name) match {
-            case Some(func) => elem = Some(func)
-            case None =>
-          }
-        }
-        case ModelBlock(_, contents) => if (contents.isDefined) {
-          ResolveUtils.findInVars(contents.get, name) match {
-            case Some(variable) => elem = Some(variable.value)
-            case None =>
-          }
-        }
-        case tmpl: TmplBlock => if (tmpl.name == name) elem = Some(TmplBlockAsValue(tmpl.context, tmpl, Context()))
-      }
-      if (errors.nonEmpty) Left(errors.toList)
-      else Right(elem)
-    }
-
     nextCaller match {
-      case CallFuncObject(_, name, _) => browseBody(name.get)
-      case CallVarObject(_, name) => browseBody(name)
-      case CallRefFuncObject(_, name, _, _) => browseBody(name.get)
+      case CallFuncObject(_, name, _) => browseBody(name.get, resource)
+      case CallVarObject(_, name) => browseBody(name, resource)
+      case CallRefFuncObject(_, name, _, _) => browseBody(name.get, resource)
       case _ => Right(None)
     }
-
   }
 
-  def resolveModel(contents: Option[List[ModelContent[_]]], module: Module, uses: List[DomainUse], currentResource: Resource): Either[List[ResolverError], Unit] = {
-    contents.foreach(_.foreach {
-      //case assign: AssignVar => ResolveStatement.resolveAssignVar(assign, module, uses, scope, currentResource)
-      case _ => Right(())
-    })
-    Right(())
+  def browseBody(name: String, resource: Resource): Either[List[ResolverError], Option[Value[_]]] = {
+    val errors = ListBuffer.empty[ResolverError]
+    var elem: Option[Value[_]] = None
+    resource.ast.body.foreach {
+      case HelperBlock(_, funcs) => if (funcs.isDefined) {
+        ResolveUtils.findInFuncs(funcs.get, name) match {
+          case Some(func) => elem = Some(func)
+          case None =>
+        }
+      }
+      case ModelBlock(_, contents) => if (contents.isDefined) {
+        ResolveUtils.findInVars(contents.get, name) match {
+          case Some(variable) => elem = Some(variable.value)
+          case None =>
+        }
+      }
+      case tmpl: TmplBlock => if (tmpl.name == name) elem = Some(TmplBlockAsValue(tmpl.context, tmpl, Context()))
+    }
+    if (errors.nonEmpty) Left(errors.toList)
+    else Right(elem)
   }
 
   def addInScope(lastName: String, elem: Either[List[ResolverError], Option[Value[_]]], previousNames: List[String], scope: Scope): Either[List[ResolverError], Option[Value[_]]] = {
