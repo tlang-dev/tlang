@@ -1,7 +1,8 @@
 package dev.tlang.tlang.astbuilder
 
 import dev.tlang.tlang.TLangParser._
-import dev.tlang.tlang.ast.common.call.{ComplexValueStatement, SimpleValueStatement}
+import dev.tlang.tlang.ast.common.call.ComplexValueStatement
+import dev.tlang.tlang.ast.common.operation.{Operation, Operator}
 import dev.tlang.tlang.ast.common.value._
 import dev.tlang.tlang.astbuilder.BuildAst.addContext
 import dev.tlang.tlang.astbuilder.context.ContextResource
@@ -14,13 +15,39 @@ object BuildCommon {
     val varType = if (assign.`type` != null && assign.`type`.getText.nonEmpty) Some(assign.`type`.getText) else None
     AssignVar(addContext(resource, assign), assign.name.getText,
       varType,
-      buildComplexValueType(resource, varType, assign.value))
+      buildOperation(resource, varType, assign.value))
   }
 
-  def buildSimpleValueType(resource: ContextResource, `type`: Option[String] = None, valueType: SimpleValueTypeContext): SimpleValueStatement[_] = {
-    valueType match {
-      case call@_ if call.callObj() != null => BuildHelperStatement.buildCallObject(resource, call.callObj())
-      case value@_ if value.primitiveValue() != null => buildPrimitiveValue(resource, `type`, value.primitiveValue())
+  //  def buildSimpleValueType(resource: ContextResource, `type`: Option[String] = None, valueType: SimpleValueTypeContext): SimpleValueStatement[_] = {
+  //    valueType match {
+  //      case call@_ if call.callObj() != null => BuildHelperStatement.buildCallObject(resource, call.callObj())
+  //      case value@_ if value.primitiveValue() != null => buildPrimitiveValue(resource, `type`, value.primitiveValue())
+  //    }
+  //  }
+
+  def buildOperation(resource: ContextResource, expectedType: Option[String], operation: OperationContext): Operation = {
+    val content: Either[Operation, ComplexValueStatement[_]] =
+      if (operation.content != null && !operation.content.isEmpty) Right(buildComplexValueType(resource, expectedType, operation.content))
+      else Left(buildOperation(resource, expectedType, operation.innerBlock))
+
+    Operation(None, expectedType, content, None)
+  }
+
+  def buildOperator(opType: String): Operator.operator = {
+    opType match {
+      case "&&" => Operator.AND
+      case "||" => Operator.OR
+      case "+" => Operator.ADD
+      case "-" => Operator.SUBTRACT
+      case "*" => Operator.MULTIPLY
+      case "/" => Operator.DIVIDE
+      case "%" => Operator.MODULO
+      case "==" => Operator.EQUAL
+      case "!=" => Operator.NOT_EQUAL
+      case ">" => Operator.GREATER
+      case "<" => Operator.LESSER
+      case ">=" => Operator.GREATER_OR_EQUAL
+      case "<=" => Operator.LESSER_OR_EQUAL
     }
   }
 
@@ -28,7 +55,6 @@ object BuildCommon {
     valueType match {
       case call@_ if call.callObj() != null => BuildHelperStatement.buildCallObject(resource, call.callObj())
       case value@_ if value.primitiveValue() != null => buildPrimitiveValue(resource, `type`, value.primitiveValue())
-      case condition@_ if condition.conditionBlock() != null => BuildHelperStatement.buildConditionBlock(resource, condition.conditionBlock())
       case multi@_ if multi.multiValue() != null => buildMultiValue(resource, multi.multiValue())
       case lazyVal@_ if lazyVal.lazyValue() != null => LazyValue(addContext(resource, lazyVal.lazyValue()), None, None)
     }
@@ -48,12 +74,12 @@ object BuildCommon {
   }
 
   def buildArray(resource: ContextResource, array: ArrayValueContext): ArrayValue = {
-    ArrayValue(addContext(resource, array), if (array.params != null) buildSimpleAttributes(resource, array.params.asScala.toList) else None)
+    ArrayValue(addContext(resource, array), if (array.params != null) buildComplexAttributes(resource, array.params.asScala.toList) else None)
   }
 
-  def buildSimpleValueTypes(resource: ContextResource, types: List[SimpleValueTypeContext]): Option[List[SimpleValueStatement[_]]] = {
-    if (types.nonEmpty) Some(types.map(valType => buildSimpleValueType(resource, None, valType))) else None
-  }
+  //  def buildSimpleValueTypes(resource: ContextResource, types: List[SimpleValueTypeContext]): Option[List[SimpleValueStatement[_]]] = {
+  //    if (types.nonEmpty) Some(types.map(valType => buildSimpleValueType(resource, None, valType))) else None
+  //  }
 
   def buildEntityValue(resource: ContextResource, `type`: Option[String] = None, entity: EntityValueContext): EntityValue = {
     EntityValue(addContext(resource, entity), if (`type`.isDefined) Some(`type`.get) else None,
@@ -61,21 +87,21 @@ object BuildCommon {
   }
 
   def buildMultiValue(resource: ContextResource, multi: MultiValueContext): MultiValue = {
-    MultiValue(addContext(resource, multi), multi.values.asScala.toList.map(buildComplexValueType(resource, None, _)))
+    MultiValue(addContext(resource, multi), multi.values.asScala.toList.map(buildOperation(resource, None, _)))
   }
 
-  def buildSimpleAttributes(resource: ContextResource, attrs: List[SimpleAttributeContext]): Option[List[SimpleAttribute]] = {
-    if (attrs.nonEmpty) Some(attrs.map(attr => buildSimpleAttribute(resource, attr))) else None
-  }
-
-  def buildSimpleAttribute(resource: ContextResource, attr: SimpleAttributeContext): SimpleAttribute = {
-    val attrType = if (attr.`type` != null && attr.`type`.getText.nonEmpty) Some(attr.`type`.getText) else None
-    SimpleAttribute(addContext(resource, attr),
-      if (attr.attr != null && attr.attr.getText.nonEmpty) Some(attr.attr.getText) else None,
-      attrType,
-      buildSimpleValueType(resource, attrType, attr.value)
-    )
-  }
+  //  def buildSimpleAttributes(resource: ContextResource, attrs: List[SimpleAttributeContext]): Option[List[SimpleAttribute]] = {
+  //    if (attrs.nonEmpty) Some(attrs.map(attr => buildSimpleAttribute(resource, attr))) else None
+  //  }
+  //
+  //  def buildSimpleAttribute(resource: ContextResource, attr: SimpleAttributeContext): SimpleAttribute = {
+  //    val attrType = if (attr.`type` != null && attr.`type`.getText.nonEmpty) Some(attr.`type`.getText) else None
+  //    SimpleAttribute(addContext(resource, attr),
+  //      if (attr.attr != null && attr.attr.getText.nonEmpty) Some(attr.attr.getText) else None,
+  //      attrType,
+  //      buildSimpleValueType(resource, attrType, attr.value)
+  //    )
+  //  }
 
   def buildComplexAttributes(resource: ContextResource, attrs: List[ComplexAttributeContext]): Option[List[ComplexAttribute]] = {
     if (attrs.nonEmpty) Some(attrs.map(attr => buildComplexAttribute(resource, attr))) else None
@@ -86,7 +112,7 @@ object BuildCommon {
     ComplexAttribute(addContext(resource, attr),
       if (attr.attr != null && attr.attr.getText.nonEmpty) Some(attr.attr.getText) else None,
       attrType,
-      buildComplexValueType(resource, attrType, attr.value)
+      buildOperation(resource, attrType, attr.value)
     )
   }
 

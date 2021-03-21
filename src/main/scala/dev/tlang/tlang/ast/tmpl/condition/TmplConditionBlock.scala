@@ -1,10 +1,10 @@
 package dev.tlang.tlang.ast.tmpl.condition
 
-import dev.tlang.tlang.ast.helper.ConditionLink
+import dev.tlang.tlang.ast.common.operation.Operator
 import dev.tlang.tlang.ast.tmpl.TmplValueType
 import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
 
-case class TmplConditionBlock(context: Option[ContextContent], content: Either[TmplConditionBlock, TmplCondition], link: Option[ConditionLink.condition] = None, nextBlock: Option[TmplConditionBlock] = None) extends TmplValueType with AstContext {
+case class TmplConditionBlock(context: Option[ContextContent], content: Either[TmplConditionBlock, TmplCondition], link: Option[Operator.operator] = None, nextBlock: Option[TmplConditionBlock] = None) extends TmplValueType with AstContext {
   override def deepCopy(): TmplConditionBlock = TmplConditionBlock(context,
     content match {
       case Left(value) => Left(value.deepCopy())

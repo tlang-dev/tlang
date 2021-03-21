@@ -1,7 +1,8 @@
 package dev.tlang.tlang.interpreter
 
 import dev.tlang.tlang.ast.common.call.{CallObject, CallVarObject}
-import dev.tlang.tlang.ast.common.value.{ArrayValue, SimpleAttribute, TLangLong, TLangString}
+import dev.tlang.tlang.ast.common.operation.Operation
+import dev.tlang.tlang.ast.common.value.{ArrayValue, ComplexAttribute, TLangLong, TLangString}
 import dev.tlang.tlang.ast.helper.{ForType, HelperContent, HelperFor, HelperInternalFunc}
 import dev.tlang.tlang.interpreter.context.{Context, Scope}
 import org.scalatest.funsuite.AnyFunSuite
@@ -15,9 +16,9 @@ class ExecForTest extends AnyFunSuite {
     var count = 0
     var variable = 0
     val forStatement = HelperFor(None, "index",
-      Some(new TLangLong(None, 1)),
+      Some(Operation(None, None, Right(new TLangLong(None, 1)))),
       ForType.TO,
-      new TLangLong(None, 10),
+      Operation(None, None, Right(new TLangLong(None, 10))),
       HelperContent(None, Some(List(HelperInternalFunc((context: Context) => {
         count += 1
         variable = context.scopes.head.variables("index").asInstanceOf[TLangLong].getElement.toInt
@@ -32,9 +33,9 @@ class ExecForTest extends AnyFunSuite {
     var count = 0
     var variable = 0
     val forStatement = HelperFor(None, "index",
-      Some(new TLangLong(None, 0)),
+      Some(Operation(None, None, Right(new TLangLong(None, 0)))),
       ForType.UNTIL,
-      new TLangLong(None, 10),
+      Operation(None, None, Right(new TLangLong(None, 10))),
       HelperContent(None, Some(List(HelperInternalFunc((context: Context) => {
         count += 1
         variable = context.scopes.head.variables("index").asInstanceOf[TLangLong].getElement.toInt
@@ -50,9 +51,9 @@ class ExecForTest extends AnyFunSuite {
     var variable = 0
     val array = ListBuffer.empty[String]
     val forStatement = HelperFor(None, "elem",
-      Some(new TLangLong(None, 0)),
+      Some(Operation(None, None, Right(new TLangLong(None, 0)))),
       ForType.IN,
-      CallObject(None, List(CallVarObject(None, "myArray"))),
+      Operation(None, None, Right(CallObject(None, List(CallVarObject(None, "myArray"))))),
       HelperContent(None, Some(List(HelperInternalFunc((context: Context) => {
         count += 1
         variable = context.scopes.last.variables("_i").asInstanceOf[TLangLong].getElement.toInt
@@ -60,9 +61,9 @@ class ExecForTest extends AnyFunSuite {
         Right(None)
       })))))
     val scope = Scope(variables = mutable.Map("myArray" -> ArrayValue(None, Some(List(
-      SimpleAttribute(None, None, None, new TLangString(None, "One")),
-      SimpleAttribute(None, None, None, new TLangString(None, "Two")),
-      SimpleAttribute(None, None, None, new TLangString(None, "Three"))
+      ComplexAttribute(None, None, None, Operation(None, None, Right(new TLangString(None, "One")))),
+      ComplexAttribute(None, None, None, Operation(None, None, Right(new TLangString(None, "Two")))),
+      ComplexAttribute(None, None, None, Operation(None, None, Right(new TLangString(None, "Three"))))
     )))))
     ExecFor.run(forStatement, Context(List(scope)))
     assert(3 == count)

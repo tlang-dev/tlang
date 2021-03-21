@@ -1,7 +1,8 @@
 package dev.tlang.tlang.libraries.builtin
 
 import dev.tlang.tlang.ast.common.call._
-import dev.tlang.tlang.ast.common.value.{ArrayValue, LazyValue, SimpleAttribute, TLangString}
+import dev.tlang.tlang.ast.common.operation.Operation
+import dev.tlang.tlang.ast.common.value.{ArrayValue, ComplexAttribute, LazyValue, TLangString}
 import dev.tlang.tlang.ast.helper._
 import dev.tlang.tlang.interpreter.ExecFunc
 import dev.tlang.tlang.interpreter.context.{Context, ContextUtils, Scope}
@@ -14,9 +15,9 @@ class TmplForTest extends AnyFunSuite {
   test("Simple for") {
     var res = ""
 
-    val array = ArrayValue(None, Some(List(SimpleAttribute(None, value = new TLangString(None, "val1")),
-      SimpleAttribute(None, value = new TLangString(None, "val2")),
-      SimpleAttribute(None, value = new TLangString(None, "val3")))))
+    val array = ArrayValue(None, Some(List(ComplexAttribute(None, value = Operation(None, None, Right(new TLangString(None, "val1")))),
+      ComplexAttribute(None, value = Operation(None, None, Right(new TLangString(None, "val2")))),
+      ComplexAttribute(None, value = Operation(None, None, Right(new TLangString(None, "val3")))))))
 
     val calledFunc = HelperFunc(None, "anyFunc", Some(List(HelperCurrying(None, List(HelperParam(None, Some("param1"), HelperObjType(None, TLangString.getType)))))), None, HelperContent(None, Some(List(
       HelperInternalFunc((context: Context) => {
@@ -26,7 +27,7 @@ class TmplForTest extends AnyFunSuite {
       })
     ))))
 
-    val call = CallRefFuncObject(None, None, Some(List(CallFuncParam(None, Some(List(SetAttribute(None, value = LazyValue(None, None, Some(TLangString)))))))), Some(Left(calledFunc)))
+    val call = CallRefFuncObject(None, None, Some(List(CallFuncParam(None, Some(List(SetAttribute(None, value = Operation(None, None, Right(LazyValue(None, None, Some(TLangString)))))))))), Some(Left(calledFunc)))
 
     val context = Context(List(Scope(
       variables = mutable.Map("array" -> array),

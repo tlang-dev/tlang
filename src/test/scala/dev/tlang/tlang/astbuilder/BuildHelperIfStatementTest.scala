@@ -1,9 +1,8 @@
 package dev.tlang.tlang.astbuilder
 
 import dev.tlang.tlang.ast.common.call.{CallObject, CallVarObject}
-import dev.tlang.tlang.ast.helper.{ConditionLink, ConditionType, HelperIf}
-import dev.tlang.tlang.ast.common.call.{CallObject, CallVarObject}
-import dev.tlang.tlang.ast.helper.{ConditionLink, ConditionType, HelperIf}
+import dev.tlang.tlang.ast.common.operation.Operator
+import dev.tlang.tlang.ast.helper.HelperIf
 import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.{TLangLexer, TLangParser}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
@@ -31,13 +30,8 @@ class BuildHelperIfStatementTest extends AnyFunSuite {
     val ifStmt = func.block.content.get.head.asInstanceOf[HelperIf]
     val trueStmt = ifStmt.ifTrue
     val elseStmt = ifStmt.ifFalse
-    assert("myVar" == ifStmt.condition.content.toOption.get.statement1.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
-    assert(ifStmt.condition.link.isEmpty)
-    assert(ifStmt.condition.nextBlock.isEmpty)
-    assert(ifStmt.condition.content.toOption.get.condition.isEmpty)
-    assert(ifStmt.condition.content.toOption.get.statement2.isEmpty)
-    assert(ifStmt.condition.content.toOption.get.link.isEmpty)
-    assert(ifStmt.condition.content.toOption.get.nextBlock.isEmpty)
+    assert("myVar" == ifStmt.condition.content.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
+    assert(ifStmt.condition.next.isEmpty)
     assert("callAnyVar" == trueStmt.get.content.get.head.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
     assert("callAnotherVar" == elseStmt.get.content.get.head.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
   }
@@ -55,9 +49,9 @@ class BuildHelperIfStatementTest extends AnyFunSuite {
     val parser = new TLangParser(tokens)
     val func = BuildHelperBlock.build(fakeContext, parser.helperBlock()).funcs.get.head
     val ifStmt = func.block.content.get.head.asInstanceOf[HelperIf]
-    assert("myVar" == ifStmt.condition.content.toOption.get.statement1.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
-    assert("myVar2" == ifStmt.condition.content.toOption.get.statement2.get.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
-    assert(ConditionType.EQUAL == ifStmt.condition.content.toOption.get.condition.get)
+    assert("myVar" == ifStmt.condition.content.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
+    assert("myVar2" == ifStmt.condition.next.get._2.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
+    assert(Operator.EQUAL == ifStmt.condition.next.get._1)
     assert(ifStmt.ifTrue.isEmpty)
     assert(ifStmt.ifFalse.isEmpty)
   }
@@ -75,9 +69,9 @@ class BuildHelperIfStatementTest extends AnyFunSuite {
     val parser = new TLangParser(tokens)
     val func = BuildHelperBlock.build(fakeContext, parser.helperBlock()).funcs.get.head
     val ifStmt = func.block.content.get.head.asInstanceOf[HelperIf]
-    assert("myVar" == ifStmt.condition.content.toOption.get.statement1.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
-    assert("myVar2" == ifStmt.condition.content.toOption.get.statement2.get.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
-    assert(ConditionType.NOT_EQUAL == ifStmt.condition.content.toOption.get.condition.get)
+    assert("myVar" == ifStmt.condition.content.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
+    assert("myVar2" == ifStmt.condition.next.get._2.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
+    assert(Operator.NOT_EQUAL == ifStmt.condition.next.get._1)
   }
 
   test("Greater statement") {
@@ -93,9 +87,9 @@ class BuildHelperIfStatementTest extends AnyFunSuite {
     val parser = new TLangParser(tokens)
     val func = BuildHelperBlock.build(fakeContext, parser.helperBlock()).funcs.get.head
     val ifStmt = func.block.content.get.head.asInstanceOf[HelperIf]
-    assert("myVar" == ifStmt.condition.content.toOption.get.statement1.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
-    assert("myVar2" == ifStmt.condition.content.toOption.get.statement2.get.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
-    assert(ConditionType.GREATER == ifStmt.condition.content.toOption.get.condition.get)
+    assert("myVar" == ifStmt.condition.content.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
+    assert("myVar2" == ifStmt.condition.next.get._2.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
+    assert(Operator.GREATER == ifStmt.condition.next.get._1)
   }
 
   test("Lesser statement") {
@@ -111,9 +105,9 @@ class BuildHelperIfStatementTest extends AnyFunSuite {
     val parser = new TLangParser(tokens)
     val func = BuildHelperBlock.build(fakeContext, parser.helperBlock()).funcs.get.head
     val ifStmt = func.block.content.get.head.asInstanceOf[HelperIf]
-    assert("myVar" == ifStmt.condition.content.toOption.get.statement1.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
-    assert("myVar2" == ifStmt.condition.content.toOption.get.statement2.get.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
-    assert(ConditionType.LESSER == ifStmt.condition.content.toOption.get.condition.get)
+    assert("myVar" == ifStmt.condition.content.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
+    assert("myVar2" == ifStmt.condition.next.get._2.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
+    assert(Operator.LESSER == ifStmt.condition.next.get._1)
   }
 
   test("Greater or equal statement") {
@@ -129,9 +123,9 @@ class BuildHelperIfStatementTest extends AnyFunSuite {
     val parser = new TLangParser(tokens)
     val func = BuildHelperBlock.build(fakeContext, parser.helperBlock()).funcs.get.head
     val ifStmt = func.block.content.get.head.asInstanceOf[HelperIf]
-    assert("myVar" == ifStmt.condition.content.toOption.get.statement1.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
-    assert("myVar2" == ifStmt.condition.content.toOption.get.statement2.get.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
-    assert(ConditionType.GREATER_OR_EQUAL == ifStmt.condition.content.toOption.get.condition.get)
+    assert("myVar" == ifStmt.condition.content.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
+    assert("myVar2" == ifStmt.condition.next.get._2.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
+    assert(Operator.GREATER_OR_EQUAL == ifStmt.condition.next.get._1)
   }
 
   test("Lesser or equal statement") {
@@ -147,9 +141,9 @@ class BuildHelperIfStatementTest extends AnyFunSuite {
     val parser = new TLangParser(tokens)
     val func = BuildHelperBlock.build(fakeContext, parser.helperBlock()).funcs.get.head
     val ifStmt = func.block.content.get.head.asInstanceOf[HelperIf]
-    assert("myVar" == ifStmt.condition.content.toOption.get.statement1.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
-    assert("myVar2" == ifStmt.condition.content.toOption.get.statement2.get.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
-    assert(ConditionType.LESSER_OR_EQUAL == ifStmt.condition.content.toOption.get.condition.get)
+    assert("myVar" == ifStmt.condition.content.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
+    assert("myVar2" == ifStmt.condition.next.get._2.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
+    assert(Operator.LESSER_OR_EQUAL == ifStmt.condition.next.get._1)
   }
 
   test("AND and OR links") {
@@ -165,14 +159,15 @@ class BuildHelperIfStatementTest extends AnyFunSuite {
     val parser = new TLangParser(tokens)
     val func = BuildHelperBlock.build(fakeContext, parser.helperBlock()).funcs.get.head
     val ifStmt = func.block.content.get.head.asInstanceOf[HelperIf]
-    val cond1 = ifStmt.condition.content.toOption.get
-    val cond2 = cond1.nextBlock.get
-    val cond3 = cond2.content.toOption.get.nextBlock.get
-    assert("myVar" == cond1.statement1.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
-    assert(ConditionLink.AND == cond1.link.get)
-    assert("myVar2" == cond2.content.toOption.get.statement1.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
-    assert(ConditionLink.OR == cond2.content.toOption.get.link.get)
-    assert("myVar3" == cond3.content.toOption.get.statement1.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
+    val cond1 = ifStmt.condition
+    val cond2 = cond1.next.get
+    val cond3 = cond2
+    val cond4 = cond3._2
+    assert("myVar" == cond1.content.toOption.get.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
+    assert(Operator.AND == cond2._1)
+    assert("myVar2" == cond2._2.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
+    assert(Operator.OR == cond3._1)
+    assert("myVar3" == cond3._2.content.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
   }
 
   test("AND and OR plus conditions") {
@@ -188,20 +183,23 @@ class BuildHelperIfStatementTest extends AnyFunSuite {
     val parser = new TLangParser(tokens)
     val func = BuildHelperBlock.build(fakeContext, parser.helperBlock()).funcs.get.head
     val ifStmt = func.block.content.get.head.asInstanceOf[HelperIf]
-    val cond1 = ifStmt.condition.content.toOption.get
-    val cond2 = cond1.nextBlock.get
-    val cond3 = cond2.content.toOption.get.nextBlock.get
-    assert("myVar" == cond1.statement1.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
-    assert(ConditionType.EQUAL == cond1.condition.get)
-    assert("myVar2" == cond1.statement2.get.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
-    assert(ConditionLink.AND == cond1.link.get)
-    assert("myVar3" == cond2.content.toOption.get.statement1.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
-    assert(ConditionType.NOT_EQUAL == cond2.content.toOption.get.condition.get)
-    assert("myVar4" == cond2.content.toOption.get.statement2.get.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
-    assert(ConditionLink.OR == cond2.content.toOption.get.link.get)
-    assert("myVar5" == cond3.content.toOption.get.statement1.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
-    assert(ConditionType.GREATER_OR_EQUAL == cond3.content.toOption.get.condition.get)
-    assert("myVar6" == cond3.content.toOption.get.statement2.get.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
+    val cond1 = ifStmt.condition
+    val cond2 = cond1.next.get
+    val cond3 = cond1.next
+    val cond4 = cond3.get._2.next
+    val cond5 = cond3.get._2.next
+    val cond6 = cond5.get._2.next
+    assert("myVar" == cond1.content.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
+    assert(Operator.EQUAL == cond2._1)
+    assert("myVar2" == cond2._2.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
+    assert(Operator.AND == cond3.get._1)
+    assert("myVar3" == cond3.get._2.content.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
+    assert(Operator.NOT_EQUAL == cond4.get._1)
+    assert("myVar4" == cond4.get._2.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
+    assert(Operator.OR == cond5.get._1)
+    assert("myVar5" == cond5.get._2.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
+    assert(Operator.GREATER_OR_EQUAL == cond6.get._1)
+    assert("myVar6" == cond6.get._2.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
   }
 
   test("Two conditions with parentheses") {
@@ -217,15 +215,17 @@ class BuildHelperIfStatementTest extends AnyFunSuite {
     val parser = new TLangParser(tokens)
     val func = BuildHelperBlock.build(fakeContext, parser.helperBlock()).funcs.get.head
     val ifStmt = func.block.content.get.head.asInstanceOf[HelperIf]
-    val cond1 = ifStmt.condition.content
-    val cond2 = ifStmt.condition.nextBlock.get
-    assert("myVar" == cond1.toOption.get.statement1.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
-    assert(ConditionType.EQUAL == cond1.toOption.get.condition.get)
-    assert("myVar2" == cond1.toOption.get.statement2.get.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
-    assert(ConditionLink.AND == ifStmt.condition.link.get)
-    assert("myVar3" == cond2.content.toOption.get.statement1.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
-    assert(ConditionType.NOT_EQUAL == cond2.content.toOption.get.condition.get)
-    assert("myVar4" == cond2.content.toOption.get.statement2.get.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
+    val cond1 = ifStmt.condition
+    val cond2 = ifStmt.condition.next
+    val cond3 = ifStmt.condition.next
+    val cond4 = cond3.get
+    assert("myVar" == cond1.content.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
+    assert(Operator.EQUAL == cond2.get._1)
+    assert("myVar2" == cond2.get._2.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
+    assert(Operator.AND == cond3.get._1)
+    assert("myVar3" == cond3.get._2.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
+    assert(Operator.NOT_EQUAL == cond4._1)
+    assert("myVar4" == cond4._2.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
   }
 
   test("One condition plus two variables with parentheses") {
@@ -241,14 +241,17 @@ class BuildHelperIfStatementTest extends AnyFunSuite {
     val parser = new TLangParser(tokens)
     val func = BuildHelperBlock.build(fakeContext, parser.helperBlock()).funcs.get.head
     val ifStmt = func.block.content.get.head.asInstanceOf[HelperIf]
-    val cond1 = ifStmt.condition.content
-    assert("myVar" == cond1.toOption.get.statement1.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
-    assert(ConditionType.EQUAL == cond1.toOption.get.condition.get)
-    assert("myVar2" == cond1.toOption.get.statement2.get.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
-    assert(ConditionLink.AND == cond1.toOption.get.link.get)
-    assert("myVar3" == cond1.toOption.get.nextBlock.get.content.toOption.get.statement1.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
-    assert(ConditionLink.OR == ifStmt.condition.link.get)
-    assert("myVar4" == ifStmt.condition.nextBlock.get.content.toOption.get.statement1.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
+    val cond1 = ifStmt.condition.content.swap.toOption.get
+    val cond2 = cond1.next.get
+    val cond3 = cond2._2.next.get
+    val cond4 = cond1.next.get
+    assert("myVar" == cond1.content.toOption.get.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
+    assert(Operator.EQUAL == cond2._1)
+    assert("myVar2" == cond2._2.content.toOption.get.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
+    assert(Operator.AND == cond3._1)
+    assert("myVar3" == cond3._2.content.toOption.get.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
+    assert(Operator.OR == cond4._1)
+    assert("myVar4" == cond4._2.content.toOption.get.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
   }
 
   test("Sub block with parentheses") {
@@ -264,20 +267,24 @@ class BuildHelperIfStatementTest extends AnyFunSuite {
     val parser = new TLangParser(tokens)
     val func = BuildHelperBlock.build(fakeContext, parser.helperBlock()).funcs.get.head
     val ifStmt = func.block.content.get.head.asInstanceOf[HelperIf]
-    val block1 = ifStmt.condition.content.left.toOption.get
-    val block2 = block1.content.toOption.get
-    val block3 = block2.nextBlock.get
-    val block4 = block1.nextBlock.get
-    val block5 = ifStmt.condition.nextBlock.get
-    assert("myVar" == block2.statement1.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
-    assert(ConditionType.EQUAL == block2.condition.get)
-    assert("myVar2" == block2.statement2.get.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
-    assert(ConditionLink.AND == block2.link.get)
-    assert("myVar3" == block3.content.toOption.get.statement1.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
-    assert(ConditionLink.OR == block1.link.get)
-    assert("myVar4" == block4.content.toOption.get.statement1.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
-    assert(ConditionLink.AND == ifStmt.condition.link.get)
-    assert("myVar5" == block5.content.toOption.get.statement1.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
+    val myVar = ifStmt.condition.content.left.toOption.get.content.toOption.get
+    val equals = ifStmt.condition.content.left.toOption.get.next.get._1
+    val myVar2 = ifStmt.condition.content.left.toOption.get.next.get._2.content.swap.toOption.get
+    val and = ifStmt.condition.content.left.toOption.get.next.get._2.next.get._1
+    val myVar3 = ifStmt.condition.content.left.toOption.get.next.get._2.next.get._2.content.swap.toOption.get
+    val or = ifStmt.condition.content.left.toOption.get.next.get._1
+    val myVar4 = ifStmt.condition.content.left.toOption.get.next.get._2
+    val and2 = ifStmt.condition.next.get._1
+    val myVar5 = ifStmt.condition.next.get._2.content.swap.toOption.get
+    assert("myVar" == myVar.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
+    assert(Operator.EQUAL == equals)
+    assert("myVar2" == myVar2.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
+    assert(Operator.AND == and)
+    assert("myVar3" == myVar3.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
+    assert(Operator.OR == or)
+    assert("myVar4" == myVar4.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
+    assert(Operator.AND == and2)
+    assert("myVar5" == myVar5.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
   }
 
 }

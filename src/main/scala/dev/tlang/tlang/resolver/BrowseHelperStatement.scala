@@ -1,8 +1,8 @@
 package dev.tlang.tlang.resolver
 
 import dev.tlang.tlang.ast.DomainUse
-import dev.tlang.tlang.ast.common.call.{CallFuncParam, CallObject, SimpleValueStatement}
-import dev.tlang.tlang.ast.common.condition.{Condition, ConditionBlock}
+import dev.tlang.tlang.ast.common.call.{CallFuncParam, CallObject, ComplexValueStatement}
+import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value.{ArrayValue, AssignVar, EntityValue, MultiValue}
 import dev.tlang.tlang.ast.helper.{HelperFor, HelperFunc, HelperIf, HelperStatement}
 import dev.tlang.tlang.ast.tmpl.TmplBlockAsValue
@@ -31,7 +31,7 @@ object BrowseHelperStatement {
       case assignVar: AssignVar => browseAssignVar(assignVar, module, uses, scope, currentResource)
       case helperIf: HelperIf => browseIf(helperIf, module, uses, scope, currentResource)
       case helperFor: HelperFor => browseFor(helperFor, module, uses, scope, currentResource)
-      case conditionBlock: ConditionBlock => browseConditionBlock(conditionBlock, module, uses, scope, currentResource)
+      case operation: Operation => browseOperation(operation, module, uses, scope, currentResource)
       case multiValue: MultiValue => browseMultiVal(multiValue, module, uses, scope, currentResource)
       case entity: EntityValue => browseEntity(entity, module, uses, scope, currentResource)
       case array: ArrayValue => browseArray(array, module, uses, scope, currentResource)
@@ -61,30 +61,30 @@ object BrowseHelperStatement {
     else Right(())
   }
 
-  def browseConditionBlock(conditionBlock: ConditionBlock, module: loader.Module, uses: List[DomainUse], scope: Scope, currentResource: Resource): Either[List[ResolverError], Unit] = {
+  def browseOperation(operation: Operation, module: loader.Module, uses: List[DomainUse], scope: Scope, currentResource: Resource): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
-    conditionBlock.content match {
-      case Left(block) => extractErrors(errors, browseStatement(block, module, uses, scope, currentResource))
-      case Right(cond) => extractErrors(errors, resolveCondition(cond, module, uses, scope, currentResource))
-    }
-    conditionBlock.nextBlock.foreach(block => extractErrors(errors, browseConditionBlock(block, module, uses, scope, currentResource)))
+    //    operation.content match {
+    //      case Left(block) => extractErrors(errors, browseStatement(block, module, uses, scope, currentResource))
+    //      case Right(cond) => extractErrors(errors, resolveCondition(cond, module, uses, scope, currentResource))
+    //    }
+    //    operation.nextBlock.foreach(block => extractErrors(errors, browseOperation(block, module, uses, scope, currentResource)))
     if (errors.nonEmpty) Left(errors.toList)
     else Right(())
   }
 
-  def resolveCondition(condition: Condition, module: loader.Module, uses: List[DomainUse], scope: Scope, currentResource: Resource): Either[List[ResolverError], Unit] = {
-    val errors = ListBuffer.empty[ResolverError]
-    extractErrors(errors, browseStatement(condition.statement1, module, uses, scope, currentResource))
-    condition.statement2.foreach(stmt => extractErrors(errors, browseStatement(stmt, module, uses, scope, currentResource)))
-    condition.nextBlock.foreach(block => extractErrors(errors, browseConditionBlock(block, module, uses, scope, currentResource)))
-    if (errors.nonEmpty) Left(errors.toList)
-    else Right(())
-  }
+  //  def resolveCondition(condition: Condition, module: loader.Module, uses: List[DomainUse], scope: Scope, currentResource: Resource): Either[List[ResolverError], Unit] = {
+  //    val errors = ListBuffer.empty[ResolverError]
+  //    extractErrors(errors, browseStatement(condition.statement1, module, uses, scope, currentResource))
+  //    condition.statement2.foreach(stmt => extractErrors(errors, browseStatement(stmt, module, uses, scope, currentResource)))
+  //    condition.nextBlock.foreach(block => extractErrors(errors, browseOperation(block, module, uses, scope, currentResource)))
+  //    if (errors.nonEmpty) Left(errors.toList)
+  //    else Right(())
+  //  }
 
   def browseMultiVal(multiValue: MultiValue, module: loader.Module, uses: List[DomainUse], scope: Scope, currentResource: Resource): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
     multiValue.values.foreach {
-      case statement: SimpleValueStatement[_] => extractErrors(errors, browseStatement(statement, module, uses, scope, currentResource))
+      case statement: ComplexValueStatement[_] => extractErrors(errors, browseStatement(statement, module, uses, scope, currentResource))
       case _ =>
     }
     if (errors.nonEmpty) Left(errors.toList)

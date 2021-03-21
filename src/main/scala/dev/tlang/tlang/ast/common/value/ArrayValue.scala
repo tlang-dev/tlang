@@ -3,7 +3,7 @@ package dev.tlang.tlang.ast.common.value
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.{ExecError, NotImplemented, Value}
 
-case class ArrayValue(context: Option[ContextContent], tbl: Option[List[SimpleAttribute]]) extends PrimitiveValue[ArrayValue] {
+case class ArrayValue(context: Option[ContextContent], tbl: Option[List[ComplexAttribute]]) extends PrimitiveValue[ArrayValue] {
   override def getElement: ArrayValue = this
 
   override def getType: String = ArrayValue.getType

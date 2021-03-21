@@ -1,6 +1,6 @@
 package dev.tlang.tlang.generator.java
 
-import dev.tlang.tlang.ast.helper.{ConditionLink, ConditionType}
+import dev.tlang.tlang.ast.common.operation.Operator
 import dev.tlang.tlang.ast.tmpl._
 import dev.tlang.tlang.ast.tmpl.call._
 import dev.tlang.tlang.ast.tmpl.condition.{TmplCondition, TmplConditionBlock}
@@ -269,37 +269,37 @@ object JavaGenerator {
     val str = new StringBuilder
     str ++= genSimpleValueType(cond.statement1)
     if (cond.condition.isDefined) {
-      str ++= " " ++= genConditionType(cond.condition.get) ++= " "
+      str ++= " " ++= genOperator(cond.condition.get) ++= " "
       str ++= genSimpleValueType(cond.statement2.get)
     }
     str ++= genConditionLinkWithBlock(cond.link, cond.nextBlock)
     str.toString()
   }
 
-  def genConditionLinkWithBlock(link: Option[ConditionLink.condition], nextBlock: Option[TmplConditionBlock]): String = {
+  def genConditionLinkWithBlock(link: Option[Operator.operator], nextBlock: Option[TmplConditionBlock]): String = {
     val str = new StringBuilder
     if (link.isDefined) {
-      str ++= " " ++= genConditionLink(link.get)
+      str ++= " " ++= genOperator(link.get)
       nextBlock.foreach(block => str ++= " " ++= genConditionBlock(block))
     }
     str.toString()
   }
 
-  def genConditionType(cond: ConditionType.condition): String = {
-    cond match {
-      case dev.tlang.tlang.ast.helper.ConditionType.EQUAL => "=="
-      case dev.tlang.tlang.ast.helper.ConditionType.GREATER => ">"
-      case dev.tlang.tlang.ast.helper.ConditionType.LESSER => "<"
-      case dev.tlang.tlang.ast.helper.ConditionType.GREATER_OR_EQUAL => ">="
-      case dev.tlang.tlang.ast.helper.ConditionType.LESSER_OR_EQUAL => "<="
-      case dev.tlang.tlang.ast.helper.ConditionType.NOT_EQUAL => "!="
-    }
-  }
-
-  def genConditionLink(link: ConditionLink.condition): String = {
-    link match {
-      case dev.tlang.tlang.ast.helper.ConditionLink.OR => "||"
-      case dev.tlang.tlang.ast.helper.ConditionLink.AND => "&&"
+  def genOperator(op: Operator.operator): String = {
+    op match {
+      case Operator.OR => "||"
+      case Operator.AND => "&&"
+      case Operator.ADD => "+"
+      case Operator.SUBTRACT => "-"
+      case Operator.MULTIPLY => "*"
+      case Operator.DIVIDE => "/"
+      case Operator.MODULO => "%"
+      case Operator.EQUAL => "=="
+      case Operator.GREATER => ">"
+      case Operator.LESSER => "<"
+      case Operator.GREATER_OR_EQUAL => ">="
+      case Operator.LESSER_OR_EQUAL => "<="
+      case Operator.NOT_EQUAL => "!="
     }
   }
 

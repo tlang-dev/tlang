@@ -5,7 +5,7 @@ import dev.tlang.tlang.ast.common.value.TLangBool
 import dev.tlang.tlang.ast.helper.HelperStatement
 import dev.tlang.tlang.interpreter.context.Context
 
-object ExecConditionBlock extends Executor {
+object ExecOperation extends Executor {
 
   override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
     val block = statement.asInstanceOf[Operation]

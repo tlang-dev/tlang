@@ -2,6 +2,7 @@ package dev.tlang.tlang.resolver
 
 import dev.tlang.tlang.ast.DomainUse
 import dev.tlang.tlang.ast.common.call.{CallFuncObject, CallObject, CallVarObject}
+import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value.{AssignVar, EntityValue}
 import dev.tlang.tlang.ast.helper.{HelperBlock, HelperContent, HelperFunc}
 import dev.tlang.tlang.ast.model.ModelContent
@@ -303,8 +304,8 @@ class ResolveContextTest extends AnyFunSuite {
   test("Find var") {
     val contents: List[ModelContent[_]] = List(
       ModelSetEntity(None, "myEntity", None, None),
-      AssignVar(None, "myEntity", None, EntityValue(None, None, None)),
-      AssignVar(None, "myEntity2", None, EntityValue(None, None, None)),
+      AssignVar(None, "myEntity", None, Operation(None, None, Right(EntityValue(None, None, None)))),
+      AssignVar(None, "myEntity2", None, Operation(None, None, Right(EntityValue(None, None, None)))),
     )
 
     val myVar = ResolveUtils.findInVars(contents, "myEntity")
@@ -325,8 +326,8 @@ class ResolveContextTest extends AnyFunSuite {
   test("Find empty var") {
     val contents: List[ModelContent[_]] = List(
       ModelSetEntity(None, "myEntity", None, None),
-      AssignVar(None, "myEntity", None, EntityValue(None, None, None)),
-      AssignVar(None, "myEntity2", None, EntityValue(None, None, None)),
+      AssignVar(None, "myEntity", None, Operation(None, None, Right(EntityValue(None, None, None)))),
+      AssignVar(None, "myEntity2", None, Operation(None, None, Right(EntityValue(None, None, None)))),
     )
 
     val myVar = ResolveUtils.findInVars(contents, "myEntity3")

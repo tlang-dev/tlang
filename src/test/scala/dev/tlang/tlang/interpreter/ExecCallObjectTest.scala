@@ -1,8 +1,8 @@
 package dev.tlang.tlang.interpreter
 
-import dev.tlang.tlang.ast.common.value.{EntityValue, TLangString}
 import dev.tlang.tlang.ast.common.call._
-import dev.tlang.tlang.ast.common.value._
+import dev.tlang.tlang.ast.common.operation.Operation
+import dev.tlang.tlang.ast.common.value.{EntityValue, TLangString, _}
 import dev.tlang.tlang.ast.helper._
 import dev.tlang.tlang.interpreter.context.{Context, Scope}
 import org.scalatest.funsuite.AnyFunSuite
@@ -21,12 +21,12 @@ class ExecCallObjectTest extends AnyFunSuite {
 
   test("Get variable from array by index") {
     val array = ArrayValue(None, Some(List(
-      SimpleAttribute(None, value = new TLangString(None, value = "value1")),
-      SimpleAttribute(None, value = new TLangString(None, value = "value2")),
-      SimpleAttribute(None, value = new TLangString(None, value = "value3"))
+      ComplexAttribute(None, value = Operation(None, None, Right(new TLangString(None, value = "value1")))),
+      ComplexAttribute(None, value = Operation(None, None, Right(new TLangString(None, value = "value2")))),
+      ComplexAttribute(None, value = Operation(None, None, Right(new TLangString(None, value = "value3"))))
     )))
     val context = Context(List(Scope(variables = mutable.Map("var1" -> array))))
-    val statement = CallObject(None, List(CallArrayObject(None, "var1", new TLangLong(None, 1))))
+    val statement = CallObject(None, List(CallArrayObject(None, "var1", Operation(None, None, Right(new TLangLong(None, 1))))))
     val res = ExecCallObject.run(statement, context).toOption.get.get
     assert(res.head.isInstanceOf[TLangString])
     assert("value2".equals(res.head.asInstanceOf[TLangString].getElement))
@@ -34,12 +34,12 @@ class ExecCallObjectTest extends AnyFunSuite {
 
   test("Get variable from array by name") {
     val array = ArrayValue(None, Some(List(
-      SimpleAttribute(None, Some("myPosition1"), value = new TLangString(None, value = "value1")),
-      SimpleAttribute(None, Some("myPosition2"), value = new TLangString(None, value = "value2")),
-      SimpleAttribute(None, Some("myPosition3"), value = new TLangString(None, value = "value3"))
+      ComplexAttribute(None, Some("myPosition1"), value = Operation(None, None, Right(new TLangString(None, value = "value1")))),
+      ComplexAttribute(None, Some("myPosition2"), value = Operation(None, None, Right(new TLangString(None, value = "value2")))),
+      ComplexAttribute(None, Some("myPosition3"), value = Operation(None, None, Right(new TLangString(None, value = "value3"))))
     )))
     val context = Context(List(Scope(variables = mutable.Map("var1" -> array))))
-    val statement = CallObject(None, List(CallArrayObject(None, "var1", new TLangString(None, "myPosition2"))))
+    val statement = CallObject(None, List(CallArrayObject(None, "var1", Operation(None, None, Right(new TLangString(None, "myPosition2"))))))
     val res = ExecCallObject.run(statement, context).toOption.get.get
     assert(res.head.isInstanceOf[TLangString])
     assert("value2".equals(res.head.asInstanceOf[TLangString].getElement))
@@ -47,9 +47,9 @@ class ExecCallObjectTest extends AnyFunSuite {
 
   test("Get variable from params in entity") {
     val myEntity = EntityValue(None, Some("MyEntity"), Some(List(
-      ComplexAttribute(None, Some("attr1"), None, new TLangString(None, value = "value1")),
-      ComplexAttribute(None, Some("attr2"), None, new TLangString(None, value = "value2")),
-      ComplexAttribute(None, Some("attr3"), None, new TLangString(None, value = "value3"))
+      ComplexAttribute(None, Some("attr1"), None, Operation(None, None, Right(new TLangString(None, value = "value1")))),
+      ComplexAttribute(None, Some("attr2"), None, Operation(None, None, Right(new TLangString(None, value = "value2")))),
+      ComplexAttribute(None, Some("attr3"), None, Operation(None, None, Right(new TLangString(None, value = "value3"))))
     )))
     val context = Context(List(Scope(variables = mutable.Map("var1" -> myEntity))))
     val statement = CallObject(None, List(CallVarObject(None, "var1"), CallVarObject(None, "attr2")))
@@ -60,9 +60,9 @@ class ExecCallObjectTest extends AnyFunSuite {
 
   test("Get variable from attrs in entity") {
     val myEntity = EntityValue(None, Some("MyEntity"), None, Some(List(
-      ComplexAttribute(None, Some("attr1"), None, new TLangString(None, value = "value1")),
-      ComplexAttribute(None, Some("attr2"), None, new TLangString(None, value = "value2")),
-      ComplexAttribute(None, Some("attr3"), None, new TLangString(None, value = "value3"))
+      ComplexAttribute(None, Some("attr1"), None, Operation(None, None, Right(new TLangString(None, value = "value1")))),
+      ComplexAttribute(None, Some("attr2"), None, Operation(None, None, Right(new TLangString(None, value = "value2")))),
+      ComplexAttribute(None, Some("attr3"), None, Operation(None, None, Right(new TLangString(None, value = "value3"))))
     )))
     val context = Context(List(Scope(variables = mutable.Map("var1" -> myEntity))))
     val statement = CallObject(None, List(CallVarObject(None, "var1"), CallVarObject(None, "attr2")))
@@ -75,7 +75,7 @@ class ExecCallObjectTest extends AnyFunSuite {
     val callInsideFunc = CallObject(None, List(CallVarObject(None, "valToReturn")))
     val block = HelperContent(None, Some(List(callInsideFunc)))
     val funcDef = HelperFunc(None, "myFunc", Some(List(HelperCurrying(None, List(HelperParam(None, Some("valToReturn"), HelperObjType(None, "String")))))), None, block = block)
-    val caller = SetAttribute(None, value = CallObject(None, List(CallVarObject(None, "var1"))))
+    val caller = SetAttribute(None, value = Operation(None, None, Right(CallObject(None, List(CallVarObject(None, "var1"))))))
     val statement = CallObject(None, List(CallFuncObject(None, Some("myFunc"), Some(List(CallFuncParam(None, Some(List(caller))))))))
     val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangString(None, "MyValue")), functions = mutable.Map("myFunc" -> funcDef))))
     val res = ExecCallObject.run(statement, context).toOption.get.get
@@ -90,8 +90,8 @@ class ExecCallObjectTest extends AnyFunSuite {
     val funcDef = HelperFunc(None, "myFunc", Some(List(
       HelperCurrying(None, List(HelperParam(None, Some("valToReturn"), HelperObjType(None, "String")))),
       HelperCurrying(None, List(HelperParam(None, Some("valToReturn2"), HelperObjType(None, "String")))))), None, block = block)
-    val caller = SetAttribute(None, value = CallObject(None, List(CallVarObject(None, "var1"))))
-    val caller2 = SetAttribute(None, value = CallObject(None, List(CallVarObject(None, "var2"))))
+    val caller = SetAttribute(None, value = Operation(None, None, Right(CallObject(None, List(CallVarObject(None, "var1"))))))
+    val caller2 = SetAttribute(None, value = Operation(None, None, Right(CallObject(None, List(CallVarObject(None, "var2"))))))
     val statement = CallObject(None, List(CallFuncObject(None, Some("myFunc"), Some(List(
       CallFuncParam(None, Some(List(caller))),
       CallFuncParam(None, Some(List(caller2))),
@@ -106,8 +106,8 @@ class ExecCallObjectTest extends AnyFunSuite {
     val callInsideFunc = CallObject(None, List(CallVarObject(None, "valToReturn")))
     val block = HelperContent(None, Some(List(callInsideFunc)))
     val funcDef = HelperFunc(None, "myFunc", Some(List(HelperCurrying(None, List(HelperParam(None, Some("valToReturn"), HelperObjType(None, "String")))))), None, block = block)
-    val caller = SetAttribute(None, value = CallObject(None, List(CallVarObject(None, "var1"))))
-    val attrStatement = CallObject(None, List(CallFuncObject(None, Some("myFunc"), Some(List(CallFuncParam(None, Some(List(caller))))))))
+    val caller = SetAttribute(None, value = Operation(None, None, Right(CallObject(None, List(CallVarObject(None, "var1"))))))
+    val attrStatement = Operation(None, None, Right(CallObject(None, List(CallFuncObject(None, Some("myFunc"), Some(List(CallFuncParam(None, Some(List(caller))))))))))
     val myEntity = EntityValue(None, Some("MyEntity"), None, Some(List(
       ComplexAttribute(None, Some("attr1"), None, attrStatement),
     )))
@@ -119,11 +119,11 @@ class ExecCallObjectTest extends AnyFunSuite {
 
   test("Call array from entity") {
     val array = ArrayValue(None, Some(List(
-      SimpleAttribute(None, Some("myPosition1"), None, new TLangString(None, value = "value1")),
-      SimpleAttribute(None, Some("myPosition2"), None, new TLangString(None, value = "value2")),
-      SimpleAttribute(None, Some("myPosition3"), None, new TLangString(None, value = "value3"))
+      ComplexAttribute(None, Some("myPosition1"), None, Operation(None, None, Right(new TLangString(None, value = "value1")))),
+      ComplexAttribute(None, Some("myPosition2"), None, Operation(None, None, Right(new TLangString(None, value = "value2")))),
+      ComplexAttribute(None, Some("myPosition3"), None, Operation(None, None, Right(new TLangString(None, value = "value3"))))
     )))
-    val attrStatement = CallObject(None, List(CallArrayObject(None, "var1", new TLangString(None, "myPosition2"))))
+    val attrStatement = Operation(None, None, Right(CallObject(None, List(CallArrayObject(None, "var1", Operation(None, None, Right(new TLangString(None, "myPosition2"))))))))
     val myEntity = EntityValue(None, Some("MyEntity"), None, Some(List(
       ComplexAttribute(None, Some("attr1"), None, attrStatement),
     )))
@@ -139,7 +139,7 @@ class ExecCallObjectTest extends AnyFunSuite {
     val blockFunc2 = HelperContent(None, Some(List(callInsideFunc2)))
     val funcDef2 = HelperFunc(None, "myFunc2", Some(List(HelperCurrying(None, List(HelperParam(None, Some("valToReturn"), HelperObjType(None, "String")))))), None, block = blockFunc2)
 
-    val caller = SetAttribute(None, value = CallObject(None, List(CallVarObject(None, "var1"))))
+    val caller = SetAttribute(None, value = Operation(None, None, Right(CallObject(None, List(CallVarObject(None, "var1"))))))
     val callInsideFunc1 = CallObject(None, List(CallFuncObject(None, Some("myFunc2"), Some(List(CallFuncParam(None, Some(List(caller))))))))
     val blockFunc1 = HelperContent(None, Some(List(callInsideFunc1)))
     val funcDef1 = HelperFunc(None, "myFunc1", None, Some(List(HelperObjType(None, "String"))), block = blockFunc1)
@@ -155,7 +155,7 @@ class ExecCallObjectTest extends AnyFunSuite {
     val callInsideFunc = CallObject(None, List(CallVarObject(None, "valToReturn")))
     val block = HelperContent(None, Some(List(callInsideFunc)))
     val funcDef = HelperFunc(None, "myFunc", Some(List(HelperCurrying(None, List(HelperParam(None, Some("valToReturn"), HelperObjType(None, "String")))))), None, block = block)
-    val caller = SetAttribute(None, value = CallObject(None, List(CallVarObject(None, "var1"))))
+    val caller = SetAttribute(None, value = Operation(None, None, Right(CallObject(None, List(CallVarObject(None, "var1"))))))
     val statement = CallObject(None, List(CallVarObject(None, "myResource"), CallFuncObject(None, Some("myFunc"), Some(List(CallFuncParam(None, Some(List(caller))))))))
     val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangString(None, "MyValue")), functions = mutable.Map("myResource/myFunc" -> funcDef))))
     val res = ExecCallObject.run(statement, context).toOption.get.get

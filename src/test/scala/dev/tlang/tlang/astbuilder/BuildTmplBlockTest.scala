@@ -1,6 +1,7 @@
 package dev.tlang.tlang.astbuilder
 
-import dev.tlang.tlang.ast.helper.{ConditionLink, ConditionType, HelperObjType}
+import dev.tlang.tlang.ast.common.operation.Operator
+import dev.tlang.tlang.ast.helper.HelperObjType
 import dev.tlang.tlang.ast.tmpl.call.{TmplCallArray, TmplCallFunc, TmplCallObj, TmplCallVar}
 import dev.tlang.tlang.ast.tmpl.condition.TmplConditionBlock
 import dev.tlang.tlang.ast.tmpl.primitive._
@@ -184,11 +185,11 @@ class BuildTmplBlockTest extends AnyFunSuite {
     val block3 = block2.nextBlock.get
     assert(block1.content.toOption.get.statement1.asInstanceOf[TmplBoolValue].value)
     assert("myVar" == block3.content.toOption.get.statement1.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallVar].name.toString)
-    assert(ConditionType.EQUAL == block3.content.toOption.get.condition.get)
+    assert(Operator.EQUAL == block3.content.toOption.get.condition.get)
     assert("myVar2" == block3.content.toOption.get.statement2.get.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallVar].name.toString)
-    assert(ConditionLink.OR == block1.link.get)
+    assert(Operator.OR == block1.link.get)
     assert("myVar3" == block1.nextBlock.get.content.toOption.get.statement1.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallVar].name.toString)
-    assert(ConditionType.LESSER == block1.nextBlock.get.content.toOption.get.condition.get)
+    assert(Operator.LESSER == block1.nextBlock.get.content.toOption.get.condition.get)
     assert("myVar4" == block1.nextBlock.get.content.toOption.get.statement2.get.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallVar].name.toString)
   }
 
@@ -239,7 +240,7 @@ class BuildTmplBlockTest extends AnyFunSuite {
     val parser = new TLangParser(tokens)
     val ifStmt = BuildTmplBlock.build(fakeContext, parser.tmplBlock()).content.get.head.asInstanceOf[TmplIf]
     val cond = ifStmt.cond.content.toOption.get
-    assert(ConditionType.EQUAL == cond.condition.get)
+    assert(Operator.EQUAL == cond.condition.get)
     assert(1 == cond.statement1.asInstanceOf[TmplLongValue].value)
     assert(1 == cond.statement2.get.asInstanceOf[TmplLongValue].value)
     assert("callMyFunc" == ifStmt.content.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallFunc].name.toString)
@@ -258,7 +259,7 @@ class BuildTmplBlockTest extends AnyFunSuite {
     val ifStmt = BuildTmplBlock.build(fakeContext, parser.tmplBlock()).content.get.head.asInstanceOf[TmplIf]
     val cond = ifStmt.cond.content.toOption.get
     val block = ifStmt.content.asInstanceOf[TmplExprBlock]
-    assert(ConditionType.EQUAL == cond.condition.get)
+    assert(Operator.EQUAL == cond.condition.get)
     assert(1 == cond.statement1.asInstanceOf[TmplLongValue].value)
     assert(1 == cond.statement2.get.asInstanceOf[TmplLongValue].value)
     assert("callMyFunc1" == block.exprs.head.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallFunc].name.toString)
@@ -275,7 +276,7 @@ class BuildTmplBlockTest extends AnyFunSuite {
     val ifStmt = BuildTmplBlock.build(fakeContext, parser.tmplBlock()).content.get.head.asInstanceOf[TmplIf]
     val cond = ifStmt.cond.content.toOption.get
     val elseBlock = ifStmt.elseBlock.get.left.toOption.get
-    assert(ConditionType.EQUAL == cond.condition.get)
+    assert(Operator.EQUAL == cond.condition.get)
     assert(1 == cond.statement1.asInstanceOf[TmplLongValue].value)
     assert(1 == cond.statement2.get.asInstanceOf[TmplLongValue].value)
     assert("callMyFunc1" == ifStmt.content.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallFunc].name.toString)
@@ -293,11 +294,11 @@ class BuildTmplBlockTest extends AnyFunSuite {
     val cond = ifStmt.cond.content.toOption.get
     val elseIf = ifStmt.elseBlock.get.toOption.get
     val cond2 = elseIf.cond.content.toOption.get
-    assert(ConditionType.EQUAL == cond.condition.get)
+    assert(Operator.EQUAL == cond.condition.get)
     assert(1 == cond.statement1.asInstanceOf[TmplLongValue].value)
     assert(1 == cond.statement2.get.asInstanceOf[TmplLongValue].value)
     assert("callMyFunc1" == ifStmt.content.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallFunc].name.toString)
-    assert(ConditionType.EQUAL == cond2.condition.get)
+    assert(Operator.EQUAL == cond2.condition.get)
     assert(2 == cond2.statement1.asInstanceOf[TmplLongValue].value)
     assert(2 == cond2.statement2.get.asInstanceOf[TmplLongValue].value)
     assert("callMyFunc2" == elseIf.content.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallFunc].name.toString)

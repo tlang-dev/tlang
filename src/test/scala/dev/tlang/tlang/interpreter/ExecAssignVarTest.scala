@@ -1,6 +1,7 @@
 package dev.tlang.tlang.interpreter
 
 import dev.tlang.tlang.ast.common.call.{CallObject, CallVarObject}
+import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value.{AssignVar, MultiValue, TLangString}
 import dev.tlang.tlang.interpreter.context.{Context, Scope}
 import org.scalatest.funsuite.AnyFunSuite
@@ -10,7 +11,7 @@ import scala.collection.mutable
 class ExecAssignVarTest extends AnyFunSuite {
 
   test("Assign to var") {
-    val statement = AssignVar(None, "myVar", None, new TLangString(None,"myValue"))
+    val statement = AssignVar(None, "myVar", None, Operation(None, None, Right(new TLangString(None, "myValue"))))
     val scope = Scope()
     val res = ExecAssignVar.run(statement, Context(List(scope)))
     assert("myValue" == scope.variables("myVar").asInstanceOf[TLangString].getElement)
@@ -18,10 +19,10 @@ class ExecAssignVarTest extends AnyFunSuite {
   }
 
   test("Assign to var multiple values") {
-    val statement = AssignVar(None,"myVar", None, MultiValue(None,List(
-      new TLangString(None,"myValue1"),
-      new TLangString(None,"myValue2"),
-      new TLangString(None,"myValue3"))))
+    val statement = AssignVar(None, "myVar", None, Operation(None, None, Right(MultiValue(None, List(
+      new TLangString(None, "myValue1"),
+      new TLangString(None, "myValue2"),
+      new TLangString(None, "myValue3"))))))
     val scope = Scope()
     val res = ExecAssignVar.run(statement, Context(List(scope))).toOption.get.get
     assert("myValue1" == scope.variables("myVar").asInstanceOf[MultiValue].values.head.asInstanceOf[TLangString].getElement)
@@ -34,7 +35,7 @@ class ExecAssignVarTest extends AnyFunSuite {
   }
 
   test("Assign value from called object") {
-    val varToCall = CallObject(None, List(CallVarObject(None, "var1")))
+    val varToCall = Operation(None, None, Right(CallObject(None, List(CallVarObject(None, "var1")))))
     val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangString(None, "myValue")))))
     val statement = AssignVar(None, "myVar", None, varToCall)
     val res = ExecAssignVar.run(statement, context)
@@ -45,10 +46,10 @@ class ExecAssignVarTest extends AnyFunSuite {
   test("Assign multiple values with HelperNewMultiValue") {
     val varToCall = CallObject(None, List(CallVarObject(None, "var1")))
     val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangString(None, "myValue2")))))
-    val values = MultiValue(None, List(
+    val values = Operation(None, None, Right(MultiValue(None, List(
       new TLangString(None, "myValue1"),
       varToCall,
-      new TLangString(None,"myValue3")))
+      new TLangString(None, "myValue3")))))
     val statement = AssignVar(None, "myVar", None, values)
     val res = ExecAssignVar.run(statement, context).toOption.get.get
     assert("myValue1" == res.head.asInstanceOf[TLangString].getElement)

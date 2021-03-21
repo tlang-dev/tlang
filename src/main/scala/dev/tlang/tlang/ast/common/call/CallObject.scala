@@ -4,7 +4,7 @@ import dev.tlang.tlang.ast.common.value.TLangType
 import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
 import dev.tlang.tlang.interpreter.Value
 
-case class CallObject(context: Option[ContextContent], statements: List[CallObjectType]) extends SimpleValueStatement[CallObject] with AstContext {
+case class CallObject(context: Option[ContextContent], statements: List[CallObjectType]) extends ComplexValueStatement[CallObject] with AstContext {
   override def getElement: CallObject = this
 
   override def getType: String = CallObject.getType

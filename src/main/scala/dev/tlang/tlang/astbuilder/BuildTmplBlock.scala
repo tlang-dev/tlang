@@ -217,7 +217,7 @@ object BuildTmplBlock {
 
   def buildConditionBlock(resource: ContextResource, block: TmplConditionBlockContext): TmplConditionBlock = {
     TmplConditionBlock(addContext(resource, block), buildEitherCondition(resource, block),
-      if (block.link != null) Some(BuildHelperStatement.buildConditionLink(block.link)) else None,
+      if (block.link != null) Some(BuildCommon.buildOperator(block.link.getText)) else None,
       if (block.next != null) Some(buildConditionBlock(resource, block.next)) else None)
   }
 
@@ -226,9 +226,9 @@ object BuildTmplBlock {
     else Right(buildCondition(resource, block.content))
 
   def buildCondition(resource: ContextResource, condition: TmplConditionContext): TmplCondition = TmplCondition(addContext(resource, condition), buildSimpleValueType(resource, condition.arg1),
-    if (condition.mark != null) Some(BuildHelperStatement.buildConditionType(condition.mark.getText)) else None,
+    if (condition.mark != null) Some(BuildCommon.buildOperator(condition.mark.getText)) else None,
     if (condition.arg2 != null) Some(buildSimpleValueType(resource, condition.arg2)) else None,
-    if (condition.link != null) Some(BuildHelperStatement.buildConditionLink(condition.link)) else None,
+    if (condition.link != null) Some(BuildCommon.buildOperator(condition.link.getText)) else None,
     if (condition.next != null) Some(buildConditionBlock(resource, condition.next)) else None)
 
   def buildAttribute(resource: ContextResource, attr: TmplAttributeContext): TmplAttribute = {

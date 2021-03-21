@@ -1,6 +1,7 @@
 package dev.tlang.tlang.interpreter
 
-import dev.tlang.tlang.ast.common.call.{CallFuncObject, CallObject, CallObjectType, CallVarObject, SimpleValueStatement, _}
+import dev.tlang.tlang.ast.common.call.{CallFuncObject, CallObject, CallObjectType, CallVarObject, _}
+import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value._
 import dev.tlang.tlang.ast.helper.HelperStatement
 import dev.tlang.tlang.ast.tmpl.TmplBlockAsValue
@@ -95,7 +96,7 @@ object ExecCallObject extends Executor {
     }
   }
 
-  def resolveArray(position: SimpleValueStatement[_], array: ArrayValue, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+  def resolveArray(position: Operation, array: ArrayValue, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
 
     def resolve(posValue: Value[_]): Either[ExecError, Option[List[Value[_]]]] = {
       array.tbl match {
@@ -120,7 +121,7 @@ object ExecCallObject extends Executor {
         case Right(value) => resolve(value)
       }
     }*/
-    ExecSimpleValue.run(position, context) match {
+    ExecComplexValue.run(position, context) match {
       case Left(error) => Left(error)
       case Right(res) => pickFirst(res) match {
         case Left(err) => Left(err)
@@ -130,7 +131,7 @@ object ExecCallObject extends Executor {
 
   }
 
-  def resolveArrayInCallable(position: SimpleValueStatement[_], callable: Option[List[Value[_]]], context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+  def resolveArrayInCallable(position: Operation, callable: Option[List[Value[_]]], context: Context): Either[ExecError, Option[List[Value[_]]]] = {
     pickFirst(callable) match {
       case Left(error) => Left(error)
       case Right(value) => resolveArray(position, value.asInstanceOf[ArrayValue], context)
@@ -147,7 +148,10 @@ object ExecCallObject extends Executor {
   def findInEntity(name: String, attrs: List[ComplexAttribute], context: Context): Either[ExecError, Option[List[Value[_]]]] = {
     attrs.find(_.attr.getOrElse(false).equals(name)) match {
       case Some(value) => value.value match {
-        case caller: CallObject => loopOverStatement(caller.statements, context, 0, None)
+        case operation: Operation =>
+          operation.content match {
+            case caller: CallObject => loopOverStatement(caller.statements, context, 0, None)
+          }
         case _ => Right(Some(List(value.value)))
       }
       case None => Left(CallableNotFound(name))

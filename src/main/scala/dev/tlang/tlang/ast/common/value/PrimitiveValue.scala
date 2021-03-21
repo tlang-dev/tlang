@@ -1,10 +1,10 @@
 package dev.tlang.tlang.ast.common.value
 
-import dev.tlang.tlang.ast.common.call.SimpleValueStatement
+import dev.tlang.tlang.ast.common.call.ComplexValueStatement
 import dev.tlang.tlang.ast.model.set.ModelSetValueType
 import dev.tlang.tlang.interpreter.ExecError
 
-abstract class PrimitiveValue[TYPE] extends SimpleValueStatement[TYPE] with ModelSetValueType[TYPE] {
+abstract class PrimitiveValue[TYPE] extends ComplexValueStatement[TYPE] with ModelSetValueType[TYPE] {
 
   def add(value: TYPE): Either[ExecError, TYPE]
 

@@ -37,7 +37,7 @@ object ResolveModel {
 
   def resolveModelType(modelType: ModelSetValueType[_], module: Module, uses: List[DomainUse], currentResource: Resource, scope: Scope): Either[List[ResolverError], Unit] = {
     modelType match {
-      case ref: ModelSetRef => FollowCallObject.followCallObject(ref, module, uses, scope, currentResource, None)
+//      case ref: ModelSetRef => FollowCallObject.followCallObject(ref, module, uses, scope, currentResource, None)
       case _ => Right(())
     }
   }
