@@ -10,12 +10,12 @@ object ExecCallRefFunc extends Executor {
     val caller = statement.asInstanceOf[CallRefFuncObject]
     caller.func.get match {
       case Left(func) =>
-        val newContext = ExecCallFunc.manageParameters(CallFuncObject(None, caller.currying), func, context)
+        val newContext = ExecCallFunc.manageParameters(CallFuncObject(None, None, caller.currying), func, context)
         ExecFunc.run(func, newContext)
       case Right(tmpl) =>
         val tmplCopy = tmpl.deepCopy()
-        val newContext = ExecCallFunc.manageTmplParameters(CallFuncObject(None, caller.currying), tmplCopy, context)
-        Right(Some(List(TmplBlockAsValue(tmplCopy, newContext))))
+        val newContext = ExecCallFunc.manageTmplParameters(CallFuncObject(None, None, caller.currying), tmplCopy, context)
+        Right(Some(List(TmplBlockAsValue(tmplCopy.context, tmplCopy, newContext))))
     }
   }
 }

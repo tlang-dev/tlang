@@ -1,3 +1,7 @@
 package dev.tlang.tlang.ast
 
-case class DomainModel(header: Option[DomainHeader], body: List[DomainBlock])
+import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
+
+case class DomainModel(context: Option[ContextContent], header: Option[DomainHeader], body: List[DomainBlock]) extends AstContext {
+  override def getContext: Option[ContextContent] = context
+}

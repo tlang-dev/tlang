@@ -11,7 +11,7 @@ object ExecConditionBlock extends Executor {
     val block = statement.asInstanceOf[ConditionBlock]
     solveConditionBlock(block, context) match {
       case Left(error) => Left(error)
-      case Right(value) => Right(Some(List(new TLangBool(value))))
+      case Right(value) => Right(Some(List(new TLangBool(None, value))))
     }
   }
 
@@ -68,8 +68,8 @@ object ExecConditionBlock extends Executor {
           if (state1.getType == TLangBool.getType) {
             val res = state1.asInstanceOf[TLangBool]
             if (cond.link.isDefined) {
-              solveNextCondition(res.getValue, cond.link.get, cond.nextBlock.get, context)
-            } else Right(res.getValue)
+              solveNextCondition(res.getElement, cond.link.get, cond.nextBlock.get, context)
+            } else Right(res.getElement)
           } else Left(WrongType("Should be Bool but is " + state1.getType))
         }
     }

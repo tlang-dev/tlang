@@ -42,9 +42,11 @@ object ExecCallObject extends Executor {
       case func: CallFuncObject =>
         val name = callVar.name + "/" + func.name.get
         ContextUtils.findFunc(context, name) match {
-          case Some(_) => ExecCallFunc.run(CallFuncObject(Some(name), func.currying), context)
+          case Some(_) => ExecCallFunc.run(CallFuncObject(None, Some(name), func.currying), context)
           case None => ContextUtils.findTmpl(context, name) match {
-            case Some(tmpl) => Right(Some(List(TmplBlockAsValue(tmpl.copy(), Context(context.scopes :+ tmpl.scope)))))
+            case Some(tmpl) =>
+              val tmplCopy = tmpl.deepCopy()
+              Right(Some(List(TmplBlockAsValue(tmplCopy.getContext, tmplCopy, Context(context.scopes :+ tmplCopy.scope)))))
             case None => Left(CallableNotFound(name))
           }
         }
@@ -55,13 +57,13 @@ object ExecCallObject extends Executor {
 
   private def findInContext(statement: CallObjectType, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
     statement match {
-      case CallArrayObject(name, position) => ContextUtils.findVar(context, name) match {
+      case CallArrayObject(None, name, position) => ContextUtils.findVar(context, name) match {
         case Some(array) => resolveArray(position, array.asInstanceOf[ArrayValue], context)
         case None => Left(CallableNotFound(name))
       }
       case caller: CallFuncObject => ExecCallFunc.run(caller, context)
       case refFunc: CallRefFuncObject => Right(Some(List(refFunc)))
-      case CallVarObject(name) => findVar(name, context)
+      case CallVarObject(_, name) => findVar(name, context)
       case _ => Left(NotImplemented())
     }
   }
@@ -75,10 +77,10 @@ object ExecCallObject extends Executor {
 
   private def findInCallable(statement: CallObjectType, callable: Option[List[Value[_]]], context: Context): Either[ExecError, Option[List[Value[_]]]] = {
     statement match {
-      case CallArrayObject(_, position) => resolveArrayInCallable(position, callable, context)
+      case CallArrayObject(_, _, position) => resolveArrayInCallable(position, callable, context)
       //case caller: HelperCallFuncObject => resolveFunc(caller, callable, context)
       case refFunc: CallRefFuncObject => Right(Some(List(refFunc)))
-      case CallVarObject(name) => resolveCallback(name, callable, context)
+      case CallVarObject(_, name) => resolveCallback(name, callable, context)
       case _ => Left(NotImplemented())
     }
   }
@@ -98,11 +100,11 @@ object ExecCallObject extends Executor {
     def resolve(posValue: Value[_]): Either[ExecError, Option[List[Value[_]]]] = {
       array.tbl match {
         case Some(array) => posValue match {
-          case long: TLangLong => Right(Some(List(array(long.getValue.toInt).value)))
+          case long: TLangLong => Right(Some(List(array(long.getElement.toInt).value)))
           case str: TLangString =>
-            val callRes = array.find(elem => elem.attr.isDefined && elem.attr.get.equals(str.getValue))
+            val callRes = array.find(elem => elem.attr.isDefined && elem.attr.get.equals(str.getElement))
             if (callRes.isDefined) Right(Some(List(callRes.get.value)))
-            else Left(CallableNotFound(posValue.getValue.toString))
+            else Left(CallableNotFound(posValue.getElement.toString))
           case _ => Left(WrongType("Should be Int or String instead of " + posValue.getType))
 
         }

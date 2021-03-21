@@ -57,7 +57,7 @@ class ResolveIfStatementTest extends AnyFunSuite {
 
     val scope = module.resources(module.mainFile).ast.body.head.asInstanceOf[HelperBlock].funcs.get.head.scope
     assert("MyFile/myBool" == scope.variables.head._1)
-    assert(scope.variables.head._2.asInstanceOf[TLangBool].getValue)
+    assert(scope.variables.head._2.asInstanceOf[TLangBool].getElement)
   }
 
   test("Resolve true block in if") {
@@ -91,7 +91,7 @@ class ResolveIfStatementTest extends AnyFunSuite {
 
     val scope = module.resources(module.mainFile).ast.body.head.asInstanceOf[HelperBlock].funcs.get.head.scope
     assert("MyFile/myBool" == scope.variables.head._1)
-    assert(scope.variables.head._2.asInstanceOf[TLangBool].getValue)
+    assert(scope.variables.head._2.asInstanceOf[TLangBool].getElement)
   }
 
   test("Resolve false block in if") {
@@ -126,7 +126,7 @@ class ResolveIfStatementTest extends AnyFunSuite {
 
     val scope = module.resources(module.mainFile).ast.body.head.asInstanceOf[HelperBlock].funcs.get.head.scope
     assert("MyFile/myBool" == scope.variables.head._1)
-    assert(scope.variables.head._2.asInstanceOf[TLangBool].getValue)
+    assert(scope.variables.head._2.asInstanceOf[TLangBool].getElement)
   }
 
 }

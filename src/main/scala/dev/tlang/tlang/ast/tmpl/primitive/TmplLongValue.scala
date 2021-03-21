@@ -1,5 +1,9 @@
 package dev.tlang.tlang.ast.tmpl.primitive
 
-case class TmplLongValue(value: Long) extends TmplPrimitiveValue {
-  override def deepCopy(): TmplLongValue = TmplLongValue(value)
+import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
+
+case class TmplLongValue(context: Option[ContextContent], value: Long) extends TmplPrimitiveValue with AstContext {
+  override def deepCopy(): TmplLongValue = TmplLongValue(context, value)
+
+  override def getContext: Option[ContextContent] = context
 }

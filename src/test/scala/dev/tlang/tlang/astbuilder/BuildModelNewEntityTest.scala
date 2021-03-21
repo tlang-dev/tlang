@@ -1,11 +1,14 @@
 package dev.tlang.tlang.astbuilder
 
 import dev.tlang.tlang.ast.common.value.{ArrayValue, AssignVar, EntityValue, TLangString}
+import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.{TLangLexer, TLangParser}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
 
 class BuildModelNewEntityTest extends AnyFunSuite {
+
+  val fakeContext: ContextResource = ContextResource("", "", "", "")
 
   test("Test new entity without type") {
     val lexer = new TLangLexer(CharStreams.fromString(
@@ -15,7 +18,7 @@ class BuildModelNewEntityTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val newEntity = BuildModelBlock.build(parser.modelBlock()).content.get.head.asInstanceOf[AssignVar]
+    val newEntity = BuildModelBlock.build(fakeContext, parser.modelBlock()).content.get.head.asInstanceOf[AssignVar]
     assert("firstEntity".equals(newEntity.name))
   }
 
@@ -27,7 +30,7 @@ class BuildModelNewEntityTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val newEntity = BuildModelBlock.build(parser.modelBlock()).content.get.head.asInstanceOf[AssignVar]
+    val newEntity = BuildModelBlock.build(fakeContext, parser.modelBlock()).content.get.head.asInstanceOf[AssignVar]
     assert("firstEntity".equals(newEntity.name))
     assert("AnyEntity".equals(newEntity.`type`.get))
   }
@@ -41,15 +44,15 @@ class BuildModelNewEntityTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val newEntity = BuildModelBlock.build(parser.modelBlock()).content.get.head.asInstanceOf[AssignVar]
-    val params = newEntity.value.getValue.asInstanceOf[EntityValue].params
+    val newEntity = BuildModelBlock.build(fakeContext, parser.modelBlock()).content.get.head.asInstanceOf[AssignVar]
+    val params = newEntity.value.getElement.asInstanceOf[EntityValue].params
     assert("firstEntity".equals(newEntity.name))
     assert("AnyEntity".equals(newEntity.`type`.get))
     assert(params.get.head.attr.isEmpty)
-    assert("myString".equals(params.get.head.value.asInstanceOf[TLangString].getValue))
+    assert("myString".equals(params.get.head.value.asInstanceOf[TLangString].getElement))
     assert("var1".equals(params.get(1).attr.get))
-    assert("elm1".equals(params.get(1).value.asInstanceOf[ArrayValue].tbl.get.head.value.asInstanceOf[TLangString].getValue))
-    assert("elm2".equals(params.get(1).value.asInstanceOf[ArrayValue].tbl.get.last.value.asInstanceOf[TLangString].getValue))
+    assert("elm1".equals(params.get(1).value.asInstanceOf[ArrayValue].tbl.get.head.value.asInstanceOf[TLangString].getElement))
+    assert("elm2".equals(params.get(1).value.asInstanceOf[ArrayValue].tbl.get.last.value.asInstanceOf[TLangString].getElement))
     assert("newEntity".equals(params.get.last.attr.get))
     assert("NewEntity".equals(params.get.last.`type`.get))
   }

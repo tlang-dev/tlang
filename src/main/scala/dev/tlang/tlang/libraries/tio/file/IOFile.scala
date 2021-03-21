@@ -10,11 +10,11 @@ import java.nio.file.Files
 
 object IOFile {
 
-  def writeFunc: HelperFunc = HelperFunc("write", Some(List(HelperCurrying(List(HelperParam(Some("file"), HelperObjType(TLangString.getType)), HelperParam(Some("content"), HelperObjType(TLangString.getType)))))), None, HelperContent(Some(List(
+  def writeFunc: HelperFunc = HelperFunc(None, "write", Some(List(HelperCurrying(None, List(HelperParam(None, Some("file"), HelperObjType(None, TLangString.getType)), HelperParam(None, Some("content"), HelperObjType(None, TLangString.getType)))))), None, HelperContent(None, Some(List(
     HelperInternalFunc((context: Context) => {
       ContextUtils.findVar(context, "file") match {
         case Some(file) => ContextUtils.findVar(context, "content") match {
-          case Some(content) => write(file.asInstanceOf[TLangString].getValue, content.asInstanceOf[TLangString].getValue)
+          case Some(content) => write(file.asInstanceOf[TLangString].getElement, content.asInstanceOf[TLangString].getElement)
           case None => println("Variable 'content' not found in context")
         }
         case None => println("Variable 'file' not found in context")

@@ -2,49 +2,51 @@ package dev.tlang.tlang.astbuilder
 
 import dev.tlang.tlang.TLangParser._
 import dev.tlang.tlang.ast.helper.{HelperBlock, _}
+import dev.tlang.tlang.astbuilder.BuildAst.addContext
+import dev.tlang.tlang.astbuilder.context.ContextResource
 
 import scala.collection.mutable.ListBuffer
 import scala.jdk.CollectionConverters._
 
 object BuildHelperBlock {
 
-  def build(helperBlock: HelperBlockContext): HelperBlock = {
+  def build(resource: ContextResource, helperBlock: HelperBlockContext): HelperBlock = {
     val funcs = ListBuffer.empty[HelperFunc]
-    helperBlock.helperFuncs.asScala.foreach(func => funcs.addOne(buildFunc(func)))
-    HelperBlock(if (funcs.isEmpty) None else Some(funcs.toList))
+    helperBlock.helperFuncs.asScala.foreach(func => funcs.addOne(buildFunc(resource, func)))
+    HelperBlock(addContext(resource, helperBlock), if (funcs.isEmpty) None else Some(funcs.toList))
   }
 
-  def buildFunc(func: HelperFuncContext): HelperFunc = {
-    HelperFunc(func.name.getText,
-      if (func.currying != null && !func.currying.isEmpty) Some(buildCurrying(func.currying.asScala.toList)) else None,
-      if (func.retVals != null && !func.retVals.isEmpty) Some(func.retVals.asScala.toList.map(buildParamType)) else None,
-      if (func.body != null) buildContent(func.body) else HelperContent(None))
+  def buildFunc(resource: ContextResource, func: HelperFuncContext): HelperFunc = {
+    HelperFunc(addContext(resource, func), func.name.getText,
+      if (func.currying != null && !func.currying.isEmpty) Some(buildCurrying(resource, func.currying.asScala.toList)) else None,
+      if (func.retVals != null && !func.retVals.isEmpty) Some(func.retVals.asScala.toList.map(retVal => buildParamType(resource, retVal))) else None,
+      if (func.body != null) buildContent(resource, func.body) else HelperContent(addContext(resource, func), None))
   }
 
-  def buildCurrying(currying: List[HelperCurryingContext]): List[HelperCurrying] = {
-    currying.map(elem => HelperCurrying(buildParams(elem.params.asScala.toList)))
+  def buildCurrying(resource: ContextResource, currying: List[HelperCurryingContext]): List[HelperCurrying] = {
+    currying.map(elem => HelperCurrying(addContext(resource, elem), buildParams(resource, elem.params.asScala.toList)))
   }
 
-  def buildParams(params: List[HelperParamContext]): List[HelperParam] = {
-    params.map(param => HelperParam(if (param.param != null) Some(param.param.getText) else None, buildParamType(param.`type`)))
+  def buildParams(resource: ContextResource, params: List[HelperParamContext]): List[HelperParam] = {
+    params.map(param => HelperParam(addContext(resource, param), if (param.param != null) Some(param.param.getText) else None, buildParamType(resource, param.`type`)))
   }
 
-  def buildParamType(param: HelperParamTypeContext): HelperParamType = {
+  def buildParamType(resource: ContextResource, param: HelperParamTypeContext): HelperParamType = {
     param match {
-      case param@_ if param.helperObjType() != null => HelperObjType(param.helperObjType().tpye.getText)
-      case param@_ if param.helperArrayType() != null => HelperArrayType(param.helperArrayType().tpye.getText)
-      case param@_ if param.helperFuncType() != null => buildFuncType(param.helperFuncType())
+      case param@_ if param.helperObjType() != null => HelperObjType(addContext(resource, param.helperObjType()), param.helperObjType().tpye.getText)
+      case param@_ if param.helperArrayType() != null => HelperArrayType(addContext(resource, param.helperArrayType()), param.helperArrayType().tpye.getText)
+      case param@_ if param.helperFuncType() != null => buildFuncType(resource, param.helperFuncType())
     }
   }
 
-  def buildFuncType(func: HelperFuncTypeContext): HelperFuncType = {
+  def buildFuncType(resource: ContextResource, func: HelperFuncTypeContext): HelperFuncType = {
     HelperFuncType(
-      if (func.currying != null && !func.currying.isEmpty) Some(buildCurrying(func.currying.asScala.toList)) else None,
-      if (func.retVals != null && !func.retVals.isEmpty) Some(func.retVals.asScala.toList.map(buildParamType)) else None)
+      if (func.currying != null && !func.currying.isEmpty) Some(buildCurrying(resource, func.currying.asScala.toList)) else None,
+      if (func.retVals != null && !func.retVals.isEmpty) Some(func.retVals.asScala.toList.map(retVal => buildParamType(resource, retVal))) else None)
   }
 
-  def buildContent(content: HelperContentContext): HelperContent = {
-    HelperContent(if (content.content != null && !content.content.isEmpty) Some(BuildHelperStatement.build(content.content.asScala.toList)) else None)
+  def buildContent(resource: ContextResource, content: HelperContentContext): HelperContent = {
+    HelperContent(addContext(resource, content), if (content.content != null && !content.content.isEmpty) Some(BuildHelperStatement.build(resource, content.content.asScala.toList)) else None)
   }
 
 }

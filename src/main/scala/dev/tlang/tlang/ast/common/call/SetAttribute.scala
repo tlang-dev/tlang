@@ -1,3 +1,7 @@
 package dev.tlang.tlang.ast.common.call
 
-case class SetAttribute(name: Option[String] = None, value: ComplexValueStatement[_])
+import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
+
+case class SetAttribute(context: Option[ContextContent], name: Option[String] = None, value: ComplexValueStatement[_]) extends AstContext {
+  override def getContext: Option[ContextContent] = context
+}

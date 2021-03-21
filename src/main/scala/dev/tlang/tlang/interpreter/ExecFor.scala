@@ -22,15 +22,15 @@ object ExecFor extends Executor {
     val newContext = Context(context.scopes :+ newScope)
     for (i <- 0 until end) {
       val elem = array(i).value
-      newScope.variables.update("_i", new TLangLong(i))
+      newScope.variables.update("_i", new TLangLong(None, i))
       newScope.variables.update(forStatement.variable, elem)
       ExecContent.run(forStatement.body, newContext)
     }
   }
 
   def runFor(forStatement: HelperFor, context: Context): Unit = {
-    val start = ExecSimpleValue.run(forStatement.start.get, context).toOption.get.get.head.asInstanceOf[TLangLong].getValue
-    val end = ExecSimpleValue.run(forStatement.array, context).toOption.get.get.head.asInstanceOf[TLangLong].getValue
+    val start = ExecSimpleValue.run(forStatement.start.get, context).toOption.get.get.head.asInstanceOf[TLangLong].getElement
+    val end = ExecSimpleValue.run(forStatement.array, context).toOption.get.get.head.asInstanceOf[TLangLong].getElement
     val realEnd = forStatement.forType match {
       case dev.tlang.tlang.ast.helper.ForType.TO => end
       case dev.tlang.tlang.ast.helper.ForType.UNTIL => end - 1
@@ -38,7 +38,7 @@ object ExecFor extends Executor {
     val newScope = Scope()
     val newContext = Context(context.scopes :+ newScope)
     for (i <- start to realEnd) {
-      newScope.variables.update(forStatement.variable, new TLangLong(i))
+      newScope.variables.update(forStatement.variable, new TLangLong(None, i))
       ExecContent.run(forStatement.body, newContext)
     }
   }

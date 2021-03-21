@@ -1,3 +1,7 @@
 package dev.tlang.tlang.ast.helper
 
-case class HelperCurrying(params: List[HelperParam])
+import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
+
+case class HelperCurrying(context: Option[ContextContent], params: List[HelperParam]) extends AstContext {
+  override def getContext: Option[ContextContent] = context
+}

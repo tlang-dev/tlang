@@ -1,5 +1,9 @@
 package dev.tlang.tlang.ast.tmpl
 
-case class TmplProp(props: List[String]) extends DeepCopy {
-  override def deepCopy(): TmplProp =  TmplProp(props.map(new String(_)))
+import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
+
+case class TmplProp(context: Option[ContextContent], props: List[String]) extends DeepCopy with AstContext {
+  override def deepCopy(): TmplProp = TmplProp(context, props.map(new String(_)))
+
+  override def getContext: Option[ContextContent] = context
 }

@@ -21,13 +21,13 @@ abstract class ModulePattern {
 
 
   def getMainResource: Resource = {
-    Resource("", "", "", "Main", DomainModel(Some(DomainHeader(Some(exposeFunctions), None)), List(
-      HelperBlock(Some(getFunctions))
+    Resource("", "", "", "Main", DomainModel(None, Some(DomainHeader(None, Some(exposeFunctions), None)), List(
+      HelperBlock(None, Some(getFunctions))
     )))
   }
 
   def exposeFunctions: List[DomainExpose] = {
-    getFunctions.map(func => DomainExpose(func.name))
+    getFunctions.map(func => DomainExpose(None, func.name))
   }
 
   def getResources: Map[String, Resource] = Map("Main" -> getMainResource)

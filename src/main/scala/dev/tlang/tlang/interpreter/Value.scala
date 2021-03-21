@@ -1,10 +1,9 @@
 package dev.tlang.tlang.interpreter
 
-trait Value[T] {
+import dev.tlang.tlang.astbuilder.context.AstContext
+import dev.tlang.tlang.resolver.Element
 
-  def getValue: T
-
-  def getType: String
+trait Value[T] extends AstContext with Element[T] {
 
   def compareTo(value: Value[T]): Int
 

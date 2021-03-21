@@ -8,7 +8,6 @@ import dev.tlang.tlang.loader.{BuildModuleTree, FileResourceLoader, Module, TBag
 import dev.tlang.tlang.resolver.ResolveContext
 
 import java.io.File
-import java.nio.file.Paths
 import java.util.UUID.randomUUID
 
 object RunMain {
@@ -18,7 +17,7 @@ object RunMain {
   implicit val tBagManager: TBagManager.type = TBagManager
 
   def runDir(name: String): Unit = {
-//    val newName = name.split(File.separator).mkString("/")
+    //    val newName = name.split(File.separator).mkString("/")
     val uuid = randomUUID().toString
     //BuildModuleTree.build(Paths.get(parts.slice(0, parts.size - 1).mkString(File.separator)), Some(parts.last)) match {
     BuildModuleTree.build(new File(name).toPath, None, uuid) match {
@@ -41,11 +40,13 @@ object RunMain {
         })
         func match {
           case Some(main) =>
-            ResolveContext.resolveContext(module)
-            ExecFunc.run(main, Context(List(main.scope)))
-          case None =>
+            ResolveContext.resolveContext(module) match {
+              case Left(errors) => errors.foreach(error => println(error.code + ">> " + error.message))
+              case Right(_) => ExecFunc.run(main, Context(List(main.scope)))
+            }
+          case None => println("No main func found in Main file")
         }
-      case None =>
+      case None => println("Non main file found in " + module.rootDir)
     }
   }
 

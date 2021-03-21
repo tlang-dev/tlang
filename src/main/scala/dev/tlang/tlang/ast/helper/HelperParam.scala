@@ -1,3 +1,7 @@
 package dev.tlang.tlang.ast.helper
 
-case class HelperParam(param:Option[String], `type`: HelperParamType)
+import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
+
+case class HelperParam(context: Option[ContextContent], param: Option[String], `type`: HelperParamType) extends AstContext {
+  override def getContext: Option[ContextContent] = context
+}

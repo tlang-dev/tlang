@@ -1,3 +1,7 @@
 package dev.tlang.tlang.ast
 
-case class DomainExpose(name: String)
+import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
+
+case class DomainExpose(context: Option[ContextContent], name: String) extends AstContext {
+  override def getContext: Option[ContextContent] = context
+}
