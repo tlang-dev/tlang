@@ -1,9 +1,8 @@
 package dev.tlang.tlang.interpreter
 
 import dev.tlang.tlang.ast.common.call.{CallObject, CallVarObject}
-import dev.tlang.tlang.ast.common.condition.{Condition, ConditionBlock}
+import dev.tlang.tlang.ast.common.operation.{ConditionBlock, Operator}
 import dev.tlang.tlang.ast.common.value.{TLangBool, TLangLong}
-import dev.tlang.tlang.ast.helper.{ConditionLink, ConditionType}
 import dev.tlang.tlang.interpreter.context.{Context, Scope}
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -28,7 +27,7 @@ class ExecConditionBlockTest extends AnyFunSuite {
   test("Two true blocks with AND") {
     val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangBool(None, true), "var2" -> new TLangBool(None, true)))))
     val statement = ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var1"))))),
-      Some(ConditionLink.AND), Some(ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var2"))))))))
+      Some(Operator.AND), Some(ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var2"))))))))
     val value = ExecConditionBlock.run(statement, context).toOption.get.get.head.asInstanceOf[TLangBool]
     assert(value.getElement)
   }
@@ -36,7 +35,7 @@ class ExecConditionBlockTest extends AnyFunSuite {
   test("Two blocks true and false with AND") {
     val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangBool(None, true), "var2" -> new TLangBool(None, false)))))
     val statement = ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var1"))))),
-      Some(ConditionLink.AND), Some(ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var2"))))))))
+      Some(Operator.AND), Some(ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var2"))))))))
     val value = ExecConditionBlock.run(statement, context).toOption.get.get.head.asInstanceOf[TLangBool]
     assert(!value.getElement)
   }
@@ -44,7 +43,7 @@ class ExecConditionBlockTest extends AnyFunSuite {
   test("Two blocks false and true with AND") {
     val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangBool(None, false), "var2" -> new TLangBool(None, true)))))
     val statement = ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var1"))))),
-      Some(ConditionLink.AND), Some(ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var2"))))))))
+      Some(Operator.AND), Some(ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var2"))))))))
     val value = ExecConditionBlock.run(statement, context).toOption.get.get.head.asInstanceOf[TLangBool]
     assert(!value.getElement)
   }
@@ -52,7 +51,7 @@ class ExecConditionBlockTest extends AnyFunSuite {
   test("Two false blocks with AND") {
     val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangBool(None, false), "var2" -> new TLangBool(None, false)))))
     val statement = ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var1"))))),
-      Some(ConditionLink.AND), Some(ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var2"))))))))
+      Some(Operator.AND), Some(ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var2"))))))))
     val value = ExecConditionBlock.run(statement, context).toOption.get.get.head.asInstanceOf[TLangBool]
     assert(!value.getElement)
   }
@@ -60,7 +59,7 @@ class ExecConditionBlockTest extends AnyFunSuite {
   test("Two true blocks with OR") {
     val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangBool(None, true), "var2" -> new TLangBool(None, true)))))
     val statement = ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var1"))))),
-      Some(ConditionLink.OR), Some(ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var2"))))))))
+      Some(Operator.OR), Some(ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var2"))))))))
     val value = ExecConditionBlock.run(statement, context).toOption.get.get.head.asInstanceOf[TLangBool]
     assert(value.getElement)
   }
@@ -68,7 +67,7 @@ class ExecConditionBlockTest extends AnyFunSuite {
   test("Two blocks true and false with OR") {
     val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangBool(None, true), "var2" -> new TLangBool(None, false)))))
     val statement = ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var1"))))),
-      Some(ConditionLink.OR), Some(ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var2"))))))))
+      Some(Operator.OR), Some(ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var2"))))))))
     val value = ExecConditionBlock.run(statement, context).toOption.get.get.head.asInstanceOf[TLangBool]
     assert(value.getElement)
   }
@@ -76,7 +75,7 @@ class ExecConditionBlockTest extends AnyFunSuite {
   test("Two blocks false and true with OR") {
     val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangBool(None, false), "var2" -> new TLangBool(None, true)))))
     val statement = ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var1"))))),
-      Some(ConditionLink.OR), Some(ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var2"))))))))
+      Some(Operator.OR), Some(ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var2"))))))))
     val value = ExecConditionBlock.run(statement, context).toOption.get.get.head.asInstanceOf[TLangBool]
     assert(value.getElement)
   }
@@ -84,7 +83,7 @@ class ExecConditionBlockTest extends AnyFunSuite {
   test("Two false blocks with OR") {
     val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangBool(None, false), "var2" -> new TLangBool(None, false)))))
     val statement = ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var1"))))),
-      Some(ConditionLink.OR), Some(ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var2"))))))))
+      Some(Operator.OR), Some(ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var2"))))))))
     val value = ExecConditionBlock.run(statement, context).toOption.get.get.head.asInstanceOf[TLangBool]
     assert(!value.getElement)
   }
@@ -189,42 +188,42 @@ class ExecConditionBlockTest extends AnyFunSuite {
 
   test("Two true conditions with AND") {
     val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangBool(None, true), "var2" -> new TLangBool(None, true)))))
-    val statement = ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var1"))), link = Some(ConditionLink.AND), nextBlock = Some(ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var2"))))))))))
+    val statement = ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var1"))), link = Some(Operator.AND), nextBlock = Some(ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var2"))))))))))
     val value = ExecConditionBlock.run(statement, context).toOption.get.get.head.asInstanceOf[TLangBool]
     assert(value.getElement)
   }
 
   test("Two conditions false and true with AND") {
     val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangBool(None, false), "var2" -> new TLangBool(None, true)))))
-    val statement = ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var1"))), link = Some(ConditionLink.AND), nextBlock = Some(ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var2"))))))))))
+    val statement = ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var1"))), link = Some(Operator.AND), nextBlock = Some(ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var2"))))))))))
     val value = ExecConditionBlock.run(statement, context).toOption.get.get.head.asInstanceOf[TLangBool]
     assert(!value.getElement)
   }
 
   test("Two conditions true and false with AND") {
     val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangBool(None, true), "var2" -> new TLangBool(None, false)))))
-    val statement = ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var1"))), link = Some(ConditionLink.AND), nextBlock = Some(ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var2"))))))))))
+    val statement = ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var1"))), link = Some(Operator.AND), nextBlock = Some(ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var2"))))))))))
     val value = ExecConditionBlock.run(statement, context).toOption.get.get.head.asInstanceOf[TLangBool]
     assert(!value.getElement)
   }
 
   test("Two false conditions with AND") {
     val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangBool(None, false), "var2" -> new TLangBool(None, false)))))
-    val statement = ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var1"))), link = Some(ConditionLink.AND), nextBlock = Some(ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var2"))))))))))
+    val statement = ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var1"))), link = Some(Operator.AND), nextBlock = Some(ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var2"))))))))))
     val value = ExecConditionBlock.run(statement, context).toOption.get.get.head.asInstanceOf[TLangBool]
     assert(!value.getElement)
   }
 
   test("Two true conditions with OR") {
     val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangBool(None, true), "var2" -> new TLangBool(None, true)))))
-    val statement = ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var1"))), link = Some(ConditionLink.OR), nextBlock = Some(ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var2"))))))))))
+    val statement = ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var1"))), link = Some(Operator.OR), nextBlock = Some(ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var2"))))))))))
     val value = ExecConditionBlock.run(statement, context).toOption.get.get.head.asInstanceOf[TLangBool]
     assert(value.getElement)
   }
 
   test("Two conditions false and true with OR") {
     val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangBool(None, false), "var2" -> new TLangBool(None, true)))))
-    val statement = ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var1"))), link = Some(ConditionLink.OR), nextBlock = Some(ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var2"))))))))))
+    val statement = ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var1"))), link = Some(Operator.OR), nextBlock = Some(ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var2"))))))))))
     val value = ExecConditionBlock.run(statement, context).toOption.get.get.head.asInstanceOf[TLangBool]
     assert(value.getElement)
   }
@@ -232,14 +231,14 @@ class ExecConditionBlockTest extends AnyFunSuite {
   test("Two conditions true and false with OR") {
     val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangBool(None, true), "var2" -> new TLangBool(None, false)))))
     val statement = ConditionBlock(None, Right(Condition(None,
-      CallObject(None, List(CallVarObject(None, "var1"))), link = Some(ConditionLink.OR), nextBlock = Some(ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var2"))))))))))
+      CallObject(None, List(CallVarObject(None, "var1"))), link = Some(Operator.OR), nextBlock = Some(ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var2"))))))))))
     val value = ExecConditionBlock.run(statement, context).toOption.get.get.head.asInstanceOf[TLangBool]
     assert(value.getElement)
   }
 
   test("Two false conditions with OR") {
     val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangBool(None, false), "var2" -> new TLangBool(None, false)))))
-    val statement = ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var1"))), link = Some(ConditionLink.OR), nextBlock = Some(ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var2"))))))))))
+    val statement = ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var1"))), link = Some(Operator.OR), nextBlock = Some(ConditionBlock(None, Right(Condition(None, CallObject(None, List(CallVarObject(None, "var2"))))))))))
     val value = ExecConditionBlock.run(statement, context).toOption.get.get.head.asInstanceOf[TLangBool]
     assert(!value.getElement)
   }
