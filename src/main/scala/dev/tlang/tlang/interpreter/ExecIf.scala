@@ -3,9 +3,6 @@ package dev.tlang.tlang.interpreter
 import dev.tlang.tlang.ast.common.value.TLangBool
 import dev.tlang.tlang.ast.helper.{HelperIf, HelperStatement}
 import dev.tlang.tlang.interpreter.context.Context
-import dev.tlang.tlang.ast.common.value.TLangBool
-import dev.tlang.tlang.ast.helper.{HelperIf, HelperStatement}
-import dev.tlang.tlang.interpreter.context.Context
 
 object ExecIf extends Executor {
 

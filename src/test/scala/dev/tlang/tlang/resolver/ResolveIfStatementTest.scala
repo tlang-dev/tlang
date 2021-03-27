@@ -2,15 +2,11 @@ package dev.tlang.tlang.resolver
 
 import dev.tlang.tlang.ast.common.value.TLangBool
 import dev.tlang.tlang.ast.helper.HelperBlock
-import dev.tlang.tlang.loader.{BuildModuleTree, FileResourceLoader, ResourceLoader, TBagManager}
-import dev.tlang.tlang.loader.remote.RemoteLoader
-
-import java.nio.file.Paths
-import dev.tlang.tlang.ast.common.value.TLangBool
-import dev.tlang.tlang.ast.helper.HelperBlock
 import dev.tlang.tlang.loader.remote.RemoteLoader
 import dev.tlang.tlang.loader.{BuildModuleTree, FileResourceLoader, ResourceLoader, TBagManager}
 import org.scalatest.funsuite.AnyFunSuite
+
+import java.nio.file.Paths
 
 class ResolveIfStatementTest extends AnyFunSuite {
 
