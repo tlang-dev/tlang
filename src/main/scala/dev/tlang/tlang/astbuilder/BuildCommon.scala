@@ -29,8 +29,10 @@ object BuildCommon {
     val content: Either[Operation, ComplexValueStatement[_]] =
       if (operation.content != null && !operation.content.isEmpty) Right(buildComplexValueType(resource, expectedType, operation.content))
       else Left(buildOperation(resource, expectedType, operation.innerBlock))
-
-    Operation(None, expectedType, content, None)
+    val next =
+      if (operation.op != null && !operation.op.isEmpty) Some((buildOperator(operation.op.getText), buildOperation(resource, expectedType, operation.next)))
+      else None
+    Operation(None, expectedType, content, next)
   }
 
   def buildOperator(opType: String): Operator.operator = {

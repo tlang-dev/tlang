@@ -286,7 +286,7 @@ class ResolveContextTest extends AnyFunSuite {
     val block = BuildAst.build(fakeContext, parser.domainModel())
     val resource = Resource("", "", "", "Main", block)
 
-    val entityType = ResolveContext.findInResource(resource, CallVarObject(None, "myEntity2")).toOption.get.get.asInstanceOf[EntityValue].`type`.get
+    val entityType = ResolveContext.findInResource(resource, CallVarObject(None, "myEntity2")).toOption.get.get.asInstanceOf[Operation].content.toOption.get.asInstanceOf[EntityValue].`type`.get
     assert("AnyEntity2" == entityType)
   }
 

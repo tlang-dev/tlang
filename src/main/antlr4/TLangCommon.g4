@@ -63,7 +63,7 @@ entityValue:
 	decl+=complexAttribute*
 	'}';
 
-multiValue: '(' (values+=operation) (',' values+=operation)* ')';
+multiValue: '(' (values+=operation) (',' values+=operation)+ ')'; // '+' is needed to avoid confusion with operation
 
 complexAttribute: (((attr=ID) (':' type=ID)? '=')? value=operation);
 
