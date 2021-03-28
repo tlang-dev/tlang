@@ -14,15 +14,15 @@ class TLangString(context: Option[ContextContent], value: String) extends Primit
 
   override def getContext: Option[ContextContent] = context
 
-  override def add(value: String): Either[ExecError, String] = Right(this.value + value)
+  override def add(value: PrimitiveValue[String]): Either[ExecError, TLangString] = Right(new TLangString(None, this.value + value.getElement))
 
-  override def subtract(value: String): Either[ExecError, String] = Left(NotImplemented())
+  override def subtract(value: PrimitiveValue[String]): Either[ExecError, TLangString] = Left(NotImplemented())
 
-  override def multiply(value: String): Either[ExecError, String] = Left(NotImplemented())
+  override def multiply(value: PrimitiveValue[String]): Either[ExecError, TLangString] = Left(NotImplemented())
 
-  override def divide(value: String): Either[ExecError, String] = Left(NotImplemented())
+  override def divide(value: PrimitiveValue[String]): Either[ExecError, TLangString] = Left(NotImplemented())
 
-  override def modulo(value: String): Either[ExecError, String] = Left(NotImplemented())
+  override def modulo(value: PrimitiveValue[String]): Either[ExecError, TLangString] = Left(NotImplemented())
 }
 
 object TLangString extends TLangType {

@@ -14,15 +14,15 @@ class TLangBool(context: Option[ContextContent], value: Boolean) extends Primiti
 
   override def getContext: Option[ContextContent] = context
 
-  override def add(value: Boolean): Either[ExecError, Boolean] = Left(NotImplemented())
+  override def add(value: PrimitiveValue[Boolean]): Either[ExecError, TLangBool] = Left(NotImplemented())
 
-  override def subtract(value: Boolean): Either[ExecError, Boolean] = Left(NotImplemented())
+  override def subtract(value: PrimitiveValue[Boolean]): Either[ExecError, TLangBool] = Left(NotImplemented())
 
-  override def multiply(value: Boolean): Either[ExecError, Boolean] = Left(NotImplemented())
+  override def multiply(value: PrimitiveValue[Boolean]): Either[ExecError, TLangBool] = Left(NotImplemented())
 
-  override def divide(value: Boolean): Either[ExecError, Boolean] = Left(NotImplemented())
+  override def divide(value: PrimitiveValue[Boolean]): Either[ExecError, TLangBool] = Left(NotImplemented())
 
-  override def modulo(value: Boolean): Either[ExecError, Boolean] = Left(NotImplemented())
+  override def modulo(value: PrimitiveValue[Boolean]): Either[ExecError, TLangBool] = Left(NotImplemented())
 }
 
 object TLangBool extends TLangType {

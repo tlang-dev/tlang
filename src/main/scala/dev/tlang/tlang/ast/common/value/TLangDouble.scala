@@ -14,15 +14,15 @@ class TLangDouble(context: Option[ContextContent], value: Double) extends Primit
 
   override def getContext: Option[ContextContent] = context
 
-  override def add(value: Double): Either[ExecError, Double] = Right(this.value + value)
+  override def add(value: PrimitiveValue[Double]): Either[ExecError, TLangDouble] = Right(new TLangDouble(None, this.value + value.getElement))
 
-  override def subtract(value: Double): Either[ExecError, Double] = Right(this.value - value)
+  override def subtract(value: PrimitiveValue[Double]): Either[ExecError, TLangDouble] = Right(new TLangDouble(None, this.value - value.getElement))
 
-  override def multiply(value: Double): Either[ExecError, Double] = Right(this.value * value)
+  override def multiply(value: PrimitiveValue[Double]): Either[ExecError, TLangDouble] = Right(new TLangDouble(None, this.value * value.getElement))
 
-  override def divide(value: Double): Either[ExecError, Double] = Right(this.value / value)
+  override def divide(value: PrimitiveValue[Double]): Either[ExecError, TLangDouble] = Right(new TLangDouble(None, this.value / value.getElement))
 
-  override def modulo(value: Double): Either[ExecError, Double] = Right(this.value % value)
+  override def modulo(value: PrimitiveValue[Double]): Either[ExecError, TLangDouble] = Right(new TLangDouble(None, this.value % value.getElement))
 }
 
 object TLangDouble extends TLangType {

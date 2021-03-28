@@ -18,15 +18,15 @@ case class EntityValue(context: Option[ContextContent],
 
   override def compareTo(value: Value[EntityValue]): Int = 0
 
-  override def add(value: EntityValue): Either[ExecError, EntityValue] = Left(NotImplemented())
+  override def add(value: PrimitiveValue[EntityValue]): Either[ExecError, EntityValue] = Left(NotImplemented())
 
-  override def subtract(value: EntityValue): Either[ExecError, EntityValue] = Left(NotImplemented())
+  override def subtract(value: PrimitiveValue[EntityValue]): Either[ExecError, EntityValue] = Left(NotImplemented())
 
-  override def multiply(value: EntityValue): Either[ExecError, EntityValue] = Left(NotImplemented())
+  override def multiply(value: PrimitiveValue[EntityValue]): Either[ExecError, EntityValue] = Left(NotImplemented())
 
-  override def divide(value: EntityValue): Either[ExecError, EntityValue] = Left(NotImplemented())
+  override def divide(value: PrimitiveValue[EntityValue]): Either[ExecError, EntityValue] = Left(NotImplemented())
 
-  override def modulo(value: EntityValue): Either[ExecError, EntityValue] = Left(NotImplemented())
+  override def modulo(value: PrimitiveValue[EntityValue]): Either[ExecError, EntityValue] = Left(NotImplemented())
 
   override def getContext: Option[ContextContent] = context
 }

@@ -12,18 +12,18 @@ case class ArrayValue(context: Option[ContextContent], tbl: Option[List[ComplexA
 
   override def getContext: Option[ContextContent] = context
 
-  override def add(value: ArrayValue): Either[ExecError, ArrayValue] = {
-    if (tbl.isEmpty && value.tbl.isEmpty) Right(ArrayValue(None, None))
-    else Right(ArrayValue(None, Some(tbl.getOrElse(List()) ++: value.tbl.getOrElse(List()))))
+  override def add(value: PrimitiveValue[ArrayValue]): Either[ExecError, ArrayValue] = {
+    if (tbl.isEmpty && value.getElement.tbl.isEmpty) Right(ArrayValue(None, None))
+    else Right(ArrayValue(None, Some(tbl.getOrElse(List()) ++: value.getElement.tbl.getOrElse(List()))))
   }
 
-  override def subtract(value: ArrayValue): Either[ExecError, ArrayValue] = Left(NotImplemented())
+  override def subtract(value: PrimitiveValue[ArrayValue]): Either[ExecError, ArrayValue] = Left(NotImplemented())
 
-  override def multiply(value: ArrayValue): Either[ExecError, ArrayValue] = Left(NotImplemented())
+  override def multiply(value: PrimitiveValue[ArrayValue]): Either[ExecError, ArrayValue] = Left(NotImplemented())
 
-  override def divide(value: ArrayValue): Either[ExecError, ArrayValue] = Left(NotImplemented())
+  override def divide(value: PrimitiveValue[ArrayValue]): Either[ExecError, ArrayValue] = Left(NotImplemented())
 
-  override def modulo(value: ArrayValue): Either[ExecError, ArrayValue] = Left(NotImplemented())
+  override def modulo(value: PrimitiveValue[ArrayValue]): Either[ExecError, ArrayValue] = Left(NotImplemented())
 }
 
 object ArrayValue extends TLangType {

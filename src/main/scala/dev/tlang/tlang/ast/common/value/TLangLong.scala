@@ -14,15 +14,15 @@ class TLangLong(context: Option[ContextContent], value: Long) extends PrimitiveV
 
   override def getContext: Option[ContextContent] = context
 
-  override def add(value: Long): Either[ExecError, Long] = Right(this.value + value)
+  override def add(value: PrimitiveValue[Long]): Either[ExecError, TLangLong] = Right(new TLangLong(None, this.value + value.getElement))
 
-  override def subtract(value: Long): Either[ExecError, Long] = Right(this.value - value)
+  override def subtract(value: PrimitiveValue[Long]): Either[ExecError, TLangLong] = Right(new TLangLong(None, this.value - value.getElement))
 
-  override def multiply(value: Long): Either[ExecError, Long] = Right(this.value * value)
+  override def multiply(value: PrimitiveValue[Long]): Either[ExecError, TLangLong] = Right(new TLangLong(None, this.value * value.getElement))
 
-  override def divide(value: Long): Either[ExecError, Long] = Right(this.value / value)
+  override def divide(value: PrimitiveValue[Long]): Either[ExecError, TLangLong] = Right(new TLangLong(None, this.value / value.getElement))
 
-  override def modulo(value: Long): Either[ExecError, Long] = Right(this.value % value)
+  override def modulo(value: PrimitiveValue[Long]): Either[ExecError, TLangLong] = Right(new TLangLong(None, this.value % value.getElement))
 
 }
 

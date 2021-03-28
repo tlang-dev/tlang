@@ -6,14 +6,14 @@ import dev.tlang.tlang.interpreter.ExecError
 
 abstract class PrimitiveValue[TYPE] extends ComplexValueStatement[TYPE] with ModelSetValueType[TYPE] {
 
-  def add(value: TYPE): Either[ExecError, TYPE]
+  def add(value: PrimitiveValue[TYPE]): Either[ExecError, PrimitiveValue[TYPE]]
 
-  def subtract(value: TYPE): Either[ExecError, TYPE]
+  def subtract(value: PrimitiveValue[TYPE]): Either[ExecError, PrimitiveValue[TYPE]]
 
-  def multiply(value: TYPE): Either[ExecError, TYPE]
+  def multiply(value: PrimitiveValue[TYPE]): Either[ExecError, PrimitiveValue[TYPE]]
 
-  def divide(value: TYPE): Either[ExecError, TYPE]
+  def divide(value: PrimitiveValue[TYPE]): Either[ExecError, PrimitiveValue[TYPE]]
 
-  def modulo(value: TYPE): Either[ExecError, TYPE]
+  def modulo(value: PrimitiveValue[TYPE]): Either[ExecError, PrimitiveValue[TYPE]]
 
 }
