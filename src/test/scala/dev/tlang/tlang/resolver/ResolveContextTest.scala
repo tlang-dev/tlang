@@ -10,8 +10,8 @@ import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.astbuilder.BuildAst
 import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.interpreter.context.Scope
-import dev.tlang.tlang.loader.remote.RemoteLoader
 import dev.tlang.tlang.loader._
+import dev.tlang.tlang.loader.remote.RemoteLoader
 import dev.tlang.tlang.{TLangLexer, TLangParser}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
@@ -64,7 +64,7 @@ class ResolveContextTest extends AnyFunSuite {
 
     val scope = module.resources(module.mainFile).ast.body.head.asInstanceOf[HelperBlock].funcs.get.head.scope
     assert("MyFile/myEntity" == scope.variables.head._1)
-    assert("MyEntity" == scope.variables.head._2.asInstanceOf[EntityValue].`type`.get)
+    assert("MyEntity" == scope.variables.head._2.asInstanceOf[Operation].content.toOption.get.asInstanceOf[EntityValue].`type`.get)
   }
 
   test("Resolve context with template") {
@@ -125,7 +125,7 @@ class ResolveContextTest extends AnyFunSuite {
     val func = HelperFunc(None, "aFunc", None, None, HelperContent(None, Some(List(caller))), scope)
     BrowseFunc.resolveFuncs(List(func), module, uses, module.resources.head._2)
     assert("MyFile/myEntity" == scope.variables.head._1)
-    assert("MyEntity" == scope.variables.head._2.getType)
+    assert("MyEntity" == scope.variables.head._2.asInstanceOf[Operation].content.toOption.get.getType)
   }
 
   test("Resolve statement") {
@@ -154,7 +154,7 @@ class ResolveContextTest extends AnyFunSuite {
     val scope = Scope()
     BrowseHelperStatement.browseStatements(Some(List(caller)), module, uses, scope, module.resources.head._2)
     assert("MyFile/myEntity" == scope.variables.head._1)
-    assert("MyEntity" == scope.variables.head._2.getType)
+    assert("MyEntity" == scope.variables.head._2.asInstanceOf[Operation].content.toOption.get.getType)
   }
 
   test("Resolve call object for entity in another package") {
@@ -183,7 +183,7 @@ class ResolveContextTest extends AnyFunSuite {
     val scope = Scope()
     FollowCallObject.followCallObject(caller, module, uses, scope, module.resources.head._2).toOption.get
     assert("MyFile/myEntity" == scope.variables.head._1)
-    assert("MyEntity" == scope.variables.head._2.getType)
+    assert("MyEntity" == scope.variables.head._2.asInstanceOf[Operation].content.toOption.get.getType)
   }
 
   test("Resolve call object for func in same package") {
@@ -253,7 +253,7 @@ class ResolveContextTest extends AnyFunSuite {
 
     ResolveContext.followCall(resource, sameResource = false, calls, 2, List("first", "second"), scope)
     assert("first/second/myEntity" == scope.variables.head._1)
-    assert("AnyEntity" == scope.variables.head._2.getType)
+    assert("AnyEntity" == scope.variables.head._2.asInstanceOf[Operation].content.toOption.get.getType)
   }
 
   test("Find func in resource") {

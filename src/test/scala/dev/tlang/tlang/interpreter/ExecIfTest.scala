@@ -27,11 +27,11 @@ class ExecIfTest extends AnyFunSuite {
     assert(!res.get.head.asInstanceOf[TLangBool].getElement)
   }
 
-  test("If wrong type") {
-    val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangString(None, "Anything")))))
-    val statement = HelperIf(None, Operation(None, None, Right(CallObject(None, List(CallVarObject(None, "var1"))))), ifFalse = Some(HelperContent(None, Some(List(CallObject(None, List(CallVarObject(None, "var1"))))))))
-    val res = ExecIf.run(statement, context).left.toOption.get
-    assert("WrongType" == res.code)
-  }
+//  test("If wrong type") {
+//    val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangString(None, "Anything")))))
+//    val statement = HelperIf(None, Operation(None, None, Right(CallObject(None, List(CallVarObject(None, "var1"))))), ifFalse = Some(HelperContent(None, Some(List(CallObject(None, List(CallVarObject(None, "var1"))))))))
+//    val res = ExecIf.run(statement, context).left.toOption.get
+//    assert("WrongType" == res.code)
+//  }
 
 }

@@ -28,8 +28,8 @@ class ExecCallObjectTest extends AnyFunSuite {
     val context = Context(List(Scope(variables = mutable.Map("var1" -> array))))
     val statement = CallObject(None, List(CallArrayObject(None, "var1", Operation(None, None, Right(new TLangLong(None, 1))))))
     val res = ExecCallObject.run(statement, context).toOption.get.get
-    assert(res.head.isInstanceOf[TLangString])
-    assert("value2".equals(res.head.asInstanceOf[TLangString].getElement))
+    assert(res.head.asInstanceOf[Operation].content.toOption.get.isInstanceOf[TLangString])
+    assert("value2".equals(res.head.asInstanceOf[Operation].content.toOption.get.asInstanceOf[TLangString].getElement))
   }
 
   test("Get variable from array by name") {
@@ -41,8 +41,8 @@ class ExecCallObjectTest extends AnyFunSuite {
     val context = Context(List(Scope(variables = mutable.Map("var1" -> array))))
     val statement = CallObject(None, List(CallArrayObject(None, "var1", Operation(None, None, Right(new TLangString(None, "myPosition2"))))))
     val res = ExecCallObject.run(statement, context).toOption.get.get
-    assert(res.head.isInstanceOf[TLangString])
-    assert("value2".equals(res.head.asInstanceOf[TLangString].getElement))
+    assert(res.head.asInstanceOf[Operation].content.toOption.get.isInstanceOf[TLangString])
+    assert("value2".equals(res.head.asInstanceOf[Operation].content.toOption.get.asInstanceOf[TLangString].getElement))
   }
 
   test("Get variable from params in entity") {
@@ -130,8 +130,8 @@ class ExecCallObjectTest extends AnyFunSuite {
     val context = Context(List(Scope(variables = mutable.Map("var1" -> array, "myEntity" -> myEntity))))
     val statement = CallObject(None, List(CallVarObject(None, "myEntity"), CallVarObject(None, "attr1")))
     val res = ExecCallObject.run(statement, context).toOption.get.get
-    assert(res.head.isInstanceOf[TLangString])
-    assert("value2".equals(res.head.asInstanceOf[TLangString].getElement))
+    assert(res.head.asInstanceOf[Operation].content.toOption.get.isInstanceOf[TLangString])
+    assert("value2".equals(res.head.asInstanceOf[Operation].content.toOption.get.asInstanceOf[TLangString].getElement))
   }
 
   test("Function called inside a function") {

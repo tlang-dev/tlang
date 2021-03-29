@@ -1,9 +1,7 @@
 package dev.tlang.tlang.astbuilder
 
 import dev.tlang.tlang.ast.common.call.{CallObject, CallVarObject}
-import dev.tlang.tlang.ast.common.value.{TLangLong, TLangString}
-import dev.tlang.tlang.ast.helper.{ForType, HelperFor}
-import dev.tlang.tlang.ast.common.call.{CallObject, CallVarObject}
+import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value.{TLangLong, TLangString}
 import dev.tlang.tlang.ast.helper.{ForType, HelperFor}
 import dev.tlang.tlang.astbuilder.context.ContextResource
@@ -30,10 +28,10 @@ class BuildHelperForStatementTest extends AnyFunSuite {
     val func = BuildHelperBlock.build(fakeContext, parser.helperBlock()).funcs.get.head
     val forStmt = func.block.content.get.head.asInstanceOf[HelperFor]
     assert("i" == forStmt.variable)
-    assert(1 == forStmt.start.get.asInstanceOf[TLangLong].getElement)
+    assert(1 == forStmt.start.get.content.toOption.get.asInstanceOf[TLangLong].getElement)
     assert(ForType.TO == forStmt.forType)
-    assert(10 == forStmt.array.asInstanceOf[TLangLong].getElement)
-    assert("myBody" == forStmt.body.content.get.head.asInstanceOf[TLangString].getElement)
+    assert(10 == forStmt.array.content.toOption.get.asInstanceOf[TLangLong].getElement)
+    assert("myBody" == forStmt.body.content.get.head.asInstanceOf[Operation].content.toOption.get.asInstanceOf[TLangString].getElement)
   }
 
   test("For 0 until 10") {
@@ -50,9 +48,9 @@ class BuildHelperForStatementTest extends AnyFunSuite {
     val func = BuildHelperBlock.build(fakeContext, parser.helperBlock()).funcs.get.head
     val forStmt = func.block.content.get.head.asInstanceOf[HelperFor]
     assert("i" == forStmt.variable)
-    assert(0 == forStmt.start.get.asInstanceOf[TLangLong].getElement)
+    assert(0 == forStmt.start.get.content.toOption.get.asInstanceOf[TLangLong].getElement)
     assert(ForType.UNTIL == forStmt.forType)
-    assert(10 == forStmt.array.asInstanceOf[TLangLong].getElement)
+    assert(10 == forStmt.array.content.toOption.get.asInstanceOf[TLangLong].getElement)
     assert(forStmt.body.content.isEmpty)
   }
 
@@ -72,7 +70,7 @@ class BuildHelperForStatementTest extends AnyFunSuite {
     assert("i" == forStmt.variable)
     assert(forStmt.start.isEmpty)
     assert(ForType.IN == forStmt.forType)
-    assert("myVar" == forStmt.array.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
+    assert("myVar" == forStmt.array.content.toOption.get.asInstanceOf[CallObject].statements.head.asInstanceOf[CallVarObject].name)
     assert(forStmt.body.content.isEmpty)
   }
 

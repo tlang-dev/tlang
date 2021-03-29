@@ -71,7 +71,11 @@ object ExecCallObject extends Executor {
 
   private def findVar(name: String, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
     ContextUtils.findVar(context, name) match {
-      case Some(value) => Right(Some(List(value)))
+      case Some(value) =>
+        value match {
+          case operation: Operation => ExecOperation.run(operation, context)
+          case _ => Right(Some(List(value)))
+        }
       case None => Left(CallableNotFound(name))
     }
   }
@@ -121,7 +125,7 @@ object ExecCallObject extends Executor {
         case Right(value) => resolve(value)
       }
     }*/
-    ExecComplexValue.run(position, context) match {
+    ExecOperation.run(position, context) match {
       case Left(error) => Left(error)
       case Right(res) => pickFirst(res) match {
         case Left(err) => Left(err)
@@ -149,9 +153,15 @@ object ExecCallObject extends Executor {
     attrs.find(_.attr.getOrElse(false).equals(name)) match {
       case Some(value) => value.value match {
         case operation: Operation =>
-          operation.content match {
-            case caller: CallObject => loopOverStatement(caller.statements, context, 0, None)
-          }
+          //          operation.content match {
+          //            case Left(_) => Left(CallableNotFound(name))
+          //            case Right(value) => value match {
+          //              case caller: CallObject => loopOverStatement(caller.statements, context, 0, None)
+          //              case _ =>
+          //                Left(CallableNotFound(name))
+          //            }
+          //          }
+          ExecOperation.run(operation, context)
         case _ => Right(Some(List(value.value)))
       }
       case None => Left(CallableNotFound(name))

@@ -1,5 +1,6 @@
 package dev.tlang.tlang.astbuilder
 
+import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value.{ArrayValue, TLangString}
 import dev.tlang.tlang.ast.model.set.{ModelSetArray, ModelSetEntity, ModelSetFuncDef, ModelSetRef, ModelSetType}
 import dev.tlang.tlang.ast.common.value.{ArrayValue, ComplexAttribute, TLangString}
@@ -235,12 +236,12 @@ class BuildModelBlockTest extends AnyFunSuite {
     val parser = new TLangParser(tokens)
     val setEntity = BuildModelBlock.build(fakeContext, parser.modelBlock()).content.get.head.asInstanceOf[ModelSetEntity]
     val ref = setEntity.attrs.get.head.value.asInstanceOf[ModelSetRef]
-    val array = ref.currying.get.head.values.last.asInstanceOf[ArrayValue].tbl.get
+    val array = ref.currying.get.head.values.last.asInstanceOf[Operation].content.toOption.get.asInstanceOf[ArrayValue].tbl.get
     assert("anyFunc" == ref.refs.head)
-    assert("myValue" == ref.currying.get.head.values.head.asInstanceOf[TLangString].getElement)
-    assert("1" == array.head.value.asInstanceOf[TLangString].getElement)
-    assert("2" == array(1).value.asInstanceOf[TLangString].getElement)
-    assert("3" == array.last.value.asInstanceOf[TLangString].getElement)
+    assert("myValue" == ref.currying.get.head.values.head.asInstanceOf[Operation].content.toOption.get.asInstanceOf[TLangString].getElement)
+    assert("1" == array.head.value.content.toOption.get.asInstanceOf[TLangString].getElement)
+    assert("2" == array(1).value.content.toOption.get.asInstanceOf[TLangString].getElement)
+    assert("3" == array.last.value.content.toOption.get.asInstanceOf[TLangString].getElement)
   }
 
 }

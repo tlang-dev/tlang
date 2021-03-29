@@ -2,7 +2,7 @@ package dev.tlang.tlang.resolver
 
 import dev.tlang.tlang.ast.DomainUse
 import dev.tlang.tlang.ast.common.call._
-import dev.tlang.tlang.ast.common.value.PrimitiveValue
+import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.helper._
 import dev.tlang.tlang.ast.model.ModelBlock
 import dev.tlang.tlang.ast.tmpl.{TmplBlock, TmplBlockAsValue}
@@ -110,7 +110,9 @@ object ResolveContext {
     val ret = value match {
       case func: HelperFunc => scope.functions.addOne(name, func)
         func
-      case variable: PrimitiveValue[_] => scope.variables.addOne(name, variable)
+      //      case variable: PrimitiveValue[_] => scope.variables.addOne(name, variable)
+      //        variable
+      case variable: Operation => scope.variables.addOne(name, variable)
         variable
       case tmpl: TmplBlockAsValue => scope.templates.addOne(name, tmpl.block)
         tmpl

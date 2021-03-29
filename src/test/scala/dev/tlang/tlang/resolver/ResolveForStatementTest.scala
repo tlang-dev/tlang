@@ -1,5 +1,6 @@
 package dev.tlang.tlang.resolver
 
+import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value.{ArrayValue, TLangLong, TLangString}
 import dev.tlang.tlang.ast.helper.HelperBlock
 import dev.tlang.tlang.loader.remote.RemoteLoader
@@ -53,7 +54,7 @@ class ResolveForStatementTest extends AnyFunSuite {
 
     val scope = module.resources(module.mainFile).ast.body.head.asInstanceOf[HelperBlock].funcs.get.head.scope
     assert("MyFile/start" == scope.variables.head._1)
-    assert(1 == scope.variables.head._2.asInstanceOf[TLangLong].getElement)
+    assert(1 == scope.variables.head._2.asInstanceOf[Operation].content.toOption.get.asInstanceOf[TLangLong].getElement)
   }
 
   test("Resolve array in for") {
@@ -86,12 +87,12 @@ class ResolveForStatementTest extends AnyFunSuite {
 
     val scope = module.resources(module.mainFile).ast.body.head.asInstanceOf[HelperBlock].funcs.get.head.scope
     assert("MyFile/array" == scope.variables.head._1)
-    val array = scope.variables.head._2.asInstanceOf[ArrayValue].tbl.get
-    assert(1 == array.head.value.asInstanceOf[TLangLong].getElement)
-    assert(2 == array(1).value.asInstanceOf[TLangLong].getElement)
-    assert(3 == array(2).value.asInstanceOf[TLangLong].getElement)
-    assert(4 == array(3).value.asInstanceOf[TLangLong].getElement)
-    assert(5 == array.last.value.asInstanceOf[TLangLong].getElement)
+    val array = scope.variables.head._2.asInstanceOf[Operation].content.toOption.get.asInstanceOf[ArrayValue].tbl.get
+    assert(1 == array.head.value.content.toOption.get.asInstanceOf[TLangLong].getElement)
+    assert(2 == array(1).value.content.toOption.get.asInstanceOf[TLangLong].getElement)
+    assert(3 == array(2).value.content.toOption.get.asInstanceOf[TLangLong].getElement)
+    assert(4 == array(3).value.content.toOption.get.asInstanceOf[TLangLong].getElement)
+    assert(5 == array.last.value.content.toOption.get.asInstanceOf[TLangLong].getElement)
   }
 
   test("Resolve content in for") {
@@ -125,7 +126,7 @@ class ResolveForStatementTest extends AnyFunSuite {
 
     val scope = module.resources(module.mainFile).ast.body.head.asInstanceOf[HelperBlock].funcs.get.head.scope
     assert("MyFile/content" == scope.variables.head._1)
-    assert("content" == scope.variables.head._2.asInstanceOf[TLangString].getElement)
+    assert("content" == scope.variables.head._2.asInstanceOf[Operation].content.toOption.get.asInstanceOf[TLangString].getElement)
   }
 
 }

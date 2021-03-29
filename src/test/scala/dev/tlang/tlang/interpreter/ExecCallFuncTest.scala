@@ -55,15 +55,15 @@ class ExecCallFuncTest extends AnyFunSuite {
     )))
 
     val res = ExecCallFunc.mergeCallers(funcCaller, refFuncCaller).currying.get
-    assert("c1p1" == res.head.params.get.head.value.asInstanceOf[TLangString].getElement)
-    assert("c1p2" == res.head.params.get(1).value.asInstanceOf[TLangString].getElement)
-    assert("c1p3" == res.head.params.get.last.value.asInstanceOf[TLangString].getElement)
-    assert("c2p1" == res(1).params.get.head.value.asInstanceOf[TLangString].getElement)
-    assert("c2p2" == res(1).params.get(1).value.asInstanceOf[TLangString].getElement)
-    assert("c2p3" == res(1).params.get.last.value.asInstanceOf[TLangString].getElement)
-    assert("c3p1" == res.last.params.get.head.value.asInstanceOf[TLangString].getElement)
-    assert("c3p2" == res.last.params.get(1).value.asInstanceOf[TLangString].getElement)
-    assert("c3p3" == res.last.params.get.last.value.asInstanceOf[TLangString].getElement)
+    assert("c1p1" == res.head.params.get.head.value.content.toOption.get.asInstanceOf[TLangString].getElement)
+    assert("c1p2" == res.head.params.get(1).value.content.toOption.get.asInstanceOf[TLangString].getElement)
+    assert("c1p3" == res.head.params.get.last.value.content.toOption.get.asInstanceOf[TLangString].getElement)
+    assert("c2p1" == res(1).params.get.head.value.content.toOption.get.asInstanceOf[TLangString].getElement)
+    assert("c2p2" == res(1).params.get(1).value.content.toOption.get.asInstanceOf[TLangString].getElement)
+    assert("c2p3" == res(1).params.get.last.value.content.toOption.get.asInstanceOf[TLangString].getElement)
+    assert("c3p1" == res.last.params.get.head.value.content.toOption.get.asInstanceOf[TLangString].getElement)
+    assert("c3p2" == res.last.params.get(1).value.content.toOption.get.asInstanceOf[TLangString].getElement)
+    assert("c3p3" == res.last.params.get.last.value.content.toOption.get.asInstanceOf[TLangString].getElement)
   }
 
 }

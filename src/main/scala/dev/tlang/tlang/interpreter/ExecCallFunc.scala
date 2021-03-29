@@ -49,7 +49,7 @@ object ExecCallFunc extends Executor {
     if (caller.currying.isDefined) {
       caller.currying.get.zipWithIndex.foreach(param => {
         param._1.params.get.zipWithIndex.foreach(attr => {
-          ExecStatement.run(attr._1.value, context) match {
+          ExecOperation.run(attr._1.value, context) match {
             case Left(value) => //Left(value)
             case Right(optionVal) => optionVal match {
               case Some(value) => if (value.size == 1) {
@@ -101,7 +101,7 @@ object ExecCallFunc extends Executor {
             val params = ListBuffer.empty[SetAttribute]
             var i = 0
             for (param <- curry._1.params.get) {
-              if (param.value.isInstanceOf[LazyValue[_]]) {
+              if (param.value.content.toOption.isDefined && param.value.content.toOption.get.isInstanceOf[LazyValue[_]]) {
                 params.addOne(funCaller.currying.get(curry._2).params.get(i))
                 i += 1
               } else {

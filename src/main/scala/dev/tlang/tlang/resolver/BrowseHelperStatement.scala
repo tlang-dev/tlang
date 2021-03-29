@@ -63,11 +63,11 @@ object BrowseHelperStatement {
 
   def browseOperation(operation: Operation, module: loader.Module, uses: List[DomainUse], scope: Scope, currentResource: Resource): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
-    //    operation.content match {
-    //      case Left(block) => extractErrors(errors, browseStatement(block, module, uses, scope, currentResource))
-    //      case Right(cond) => extractErrors(errors, resolveCondition(cond, module, uses, scope, currentResource))
-    //    }
-    //    operation.nextBlock.foreach(block => extractErrors(errors, browseOperation(block, module, uses, scope, currentResource)))
+    operation.content match {
+      case Left(op) => extractErrors(errors, browseOperation(op, module, uses, scope, currentResource))
+      case Right(value) => extractErrors(errors, browseStatement(value, module, uses, scope, currentResource))
+    }
+    operation.next.foreach(block => extractErrors(errors, browseOperation(block._2, module, uses, scope, currentResource)))
     if (errors.nonEmpty) Left(errors.toList)
     else Right(())
   }

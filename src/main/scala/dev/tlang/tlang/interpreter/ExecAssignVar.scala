@@ -9,7 +9,7 @@ object ExecAssignVar extends Executor {
   override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
     val varStatement = statement.asInstanceOf[AssignVar]
 
-    ExecComplexValue.run(varStatement.value, context) match {
+    ExecOperation.run(varStatement.value, context) match {
       case Left(error) => Left(error)
       case Right(value) => value match {
         case None => Left(NoValue("Value to assign was empty"))
@@ -26,12 +26,5 @@ object ExecAssignVar extends Executor {
       }
     }
   }
-
-//  def extractValue(value: Value[_]): Either[ExecError, Option[List[Value[_]]]] = {
-//    value match {
-//      case multi: MultiValue => Right(Some(multi.values))
-//      case _ => Right(Some(List(value)))
-//    }
-//  }
 
 }
