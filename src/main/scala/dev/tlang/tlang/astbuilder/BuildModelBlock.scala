@@ -33,6 +33,8 @@ object BuildModelBlock {
       case content@_ if content.modelSetFuncDef() != null => ModelSetAttribute(addContext(resource, content.modelSetFuncDef()), attr, buildFuncDef(resource, content.modelSetFuncDef()))
       case content@_ if content.modelSetRef() != null => ModelSetAttribute(addContext(resource, content.modelSetRef()), attr, buildRef(resource, content.modelSetRef()))
       case content@_ if content.modelSetArray() != null => ModelSetAttribute(addContext(resource, content.modelSetArray()), attr, ModelSetArray(addContext(resource, content.modelSetArray()), content.modelSetArray().array.getText))
+      case impl@_ if impl.modelSetImpl() != null => ModelSetAttribute(addContext(resource, impl.modelSetImpl()), attr, ModelSetImpl(addContext(resource, impl), None, extractSetEntityAttrDefs(resource, impl.modelSetImpl().attrs.asScala.toList)))
+      case impl@_ if impl.modelSetImplArray() != null => ModelSetAttribute(addContext(resource, impl.modelSetImplArray()), attr, ModelSetImplArray(addContext(resource, impl), None))
     }
   }
 

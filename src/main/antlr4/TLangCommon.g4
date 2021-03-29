@@ -45,19 +45,6 @@ setAttribute: (attr=ID '=')? value=operation;
 
 callVariable: name=ID;
 
-//conditionBlock:
-//     content=condition (link=('&&' | '||')  next=conditionBlock)* |
-//    '(' content=condition ')' (link=('&&' | '||')  next=conditionBlock)* |
-//    '(' content=condition (link=('&&' | '||')  next=conditionBlock)* ')' |
-//    '(' innerBlock=conditionBlock ')' (link=('&&' | '||')  next=conditionBlock)*
-//;
-//
-//condition:
-//    arg1=simpleValueType (mark=conditionMark arg2=simpleValueType)? (link=('&&' | '||') next=conditionBlock)*
-//;
-//
-//conditionMark: '==' | '!=' | '<' | '>' | '<=' | '>=';
-
 entityValue:
 	 ('(' ((attrs+=complexAttribute) (',' attrs+=complexAttribute)*) ')')? '{'
 	decl+=complexAttribute*
@@ -66,5 +53,3 @@ entityValue:
 multiValue: '(' (values+=operation) (',' values+=operation)+ ')'; // '+' is needed to avoid confusion with operation
 
 complexAttribute: (((attr=ID) (':' type=ID)? '=')? value=operation);
-
-//simpleAttribute: (((attr=ID) (':' type=ID)? '=')? value=operation);
