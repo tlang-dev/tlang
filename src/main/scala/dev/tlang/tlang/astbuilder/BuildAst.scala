@@ -2,36 +2,42 @@ package dev.tlang.tlang.astbuilder
 
 import dev.tlang.tlang.TLangParser._
 import dev.tlang.tlang.ast._
+import dev.tlang.tlang.astbuilder.context.{ContextContent, ContextResource}
+import org.antlr.v4.runtime.ParserRuleContext
 
 import scala.jdk.CollectionConverters._
 
 object BuildAst {
 
-  def build(domain: DomainModelContext): DomainModel = {
-    DomainModel(if (domain.header != null) Some(buildHeader(domain.header)) else None,
-      buildBody(domain.body.asScala.toList))
+  def build(resource: ContextResource, domain: DomainModelContext): DomainModel = {
+    DomainModel(addContext(resource, domain), if (domain.header != null) Some(buildHeader(resource, domain.header)) else None,
+      buildBody(resource, domain.body.asScala.toList))
   }
 
-  def buildHeader(header: DomainHeaderContext): DomainHeader = {
-    DomainHeader(
-      if (header.exposes != null && !header.exposes.isEmpty) Some(header.exposes.asScala.toList.map(buildExpose)) else None,
-      if (header.uses != null && !header.uses.isEmpty) Some(header.uses.asScala.toList.map(buildUse)) else None)
+  def buildHeader(resource: ContextResource, header: DomainHeaderContext): DomainHeader = {
+    DomainHeader(addContext(resource, header),
+      if (header.exposes != null && !header.exposes.isEmpty) Some(header.exposes.asScala.toList.map(expose => buildExpose(resource, expose))) else None,
+      if (header.uses != null && !header.uses.isEmpty) Some(header.uses.asScala.toList.map(use => buildUse(resource, use))) else None)
   }
 
-  def buildBody(bodies: List[DomainBlockContext]): List[DomainBlock] = {
+  def buildBody(resource: ContextResource, bodies: List[DomainBlockContext]): List[DomainBlock] = {
     bodies.map {
-      case body@_ if body.modelBlock() != null => BuildModelBlock.build(body.modelBlock())
-      case body@_ if body.helperBlock() != null => BuildHelperBlock.build(body.helperBlock())
-      case body@_ if body.tmplBlock() != null => BuildTmplBlock.build(body.tmplBlock())
+      case body@_ if body.modelBlock() != null => BuildModelBlock.build(resource, body.modelBlock())
+      case body@_ if body.helperBlock() != null => BuildHelperBlock.build(resource, body.helperBlock())
+      case body@_ if body.tmplBlock() != null => BuildTmplBlock.build(resource, body.tmplBlock())
     }
   }
 
-  def buildExpose(expose: DomainExposeContext): DomainExpose = {
-    DomainExpose(expose.expose.getText)
+  def buildExpose(resource: ContextResource, expose: DomainExposeContext): DomainExpose = {
+    DomainExpose(addContext(resource, expose), expose.expose.getText)
   }
 
-  def buildUse(use: DomainUseContext): DomainUse = {
-    DomainUse(use.uses.asScala.toList.map(_.getText))
+  def buildUse(resource: ContextResource, use: DomainUseContext): DomainUse = {
+    DomainUse(addContext(resource, use), use.uses.asScala.toList.map(_.getText))
+  }
+
+  def addContext(resource: ContextResource, parser: ParserRuleContext): Option[ContextContent] = {
+    Some(ContextContent(resource, parser.getStart.getLine, parser.getStart.getCharPositionInLine))
   }
 
 }

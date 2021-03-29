@@ -1,7 +1,8 @@
 package dev.tlang.tlang.libraries.builtin
 
 import dev.tlang.tlang.ast.common.call._
-import dev.tlang.tlang.ast.common.value.{ArrayValue, LazyValue, SimpleAttribute, TLangString}
+import dev.tlang.tlang.ast.common.operation.Operation
+import dev.tlang.tlang.ast.common.value.{ArrayValue, ComplexAttribute, LazyValue, TLangString}
 import dev.tlang.tlang.ast.helper._
 import dev.tlang.tlang.interpreter.ExecFunc
 import dev.tlang.tlang.interpreter.context.{Context, ContextUtils, Scope}
@@ -14,19 +15,19 @@ class TmplForTest extends AnyFunSuite {
   test("Simple for") {
     var res = ""
 
-    val array = ArrayValue(Some(List(SimpleAttribute(value = new TLangString("val1")),
-      SimpleAttribute(value = new TLangString("val2")),
-      SimpleAttribute(value = new TLangString("val3")))))
+    val array = ArrayValue(None, Some(List(ComplexAttribute(None, value = Operation(None, None, Right(new TLangString(None, "val1")))),
+      ComplexAttribute(None, value = Operation(None, None, Right(new TLangString(None, "val2")))),
+      ComplexAttribute(None, value = Operation(None, None, Right(new TLangString(None, "val3")))))))
 
-    val calledFunc = HelperFunc("anyFunc", Some(List(HelperCurrying(List(HelperParam(Some("param1"), HelperObjType(TLangString.getType)))))), None, HelperContent(Some(List(
+    val calledFunc = HelperFunc(None, "anyFunc", Some(List(HelperCurrying(None, List(HelperParam(None, Some("param1"), HelperObjType(None, TLangString.getType)))))), None, HelperContent(None, Some(List(
       HelperInternalFunc((context: Context) => {
         //        res += context.scopes.last.variables("param1").asInstanceOf[TLangString].getValue
-        res += ContextUtils.findVar(context, "param1").get.asInstanceOf[TLangString].getValue
+        res += ContextUtils.findVar(context, "param1").get.asInstanceOf[TLangString].getElement
         Right(None)
       })
     ))))
 
-    val call = CallRefFuncObject(None, Some(List(CallFuncParam(Some(List(SetAttribute(value = LazyValue(None, Some(TLangString)))))))), Some(Left(calledFunc)))
+    val call = CallRefFuncObject(None, None, Some(List(CallFuncParam(None, Some(List(SetAttribute(None, value = Operation(None, None, Right(LazyValue(None, None, Some(TLangString)))))))))), Some(Left(calledFunc)))
 
     val context = Context(List(Scope(
       variables = mutable.Map("array" -> array),

@@ -68,4 +68,4 @@ modelSetRef: '&' refs+=ID ('.' refs+=ID)* (('(' currying+=modelSetRefCurrying  '
 
 modelSetRefCurrying:values+=modelSetRefValue (',' values+=modelSetRefValue)*;
 
-modelSetRefValue: modelSetRef | complexValueType;
+modelSetRefValue: modelSetRef | operation;

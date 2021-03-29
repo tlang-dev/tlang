@@ -10,7 +10,7 @@ import scala.collection.mutable.ListBuffer
 
 object TmplFor {
 
-  def tmplForFunc: HelperFunc = HelperFunc("forEach", Some(List(HelperCurrying(List(HelperParam(Some("array"), HelperObjType(ArrayValue.getType)), HelperParam(Some("refFunc"), HelperObjType(CallRefFuncObject.getType)))))), None, HelperContent(Some(List(
+  def tmplForFunc: HelperFunc = HelperFunc(None, "forEach", Some(List(HelperCurrying(None, List(HelperParam(None, Some("array"), HelperObjType(None, ArrayValue.getType)), HelperParam(None, Some("refFunc"), HelperObjType(None, CallRefFuncObject.getType)))))), None, HelperContent(None, Some(List(
     HelperInternalFunc((context: Context) => {
       ContextUtils.findVar(context, "array") match {
         case Some(arrayVar) => ContextUtils.findRefFunc(context, "refFunc") match {
@@ -32,9 +32,9 @@ object TmplFor {
       val rets = ListBuffer.empty[Value[_]]
       var error: Option[ExecError] = None
       for (i <- array.indices) {
-        newScope.variables.update("_i", new TLangLong(i))
+        newScope.variables.update("_i", new TLangLong(None, i))
         //        newScope.variables.update("_", array(i).value)
-        val newCaller = CallFuncObject(Some("refFunc"), Some(List(CallFuncParam(Some(List(SetAttribute(Some("_"), array(i).value)))))))
+        val newCaller = CallFuncObject(None, Some("refFunc"), Some(List(CallFuncParam(None, Some(List(SetAttribute(None, Some("_"), array(i).value)))))))
         ExecCallFunc.run(newCaller, newContext) match {
           case Left(err) => error = Some(err)
           case Right(value) => value match {

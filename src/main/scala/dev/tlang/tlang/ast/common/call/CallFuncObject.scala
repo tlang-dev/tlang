@@ -1,3 +1,7 @@
 package dev.tlang.tlang.ast.common.call
 
-case class CallFuncObject(name: Option[String], currying: Option[List[CallFuncParam]]) extends CallObjectType
+import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
+
+case class CallFuncObject(context: Option[ContextContent], name: Option[String], currying: Option[List[CallFuncParam]]) extends CallObjectType with AstContext {
+  override def getContext: Option[ContextContent] = context
+}

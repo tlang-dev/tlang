@@ -1,8 +1,5 @@
 package dev.tlang.tlang.interpreter
 
-import dev.tlang.tlang.ast.common.value.AssignVar
-import dev.tlang.tlang.ast.helper.HelperStatement
-import dev.tlang.tlang.interpreter.context.Context
 import dev.tlang.tlang.ast.common.value.{AssignVar, MultiValue}
 import dev.tlang.tlang.ast.helper.HelperStatement
 import dev.tlang.tlang.interpreter.context.Context
@@ -12,7 +9,7 @@ object ExecAssignVar extends Executor {
   override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
     val varStatement = statement.asInstanceOf[AssignVar]
 
-    ExecComplexValue.run(varStatement.value, context) match {
+    ExecOperation.run(varStatement.value, context) match {
       case Left(error) => Left(error)
       case Right(value) => value match {
         case None => Left(NoValue("Value to assign was empty"))
@@ -22,19 +19,12 @@ object ExecAssignVar extends Executor {
             context.scopes.last.variables.addOne(varStatement.name -> value.head)
             Right(Some(List(value.head)))
           } else {
-            val values = MultiValue(value)
+            val values = MultiValue(None, value)
             context.scopes.last.variables.addOne(varStatement.name -> values)
             Right(Some(value))
           }
       }
     }
   }
-
-//  def extractValue(value: Value[_]): Either[ExecError, Option[List[Value[_]]]] = {
-//    value match {
-//      case multi: MultiValue => Right(Some(multi.values))
-//      case _ => Right(Some(List(value)))
-//    }
-//  }
 
 }

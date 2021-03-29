@@ -39,7 +39,7 @@ object ExecMultiValue extends Executor {
     value match {
       case Some(v) => if (v.isEmpty) Left(NoValue("No value found"))
       else if (v.size == 1) Right(v.head)
-      else Right(MultiValue(v))
+      else Right(MultiValue(None, v))
       case None => Left(NoValue("No value found"))
     }
   }

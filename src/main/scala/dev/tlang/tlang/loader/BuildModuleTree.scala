@@ -1,6 +1,7 @@
 package dev.tlang.tlang.loader
 
 import dev.tlang.tlang.astbuilder.BuildAst
+import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.libraries.Modules
 import dev.tlang.tlang.loader.manifest.{Manifest, ManifestLoader}
 import dev.tlang.tlang.loader.remote.RemoteLoader
@@ -54,16 +55,16 @@ object BuildModuleTree {
   def browseExternalResources(manifest: Manifest, cacheId: String)(implicit resourceLoader: ResourceLoader, remote: RemoteLoader, tBagManager: TBagManager): Either[LoaderError, Map[String, Module]] = {
     val modules = mutable.Map.empty[String, Module]
     manifest.dependencies.foreach(_.foreach(dependency => {
-//      if (dependency.organisation == Modules.organisation) {
-        Modules.findModule(dependency) match {
-          case Some(module) => modules.addOne(dependency.alias.getOrElse(module.manifest.name), module)
-          case None =>
-            ModuleLoader.loadModule(dependency, cacheId) match {
-              case Left(error) => println("CANNOT GET MODULE:" + error.message)
-              case Right(module) => modules.addOne(dependency.alias.getOrElse(module.manifest.name), module)
-            }
-        }
-//      }
+      //      if (dependency.organisation == Modules.organisation) {
+      Modules.findModule(dependency) match {
+        case Some(module) => modules.addOne(dependency.alias.getOrElse(module.manifest.name), module)
+        case None =>
+          ModuleLoader.loadModule(dependency, cacheId) match {
+            case Left(error) => println("CANNOT GET MODULE:" + error.message)
+            case Right(module) => modules.addOne(dependency.alias.getOrElse(module.manifest.name), module)
+          }
+      }
+      //      }
     }))
     Right(modules.toMap)
   }
@@ -84,7 +85,7 @@ object BuildModuleTree {
 
   def buildResourceAST(root: String, fromRoot: String, pkg: String, name: String, content: String): Resource = {
     val parser = new TLangParser(new CommonTokenStream(new TLangLexer(CharStreams.fromString(content))))
-    Resource(root, fromRoot, pkg, name, BuildAst.build(parser.domainModel()))
+    Resource(root, fromRoot, pkg, name, BuildAst.build(ContextResource(root, fromRoot, pkg, name), parser.domainModel()))
   }
 
   def createPkg(parts: String*): String = {

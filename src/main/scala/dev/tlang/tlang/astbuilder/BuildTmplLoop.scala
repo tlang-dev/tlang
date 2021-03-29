@@ -2,17 +2,17 @@ package dev.tlang.tlang.astbuilder
 
 import dev.tlang.tlang.TLangParser.{TmplDoWhileContext, TmplWhileContext}
 import dev.tlang.tlang.ast.tmpl.loop.{TmplDoWhile, TmplWhile}
+import dev.tlang.tlang.astbuilder.BuildAst.addContext
+import dev.tlang.tlang.astbuilder.context.ContextResource
 
 object BuildTmplLoop {
 
-  def buildWhile(loop: TmplWhileContext): TmplWhile = {
-    TmplWhile(BuildTmplBlock.buildConditionBlock(loop.cond), BuildTmplBlock.buildExprContent(loop.content))
+  def buildWhile(resource: ContextResource, loop: TmplWhileContext): TmplWhile = {
+    TmplWhile(addContext(resource, loop), BuildTmplBlock.buildConditionBlock(resource, loop.cond), BuildTmplBlock.buildExprContent(resource, loop.content))
   }
 
-  def buildDoWhile(loop: TmplDoWhileContext): TmplDoWhile = {
-    TmplDoWhile(BuildTmplBlock.buildExprContent(loop.content), BuildTmplBlock.buildConditionBlock(loop.cond))
+  def buildDoWhile(resource: ContextResource, loop: TmplDoWhileContext): TmplDoWhile = {
+    TmplDoWhile(addContext(resource, loop), BuildTmplBlock.buildExprContent(resource, loop.content), BuildTmplBlock.buildConditionBlock(resource, loop.cond))
   }
-
-
 
 }

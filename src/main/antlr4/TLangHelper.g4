@@ -30,10 +30,10 @@ helperFuncType: type='(' (currying+=helperCurrying)? ')' ('(' currying+=helperCu
 
 helperContent: content+=helperStatement*;
 
-helperStatement: assignVar | complexValueType | helperIf | helperFor;
+helperStatement: assignVar | operation | helperIf | helperFor;
 
 helperIf:
-    'if' '(' cond=conditionBlock ')' '{'
+    'if' '(' cond=operation ')' '{'
         body=helperContent
     '}' orElse=helperElse?;
 
@@ -43,7 +43,7 @@ helperElse:
     '}';
 
 helperFor:
-    'for' '(' var=ID start=simpleValueType? type=('in' | 'to' | 'until') array=simpleValueType ')' '{'
+    'for' '(' var=ID start=operation? type=('in' | 'to' | 'until') array=operation ')' '{'
         body=helperContent
     '}'
 ;

@@ -1,14 +1,18 @@
 package dev.tlang.tlang.astbuilder
 
+import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value.{ArrayValue, TLangString}
 import dev.tlang.tlang.ast.model.set.{ModelSetArray, ModelSetEntity, ModelSetFuncDef, ModelSetRef, ModelSetType}
 import dev.tlang.tlang.ast.common.value.{ArrayValue, ComplexAttribute, TLangString}
 import dev.tlang.tlang.ast.model.set.{ModelSetArray, ModelSetEntity, ModelSetFuncDef, ModelSetRef, ModelSetType}
+import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.{TLangLexer, TLangParser}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
 
 class BuildModelBlockTest extends AnyFunSuite {
+
+  val fakeContext: ContextResource = ContextResource("", "", "", "")
 
   test("Test setting model entity") {
     val lexer = new TLangLexer(CharStreams.fromString(
@@ -18,7 +22,7 @@ class BuildModelBlockTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val setEntity = BuildModelBlock.build(parser.modelBlock()).content.get.head.asInstanceOf[ModelSetEntity]
+    val setEntity = BuildModelBlock.build(fakeContext, parser.modelBlock()).content.get.head.asInstanceOf[ModelSetEntity]
     assert("firstEntity" == setEntity.name)
   }
 
@@ -30,7 +34,7 @@ class BuildModelBlockTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val setEntity = BuildModelBlock.build(parser.modelBlock()).content.get.head.asInstanceOf[ModelSetEntity]
+    val setEntity = BuildModelBlock.build(fakeContext, parser.modelBlock()).content.get.head.asInstanceOf[ModelSetEntity]
     assert("firstEntity" == setEntity.name)
     assert("attr1" == setEntity.params.get.head.attr.get)
     assert("String" == setEntity.params.get.head.value.asInstanceOf[ModelSetType].`type`)
@@ -50,7 +54,7 @@ class BuildModelBlockTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val setEntity = BuildModelBlock.build(parser.modelBlock()).content.get.head.asInstanceOf[ModelSetEntity]
+    val setEntity = BuildModelBlock.build(fakeContext, parser.modelBlock()).content.get.head.asInstanceOf[ModelSetEntity]
     assert("firstEntity" == setEntity.name)
     assert("var1" == setEntity.attrs.get.head.attr.get)
     assert("String" == setEntity.attrs.get.head.value.asInstanceOf[ModelSetType].`type`)
@@ -68,7 +72,7 @@ class BuildModelBlockTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val setEntity = BuildModelBlock.build(parser.modelBlock()).content.get.head.asInstanceOf[ModelSetEntity]
+    val setEntity = BuildModelBlock.build(fakeContext, parser.modelBlock()).content.get.head.asInstanceOf[ModelSetEntity]
     val params1 = setEntity.params.get.head.value.asInstanceOf[ModelSetFuncDef].params.get
     val returns1 = setEntity.params.get.head.value.asInstanceOf[ModelSetFuncDef].returns.get
     val params2 = setEntity.params.get.last.value.asInstanceOf[ModelSetFuncDef].params.get
@@ -95,7 +99,7 @@ class BuildModelBlockTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val setEntity = BuildModelBlock.build(parser.modelBlock()).content.get.head.asInstanceOf[ModelSetEntity]
+    val setEntity = BuildModelBlock.build(fakeContext, parser.modelBlock()).content.get.head.asInstanceOf[ModelSetEntity]
     val attr1 = setEntity.attrs.get.head.value.asInstanceOf[ModelSetFuncDef].params.get
     val returns1 = setEntity.attrs.get.head.value.asInstanceOf[ModelSetFuncDef].returns.get
     val attr2 = setEntity.attrs.get.last.value.asInstanceOf[ModelSetFuncDef].params.get
@@ -121,7 +125,7 @@ class BuildModelBlockTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val setEntity = BuildModelBlock.build(parser.modelBlock()).content.get.head.asInstanceOf[ModelSetEntity]
+    val setEntity = BuildModelBlock.build(fakeContext, parser.modelBlock()).content.get.head.asInstanceOf[ModelSetEntity]
     val returns1 = setEntity.params.get.last.value.asInstanceOf[ModelSetFuncDef].returns.get
     val returns2 = setEntity.attrs.get.last.value.asInstanceOf[ModelSetFuncDef].returns.get
     assert(setEntity.params.get.head.value.asInstanceOf[ModelSetFuncDef].params.isEmpty)
@@ -142,7 +146,7 @@ class BuildModelBlockTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val setEntity = BuildModelBlock.build(parser.modelBlock()).content.get.head.asInstanceOf[ModelSetEntity]
+    val setEntity = BuildModelBlock.build(fakeContext, parser.modelBlock()).content.get.head.asInstanceOf[ModelSetEntity]
     val params1 = setEntity.params.get.head.value.asInstanceOf[ModelSetFuncDef].params.get
     val attr1 = setEntity.attrs.get.head.value.asInstanceOf[ModelSetFuncDef].params.get
 
@@ -163,7 +167,7 @@ class BuildModelBlockTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val setEntity = BuildModelBlock.build(parser.modelBlock()).content.get.head.asInstanceOf[ModelSetEntity]
+    val setEntity = BuildModelBlock.build(fakeContext, parser.modelBlock()).content.get.head.asInstanceOf[ModelSetEntity]
     assert("firstEntity" == setEntity.name)
     assert("param1" == setEntity.params.get.head.attr.get)
     assert(setEntity.params.get.head.value.asInstanceOf[ModelSetRef].currying.isEmpty)
@@ -178,7 +182,7 @@ class BuildModelBlockTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val setEntity = BuildModelBlock.build(parser.modelBlock()).content.get.head.asInstanceOf[ModelSetEntity]
+    val setEntity = BuildModelBlock.build(fakeContext, parser.modelBlock()).content.get.head.asInstanceOf[ModelSetEntity]
     assert("firstEntity" == setEntity.name)
     assert("param1" == setEntity.params.get.head.attr.get)
     assert(setEntity.params.get.head.value.asInstanceOf[ModelSetRef].currying.isEmpty)
@@ -196,7 +200,7 @@ class BuildModelBlockTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val setEntity = BuildModelBlock.build(parser.modelBlock()).content.get.head.asInstanceOf[ModelSetEntity]
+    val setEntity = BuildModelBlock.build(fakeContext, parser.modelBlock()).content.get.head.asInstanceOf[ModelSetEntity]
     assert("firstEntity" == setEntity.name)
     assert("attr1" == setEntity.attrs.get.head.attr.get)
     assert(setEntity.attrs.get.head.value.asInstanceOf[ModelSetRef].currying.isEmpty)
@@ -212,7 +216,7 @@ class BuildModelBlockTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val setEntity = BuildModelBlock.build(parser.modelBlock()).content.get.head.asInstanceOf[ModelSetEntity]
+    val setEntity = BuildModelBlock.build(fakeContext, parser.modelBlock()).content.get.head.asInstanceOf[ModelSetEntity]
     assert("firstEntity" == setEntity.name)
     assert("attr1" == setEntity.attrs.get.head.attr.get)
     assert(setEntity.attrs.get.head.value.asInstanceOf[ModelSetRef].currying.isEmpty)
@@ -230,14 +234,14 @@ class BuildModelBlockTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val setEntity = BuildModelBlock.build(parser.modelBlock()).content.get.head.asInstanceOf[ModelSetEntity]
+    val setEntity = BuildModelBlock.build(fakeContext, parser.modelBlock()).content.get.head.asInstanceOf[ModelSetEntity]
     val ref = setEntity.attrs.get.head.value.asInstanceOf[ModelSetRef]
-    val array = ref.currying.get.head.values.last.asInstanceOf[ArrayValue].tbl.get
+    val array = ref.currying.get.head.values.last.asInstanceOf[Operation].content.toOption.get.asInstanceOf[ArrayValue].tbl.get
     assert("anyFunc" == ref.refs.head)
-    assert("myValue" == ref.currying.get.head.values.head.asInstanceOf[TLangString].getValue)
-    assert("1" == array.head.value.asInstanceOf[TLangString].getValue)
-    assert("2" == array(1).value.asInstanceOf[TLangString].getValue)
-    assert("3" == array.last.value.asInstanceOf[TLangString].getValue)
+    assert("myValue" == ref.currying.get.head.values.head.asInstanceOf[Operation].content.toOption.get.asInstanceOf[TLangString].getElement)
+    assert("1" == array.head.value.content.toOption.get.asInstanceOf[TLangString].getElement)
+    assert("2" == array(1).value.content.toOption.get.asInstanceOf[TLangString].getElement)
+    assert("3" == array.last.value.content.toOption.get.asInstanceOf[TLangString].getElement)
   }
 
 }

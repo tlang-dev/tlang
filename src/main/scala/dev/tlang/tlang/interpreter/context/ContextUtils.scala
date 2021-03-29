@@ -1,11 +1,20 @@
 package dev.tlang.tlang.interpreter.context
 
 import dev.tlang.tlang.ast.common.call.CallRefFuncObject
+import dev.tlang.tlang.ast.common.value.{TLangBool, TLangDouble, TLangLong, TLangString}
 import dev.tlang.tlang.ast.helper.HelperFunc
+import dev.tlang.tlang.ast.model.set.ModelSetValueType
 import dev.tlang.tlang.ast.tmpl.TmplBlock
 import dev.tlang.tlang.interpreter.Value
 
 object ContextUtils {
+
+  val nativeModels: Map[String, ModelSetValueType[_]] = Map(
+    TLangString.getType -> new TLangString(None, ""),
+    TLangBool.getType -> new TLangBool(None, false),
+    TLangDouble.getType -> new TLangDouble(None, 0),
+    TLangLong.getType -> new TLangLong(None, 0)
+  )
 
   def findVar(context: Context, name: String): Option[Value[_]] = {
     var i = 0
@@ -45,6 +54,20 @@ object ContextUtils {
       i += 1
     }
     ref
+  }
+
+  def findModel(context: Context, name: String): Option[ModelSetValueType[_]] = {
+    var i = 0
+    var model: Option[ModelSetValueType[_]] = None
+    nativeModels.get(name) match {
+      case Some(value) => model = Some(value)
+      case None =>
+        while (model.isEmpty && i < context.scopes.length) {
+          context.scopes(i).models.get(name).foreach(value => model = Some(value))
+          i += 1
+        }
+    }
+    model
   }
 
 }
