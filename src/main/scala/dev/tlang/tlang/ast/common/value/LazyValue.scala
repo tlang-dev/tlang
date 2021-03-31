@@ -4,7 +4,7 @@ import dev.tlang.tlang.ast.common.call.ComplexValueStatement
 import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
 import dev.tlang.tlang.interpreter.Value
 
-case class LazyValue[T <: Value[T]](context: Option[ContextContent], var value: Option[T], valueType: Option[TLangType]) extends ComplexValueStatement[T] with AstContext {
+case class LazyValue[T <: Value[T]](context: Option[ContextContent], var value: Option[T], valueType: Option[TLangType]) extends ComplexValueStatement[T] {
   override def getElement: T = value.get
 
   override def getType: String = if (valueType.isDefined) valueType.get.getType else "LazyValue"

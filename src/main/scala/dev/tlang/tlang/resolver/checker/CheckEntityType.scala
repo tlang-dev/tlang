@@ -12,18 +12,7 @@ object CheckEntityType {
   def checkEntityType(entity: EntityValue, entityType: ModelSetEntity): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
     if (entity.`type`.isEmpty || entity.`type`.get != entityType.name) errors.addOne(TypeError(entity.context, entity.`type`.getOrElse("Undefined"), entityType.name))
-    if (entityType.params.isEmpty && entity.params.nonEmpty) errors.addOne(TypeError(entity.context, "params are empty in " + entityType.name, "params are not empty in entity"))
-    if (entityType.params.nonEmpty) {
-      entityType.params.foreach(_.foreach(param => {
-        if (entity.params.isDefined) {
-          entity.params.get.find(entityParam => entityParam.`type`.isDefined
-            && param.attr.isDefined && entityParam.`type`.get == param.attr.get) match {
-            case Some(value) => checkType(errors, param.attr.get, value.value)
-            case None => errors.addOne(TypeError(param.context, param.attr.get + " not found", param.attr.get))
-          }
-        }
-      }))
-    }
+//    if (entityType.params.isEmpty && entity.params.nonEmpty) errors.addOne(TypeError(entity.context, "params are empty in " + entityType.name, "params are not empty in entity"))
     if (entityType.attrs.nonEmpty) {
       entityType.attrs.foreach(_.foreach(attr => {
         if (entity.attrs.isDefined) {

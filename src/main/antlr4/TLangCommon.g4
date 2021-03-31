@@ -13,9 +13,7 @@ operation: (content=complexValueType (op=operator  next=operation)* |
 
 operator: '&&' | '||' | '+' | '-' | '*' | '/' | '%' | '==' | '!=' | '>' | '<' | '>=' | '<=' ;
 
-complexValueType: callObj | primitiveValue | multiValue | lazyValue;
-
-//simpleValueType: callObj | primitiveValue;
+complexValueType: callObj | primitiveValue | multiValue | lazyValue | impl;
 
 primitiveValue: stringValue | numberValue | textValue | entityValue | boolValue | arrayValue;
 
@@ -45,10 +43,9 @@ setAttribute: (attr=ID '=')? value=operation;
 
 callVariable: name=ID;
 
-entityValue:
-	 ('(' ((attrs+=complexAttribute) (',' attrs+=complexAttribute)*) ')')? '{'
-	decl+=complexAttribute*
-	'}';
+entityValue: '{' attrs+=complexAttribute* '}';
+
+impl: 'impl' (':' type=ID)? '{' attrs+=complexAttribute* '}';
 
 multiValue: '(' (values+=operation) (',' values+=operation)+ ')'; // '+' is needed to avoid confusion with operation
 

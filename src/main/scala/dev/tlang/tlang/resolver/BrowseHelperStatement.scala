@@ -33,7 +33,7 @@ object BrowseHelperStatement {
       case helperFor: HelperFor => browseFor(helperFor, module, uses, scope, currentResource)
       case operation: Operation => browseOperation(operation, module, uses, scope, currentResource)
       case multiValue: MultiValue => browseMultiVal(multiValue, module, uses, scope, currentResource)
-      case entity: EntityValue => browseEntity(entity, module, uses, scope, currentResource)
+      case entity: EntityValue => BrowseNewEntity.browseEntity(entity, module, uses, currentResource)
       case array: ArrayValue => browseArray(array, module, uses, scope, currentResource)
       case _ => Right(())
     }
@@ -87,14 +87,6 @@ object BrowseHelperStatement {
       case statement: ComplexValueStatement[_] => extractErrors(errors, browseStatement(statement, module, uses, scope, currentResource))
       case _ =>
     }
-    if (errors.nonEmpty) Left(errors.toList)
-    else Right(())
-  }
-
-  def browseEntity(entity: EntityValue, module: loader.Module, uses: List[DomainUse], scope: Scope, currentResource: Resource): Either[List[ResolverError], Unit] = {
-    val errors = ListBuffer.empty[ResolverError]
-    entity.params.foreach(_.foreach(param => extractErrors(errors, browseStatement(param.value, module, uses, scope, currentResource))))
-    entity.attrs.foreach(_.foreach(attr => extractErrors(errors, browseStatement(attr.value, module, uses, scope, currentResource))))
     if (errors.nonEmpty) Left(errors.toList)
     else Right(())
   }

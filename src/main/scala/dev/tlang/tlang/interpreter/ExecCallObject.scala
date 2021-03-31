@@ -82,19 +82,20 @@ object ExecCallObject extends Executor {
 
   private def findInCallable(statement: CallObjectType, callable: Option[List[Value[_]]], context: Context): Either[ExecError, Option[List[Value[_]]]] = {
     statement match {
-      case CallArrayObject(_, _, position) => resolveArrayInCallable(position, callable, context)
+      case callArray: CallArrayObject => resolveArrayInCallable(callArray, callable, context)
       //case caller: HelperCallFuncObject => resolveFunc(caller, callable, context)
       case refFunc: CallRefFuncObject => Right(Some(List(refFunc)))
-      case CallVarObject(_, name) => resolveCallback(name, callable, context)
+      case CallVarObject(_, name) => resolveCallVar(name, callable, context)
       case _ => Left(NotImplemented())
     }
   }
 
-  def resolveCallback(name: String, callable: Option[List[Value[_]]], context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+  def resolveCallVar(name: String, callable: Option[List[Value[_]]], context: Context): Either[ExecError, Option[List[Value[_]]]] = {
     pickFirst(callable) match {
       case Left(error) => Left(error)
       case Right(value) => value match {
-        case valueType: EntityValue => resolveEntity(name, valueType, context)
+        case impl: EntityImpl => findInImpl(name, impl, context)
+        case valueType: EntityValue => findInEntity(name, valueType, context)
         case _ => Right(callable)
       }
     }
@@ -135,21 +136,30 @@ object ExecCallObject extends Executor {
 
   }
 
-  def resolveArrayInCallable(position: Operation, callable: Option[List[Value[_]]], context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+  def resolveArrayInCallable(call: CallArrayObject, callable: Option[List[Value[_]]], context: Context): Either[ExecError, Option[List[Value[_]]]] = {
     pickFirst(callable) match {
       case Left(error) => Left(error)
-      case Right(value) => resolveArray(position, value.asInstanceOf[ArrayValue], context)
-
+      case Right(value) => value match {
+        case impl: EntityImpl => findInImpl(call.name, impl, context) match {
+          case Left(err) => Left(err)
+          case Right(array) => resolveArrayInCallable(call, array, context)
+        }
+        case array: ArrayValue => resolveArray(call.position, array, context)
+      }
     }
   }
 
-  def resolveEntity(name: String, entity: EntityValue, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
-    if (entity.params.isDefined) findInEntity(name, entity.params.get, context)
-    else if (entity.attrs.isDefined) findInEntity(name, entity.attrs.get, context)
+  def findInImpl(name: String, impl: EntityImpl, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+    if (impl.attrs.isDefined) findInAttrs(name, impl.attrs.get, context)
     else Left(CallableNotFound(name))
   }
 
-  def findInEntity(name: String, attrs: List[ComplexAttribute], context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+  def findInEntity(name: String, entity: EntityValue, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+    if (entity.attrs.isDefined) findInAttrs(name, entity.attrs.get, context)
+    else Left(CallableNotFound(name))
+  }
+
+  def findInAttrs(name: String, attrs: List[ComplexAttribute], context: Context): Either[ExecError, Option[List[Value[_]]]] = {
     attrs.find(_.attr.getOrElse(false).equals(name)) match {
       case Some(value) => value.value match {
         case operation: Operation =>

@@ -12,12 +12,12 @@ object ExecOperation extends Executor {
 
   override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
     val block = statement.asInstanceOf[Operation]
-    execOperation(block, context, true)
+    execOperation(block, context, newLevel = true)
   }
 
   def execOperation(block: Operation, context: Context, newLevel: Boolean): Either[ExecError, Option[List[Value[_]]]] = {
     val value = block.content match {
-      case Left(op) => execOperation(op, context, true)
+      case Left(op) => execOperation(op, context, newLevel = true)
       case Right(value) => ExecComplexValue.run(value, context)
     }
     value match {

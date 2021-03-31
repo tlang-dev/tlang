@@ -1,7 +1,7 @@
 package dev.tlang.tlang.interpreter
 
 import dev.tlang.tlang.ast.common.call.{CallObject, ComplexValueStatement}
-import dev.tlang.tlang.ast.common.value.{MultiValue, PrimitiveValue}
+import dev.tlang.tlang.ast.common.value.{EntityImpl, MultiValue, PrimitiveValue}
 import dev.tlang.tlang.ast.helper.HelperStatement
 import dev.tlang.tlang.interpreter.context.Context
 
