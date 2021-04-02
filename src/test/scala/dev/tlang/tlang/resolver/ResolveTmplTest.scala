@@ -1,0 +1,224 @@
+package dev.tlang.tlang.resolver
+
+import dev.tlang.tlang.ast.common.operation.Operation
+import dev.tlang.tlang.ast.common.value.TLangString
+import dev.tlang.tlang.ast.tmpl.TmplBlock
+import dev.tlang.tlang.astbuilder.context.ContextResource
+import dev.tlang.tlang.interpreter.context.{Context, ContextUtils}
+import dev.tlang.tlang.loader.remote.RemoteLoader
+import dev.tlang.tlang.loader.{BuildModuleTree, FileResourceLoader, ResourceLoader, TBagManager}
+import org.scalatest.funsuite.AnyFunSuite
+
+import java.nio.file.Paths
+
+class ResolveTmplTest extends AnyFunSuite {
+
+  val fakeContext: ContextResource = ContextResource("", "", "", "")
+
+  implicit val loader: FileResourceLoader.type = FileResourceLoader
+  implicit val remoteLoader: RemoteLoader.type = RemoteLoader
+  implicit val tBagManager: TBagManager.type = TBagManager
+
+  val defaultManifest: String =
+    """name: MyProgram
+      |project: MyProject
+      |organisation: MyOrganisation
+      |version: 1.33.7
+      |stability: final
+      |releaseNumber: 2
+      |""".stripMargin
+
+  test("Resolve pkg") {
+    implicit val loader: ResourceLoader = (_: String, _: String, _: String, name: String) => {
+      if (name == "Main.tlang") {
+        Right(
+          """
+            |use MyPackage.MyFile
+            |tmpl[scala] myTmpl{
+            | pkg ${MyFile.myPkg}.${MyFile.myPkg2}
+            |}""".stripMargin)
+      } else if (name == "manifest.yaml") {
+        Right(defaultManifest)
+      } else {
+        Right(
+          """
+            |expose myPkg
+            |expose myPkg2
+            |model {
+            |let myPkg :String = "myPackage"
+            |let myPkg2 :String = "myPackage2"
+            |
+            |}""".stripMargin)
+      }
+    }
+    val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
+    val block = module.resources("Main").ast.body.head.asInstanceOf[TmplBlock]
+    val resource = module.resources("Main")
+    ResolveTmpl.resolveTmpl(block, module, resource.ast.header.get.uses.get, resource)
+    assert("myPackage" == ContextUtils.findVar(Context(List(block.scope)), "MyFile/myPkg").get.asInstanceOf[Operation].content.toOption.get.asInstanceOf[TLangString].getElement)
+    assert("myPackage2" == ContextUtils.findVar(Context(List(block.scope)), "MyFile/myPkg2").get.asInstanceOf[Operation].content.toOption.get.asInstanceOf[TLangString].getElement)
+  }
+
+  test("Resolve uses") {
+    implicit val loader: ResourceLoader = (_: String, _: String, _: String, name: String) => {
+      if (name == "Main.tlang") {
+        Right(
+          """
+            |use MyPackage.MyFile
+            |tmpl[scala] myTmpl{
+            | use ${MyFile.use1}.${MyFile.use2}
+            |}""".stripMargin)
+      } else if (name == "manifest.yaml") {
+        Right(defaultManifest)
+      } else {
+        Right(
+          """
+            |expose use1
+            |expose use2
+            |model {
+            |let use1 :String = "Use1"
+            |let use2 :String = "Use2"
+            |
+            |}""".stripMargin)
+      }
+    }
+    val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
+    val block = module.resources("Main").ast.body.head.asInstanceOf[TmplBlock]
+    val resource = module.resources("Main")
+    ResolveTmpl.resolveTmpl(block, module, resource.ast.header.get.uses.get, resource)
+    assert("Use1" == ContextUtils.findVar(Context(List(block.scope)), "MyFile/use1").get.asInstanceOf[Operation].content.toOption.get.asInstanceOf[TLangString].getElement)
+    assert("Use2" == ContextUtils.findVar(Context(List(block.scope)), "MyFile/use2").get.asInstanceOf[Operation].content.toOption.get.asInstanceOf[TLangString].getElement)
+  }
+
+  test("Resolve annots") {
+    implicit val loader: ResourceLoader = (_: String, _: String, _: String, name: String) => {
+      if (name == "Main.tlang") {
+        Right(
+          """
+            |use MyPackage.MyFile
+            |tmpl[scala] myTmpl{
+            | @${MyFile.annot}(${MyFile.param} = "Value")
+            | func myFunc() {
+            | }
+            |}""".stripMargin)
+      } else if (name == "manifest.yaml") {
+        Right(defaultManifest)
+      } else {
+        Right(
+          """
+            |expose annot
+            |expose param
+            |model {
+            |let annot :String = "Annot"
+            |let param :String = "Param"
+            |}""".stripMargin)
+      }
+    }
+    val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
+    val block = module.resources("Main").ast.body.head.asInstanceOf[TmplBlock]
+    val resource = module.resources("Main")
+    ResolveTmpl.resolveTmpl(block, module, resource.ast.header.get.uses.get, resource)
+    assert("Annot" == ContextUtils.findVar(Context(List(block.scope)), "MyFile/annot").get.asInstanceOf[Operation].content.toOption.get.asInstanceOf[TLangString].getElement)
+    assert("Param" == ContextUtils.findVar(Context(List(block.scope)), "MyFile/param").get.asInstanceOf[Operation].content.toOption.get.asInstanceOf[TLangString].getElement)
+  }
+
+  test("Resolve props") {
+    implicit val loader: ResourceLoader = (_: String, _: String, _: String, name: String) => {
+      if (name == "Main.tlang") {
+        Right(
+          """
+            |use MyPackage.MyFile
+            |tmpl[scala] myTmpl{
+            | func[${MyFile.prop1} ${MyFile.prop2}] myFunc() {
+            | }
+            |}""".stripMargin)
+      } else if (name == "manifest.yaml") {
+        Right(defaultManifest)
+      } else {
+        Right(
+          """
+            |expose prop1
+            |expose prop2
+            |model {
+            |let prop1 :String = "Prop1"
+            |let prop2 :String = "Prop2"
+            |}""".stripMargin)
+      }
+    }
+    val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
+    val block = module.resources("Main").ast.body.head.asInstanceOf[TmplBlock]
+    val resource = module.resources("Main")
+    ResolveTmpl.resolveTmpl(block, module, resource.ast.header.get.uses.get, resource)
+    assert("Prop1" == ContextUtils.findVar(Context(List(block.scope)), "MyFile/prop1").get.asInstanceOf[Operation].content.toOption.get.asInstanceOf[TLangString].getElement)
+    assert("Prop2" == ContextUtils.findVar(Context(List(block.scope)), "MyFile/prop2").get.asInstanceOf[Operation].content.toOption.get.asInstanceOf[TLangString].getElement)
+  }
+
+  test("Resolve currying") {
+    implicit val loader: ResourceLoader = (_: String, _: String, _: String, name: String) => {
+      if (name == "Main.tlang") {
+        Right(
+          """
+            |use MyPackage.MyFile
+            |tmpl[scala] myTmpl{
+            | func myFunc(${MyFile.param}: ${MyFile.type}<${MyFile.type2}>) {
+            | }
+            |}""".stripMargin)
+      } else if (name == "manifest.yaml") {
+        Right(defaultManifest)
+      } else {
+        Right(
+          """
+            |expose param
+            |expose type
+            |expose type2
+            |model {
+            |let param :String = "Param"
+            |let type :String = "Type"
+            |let type2 :String = "Type2"
+            |}""".stripMargin)
+      }
+    }
+    val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
+    val block = module.resources("Main").ast.body.head.asInstanceOf[TmplBlock]
+    val resource = module.resources("Main")
+    ResolveTmpl.resolveTmpl(block, module, resource.ast.header.get.uses.get, resource)
+    assert("Param" == ContextUtils.findVar(Context(List(block.scope)), "MyFile/param").get.asInstanceOf[Operation].content.toOption.get.asInstanceOf[TLangString].getElement)
+    assert("Type" == ContextUtils.findVar(Context(List(block.scope)), "MyFile/type").get.asInstanceOf[Operation].content.toOption.get.asInstanceOf[TLangString].getElement)
+    assert("Type2" == ContextUtils.findVar(Context(List(block.scope)), "MyFile/type2").get.asInstanceOf[Operation].content.toOption.get.asInstanceOf[TLangString].getElement)
+  }
+
+  test("Resolve func content") {
+    implicit val loader: ResourceLoader = (_: String, _: String, _: String, name: String) => {
+      if (name == "Main.tlang") {
+        Right(
+          """
+            |use MyPackage.MyFile
+            |tmpl[scala] myTmpl{
+            | func myFunc() {
+            |   var [${MyFile.prop}] ${MyFile.myVar} = "Value"
+            | }
+            |}""".stripMargin)
+      } else if (name == "manifest.yaml") {
+        Right(defaultManifest)
+      } else {
+        Right(
+          """
+            |expose prop
+            |expose myVar
+            |model {
+            |let prop :String = "Prop"
+            |let myVar :String = "MyVar"
+            |}""".stripMargin)
+      }
+    }
+    val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
+    val block = module.resources("Main").ast.body.head.asInstanceOf[TmplBlock]
+    val resource = module.resources("Main")
+    ResolveTmpl.resolveTmpl(block, module, resource.ast.header.get.uses.get, resource)
+    assert("Prop" == ContextUtils.findVar(Context(List(block.scope)), "MyFile/prop").get.asInstanceOf[Operation].content.toOption.get.asInstanceOf[TLangString].getElement)
+    assert("MyVar" == ContextUtils.findVar(Context(List(block.scope)), "MyFile/myVar").get.asInstanceOf[Operation].content.toOption.get.asInstanceOf[TLangString].getElement)
+  }
+
+
+
+}

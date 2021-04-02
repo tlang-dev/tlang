@@ -1,6 +1,6 @@
 package dev.tlang.tlang.generator.java
 
-import dev.tlang.tlang.ast.common.operation.{Operation, Operator}
+import dev.tlang.tlang.ast.common.operation.Operator
 import dev.tlang.tlang.ast.tmpl._
 import dev.tlang.tlang.ast.tmpl.call.{TmplCallFunc, TmplCallObj, TmplCallVar}
 import dev.tlang.tlang.ast.tmpl.condition.{TmplCondition, TmplConditionBlock}
@@ -48,15 +48,15 @@ class JavaGeneratorTest extends AnyFunSuite {
   }
 
   test("Simple interface") {
-    val impl = TmplImpl(None, None, Some(TmplProp(None, List("public", "interface"))), TmplStringID(None, "MyInterface"), None, None)
+    val impl = TmplImpl(None, None, Some(TmplProp(None, List(TmplStringID(None, "public"), TmplStringID(None, "interface")))), TmplStringID(None, "MyInterface"), None, None)
     val res = JavaGenerator.genContent(impl)
     assert(res.contains("public interface MyInterface {"))
   }
 
   test("Annotation before impl") {
     val impl = TmplImpl(None, Some(List(
-      TmplAnnotation(None, "MyAnnot1", None),
-      TmplAnnotation(None, "MyAnnot2", Some(List(TmplAnnotationParam(None, "param1", TmplStringValue(None, TmplStringID(None, "val1"))), TmplAnnotationParam(None, "param2", TmplStringValue(None, TmplStringID(None, "val2")))))))), None, TmplStringID(None, "MyClass"), None, None)
+      TmplAnnotation(None, TmplStringID(None, "MyAnnot1"), None),
+      TmplAnnotation(None, TmplStringID(None, "MyAnnot2"), Some(List(TmplAnnotationParam(None, TmplStringID(None, "param1"), TmplStringValue(None, TmplStringID(None, "val1"))), TmplAnnotationParam(None, TmplStringID(None, "param2"), TmplStringValue(None, TmplStringID(None, "val2")))))))), None, TmplStringID(None, "MyClass"), None, None)
     val res = JavaGenerator.genImpl(impl)
     assert(res.contains("@MyAnnot1\n" +
       "@MyAnnot2(param1 = \"val1\", param2 = \"val2\")\n" +
@@ -65,8 +65,8 @@ class JavaGeneratorTest extends AnyFunSuite {
 
   test("Annotation before func") {
     val impl = TmplFunc(None, Some(List(
-      TmplAnnotation(None, "MyAnnot1", None),
-      TmplAnnotation(None, "MyAnnot2", Some(List(TmplAnnotationParam(None, "param1", TmplStringValue(None, TmplStringID(None, "val1"))), TmplAnnotationParam(None, "param2", TmplStringValue(None, TmplStringID(None, "val2")))))))), None, TmplStringID(None, "myFunc"), None, Some(TmplExprBlock(None, List())), None)
+      TmplAnnotation(None, TmplStringID(None, "MyAnnot1"), None),
+      TmplAnnotation(None, TmplStringID(None, "MyAnnot2"), Some(List(TmplAnnotationParam(None, TmplStringID(None, "param1"), TmplStringValue(None, TmplStringID(None, "val1"))), TmplAnnotationParam(None, TmplStringID(None, "param2"), TmplStringValue(None, TmplStringID(None, "val2")))))))), None, TmplStringID(None, "myFunc"), None, Some(TmplExprBlock(None, List())), None)
     val res = JavaGenerator.genExpression(impl)
     assert(res.contains("@MyAnnot1\n" +
       "@MyAnnot2(param1 = \"val1\", param2 = \"val2\")\n" +
@@ -74,7 +74,7 @@ class JavaGeneratorTest extends AnyFunSuite {
   }
 
   test("New variable in TmplBlock") {
-    val block = TmplBlock(None, "test", "java", None, None, None, Some(List(TmplVar(None, None, Some(TmplProp(None, List("private", "final"))), TmplStringID(None, "myVar"), TmplType(None, TmplStringID(None, "List"), Some(TmplGeneric(None, List(TmplType(None, TmplStringID(None, "String"), None, isArray = true))))), Some(TmplLongValue(None, 5))))))
+    val block = TmplBlock(None, "test", "java", None, None, None, Some(List(TmplVar(None, None, Some(TmplProp(None, List(TmplStringID(None, "private"), TmplStringID(None, "final")))), TmplStringID(None, "myVar"), Some(TmplType(None, TmplStringID(None, "List"), Some(TmplGeneric(None, List(TmplType(None, TmplStringID(None, "String"), None, isArray = true)))))), Some(TmplLongValue(None, 5))))))
     val res = new JavaGenerator().generate(block)
     assert(res.contains("private final List<String[]> myVar = 5;"))
   }

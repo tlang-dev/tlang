@@ -133,11 +133,11 @@ class ValueMapperTest extends AnyFunSuite {
       "type" -> new TLangString(None, "String"),
       "value" -> new TLangString(None, "MyValue"))
     val context = Context(List(Scope(values, mutable.Map(), mutable.Map())))
-    val newVar = TmplVar(None, None, None, TmplInterpretedID(None, call = CallObject(None, List(CallVarObject(None, "name")))), TmplType(None, TmplInterpretedID(None, call = CallObject(None, List(CallVarObject(None, "type"))))),
+    val newVar = TmplVar(None, None, None, TmplInterpretedID(None, call = CallObject(None, List(CallVarObject(None, "name")))), Some(TmplType(None, TmplInterpretedID(None, call = CallObject(None, List(CallVarObject(None, "type")))))),
       Some(TmplMultiValue(None, List(TmplStringValue(None, TmplInterpretedID(None, call = CallObject(None, List(CallVarObject(None, "value")))))))))
     val res = ValueMapper.mapExpression(newVar, context).asInstanceOf[TmplVar]
     assert("MyVar" == res.name.toString)
-    assert("String" == res.`type`.name.toString)
+    assert("String" == res.`type`.get.name.toString)
     assert("MyValue" == res.value.get.asInstanceOf[TmplMultiValue].values.head.asInstanceOf[TmplStringValue].value.toString)
   }
 

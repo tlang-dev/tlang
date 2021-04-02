@@ -130,7 +130,7 @@ class BuildTmplBlockTest extends AnyFunSuite {
     val parser = new TLangParser(tokens)
     val res = BuildTmplBlock.build(fakeContext, parser.tmplBlock()).content.get.head.asInstanceOf[TmplVar]
     assert("myVar" == res.name.toString)
-    assert("String" == res.`type`.name.toString)
+    assert("String" == res.`type`.get.name.toString)
     assert("myValue" == res.value.get.asInstanceOf[TmplStringValue].value.toString)
   }
 

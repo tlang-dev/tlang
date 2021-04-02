@@ -72,15 +72,15 @@ object BuildTmplBlock {
 
   def buildAnnotations(resource: ContextResource, annots: List[TmplAnnotContext]): Option[List[TmplAnnotation]] = {
     if (annots.nonEmpty) Some(annots.map(annot => {
-      val params = annot.annotParams.asScala.toList.map(param => TmplAnnotationParam(addContext(resource, param), param.name.getText, buildPrimitive(resource, param.value)))
-      TmplAnnotation(addContext(resource, annot), annot.name.getText, if (params.nonEmpty) Some(params) else None)
+      val params = annot.annotParams.asScala.toList.map(param => TmplAnnotationParam(addContext(resource, param), buildId(resource, param.name), buildPrimitive(resource, param.value)))
+      TmplAnnotation(addContext(resource, annot), buildId(resource, annot.name), if (params.nonEmpty) Some(params) else None)
     }))
     else None
   }
 
   def buildProps(resource: ContextResource, props: TmplPropsContext): Option[TmplProp] = {
     val elems = props.props.asScala.toList
-    if (elems.nonEmpty) Some(TmplProp(addContext(resource, props), elems.map(_.getText)))
+    if (elems.nonEmpty) Some(TmplProp(addContext(resource, props), elems.map(buildId(resource, _))))
     else None
   }
 
@@ -152,7 +152,9 @@ object BuildTmplBlock {
   }
 
   def buildVar(resource: ContextResource, variable: TmplVarContext): TmplVar = {
-    TmplVar(addContext(resource, variable), buildAnnotations(resource, variable.annots.asScala.toList), buildProps(resource, variable.props), buildId(resource, variable.name), buildType(resource, variable.`type`), if (variable.value != null) Some(buildExpression(resource, variable.value)) else None)
+    TmplVar(addContext(resource, variable), buildAnnotations(resource, variable.annots.asScala.toList), buildProps(resource, variable.props), buildId(resource, variable.name),
+      if (variable.`type` != null) Some(buildType(resource, variable.`type`)) else None,
+      if (variable.value != null) Some(buildExpression(resource, variable.value)) else None)
   }
 
   def buildReturn(resource: ContextResource, ret: TmplReturnContext): TmplReturn = {

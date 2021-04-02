@@ -97,11 +97,33 @@ object ValueMapper {
   }
 
   def mapFunc(func: TmplFunc, context: Context): TmplFunc = {
+    func.annots = mapAnnots(func.annots, context)
     func.name = mapID(func.name, context)
     func.curries = mapCurries(func.curries, context)
     func.content = mapExprBlock(func.content, context)
     func.ret = mapTypes(func.ret, context)
     func
+  }
+
+  def mapAnnots(annots: Option[List[TmplAnnotation]], context: Context): Option[List[TmplAnnotation]] = {
+    if (annots.isDefined) {
+      annots.get.map(annot => {
+        annot.name = mapID(annot.name, context)
+        annot.values = mapAnnotParams(annot.values, context)
+        annot
+      })
+      annots
+    } else None
+  }
+
+  def mapAnnotParams(params: Option[List[TmplAnnotationParam]], context: Context): Option[List[TmplAnnotationParam]] = {
+    if (params.isDefined) {
+      params.get.foreach(param => {
+        param.name = mapID(param.name, context)
+        param.value = mapPrimitive(param.value, context)
+      })
+      params
+    } else None
   }
 
   def mapExprBlock(block: Option[TmplExprBlock], context: Context): Option[TmplExprBlock] = {
@@ -212,7 +234,7 @@ object ValueMapper {
 
   def mapVar(variable: TmplVar, context: Context): TmplVar = {
     variable.name = mapID(variable.name, context)
-    variable.`type` = mapType(variable.`type`, context)
+    variable.`type` = if (variable.`type`.isDefined) Some(mapType(variable.`type`.get, context)) else None
     variable.value = if (variable.value.isDefined) Some(mapExpression(variable.value.get, context)) else None
     variable
   }

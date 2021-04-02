@@ -205,6 +205,15 @@ class ExecCallObjectTest extends AnyFunSuite {
     assert("ValueElem1" == res.head.asInstanceOf[Operation].content.toOption.get.asInstanceOf[TLangString].getElement)
   }
 
+  test("Call ref func") {
+    val block = HelperContent(None, None)
+    val funcDef = HelperFunc(None, "myFunc", Some(List(HelperCurrying(None, List(HelperParam(None, Some("valToReturn"), HelperObjType(None, "String")))))), None, block = block)
+    val refFunc = CallObject(None, List(CallRefFuncObject(None, Some("myFunc"), None, Some(Left(funcDef)))))
+    val res = ExecCallObject.run(refFunc, Context()).toOption.get.get
+    assert(res.head.isInstanceOf[CallRefFuncObject])
+    assert("myFunc" == res.head.asInstanceOf[CallRefFuncObject].func.get.swap.toOption.get.name)
+  }
+
   /* For now the returned functions are directly executed, a reference will be needed.
   test("Function returning a nested function") {
     val callInsideFunc2 = HelperCallObject(List(HelperCallVarObject("valToReturn")))

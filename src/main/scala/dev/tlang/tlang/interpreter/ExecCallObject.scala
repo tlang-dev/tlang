@@ -136,6 +136,7 @@ object ExecCallObject extends Executor {
 
   }
 
+  @tailrec
   def resolveArrayInCallable(call: CallArrayObject, callable: Option[List[Value[_]]], context: Context): Either[ExecError, Option[List[Value[_]]]] = {
     pickFirst(callable) match {
       case Left(error) => Left(error)
@@ -162,16 +163,7 @@ object ExecCallObject extends Executor {
   def findInAttrs(name: String, attrs: List[ComplexAttribute], context: Context): Either[ExecError, Option[List[Value[_]]]] = {
     attrs.find(_.attr.getOrElse(false).equals(name)) match {
       case Some(value) => value.value match {
-        case operation: Operation =>
-          //          operation.content match {
-          //            case Left(_) => Left(CallableNotFound(name))
-          //            case Right(value) => value match {
-          //              case caller: CallObject => loopOverStatement(caller.statements, context, 0, None)
-          //              case _ =>
-          //                Left(CallableNotFound(name))
-          //            }
-          //          }
-          ExecOperation.run(operation, context)
+        case operation: Operation => ExecOperation.run(operation, context)
         case _ => Right(Some(List(value.value)))
       }
       case None => Left(CallableNotFound(name))

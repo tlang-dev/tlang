@@ -66,7 +66,7 @@ object JavaGenerator {
     if (annots.isDefined) {
       val str = new StringBuilder
       annots.get.foreach(annot => {
-        str ++= "@" ++= annot.name
+        str ++= "@" ++= annot.name.toString
         if (annot.values.isDefined) {
           str ++= "("
           str ++= annot.values.get.map(value => value.name + " = " + genPrimitive(value.value)).mkString(", ")
@@ -234,7 +234,8 @@ object JavaGenerator {
     val str = new StringBuilder
     str ++= genAnnotations(variable.annots)
     variable.props.foreach(prop => str ++= genProps(prop, addSpace = true))
-    str ++= genType(variable.`type`) ++= " " ++= variable.name.toString
+    if (variable.`type`.isDefined) str ++= genType(variable.`type`.get) ++= " "
+    str ++= variable.name.toString
     variable.value.foreach(str ++= " = " + genExpression(_))
     str ++= ";\n"
     str.toString()
