@@ -38,14 +38,17 @@ class BuildModelNewEntityTest extends AnyFunSuite {
   test("Test new entity with parameters") {
     val lexer = new TLangLexer(CharStreams.fromString(
       """model {
-        |let firstEntity :AnyEntity = ("myString", var1 = ["elm1", "elm2"], newEntity :NewEntity = {
-        |}) {
+        |let firstEntity :AnyEntity = {
+        |"myString"
+        |var1 = ["elm1", "elm2"]
+        |newEntity :NewEntity = {
+        |}
         |}
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
     val newEntity = BuildModelBlock.build(fakeContext, parser.modelBlock()).content.get.head.asInstanceOf[AssignVar]
-    val params = newEntity.value.getElement.content.toOption.get.asInstanceOf[EntityValue].params
+    val params = newEntity.value.getElement.content.toOption.get.asInstanceOf[EntityValue].attrs
     assert("firstEntity".equals(newEntity.name))
     assert("AnyEntity".equals(newEntity.`type`.get))
     assert(params.get.head.attr.isEmpty)

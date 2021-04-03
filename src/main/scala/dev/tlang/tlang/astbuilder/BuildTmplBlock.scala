@@ -3,7 +3,7 @@ package dev.tlang.tlang.astbuilder
 import dev.tlang.tlang.TLangParser.{TmplExpressionContext, _}
 import dev.tlang.tlang.ast.tmpl._
 import dev.tlang.tlang.ast.tmpl.call._
-import dev.tlang.tlang.ast.tmpl.condition.{TmplCondition, TmplConditionBlock}
+import dev.tlang.tlang.ast.tmpl.condition.TmplOperation
 import dev.tlang.tlang.ast.tmpl.func.{TmplFunc, TmplFuncCurry}
 import dev.tlang.tlang.ast.tmpl.primitive._
 import dev.tlang.tlang.astbuilder.BuildAst.addContext
@@ -72,15 +72,15 @@ object BuildTmplBlock {
 
   def buildAnnotations(resource: ContextResource, annots: List[TmplAnnotContext]): Option[List[TmplAnnotation]] = {
     if (annots.nonEmpty) Some(annots.map(annot => {
-      val params = annot.annotParams.asScala.toList.map(param => TmplAnnotationParam(addContext(resource, param), param.name.getText, buildPrimitive(resource, param.value)))
-      TmplAnnotation(addContext(resource, annot), annot.name.getText, if (params.nonEmpty) Some(params) else None)
+      val params = annot.annotParams.asScala.toList.map(param => TmplAnnotationParam(addContext(resource, param), buildId(resource, param.name), buildPrimitive(resource, param.value)))
+      TmplAnnotation(addContext(resource, annot), buildId(resource, annot.name), if (params.nonEmpty) Some(params) else None)
     }))
     else None
   }
 
   def buildProps(resource: ContextResource, props: TmplPropsContext): Option[TmplProp] = {
     val elems = props.props.asScala.toList
-    if (elems.nonEmpty) Some(TmplProp(addContext(resource, props), elems.map(_.getText)))
+    if (elems.nonEmpty) Some(TmplProp(addContext(resource, props), elems.map(buildId(resource, _))))
     else None
   }
 
@@ -122,7 +122,6 @@ object BuildTmplBlock {
       case tmplVar@_ if tmplVar.tmplVar() != null => buildVar(resource, tmplVar.tmplVar())
       case callObj@_ if callObj.tmplCallObj() != null => buildCallObject(resource, callObj.tmplCallObj())
       case valueType@_ if valueType.tmplValueType() != null => buildValueType(resource, valueType.tmplValueType())
-      case cond@_ if cond.tmplConditionBlock() != null => buildConditionBlock(resource, cond.tmplConditionBlock())
       case func@_ if func.tmplFunc() != null => buildFunc(resource, func.tmplFunc())
       case whileLoop@_ if whileLoop.tmplWhile() != null => BuildTmplLoop.buildWhile(resource, whileLoop.tmplWhile())
       case doWhile@_ if doWhile.tmplDoWhile() != null => BuildTmplLoop.buildDoWhile(resource, doWhile.tmplDoWhile())
@@ -148,19 +147,21 @@ object BuildTmplBlock {
         case elseBl@_ if elseBl.tmplExprContent() != null => Some(Left(buildExprContent(resource, elseBl.tmplExprContent())))
       }
     } else None
-    TmplIf(addContext(resource, ifStmt), buildConditionBlock(resource, ifStmt.cond), buildExprContent(resource, ifStmt.content), elseBlock)
+    TmplIf(addContext(resource, ifStmt), buildOperation(resource, ifStmt.cond), buildExprContent(resource, ifStmt.content), elseBlock)
   }
 
   def buildVar(resource: ContextResource, variable: TmplVarContext): TmplVar = {
-    TmplVar(addContext(resource, variable), buildAnnotations(resource, variable.annots.asScala.toList), buildProps(resource, variable.props), buildId(resource, variable.name), buildType(resource, variable.`type`), if (variable.value != null) Some(buildExpression(resource, variable.value)) else None)
+    TmplVar(addContext(resource, variable), buildAnnotations(resource, variable.annots.asScala.toList), buildProps(resource, variable.props), buildId(resource, variable.name),
+      if (variable.`type` != null) Some(buildType(resource, variable.`type`)) else None,
+      if (variable.value != null) Some(buildOperation(resource, variable.value)) else None)
   }
 
   def buildReturn(resource: ContextResource, ret: TmplReturnContext): TmplReturn = {
-    TmplReturn(addContext(resource, ret), buildCallObject(resource, ret.call))
+    TmplReturn(addContext(resource, ret), buildOperation(resource, ret.call))
   }
 
   def buildAffect(resource: ContextResource, affect: TmplAffectContext): TmplAffect = {
-    TmplAffect(addContext(resource, affect), buildCallObject(resource, affect.variable), buildCallObject(resource, affect.value))
+    TmplAffect(addContext(resource, affect), buildCallObject(resource, affect.variable), buildOperation(resource, affect.value))
   }
 
   def buildCallObject(resource: ContextResource, obj: TmplCallObjContext): TmplCallObj = {
@@ -176,7 +177,7 @@ object BuildTmplBlock {
   }
 
   def buildCallArray(resource: ContextResource, array: TmplCallArrayContext): TmplCallArray = {
-    TmplCallArray(addContext(resource, array), buildId(resource, array.name), buildValueType(resource, array.elem))
+    TmplCallArray(addContext(resource, array), buildId(resource, array.name), buildOperation(resource, array.elem))
   }
 
   def buildCallFunc(resource: ContextResource, func: TmplCallFuncContext): TmplCallFunc = {
@@ -192,7 +193,7 @@ object BuildTmplBlock {
   }
 
   def buildSetAttribute(resource: ContextResource, param: TmplSetAttributeContext): TmplSetAttribute = {
-    TmplSetAttribute(addContext(resource, param), buildOptionId(resource, param.name), buildValueType(resource, param.value))
+    TmplSetAttribute(addContext(resource, param), buildOptionId(resource, param.name), buildOperation(resource, param.value))
   }
 
   def buildCallVar(resource: ContextResource, variable: TmplCallVariableContext): TmplCallVar = {
@@ -203,36 +204,18 @@ object BuildTmplBlock {
     valueType match {
       case callObj@_ if callObj.tmplCallObj() != null => buildCallObject(resource, callObj.tmplCallObj())
       case primitive@_ if primitive.tmplPrimitiveValue() != null => buildPrimitive(resource, primitive.tmplPrimitiveValue())
-      case cond@_ if cond.tmplConditionBlock() != null => buildConditionBlock(resource, cond.tmplConditionBlock())
       case multi@_ if multi.tmplMultiValue() != null => buildMultiValue(resource, multi.tmplMultiValue())
     }
   }
 
-  def buildSimpleValueType(resource: ContextResource, valueType: TmplSimpleValueTypeContext): TmplSimpleValueType = {
-    valueType match {
-      case callObj@_ if callObj.tmplCallObj() != null => buildCallObject(resource, callObj.tmplCallObj())
-      case primitive@_ if primitive.tmplPrimitiveValue() != null => buildPrimitive(resource, primitive.tmplPrimitiveValue())
-    }
+  def buildOperation(resource: ContextResource, block: TmplOperationContext): TmplOperation = {
+    TmplOperation(addContext(resource, block),
+      if (block.content != null) Right(buildExpression(resource, block.content)) else Left(buildOperation(resource, block.innerBlock)),
+      if (block.op != null) Some(BuildCommon.buildOperator(block.op.getText), buildOperation(resource, block.next)) else None)
   }
-
-  def buildConditionBlock(resource: ContextResource, block: TmplConditionBlockContext): TmplConditionBlock = {
-    TmplConditionBlock(addContext(resource, block), buildEitherCondition(resource, block),
-      if (block.link != null) Some(BuildCommon.buildOperator(block.link.getText)) else None,
-      if (block.next != null) Some(buildConditionBlock(resource, block.next)) else None)
-  }
-
-  def buildEitherCondition(resource: ContextResource, block: TmplConditionBlockContext): Either[TmplConditionBlock, TmplCondition] =
-    if (block.innerBlock != null) Left(buildConditionBlock(resource, block.innerBlock))
-    else Right(buildCondition(resource, block.content))
-
-  def buildCondition(resource: ContextResource, condition: TmplConditionContext): TmplCondition = TmplCondition(addContext(resource, condition), buildSimpleValueType(resource, condition.arg1),
-    if (condition.mark != null) Some(BuildCommon.buildOperator(condition.mark.getText)) else None,
-    if (condition.arg2 != null) Some(buildSimpleValueType(resource, condition.arg2)) else None,
-    if (condition.link != null) Some(BuildCommon.buildOperator(condition.link.getText)) else None,
-    if (condition.next != null) Some(buildConditionBlock(resource, condition.next)) else None)
 
   def buildAttribute(resource: ContextResource, attr: TmplAttributeContext): TmplAttribute = {
-    TmplAttribute(addContext(resource, attr), buildOptionId(resource, attr.attr), if (attr.`type` != null) Some(buildType(resource, attr.`type`)) else None, buildValueType(resource, attr.value))
+    TmplAttribute(addContext(resource, attr), buildOptionId(resource, attr.attr), if (attr.`type` != null) Some(buildType(resource, attr.`type`)) else None, buildOperation(resource, attr.value))
   }
 
   def buildMultiValue(resource: ContextResource, value: TmplMultiValueContext): TmplMultiValue = TmplMultiValue(addContext(resource, value), value.values.asScala.toList.map(value => buildValueType(resource, value)))

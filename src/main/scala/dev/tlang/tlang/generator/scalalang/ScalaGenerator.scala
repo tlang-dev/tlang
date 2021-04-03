@@ -3,10 +3,11 @@ package dev.tlang.tlang.generator.scalalang
 import dev.tlang.tlang.ast.common.call.ComplexValueStatement
 import dev.tlang.tlang.ast.tmpl._
 import dev.tlang.tlang.ast.tmpl.call._
-import dev.tlang.tlang.ast.tmpl.condition.{TmplCondition, TmplConditionBlock}
+import dev.tlang.tlang.ast.tmpl.condition.TmplOperation
 import dev.tlang.tlang.ast.tmpl.func.TmplFunc
 import dev.tlang.tlang.ast.tmpl.primitive._
 import dev.tlang.tlang.generator.CodeGenerator
+import dev.tlang.tlang.generator.java.JavaGenerator.genOperator
 
 class ScalaGenerator extends CodeGenerator {
 
@@ -91,7 +92,7 @@ object ScalaGenerator {
 
   def genCallArray(array: TmplCallArray): String = {
     val str = new StringBuilder
-    str ++= array.name.toString ++= "(" ++= genValueType(array.elem) ++= ")"
+    str ++= array.name.toString ++= "(" ++= genOperation(array.elem) ++= ")"
     str.toString
   }
 
@@ -116,7 +117,7 @@ object ScalaGenerator {
   def genSetAttribute(attr: TmplSetAttribute): String = {
     val str = new StringBuilder
     attr.name.foreach(str ++= _.toString ++= " = ")
-    str ++= genValueType(attr.value)
+    str ++= genOperation(attr.value)
     str.toString
   }
 
@@ -128,23 +129,23 @@ object ScalaGenerator {
 
   def genValueType(value: TmplValueType): String = {
     value match {
-      case cond: TmplConditionBlock => genConditionBlock(cond)
       case multi: TmplMultiValue => genMulti(multi)
       case callObj: TmplCallObj => genCallObject(callObj)
       case primitive: TmplPrimitiveValue => genPrimitive(primitive)
     }
   }
 
-  def genConditionBlock(cond: TmplConditionBlock): String = {
+  def genOperation(block: TmplOperation): String = {
     val str = new StringBuilder
-
-    str.toString
-  }
-
-  def genCondition(cond: TmplCondition): String = {
-    val str = new StringBuilder
-
-    str.toString
+    block.content match {
+      case Left(block) => str ++= "(" ++= genOperation(block) ++= ")"
+      case Right(cond) => str ++= genExpression(cond)
+    }
+    if (block.next.isDefined) {
+      str ++= " " ++= genOperator(block.next.get._1)
+      str ++= " " ++= genOperation(block.next.get._2)
+    }
+    str.toString()
   }
 
   def genMulti(multi: TmplMultiValue): String = {

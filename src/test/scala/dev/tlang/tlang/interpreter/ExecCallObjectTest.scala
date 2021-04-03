@@ -4,6 +4,7 @@ import dev.tlang.tlang.ast.common.call._
 import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value.{EntityValue, TLangString, _}
 import dev.tlang.tlang.ast.helper._
+import dev.tlang.tlang.ast.tmpl.{TmplBlock, TmplBlockAsValue, TmplPkg, TmplStringID}
 import dev.tlang.tlang.interpreter.context.{Context, Scope}
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -59,7 +60,7 @@ class ExecCallObjectTest extends AnyFunSuite {
   }
 
   test("Get variable from attrs in entity") {
-    val myEntity = EntityValue(None, Some("MyEntity"), None, Some(List(
+    val myEntity = EntityValue(None, Some("MyEntity"), Some(List(
       ComplexAttribute(None, Some("attr1"), None, Operation(None, None, Right(new TLangString(None, value = "value1")))),
       ComplexAttribute(None, Some("attr2"), None, Operation(None, None, Right(new TLangString(None, value = "value2")))),
       ComplexAttribute(None, Some("attr3"), None, Operation(None, None, Right(new TLangString(None, value = "value3"))))
@@ -108,7 +109,7 @@ class ExecCallObjectTest extends AnyFunSuite {
     val funcDef = HelperFunc(None, "myFunc", Some(List(HelperCurrying(None, List(HelperParam(None, Some("valToReturn"), HelperObjType(None, "String")))))), None, block = block)
     val caller = SetAttribute(None, value = Operation(None, None, Right(CallObject(None, List(CallVarObject(None, "var1"))))))
     val attrStatement = Operation(None, None, Right(CallObject(None, List(CallFuncObject(None, Some("myFunc"), Some(List(CallFuncParam(None, Some(List(caller))))))))))
-    val myEntity = EntityValue(None, Some("MyEntity"), None, Some(List(
+    val myEntity = EntityValue(None, Some("MyEntity"), Some(List(
       ComplexAttribute(None, Some("attr1"), None, attrStatement),
     )))
     val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangString(None, "MyValue"), "myEntity" -> myEntity), functions = mutable.Map("myFunc" -> funcDef))))
@@ -124,7 +125,7 @@ class ExecCallObjectTest extends AnyFunSuite {
       ComplexAttribute(None, Some("myPosition3"), None, Operation(None, None, Right(new TLangString(None, value = "value3"))))
     )))
     val attrStatement = Operation(None, None, Right(CallObject(None, List(CallArrayObject(None, "var1", Operation(None, None, Right(new TLangString(None, "myPosition2"))))))))
-    val myEntity = EntityValue(None, Some("MyEntity"), None, Some(List(
+    val myEntity = EntityValue(None, Some("MyEntity"), Some(List(
       ComplexAttribute(None, Some("attr1"), None, attrStatement),
     )))
     val context = Context(List(Scope(variables = mutable.Map("var1" -> array, "myEntity" -> myEntity))))
@@ -160,6 +161,57 @@ class ExecCallObjectTest extends AnyFunSuite {
     val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangString(None, "MyValue")), functions = mutable.Map("myResource/myFunc" -> funcDef))))
     val res = ExecCallObject.run(statement, context).toOption.get.get
     assert("MyValue".equals(res.head.asInstanceOf[TLangString].getElement))
+  }
+
+  test("Call tmpl in other resources") {
+    val tmpl = TmplBlock(None, "myTmpl", "scala", None, Some(new TmplPkg(List(TmplStringID(None, "pkg1")))), None, None)
+    val statement = CallObject(None, List(CallVarObject(None, "myResource"), CallFuncObject(None, Some("myTmpl"), None)))
+    val context = Context(List(Scope(templates = mutable.Map("myResource/myTmpl" -> tmpl))))
+    val res = ExecCallObject.run(statement, context).toOption.get.get
+    assert(res.head.isInstanceOf[TmplBlockAsValue])
+    assert("pkg1" == res.head.asInstanceOf[TmplBlockAsValue].block.pkg.get.parts.head.toString)
+  }
+
+  test("Call attr in impl") {
+    val myEntity = EntityValue(None, Some("MyEntity"), Some(List(
+      ComplexAttribute(None, Some("attr1"), None, Operation(None, None, Right(new TLangString(None, value = "value1")))),
+      ComplexAttribute(None, Some("attr2"), None, Operation(None, None, Right(EntityImpl(None, None, None,
+        Some(List(
+          ComplexAttribute(None, Some("implAttr1"), None, Operation(None, None, Right(new TLangString(None, value = "ImplVal1")))),
+          ComplexAttribute(None, Some("implAttr2"), None, Operation(None, None, Right(new TLangString(None, value = "ImplVal2")))),
+          ComplexAttribute(None, Some("implAttr3"), None, Operation(None, None, Right(new TLangString(None, value = "ImplVal3")))),
+        )))))),
+    )))
+    val context = Context(List(Scope(variables = mutable.Map("var1" -> myEntity))))
+    val statement = CallObject(None, List(CallVarObject(None, "var1"), CallVarObject(None, "attr2"), CallVarObject(None, "implAttr2")))
+    val res = ExecCallObject.run(statement, context).toOption.get.get
+    assert(res.head.isInstanceOf[TLangString])
+    assert("ImplVal2" == res.head.asInstanceOf[TLangString].getElement)
+  }
+
+  test("Call array attr in impl") {
+    val myEntity = EntityValue(None, Some("MyEntity"), Some(List(
+      ComplexAttribute(None, Some("attr2"), None, Operation(None, None, Right(EntityImpl(None, None, None,
+        Some(List(
+          ComplexAttribute(None, Some("implAttr1"), None, Operation(None, None, Right(new ArrayValue(None, Some(List(
+            ComplexAttribute(None, Some("elem1"), None, Operation(None, None, Right(new TLangString(None, value = "ValueElem1")))),
+          )))))),
+        )))))),
+    )))
+    val context = Context(List(Scope(variables = mutable.Map("var1" -> myEntity))))
+    val statement = CallObject(None, List(CallVarObject(None, "var1"), CallVarObject(None, "attr2"), CallArrayObject(None, "implAttr1", Operation(None, None, Right(new TLangString(None, "elem1"))))))
+    val res = ExecCallObject.run(statement, context).toOption.get.get
+    assert(res.head.asInstanceOf[Operation].content.toOption.get.isInstanceOf[TLangString])
+    assert("ValueElem1" == res.head.asInstanceOf[Operation].content.toOption.get.asInstanceOf[TLangString].getElement)
+  }
+
+  test("Call ref func") {
+    val block = HelperContent(None, None)
+    val funcDef = HelperFunc(None, "myFunc", Some(List(HelperCurrying(None, List(HelperParam(None, Some("valToReturn"), HelperObjType(None, "String")))))), None, block = block)
+    val refFunc = CallObject(None, List(CallRefFuncObject(None, Some("myFunc"), None, Some(Left(funcDef)))))
+    val res = ExecCallObject.run(refFunc, Context()).toOption.get.get
+    assert(res.head.isInstanceOf[CallRefFuncObject])
+    assert("myFunc" == res.head.asInstanceOf[CallRefFuncObject].func.get.swap.toOption.get.name)
   }
 
   /* For now the returned functions are directly executed, a reference will be needed.

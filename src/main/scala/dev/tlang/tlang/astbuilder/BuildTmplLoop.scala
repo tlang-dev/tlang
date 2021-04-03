@@ -8,11 +8,11 @@ import dev.tlang.tlang.astbuilder.context.ContextResource
 object BuildTmplLoop {
 
   def buildWhile(resource: ContextResource, loop: TmplWhileContext): TmplWhile = {
-    TmplWhile(addContext(resource, loop), BuildTmplBlock.buildConditionBlock(resource, loop.cond), BuildTmplBlock.buildExprContent(resource, loop.content))
+    TmplWhile(addContext(resource, loop), BuildTmplBlock.buildOperation(resource, loop.cond), BuildTmplBlock.buildExprContent(resource, loop.content))
   }
 
   def buildDoWhile(resource: ContextResource, loop: TmplDoWhileContext): TmplDoWhile = {
-    TmplDoWhile(addContext(resource, loop), BuildTmplBlock.buildExprContent(resource, loop.content), BuildTmplBlock.buildConditionBlock(resource, loop.cond))
+    TmplDoWhile(addContext(resource, loop), BuildTmplBlock.buildExprContent(resource, loop.content), BuildTmplBlock.buildOperation(resource, loop.cond))
   }
 
 }

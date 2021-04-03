@@ -59,6 +59,7 @@ object BuildCommon {
       case value@_ if value.primitiveValue() != null => buildPrimitiveValue(resource, `type`, value.primitiveValue())
       case multi@_ if multi.multiValue() != null => buildMultiValue(resource, multi.multiValue())
       case lazyVal@_ if lazyVal.lazyValue() != null => LazyValue(addContext(resource, lazyVal.lazyValue()), None, None)
+      case impl@_ if impl.impl() != null => EntityImpl(addContext(resource, impl.impl()), None, AstBuilderUtils.getText(impl.impl().`type`), buildComplexAttributes(resource, impl.impl().attrs.asScala.toList))
     }
   }
 
@@ -85,7 +86,7 @@ object BuildCommon {
 
   def buildEntityValue(resource: ContextResource, `type`: Option[String] = None, entity: EntityValueContext): EntityValue = {
     EntityValue(addContext(resource, entity), if (`type`.isDefined) Some(`type`.get) else None,
-      buildComplexAttributes(resource, entity.attrs.asScala.toList), buildComplexAttributes(resource, entity.decl.asScala.toList))
+      buildComplexAttributes(resource, entity.attrs.asScala.toList))
   }
 
   def buildMultiValue(resource: ContextResource, multi: MultiValueContext): MultiValue = {

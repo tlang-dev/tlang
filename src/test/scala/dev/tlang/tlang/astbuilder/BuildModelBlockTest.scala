@@ -2,9 +2,7 @@ package dev.tlang.tlang.astbuilder
 
 import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value.{ArrayValue, TLangString}
-import dev.tlang.tlang.ast.model.set.{ModelSetArray, ModelSetEntity, ModelSetFuncDef, ModelSetRef, ModelSetType}
-import dev.tlang.tlang.ast.common.value.{ArrayValue, ComplexAttribute, TLangString}
-import dev.tlang.tlang.ast.model.set.{ModelSetArray, ModelSetEntity, ModelSetFuncDef, ModelSetRef, ModelSetType}
+import dev.tlang.tlang.ast.model.set._
 import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.{TLangLexer, TLangParser}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
@@ -242,6 +240,40 @@ class BuildModelBlockTest extends AnyFunSuite {
     assert("1" == array.head.value.content.toOption.get.asInstanceOf[TLangString].getElement)
     assert("2" == array(1).value.content.toOption.get.asInstanceOf[TLangString].getElement)
     assert("3" == array.last.value.content.toOption.get.asInstanceOf[TLangString].getElement)
+  }
+
+  test("Model set entity with impl") {
+    val lexer = new TLangLexer(CharStreams.fromString(
+      """model {
+        |set firstEntity {
+        |impl {
+        |var1 String
+        |var2 Type2[]
+        |Type3
+        |}
+        |}
+        |}""".stripMargin))
+    val tokens = new CommonTokenStream(lexer)
+    val parser = new TLangParser(tokens)
+    val impl = BuildModelBlock.build(fakeContext, parser.modelBlock()).content.get.head.asInstanceOf[ModelSetEntity].attrs.get.head.value.asInstanceOf[ModelSetImpl].attrs.get
+    assert("var1" == impl.head.attr.get)
+    assert("String" == impl.head.value.asInstanceOf[ModelSetType].`type`)
+    assert("var2" == impl(1).attr.get)
+    assert("Type2" == impl(1).value.asInstanceOf[ModelSetArray].array)
+    assert("Type3" == impl.last.value.asInstanceOf[ModelSetType].`type`)
+  }
+
+  test("Model set entity with impl array") {
+    val lexer = new TLangLexer(CharStreams.fromString(
+      """model {
+        |set firstEntity {
+        |impl[]
+        |}
+        |}""".stripMargin))
+    val tokens = new CommonTokenStream(lexer)
+    val parser = new TLangParser(tokens)
+    val impl = BuildModelBlock.build(fakeContext, parser.modelBlock()).content.get.head.asInstanceOf[ModelSetEntity].attrs.get.head.value
+    assert(impl.isInstanceOf[ModelSetImplArray])
   }
 
 }

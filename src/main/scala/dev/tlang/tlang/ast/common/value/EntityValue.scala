@@ -7,7 +7,6 @@ import dev.tlang.tlang.interpreter.{ExecError, NotImplemented, Value}
 
 case class EntityValue(context: Option[ContextContent],
                        `type`: Option[String],
-                       params: Option[List[ComplexAttribute]] = None,
                        attrs: Option[List[ComplexAttribute]] = None,
                        scope: Scope = Scope())
   extends PrimitiveValue[EntityValue] with ModelSetRefValue with AstContext {

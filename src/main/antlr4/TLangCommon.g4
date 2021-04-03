@@ -13,9 +13,7 @@ operation: (content=complexValueType (op=operator  next=operation)* |
 
 operator: '&&' | '||' | '+' | '-' | '*' | '/' | '%' | '==' | '!=' | '>' | '<' | '>=' | '<=' ;
 
-complexValueType: callObj | primitiveValue | multiValue | lazyValue;
-
-//simpleValueType: callObj | primitiveValue;
+complexValueType: callObj | primitiveValue | multiValue | lazyValue | impl;
 
 primitiveValue: stringValue | numberValue | textValue | entityValue | boolValue | arrayValue;
 
@@ -45,26 +43,10 @@ setAttribute: (attr=ID '=')? value=operation;
 
 callVariable: name=ID;
 
-//conditionBlock:
-//     content=condition (link=('&&' | '||')  next=conditionBlock)* |
-//    '(' content=condition ')' (link=('&&' | '||')  next=conditionBlock)* |
-//    '(' content=condition (link=('&&' | '||')  next=conditionBlock)* ')' |
-//    '(' innerBlock=conditionBlock ')' (link=('&&' | '||')  next=conditionBlock)*
-//;
-//
-//condition:
-//    arg1=simpleValueType (mark=conditionMark arg2=simpleValueType)? (link=('&&' | '||') next=conditionBlock)*
-//;
-//
-//conditionMark: '==' | '!=' | '<' | '>' | '<=' | '>=';
+entityValue: '{' attrs+=complexAttribute* '}';
 
-entityValue:
-	 ('(' ((attrs+=complexAttribute) (',' attrs+=complexAttribute)*) ')')? '{'
-	decl+=complexAttribute*
-	'}';
+impl: 'impl' (':' type=ID)? '{' attrs+=complexAttribute* '}';
 
 multiValue: '(' (values+=operation) (',' values+=operation)+ ')'; // '+' is needed to avoid confusion with operation
 
 complexAttribute: (((attr=ID) (':' type=ID)? '=')? value=operation);
-
-//simpleAttribute: (((attr=ID) (':' type=ID)? '=')? value=operation);
