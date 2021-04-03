@@ -53,22 +53,22 @@ tmplExprContent: tmplExpression | tmplExprBlock;
 
 tmplExprBlock: '{' exprs+=tmplExpression* '}';
 
-tmplExpression:	tmplVar | tmplCallObj | tmplValueType | tmplConditionBlock | tmplFunc
+tmplExpression:	tmplVar | tmplCallObj | tmplValueType | tmplFunc
                 | tmplIf | tmplFor | tmplWhile | tmplDoWhile | tmplInclude | tmplReturn | tmplAffect;
 
-tmplIf: 'if' '(' cond=tmplConditionBlock ')' content=tmplExprContent elseThen=tmplElse?;
+tmplIf: 'if' '(' cond=tmplOperation ')' content=tmplExprContent elseThen=tmplElse?;
 
 tmplElse: 'else' (tmplIf | tmplExprContent);
 
-tmplFor: 'for' '(' var=tmplID start=tmplValueType? type=('in' | 'to' | 'until') array=tmplValueType ')' content=tmplExprContent;
+tmplFor: 'for' '(' var=tmplID start=tmplOperation? type=('in' | 'to' | 'until') array=tmplOperation ')' content=tmplExprContent;
 
-tmplWhile: 'while' '(' cond=tmplConditionBlock ')' content=tmplExprContent;
+tmplWhile: 'while' '(' cond=tmplOperation ')' content=tmplExprContent;
 
-tmplDoWhile: 'do' content=tmplExprContent 'while' '(' cond=tmplConditionBlock ')';
+tmplDoWhile: 'do' content=tmplExprContent 'while' '(' cond=tmplOperation ')';
 
 tmplVar:
     (annots+=tmplAnnot)*
-    'var' props=tmplProps name=tmplID (':' type=tmplType)? ('=' value=tmplExpression)?;
+    'var' props=tmplProps name=tmplID (':' type=tmplType)? ('=' value=tmplOperation)?;
 
 tmplCallObj: objs+=tmplCallObjType ('.'objs+=tmplCallObjType)*;
 
@@ -78,15 +78,13 @@ tmplCallFunc: ((name=tmplID) | '_') (currying += tmplCurryParams)+;
 
 tmplCurryParams:'(' (params+=tmplSetAttribute (',' params+=tmplSetAttribute)*)? ')';
 
-tmplSetAttribute: (name=tmplID '=')? value=tmplValueType;
+tmplSetAttribute: (name=tmplID '=')? value=tmplOperation;
 
-tmplCallArray: name=tmplID '[' elem=tmplValueType ']';
+tmplCallArray: name=tmplID '[' elem=tmplOperation ']';
 
 tmplCallVariable: name=tmplID;
 
-tmplValueType: tmplCallObj | tmplPrimitiveValue | tmplConditionBlock | tmplMultiValue;
-
-tmplSimpleValueType: tmplCallObj | tmplPrimitiveValue;
+tmplValueType: tmplCallObj | tmplPrimitiveValue | tmplMultiValue;
 
 tmplPrimitiveValue: tmplStringValue | tmplNumberValue | tmplTextValue | tmplEntityValue | tmplBoolValue | tmplArrayValue;
 
@@ -100,7 +98,7 @@ tmplBoolValue: value= 'true' | 'false';
 
 tmplArrayValue: '[' (params+=tmplSetAttribute)? (',' params+=tmplSetAttribute)* ']';
 
-tmplAttribute: ((attr=tmplID)? (':' type=tmplType)? value=tmplValueType);
+tmplAttribute: ((attr=tmplID)? (':' type=tmplType)? value=tmplOperation);
 
 tmplMultiValue: '(' (values+=tmplValueType) (',' values+=tmplValueType)* ')';
 
@@ -109,22 +107,17 @@ tmplEntityValue:
 	attrs+=tmplAttribute*
 	'}';
 
-tmplConditionBlock:
-     content=tmplCondition (link=('&&' | '||')  next=tmplConditionBlock)* |
-    '(' content=tmplCondition ')' (link=('&&' | '||')  next=tmplConditionBlock)* |
-    '(' content=tmplCondition (link=('&&' | '||')  next=tmplConditionBlock)* ')' |
-    '(' innerBlock=tmplConditionBlock ')' (link=('&&' | '||')  next=tmplConditionBlock)*;
-
-tmplCondition:
-    arg1=tmplSimpleValueType (mark=tmplConditionMark arg2=tmplSimpleValueType)? (link=('&&' | '||') next=tmplConditionBlock)*;
-
-tmplConditionMark: '==' | '!=' | '<' | '>' | '<=' | '>=';
+tmplOperation:
+     (content=tmplExpression (op=operator  next=tmplOperation)* |
+     '(' content=tmplExpression ')' (op=operator  next=tmplOperation)* |
+     '(' content=tmplExpression (op=operator  next=tmplOperation)* ')' |
+     '(' innerBlock=tmplOperation ')' (op=operator  next=tmplOperation)*);
 
 tmplInclude: '<[' ((calls+=callObj)*) ']>';
 
-tmplReturn: 'return' call=tmplCallObj;
+tmplReturn: 'return' call=tmplOperation;
 
-tmplAffect: variable=tmplCallObj '=' value=tmplCallObj;
+tmplAffect: variable=tmplCallObj '=' value=tmplOperation;
 
 tmplID: ID | tmplIntprID;
 

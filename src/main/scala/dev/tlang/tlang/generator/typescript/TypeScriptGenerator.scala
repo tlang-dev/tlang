@@ -3,7 +3,7 @@ package dev.tlang.tlang.generator.typescript
 import dev.tlang.tlang.ast.common.operation
 import dev.tlang.tlang.ast.common.operation.Operator
 import dev.tlang.tlang.ast.tmpl.call.{TmplCallArray, TmplCallFunc, TmplCallObj, TmplCallObjType, TmplCallVar}
-import dev.tlang.tlang.ast.tmpl.condition.{TmplCondition, TmplConditionBlock}
+import dev.tlang.tlang.ast.tmpl.condition.TmplOperation
 import dev.tlang.tlang.ast.tmpl.func.TmplFunc
 import dev.tlang.tlang.ast.tmpl.loop.{TmplDoWhile, TmplFor, TmplWhile}
 import dev.tlang.tlang.ast.tmpl.primitive.{TmplArrayValue, TmplBoolValue, TmplDoubleValue, TmplLongValue, TmplPrimitiveValue, TmplStringValue}

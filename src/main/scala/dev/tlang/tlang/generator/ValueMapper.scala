@@ -2,7 +2,7 @@ package dev.tlang.tlang.generator
 
 import dev.tlang.tlang.ast.common.value.TLangString
 import dev.tlang.tlang.ast.tmpl.call._
-import dev.tlang.tlang.ast.tmpl.condition.TmplConditionBlock
+import dev.tlang.tlang.ast.tmpl.condition.TmplOperation
 import dev.tlang.tlang.ast.tmpl.func.{TmplFunc, TmplFuncCurry}
 import dev.tlang.tlang.ast.tmpl.primitive.{TmplPrimitiveValue, TmplStringValue, TmplTextValue}
 import dev.tlang.tlang.ast.tmpl.{TmplStringID, _}
@@ -152,13 +152,13 @@ object ValueMapper {
   }
 
   def mapReturn(ret: TmplReturn, context: Context): TmplReturn = {
-    ret.call = mapCallObj(ret.call, context)
+    ret.operation = mapOperation(ret.operation, context)
     ret
   }
 
   def mapAffect(affect: TmplAffect, context: Context): TmplAffect = {
     affect.variable = mapCallObj(affect.variable, context)
-    affect.value = mapCallObj(affect.value, context)
+    affect.value = mapOperation(affect.value, context)
     affect
   }
 
@@ -173,7 +173,7 @@ object ValueMapper {
 
   def mapCallArray(array: TmplCallArray, context: Context): TmplCallArray = {
     array.name = mapID(array.name, context)
-    array.elem = mapValueType(array.elem, context)
+    array.elem = mapOperation(array.elem, context)
     array
   }
 
@@ -194,7 +194,7 @@ object ValueMapper {
     if (attrs.isDefined) {
       val newAttrs: List[TmplSetAttribute] = attrs.get.map(attr => {
         attr.name = if (attr.name.isDefined) Some(mapID(attr.name.get, context)) else None
-        attr.value = mapValueType(attr.value, context)
+        attr.value = mapOperation(attr.value, context)
         attr
       })
       Some(newAttrs)
@@ -208,15 +208,19 @@ object ValueMapper {
 
   def mapValueType(value: TmplValueType, context: Context): TmplValueType = {
     value match {
-      case cond: TmplConditionBlock => mapCondition(cond, context)
       case multi: TmplMultiValue => mapMultiValue(multi, context)
       case primitive: TmplPrimitiveValue => mapPrimitive(primitive, context)
       case call: TmplCallObj => mapCallObj(call, context)
     }
   }
 
-  def mapCondition(cond: TmplConditionBlock, context: Context): TmplConditionBlock = {
-    cond
+  def mapOperation(op: TmplOperation, context: Context): TmplOperation = {
+    op.content match {
+      case Left(subOp) => op.content = Left(mapOperation(subOp, context))
+      case Right(expr) => op.content = Right(mapExpression(expr, context))
+    }
+    op.next = if (op.next.isDefined) Some(op.next.get._1, mapOperation(op.next.get._2, context)) else None
+    op
   }
 
   def mapMultiValue(multi: TmplMultiValue, context: Context): TmplMultiValue = {
@@ -235,7 +239,7 @@ object ValueMapper {
   def mapVar(variable: TmplVar, context: Context): TmplVar = {
     variable.name = mapID(variable.name, context)
     variable.`type` = if (variable.`type`.isDefined) Some(mapType(variable.`type`.get, context)) else None
-    variable.value = if (variable.value.isDefined) Some(mapExpression(variable.value.get, context)) else None
+    variable.value = if (variable.value.isDefined) Some(mapOperation(variable.value.get, context)) else None
     variable
   }
 

@@ -1,7 +1,7 @@
 package dev.tlang.tlang.resolver
 
 import dev.tlang.tlang.ast.common.operation.Operation
-import dev.tlang.tlang.ast.common.value.TLangString
+import dev.tlang.tlang.ast.common.value.{ArrayValue, TLangString}
 import dev.tlang.tlang.ast.tmpl.TmplBlock
 import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.interpreter.context.{Context, ContextUtils}
@@ -219,6 +219,44 @@ class ResolveTmplTest extends AnyFunSuite {
     assert("MyVar" == ContextUtils.findVar(Context(List(block.scope)), "MyFile/myVar").get.asInstanceOf[Operation].content.toOption.get.asInstanceOf[TLangString].getElement)
   }
 
+  test("Resolve built in func") {
+    implicit val loader: ResourceLoader = (_: String, _: String, _: String, name: String) => {
+      if (name == "Main.tlang") {
+        Right(
+          """
+            |use MyPackage.MyFile
+            |tmpl[scala] myTmpl{
+            | impl MyClass {
+            |   <[forEach(MyFile.array, MyFile.&doSomething(_))]>
+            | }
+            |}""".stripMargin)
+      } else if (name == "manifest.yaml") {
+        Right(defaultManifest)
+      } else {
+        Right(
+          """
+            |expose array
+            |expose doSomething
+            |model {
+            |  let array = ["One", "Two", "Three"]
+            |}
+            |
+            |helper {
+            |  func doSomething(elem String) {
+            |  }
+            |}
+            |""".stripMargin)
+      }
+    }
+    val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
+    val block = module.resources("Main").ast.body.head.asInstanceOf[TmplBlock]
+    val resource = module.resources("Main")
+    ResolveTmpl.resolveTmpl(block, module, resource.ast.header.get.uses.get, resource)
+    assert("One" == ContextUtils.findVar(Context(List(block.scope)), "MyFile/array").get.asInstanceOf[Operation].content.toOption.get.asInstanceOf[ArrayValue].tbl.get.head.value.content.toOption.get.asInstanceOf[TLangString].getElement)
+    assert("Two" == ContextUtils.findVar(Context(List(block.scope)), "MyFile/array").get.asInstanceOf[Operation].content.toOption.get.asInstanceOf[ArrayValue].tbl.get(1).value.content.toOption.get.asInstanceOf[TLangString].getElement)
+    assert("Three" == ContextUtils.findVar(Context(List(block.scope)), "MyFile/array").get.asInstanceOf[Operation].content.toOption.get.asInstanceOf[ArrayValue].tbl.get.last.value.content.toOption.get.asInstanceOf[TLangString].getElement)
+    assert("doSomething" == ContextUtils.findFunc(Context(List(block.scope)), "MyFile/doSomething").get.name)
+  }
 
 
 }

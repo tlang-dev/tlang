@@ -3,7 +3,7 @@ package dev.tlang.tlang.generator.java
 import dev.tlang.tlang.ast.common.operation.Operator
 import dev.tlang.tlang.ast.tmpl._
 import dev.tlang.tlang.ast.tmpl.call._
-import dev.tlang.tlang.ast.tmpl.condition.{TmplCondition, TmplConditionBlock}
+import dev.tlang.tlang.ast.tmpl.condition.TmplOperation
 import dev.tlang.tlang.ast.tmpl.func.TmplFunc
 import dev.tlang.tlang.ast.tmpl.loop.{TmplDoWhile, TmplFor, TmplWhile}
 import dev.tlang.tlang.ast.tmpl.primitive._
@@ -159,19 +159,19 @@ object JavaGenerator {
 
   def genAffect(affect: TmplAffect): String = {
     val str = new StringBuilder
-    str ++= genCallObj(affect.variable) ++= " = " ++= genCallObj(affect.value) ++= ";"
+    str ++= genCallObj(affect.variable) ++= " = " ++= genOperation(affect.value) ++= ";"
     str.toString()
   }
 
   def genReturn(ret: TmplReturn): String = {
     val str = new StringBuilder
-    str ++= "return " ++= genCallObj(ret.call) ++= ";"
+    str ++= "return " ++= genOperation(ret.operation) ++= ";"
     str.toString()
   }
 
   def genIf(ifStmt: TmplIf): String = {
     val str = new StringBuilder
-    str ++= "if(" ++= genConditionBlock(ifStmt.cond) ++= ") "
+    str ++= "if(" ++= genOperation(ifStmt.cond) ++= ") "
     str ++= genExprContent(ifStmt.content, ifStmt.content.isInstanceOf[TmplExpression])
     if (ifStmt.elseBlock.isDefined) ifStmt.elseBlock.get match {
       case Left(elseBlock) => str ++= " else " ++= genExprContent(elseBlock, elseBlock.isInstanceOf[TmplExpression])
@@ -190,7 +190,7 @@ object JavaGenerator {
 
   def genWhile(whileLoop: TmplWhile): String = {
     val str = new StringBuilder
-    str ++= "while(" ++= genConditionBlock(whileLoop.cond) ++= ") "
+    str ++= "while(" ++= genOperation(whileLoop.cond) ++= ") "
     str ++= genExprContent(whileLoop.content, whileLoop.content.isInstanceOf[TmplExpression]) ++= "\n"
     str.toString()
   }
@@ -198,7 +198,7 @@ object JavaGenerator {
   def genDoWhile(doWhile: TmplDoWhile): String = {
     val str = new StringBuilder
     str ++= "do " ++= genExprContent(doWhile.content, doWhile.content.isInstanceOf[TmplExpression])
-    str ++= " while(" ++= genConditionBlock(doWhile.cond) ++= ");\n"
+    str ++= " while(" ++= genOperation(doWhile.cond) ++= ");\n"
     str.toString()
   }
 
@@ -218,7 +218,7 @@ object JavaGenerator {
 
   def genCallArray(array: TmplCallArray): String = {
     val str = new StringBuilder
-    str ++= array.name.toString ++= "[" ++= genValueType(array.elem) ++= "]"
+    str ++= array.name.toString ++= "[" ++= genOperation(array.elem) ++= "]"
     str.toString()
   }
 
@@ -236,7 +236,7 @@ object JavaGenerator {
     variable.props.foreach(prop => str ++= genProps(prop, addSpace = true))
     if (variable.`type`.isDefined) str ++= genType(variable.`type`.get) ++= " "
     str ++= variable.name.toString
-    variable.value.foreach(str ++= " = " + genExpression(_))
+    variable.value.foreach(str ++= " = " + genOperation(_))
     str ++= ";\n"
     str.toString()
   }
@@ -244,7 +244,6 @@ object JavaGenerator {
   def genValueType(valueType: TmplValueType): String = {
     valueType match {
       case call: TmplCallObj => genCallObj(call)
-      case condition: TmplConditionBlock => genConditionBlock(condition)
       case primitive: TmplPrimitiveValue => genPrimitive(primitive)
     }
   }
@@ -256,32 +255,15 @@ object JavaGenerator {
     }
   }
 
-  def genConditionBlock(block: TmplConditionBlock): String = {
+  def genOperation(block: TmplOperation): String = {
     val str = new StringBuilder
     block.content match {
-      case Left(block) => str ++= "(" ++= genConditionBlock(block) ++= ")"
-      case Right(cond) => str ++= genCondition(cond)
+      case Left(block) => str ++= "(" ++= genOperation(block) ++= ")"
+      case Right(cond) => str ++= genExpression(cond)
     }
-    str ++= genConditionLinkWithBlock(block.link, block.nextBlock)
-    str.toString()
-  }
-
-  def genCondition(cond: TmplCondition): String = {
-    val str = new StringBuilder
-    str ++= genSimpleValueType(cond.statement1)
-    if (cond.condition.isDefined) {
-      str ++= " " ++= genOperator(cond.condition.get) ++= " "
-      str ++= genSimpleValueType(cond.statement2.get)
-    }
-    str ++= genConditionLinkWithBlock(cond.link, cond.nextBlock)
-    str.toString()
-  }
-
-  def genConditionLinkWithBlock(link: Option[Operator.operator], nextBlock: Option[TmplConditionBlock]): String = {
-    val str = new StringBuilder
-    if (link.isDefined) {
-      str ++= " " ++= genOperator(link.get)
-      nextBlock.foreach(block => str ++= " " ++= genConditionBlock(block))
+    if (block.next.isDefined) {
+      str ++= " " ++= genOperator(block.next.get._1)
+      str ++= " " ++= genOperation(block.next.get._2)
     }
     str.toString()
   }
@@ -335,6 +317,6 @@ object JavaGenerator {
 
   def genBoolValue(bool: TmplBoolValue): String = if (bool.value) "true" else "false"
 
-  def genSetAttribute(attr: TmplSetAttribute): String = genValueType(attr.value)
+  def genSetAttribute(attr: TmplSetAttribute): String = genOperation(attr.value)
 
 }
