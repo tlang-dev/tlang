@@ -94,7 +94,24 @@ object ResolveTmpl {
       case tmplWhile: TmplWhile => checkRet(errors, resolveWhile(tmplWhile, module, uses, currentResource, scope))
       case doWhile: TmplDoWhile => checkRet(errors, resolveDoWhile(doWhile, module, uses, currentResource, scope))
       case include: TmplInclude => checkRet(errors, resolveInclude(include, module, uses, currentResource, scope))
+      case tmplReturn: TmplReturn => checkRet(errors, resolveReturn(tmplReturn, module, uses, currentResource, scope))
+      case tmplAffect: TmplAffect => checkRet(errors, resolveAffect(tmplAffect, module, uses, currentResource, scope))
     }
+    if (errors.nonEmpty) Left(errors.toList)
+    else Right(())
+  }
+
+  def resolveAffect(affect: TmplAffect, module: Module, uses: List[DomainUse], resource: Resource, scope: Scope): Either[List[ResolverError], Unit] = {
+    val errors = ListBuffer.empty[ResolverError]
+    checkRet(errors, resolveCall(affect.variable, module, uses, resource, scope))
+    checkRet(errors, resolveOperation(affect.value, module, uses, resource, scope))
+    if (errors.nonEmpty) Left(errors.toList)
+    else Right(())
+  }
+
+  def resolveReturn(tmplReturn: TmplReturn, module: Module, uses: List[DomainUse], resource: Resource, scope: Scope): Either[List[ResolverError], Unit] = {
+    val errors = ListBuffer.empty[ResolverError]
+    checkRet(errors, resolveOperation(tmplReturn.operation, module, uses, resource, scope))
     if (errors.nonEmpty) Left(errors.toList)
     else Right(())
   }

@@ -27,7 +27,7 @@ tmplProps: ('[' (props+=tmplID)+ ']')?;
 
 tmplImpl:
     (annots+=tmplAnnot)*
-	'impl' props=tmplProps  name=tmplID (('for' forProps=tmplProps  forNames+=tmplID) (',' forNames+=tmplID)* (('with' withProps=tmplProps  withNames+=tmplID) (',' withNames+=tmplID)*)?)? '{'
+	'impl' props=tmplProps  name=tmplID (('for' forProps=tmplProps  forNames+=tmplType) (',' forNames+=tmplType)* (('with' withProps=tmplProps  withNames+=tmplType) (',' withNames+=tmplType)*)?)? '{'
 	(tmplImplContents+=tmplContent)*
 	'}';
 

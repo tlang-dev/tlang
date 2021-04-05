@@ -36,11 +36,11 @@ object ScalaGenerator {
   def genImpl(impl: TmplImpl): String = {
     val str = new StringBuilder
     str ++= "class " ++= impl.name.toString
-    impl.fors.foreach(_.zipWithIndex.foreach {
-      case (for1, 0) => str ++= " extends " ++= for1.name.toString
-      case (for1, 1) => str ++= " with " ++= for1.name.toString
-      case (for1, _) => str ++= ", " ++= for1.name.toString
-    })
+//    impl.fors.foreach(_.zipWithIndex.foreach {
+//      case (for1, 0) => str ++= " extends " ++= for1.name.toString
+//      case (for1, 1) => str ++= " with " ++= for1.name.toString
+//      case (for1, _) => str ++= ", " ++= for1.name.toString
+//    })
     str ++= " {\n" ++= genImplContent(impl.content) ++= "}\n\n"
     str.toString
   }

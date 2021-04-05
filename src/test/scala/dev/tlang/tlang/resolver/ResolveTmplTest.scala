@@ -225,7 +225,7 @@ class ResolveTmplTest extends AnyFunSuite {
         Right(
           """
             |use MyPackage.MyFile
-            |tmpl[scala] myTmpl{
+            |tmpl[scala] myTmpl {
             | func myFunc() {
             |   func MyFunc2() {
             |     var [${MyFile.prop}] ${MyFile.myVar} = "Value"

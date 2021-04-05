@@ -5,6 +5,7 @@ import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value._
 import dev.tlang.tlang.ast.helper.HelperStatement
 import dev.tlang.tlang.ast.tmpl.TmplBlockAsValue
+import dev.tlang.tlang.interpreter.ExecCallFunc.manageTmplParameters
 import dev.tlang.tlang.interpreter.context.{Context, ContextUtils}
 
 import scala.annotation.tailrec
@@ -47,7 +48,8 @@ object ExecCallObject extends Executor {
           case None => ContextUtils.findTmpl(context, name) match {
             case Some(tmpl) =>
               val tmplCopy = tmpl.deepCopy()
-              Right(Some(List(TmplBlockAsValue(tmplCopy.getContext, tmplCopy, Context(context.scopes :+ tmplCopy.scope)))))
+              val newContext = manageTmplParameters(func, tmplCopy, context)
+              Right(Some(List(TmplBlockAsValue(tmplCopy.getContext, tmplCopy, Context(newContext.scopes :+ tmplCopy.scope)))))
             case None => Left(CallableNotFound(name))
           }
         }

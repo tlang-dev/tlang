@@ -3,6 +3,7 @@ package dev.tlang.tlang.libraries.generator
 import dev.tlang.tlang.ast.common.value.TLangString
 import dev.tlang.tlang.ast.helper._
 import dev.tlang.tlang.ast.tmpl.TmplBlockAsValue
+import dev.tlang.tlang.generator.dart.DartGenerator
 import dev.tlang.tlang.generator.groovy.GroovyGenerator
 import dev.tlang.tlang.generator.java.JavaGenerator
 import dev.tlang.tlang.generator.json.JSONGenerator
@@ -21,6 +22,7 @@ object Generator {
     "scala" -> new ScalaGenerator(),
     "java" -> new JavaGenerator(),
     "typescript" -> new TypeScriptGenerator(),
+    "dart" -> new DartGenerator(),
     "groovy" -> new GroovyGenerator(),
     "json" -> new JSONGenerator(),
     "rust" -> new RustGenerator(),

@@ -89,7 +89,8 @@ object ExecOperation extends Executor {
         val val1 = value1.asInstanceOf[Value[Any]]
         val val2 = value2.asInstanceOf[Value[Any]]
         operator match {
-          case Operator.EQUAL => Right(new TLangBool(None, val1.compareTo(val2) == 0))
+          case Operator.EQUAL =>
+            Right(new TLangBool(None, val1.compareTo(val2) == 0))
           case Operator.GREATER => Right(new TLangBool(None, val1.compareTo(val2) > 0))
           case Operator.LESSER => Right(new TLangBool(None, val1.compareTo(val2) < 0))
           case Operator.GREATER_OR_EQUAL => Right(new TLangBool(None, val1.compareTo(val2) >= 0))

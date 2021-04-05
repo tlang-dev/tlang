@@ -1,6 +1,8 @@
 package dev.tlang.tlang.interpreter
 
-class ExecError(val code: String, val message: String = "")
+class ExecError(val code: String, val message: String = "") {
+  override def toString: String = "[" + code + "] " + message
+}
 
 case class CallableNotFound(name: String) extends ExecError(name, "Callable not found in context or inside another callable")
 

@@ -47,17 +47,19 @@ object BuildTmplBlock {
 
   def buildImpl(resource: ContextResource, impl: TmplImplContext): TmplImpl = {
     TmplImpl(addContext(resource, impl), buildAnnotations(resource, impl.annots.asScala.toList), buildProps(resource, impl.props),
-      buildId(resource, impl.name), buildFors(resource, impl.forNames), buildWiths(resource, impl.withNames),
+      buildId(resource, impl.name), buildFors(resource, impl.forProps, impl.forNames), buildWiths(resource, impl.withProps, impl.withNames),
       if (impl.tmplImplContents != null && !impl.tmplImplContents.isEmpty) buildContent(resource, impl.tmplImplContents.asScala.toList) else None)
   }
 
-  def buildFors(resource: ContextResource, fors: java.util.List[TmplIDContext]): Option[List[TmplImplFor]] = {
-    if (fors != null && !fors.isEmpty) Some(fors.asScala.toList.map(id => TmplImplFor(addContext(resource, id), buildId(resource, id))))
+  def buildFors(resource: ContextResource, props: TmplPropsContext, fors: java.util.List[TmplTypeContext]): Option[TmplImplFor] = {
+    if (fors != null && !fors.isEmpty)
+      Some(TmplImplFor(addContext(resource, props), buildProps(resource, props), fors.asScala.toList.map(t => buildType(resource, t))))
     else None
   }
 
-  def buildWiths(resource: ContextResource, withs: java.util.List[TmplIDContext]): Option[List[TmplImplWith]] = {
-    if (withs != null && !withs.isEmpty) Some(withs.asScala.toList.map(id => TmplImplWith(buildId(resource, id))))
+  def buildWiths(resource: ContextResource, props: TmplPropsContext, withs: java.util.List[TmplTypeContext]): Option[TmplImplWith] = {
+    if (withs != null && !withs.isEmpty)
+      Some(TmplImplWith(addContext(resource, props), buildProps(resource, props), withs.asScala.toList.map(t => buildType(resource, t))))
     else None
   }
 

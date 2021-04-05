@@ -69,10 +69,11 @@ object ValueMapper {
     for (expr <- tmplInclude.calls) {
       ExecCallObject.run(expr, context) match {
         case Left(error) => println(error.message)
-        case Right(value) => value.get.foreach {
-          case str: TLangString => contents.addOne(Left(str))
-          case block: TmplBlockAsValue => contents.addOne(Right(mapBlock(block)))
-        }
+        case Right(value) =>
+          value.get.foreach {
+            case str: TLangString => contents.addOne(Left(str))
+            case block: TmplBlockAsValue => contents.addOne(Right(mapBlock(block)))
+          }
       }
     }
     tmplInclude.results = contents.toList
@@ -83,21 +84,31 @@ object ValueMapper {
     impl.name = mapID(impl.name, context)
     impl.content = mapContent(impl.content, context)
     impl.fors = mapFors(impl.fors, context)
+    impl.withs = mapWiths(impl.withs, context)
     impl
   }
 
-  def mapFors(fors: Option[List[TmplImplFor]], context: Context): Option[List[TmplImplFor]] = {
-    if (fors.isDefined) {
-      val newFors: List[TmplImplFor] = fors.get.map(f => {
-        f.name = mapID(f.name, context)
-        f
-      })
-      Some(newFors)
+  def mapFors(aFor: Option[TmplImplFor], context: Context): Option[TmplImplFor] = {
+    if (aFor.isDefined) {
+      val newFor = aFor.get
+      newFor.props = mapProps(newFor.props, context)
+      newFor.types = newFor.types.map(t => mapType(t, context))
+      Some(newFor)
+    } else None
+  }
+
+  def mapWiths(withs: Option[TmplImplWith], context: Context): Option[TmplImplWith] = {
+    if (withs.isDefined) {
+      val newWiths = withs.get
+      newWiths.props = mapProps(newWiths.props, context)
+      newWiths.types = newWiths.types.map(t => mapType(t, context))
+      Some(newWiths)
     } else None
   }
 
   def mapFunc(func: TmplFunc, context: Context): TmplFunc = {
     func.annots = mapAnnots(func.annots, context)
+    func.props = mapProps(func.props, context)
     func.name = mapID(func.name, context)
     func.curries = mapCurries(func.curries, context)
     func.content = mapExprBlock(func.content, context)
@@ -123,6 +134,14 @@ object ValueMapper {
         param.value = mapPrimitive(param.value, context)
       })
       params
+    } else None
+  }
+
+  def mapProps(props: Option[TmplProp], context: Context): Option[TmplProp] = {
+    if (props.isDefined) {
+      val newProps = props.get
+      newProps.props = newProps.props.map(p => mapID(p, context))
+      Some(newProps)
     } else None
   }
 
