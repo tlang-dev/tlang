@@ -232,8 +232,8 @@ object BuildTmplBlock {
   }
 
   def buildEntity(resource: ContextResource, entity: TmplEntityValueContext): TmplEntityValue = TmplEntityValue(
-    if (entity.params != null && !entity.params.isEmpty) Some(entity.params.asScala.toList.map(param => buildAttribute(resource, param))) else None,
-    if (entity.attrs != null && !entity.attrs.isEmpty) Some(entity.attrs.asScala.toList.map(attr => buildAttribute(resource, attr))) else None)
+    buildId(resource, entity.name),
+    if (entity.attrs != null && !entity.attrs.isEmpty) Some(entity.attrs.asScala.toList.map(attr => buildSetAttribute(resource, attr))) else None)
 
   def buildArray(resource: ContextResource, `type`: Option[TmplType] = None, array: TmplArrayValueContext): TmplArrayValue = {
     TmplArrayValue(addContext(resource, array), `type`,

@@ -78,7 +78,7 @@ tmplCallFunc: ((name=tmplID) | '_') (currying += tmplCurryParams)+;
 
 tmplCurryParams:'(' (params+=tmplSetAttribute (',' params+=tmplSetAttribute)*)? ')';
 
-tmplSetAttribute: (name=tmplID '=')? value=tmplOperation;
+tmplSetAttribute: (name=tmplID ':')? value=tmplOperation;
 
 tmplCallArray: name=tmplID '[' elem=tmplOperation ']';
 
@@ -103,9 +103,7 @@ tmplAttribute: ((attr=tmplID)? (':' type=tmplType)? value=tmplOperation);
 tmplMultiValue: '(' (values+=tmplValueType) (',' values+=tmplValueType)* ')';
 
 tmplEntityValue:
-	'new' ('(' ((params+=tmplAttribute) (',' params+=tmplAttribute)*) ')')? '{'
-	attrs+=tmplAttribute*
-	'}';
+	'new' name=tmplID ('(' ((attrs+=tmplSetAttribute) (',' attrs+=tmplSetAttribute)*)? ')')?;
 
 tmplOperation:
      (content=tmplExpression (op=operator  next=tmplOperation)* |

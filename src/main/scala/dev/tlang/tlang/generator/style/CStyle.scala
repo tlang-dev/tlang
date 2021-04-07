@@ -7,7 +7,6 @@ import dev.tlang.tlang.ast.tmpl.condition.TmplOperation
 import dev.tlang.tlang.ast.tmpl.func.TmplFunc
 import dev.tlang.tlang.ast.tmpl.loop.{TmplDoWhile, TmplFor, TmplWhile}
 import dev.tlang.tlang.ast.tmpl.primitive._
-import dev.tlang.tlang.generator.java.JavaGenerator
 
 abstract class CStyle {
 
@@ -15,7 +14,7 @@ abstract class CStyle {
     val str = new StringBuilder()
     str ++= genPackage(tmpl.pkg)
     str ++= genIncludes(tmpl.uses)
-    tmpl.content.foreach(str ++= JavaGenerator.genContents(_))
+    tmpl.content.foreach(str ++= genContents(_))
     str.toString
   }
 
@@ -240,7 +239,12 @@ abstract class CStyle {
 
   def genCallFunc(func: TmplCallFunc): String = {
     val str = new StringBuilder
-    str ++= func.name.toString ++= "(" ++= ")"
+    str ++= func.name.toString
+    func.currying.foreach(_.foreach(curry => {
+      str ++= "("
+      curry.params.foreach(str ++= _.map(op => genOperation(op.value)).mkString(", "))
+      str ++= ")"
+    }))
     str.toString()
   }
 
@@ -309,8 +313,23 @@ abstract class CStyle {
       case double: TmplDoubleValue => genDoubleValue(double)
       case bool: TmplBoolValue => genBoolValue(bool)
       case array: TmplArrayValue => genArrayValue(array)
+      case entity: TmplEntityValue => genEntityValue(entity)
     }
   }
+
+  def genEntityValue(entity: TmplEntityValue): String = {
+    val str = new StringBuilder
+    str ++= " new " ++= entity.name.toString ++= "("
+    entity.attrs.foreach(attrs => str ++= attrs.map(attr => genSetAttribute(attr)).mkString(",\n"))
+    str ++= ")"
+    str.toString()
+  }
+
+  //  def genAttribute(attr: TmplAttribute):String = {
+  //    val str = new StringBuilder
+  //    str ++= attr.attr.getOrElse("").toString ++= ":" ++= attr.
+  //    str.toString()
+  //  }
 
   def genArrayValue(array: TmplArrayValue): String = {
     val str = new StringBuilder
@@ -333,7 +352,12 @@ abstract class CStyle {
 
   def genBoolValue(bool: TmplBoolValue): String = if (bool.value) "true" else "false"
 
-  def genSetAttribute(attr: TmplSetAttribute): String = genOperation(attr.value)
+  def genSetAttribute(attr: TmplSetAttribute): String = {
+    val str = new StringBuilder
+    if (attr.name.isDefined) str ++= attr.name.get.toString ++= ": "
+    str ++= genOperation(attr.value)
+    str.toString()
+  }
 
   def comma(): String = if (commaRequired()) ";" else ""
 
