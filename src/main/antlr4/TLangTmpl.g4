@@ -33,7 +33,7 @@ tmplImpl:
 
 tmplFunc:
     (annots+=tmplAnnot)*
-	'func' props=tmplProps name=tmplID curries+=tmplCurrying* (':' types+=tmplType (',' types+=tmplType)*)? content=tmplExprBlock?;
+	'func' props=tmplProps name=tmplID curries+=tmplCurrying* (':' types+=tmplType (',' types+=tmplType)*)? postProps=tmplProps content=tmplExprBlock?;
 
 tmplCurrying: '(' param=tmplCurryingParam ')';
 
@@ -54,7 +54,8 @@ tmplExprContent: tmplExpression | tmplExprBlock;
 tmplExprBlock: '{' exprs+=tmplExpression* '}';
 
 tmplExpression:	tmplVar | tmplCallObj | tmplValueType | tmplFunc
-                | tmplIf | tmplFor | tmplWhile | tmplDoWhile | tmplInclude | tmplReturn | tmplAffect;
+                | tmplIf | tmplFor | tmplWhile | tmplDoWhile | tmplInclude | tmplReturn
+                | tmplAffect | tmplCast;
 
 tmplIf: 'if' '(' cond=tmplOperation ')' content=tmplExprContent elseThen=tmplElse?;
 
@@ -109,13 +110,16 @@ tmplOperation:
      (content=tmplExpression (op=operator  next=tmplOperation)* |
      '(' content=tmplExpression ')' (op=operator  next=tmplOperation)* |
      '(' content=tmplExpression (op=operator  next=tmplOperation)* ')' |
-     '(' innerBlock=tmplOperation ')' (op=operator  next=tmplOperation)*);
+     '(' innerBlock=tmplOperation ')' (op=operator  next=tmplOperation)*)
+     ('.' combine=tmplCallObj)?;
 
 tmplInclude: '<[' ((calls+=callObj)*) ']>';
 
 tmplReturn: 'return' call=tmplOperation;
 
 tmplAffect: variable=tmplCallObj '=' value=tmplOperation;
+
+tmplCast: '(' toCast=tmplOperation 'as' type=tmplType ')' ('.' combine=tmplCallObj)?;
 
 tmplID: ID | tmplIntprID;
 

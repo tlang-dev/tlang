@@ -18,4 +18,6 @@ object JavaGenerator extends CStyle {
   override def defaultImplProps(): String = "public class"
 
   override def defaultFuncProps(): String = "public"
+
+  override def genDefaultVarKeyword(): String = "var"
 }

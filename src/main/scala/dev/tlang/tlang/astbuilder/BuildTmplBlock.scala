@@ -33,7 +33,8 @@ object BuildTmplBlock {
   }
 
   def buildUse(resource: ContextResource, use: TmplUseContext): TmplUse = {
-    TmplUse(use.parts.asScala.toList.map(part => buildId(resource, part)))
+    TmplUse(use.parts.asScala.toList.map(part => buildId(resource, part)),
+      if (use.alias != null && !use.alias.isEmpty) Some(buildId(resource, use.alias)) else None)
   }
 
   def buildContent(resource: ContextResource, content: List[TmplContentContext]): Option[List[TmplContent]] = {
@@ -69,7 +70,7 @@ object BuildTmplBlock {
       else None
     TmplFunc(addContext(resource, func), buildAnnotations(resource, func.annots.asScala.toList), buildProps(resource, func.props), buildId(resource, func.name), curries,
       if (func.content != null) Some(buildExprBlock(resource, func.content)) else None,
-      if (func.types != null && !func.types.isEmpty) Some(func.types.asScala.toList.map(t => buildType(resource, t))) else None)
+      if (func.types != null && !func.types.isEmpty) Some(func.types.asScala.toList.map(t => buildType(resource, t))) else None, buildProps(resource, func.postProps))
   }
 
   def buildAnnotations(resource: ContextResource, annots: List[TmplAnnotContext]): Option[List[TmplAnnotation]] = {

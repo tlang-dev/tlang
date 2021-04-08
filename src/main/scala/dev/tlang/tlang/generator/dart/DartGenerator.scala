@@ -14,7 +14,11 @@ object DartGenerator extends CStyle {
 
   override def genIncludes(uses: Option[List[TmplUse]]): String = {
     val str = new StringBuilder()
-    uses.foreach(_.foreach(str ++= includeKeyword() ++= " '" ++= _.parts.mkString("/").replaceFirst("/", ":").replace("/dart", ".dart") ++= "'" ++= comma() ++= "\n"))
+    uses.foreach(_.foreach(use => {
+      str ++= includeKeyword() ++= " '" ++= use.parts.mkString("/").replaceFirst("/", ":").replace("/dart", ".dart") ++= "'"
+      if (use.alias.isDefined) str ++= " as " ++= use.alias.get.toString
+      str ++= comma() ++= "\n"
+    }))
     str.toString
   }
 
@@ -27,4 +31,6 @@ object DartGenerator extends CStyle {
   override def defaultImplProps(): String = "class"
 
   override def defaultFuncProps(): String = ""
+
+  override def genDefaultVarKeyword(): String = "var"
 }

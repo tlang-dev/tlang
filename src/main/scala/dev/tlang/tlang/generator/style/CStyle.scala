@@ -72,6 +72,7 @@ abstract class CStyle {
       func.curries.get.head.params.foreach(params => str ++= params.map(genParam).mkString(", "))
     }
     str ++= ")"
+    str ++= func.postPros.fold("")(prop => genProps(prop) + " ")
     if (func.content.isDefined) str ++= " " ++= genExprBlock(func.content.get) ++= "\n\n"
     else str ++= comma() ++= "\n\n"
     str.toString()
@@ -255,6 +256,7 @@ abstract class CStyle {
     str ++= genAnnotations(variable.annots)
     variable.props.foreach(prop => str ++= genProps(prop, addSpace = true))
     if (variable.`type`.isDefined) str ++= genType(variable.`type`.get) ++= " "
+    else str ++= genDefaultVarKeyword() ++= " "
     str ++= variable.name.toString
     variable.value.foreach(str ++= " = " + genOperation(_))
     str ++= comma() ++= "\n"
@@ -370,4 +372,6 @@ abstract class CStyle {
   def defaultImplProps(): String
 
   def defaultFuncProps(): String
+
+  def genDefaultVarKeyword(): String
 }

@@ -18,4 +18,6 @@ object TypeScriptGenerator extends CStyle {
   override def defaultImplProps(): String = "export class"
 
   override def defaultFuncProps(): String = "function"
+
+  override def genDefaultVarKeyword(): String = "val"
 }
