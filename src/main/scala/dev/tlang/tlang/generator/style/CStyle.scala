@@ -243,7 +243,7 @@ abstract class CStyle {
     str ++= func.name.toString
     func.currying.foreach(_.foreach(curry => {
       str ++= "("
-      curry.params.foreach(str ++= _.map(op => genOperation(op.value)).mkString(", "))
+      curry.params.foreach(str ++= _.map(attr => attr.name.fold("")(_.toString + ": ") + genOperation(attr.value)).mkString(", "))
       str ++= ")"
     }))
     str.toString()
@@ -322,26 +322,33 @@ abstract class CStyle {
   def genEntityValue(entity: TmplEntityValue): String = {
     val str = new StringBuilder
     str ++= " new " ++= entity.name.toString ++= "("
-    entity.attrs.foreach(attrs => str ++= attrs.map(attr => genSetAttribute(attr)).mkString(",\n"))
+    entity.attrs.foreach(attrs => str ++= attrs.map(attr => genAttribute(attr)).mkString(",\n"))
     str ++= ")"
     str.toString()
   }
 
-  //  def genAttribute(attr: TmplAttribute):String = {
-  //    val str = new StringBuilder
-  //    str ++= attr.attr.getOrElse("").toString ++= ":" ++= attr.
-  //    str.toString()
-  //  }
+  def genAttribute(attr: TmplAttribute): String = {
+    val str = new StringBuilder
+    if (attr.`type`.isDefined) str ++= attr.`type`.get.toString ++= ": "
+    str ++= genOperation(attr.value)
+    str.toString()
+  }
 
   def genArrayValue(array: TmplArrayValue): String = {
     val str = new StringBuilder
     str ++= " new "
     array.`type`.foreach(t => str ++= genType(t))
     str ++= "[]"
-    if (array.params.isDefined) {
-      str ++= " {"
-      array.params.get.map(genSetAttribute).mkString(", ")
-      str ++= "}" ++= comma() ++= "\n"
+    str ++= genArrayValueParams(array.params)
+    str.toString()
+  }
+
+  def genArrayValueParams(params: Option[List[TmplSetAttribute]]): String = {
+    val str = new StringBuilder
+    if (params.isDefined) {
+      str ++= "{"
+      str ++= params.get.map(genSetAttribute).mkString(", ")
+      str ++= "}"
     }
     str.toString()
   }
@@ -356,9 +363,18 @@ abstract class CStyle {
 
   def genSetAttribute(attr: TmplSetAttribute): String = {
     val str = new StringBuilder
-    if (attr.name.isDefined) str ++= attr.name.get.toString ++= ": "
+    if (attr.name.isDefined) str ++= genTmplID(attr.name) ++= ": "
     str ++= genOperation(attr.value)
     str.toString()
+  }
+
+  def genTmplID(tmplId: Option[TmplID]): String = {
+    if (tmplId.isDefined) tmplId.get match {
+      case interp: TmplInterpretedID => interp.toString
+      case str: TmplStringID => "\"" + str.toString + "\""
+      case block: TmplBlockID => block.toString
+    }
+    else ""
   }
 
   def comma(): String = if (commaRequired()) ";" else ""

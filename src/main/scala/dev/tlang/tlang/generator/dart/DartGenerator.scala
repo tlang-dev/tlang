@@ -1,5 +1,6 @@
 package dev.tlang.tlang.generator.dart
 
+import dev.tlang.tlang.ast.tmpl.primitive.TmplArrayValue
 import dev.tlang.tlang.ast.tmpl.{TmplBlock, TmplPkg, TmplUse}
 import dev.tlang.tlang.generator.CodeGenerator
 import dev.tlang.tlang.generator.style.CStyle
@@ -20,6 +21,10 @@ object DartGenerator extends CStyle {
       str ++= comma() ++= "\n"
     }))
     str.toString
+  }
+
+  override def genArrayValue(array: TmplArrayValue): String = {
+    genArrayValueParams(array.params)
   }
 
   override def commaRequired(): Boolean = true

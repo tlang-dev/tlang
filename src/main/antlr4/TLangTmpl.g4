@@ -79,7 +79,7 @@ tmplCallFunc: ((name=tmplID) | '_') (currying += tmplCurryParams)+;
 
 tmplCurryParams:'(' (params+=tmplSetAttribute (',' params+=tmplSetAttribute)*)? ')';
 
-tmplSetAttribute: (name=tmplID ':')? value=tmplOperation;
+tmplSetAttribute: (name=tmplIdOrString ':')? value=tmplOperation;
 
 tmplCallArray: name=tmplID '[' elem=tmplOperation ']';
 
@@ -104,7 +104,8 @@ tmplAttribute: ((attr=tmplID)? (':' type=tmplType)? value=tmplOperation);
 tmplMultiValue: '(' (values+=tmplValueType) (',' values+=tmplValueType)* ')';
 
 tmplEntityValue:
-	'new' name=tmplID ('(' ((attrs+=tmplSetAttribute) (',' attrs+=tmplSetAttribute)*)? ')')?;
+	'new' name=tmplID ('(' ((params+=tmplAttribute) (',' params+=tmplAttribute)*)? ')')?
+	('{' ((attrs+=tmplAttribute) (',' attrs+=tmplAttribute)*)? '}')?;
 
 tmplOperation:
      (content=tmplExpression (op=operator  next=tmplOperation)* |
@@ -132,3 +133,5 @@ tmplIntprString: 's"' (pre=ID)? '${' callObj '}' (pos=ID)? '"';
 tmplText: TEXT | tmplIntprText;
 
 tmplIntprText: 's"""' (pre=ID)? '${' callObj '}' (pos=ID)? '"""';
+
+tmplIdOrString: tmplID | tmplString;

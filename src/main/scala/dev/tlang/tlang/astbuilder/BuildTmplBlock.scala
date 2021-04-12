@@ -196,7 +196,9 @@ object BuildTmplBlock {
   }
 
   def buildSetAttribute(resource: ContextResource, param: TmplSetAttributeContext): TmplSetAttribute = {
-    TmplSetAttribute(addContext(resource, param), buildOptionId(resource, param.name), buildOperation(resource, param.value))
+    TmplSetAttribute(addContext(resource, param),
+      buildIdOrString(resource, param.name),
+      buildOperation(resource, param.value))
   }
 
   def buildCallVar(resource: ContextResource, variable: TmplCallVariableContext): TmplCallVar = {
@@ -234,7 +236,9 @@ object BuildTmplBlock {
 
   def buildEntity(resource: ContextResource, entity: TmplEntityValueContext): TmplEntityValue = TmplEntityValue(
     buildId(resource, entity.name),
-    if (entity.attrs != null && !entity.attrs.isEmpty) Some(entity.attrs.asScala.toList.map(attr => buildSetAttribute(resource, attr))) else None)
+    if (entity.params != null && !entity.params.isEmpty) Some(entity.params.asScala.toList.map(param => buildAttribute(resource, param))) else None,
+    if (entity.attrs != null && !entity.attrs.isEmpty) Some(entity.attrs.asScala.toList.map(attr => buildAttribute(resource, attr))) else None
+  )
 
   def buildArray(resource: ContextResource, `type`: Option[TmplType] = None, array: TmplArrayValueContext): TmplArrayValue = {
     TmplArrayValue(addContext(resource, array), `type`,
@@ -272,5 +276,11 @@ object BuildTmplBlock {
   def buildText(resource: ContextResource, text: TmplTextValueContext): TmplTextValue = TmplTextValue(addContext(resource, text), buildText(resource, text.value))
 
   def buildBool(resource: ContextResource, bool: TmplBoolValueContext): TmplBoolValue = TmplBoolValue(addContext(resource, bool), bool.value.getText == "true")
+
+  def buildIdOrString(resource: ContextResource, idOrString: TmplIdOrStringContext): Option[TmplID] = {
+    if (idOrString != null && idOrString.tmplID() != null) Some(buildId(resource, idOrString.tmplID()))
+    else if (idOrString != null && idOrString.tmplString() != null) Some(buildString(resource, idOrString.tmplString()))
+    else None
+  }
 
 }

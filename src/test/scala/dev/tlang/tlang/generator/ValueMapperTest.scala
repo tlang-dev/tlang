@@ -55,10 +55,10 @@ class ValueMapperTest extends AnyFunSuite {
   test("Replace in impl fors") {
     val values: mutable.Map[String, Value[_]] = mutable.Map("for1" -> new TLangString(None, "String"), "for2" -> new TLangString(None, "CharSequence"))
     val context = Context(List(Scope(values, mutable.Map(), mutable.Map())))
-    val fors = Some(List(TmplImplFor(None, TmplInterpretedID(None, call = CallObject(None, List(CallVarObject(None, "for1"))))), TmplImplFor(None, TmplInterpretedID(None, call = CallObject(None, List(CallVarObject(None, "for2")))))))
+    val fors = Some(TmplImplFor(None,None, List(TmplType(None,  TmplInterpretedID(None, call = CallObject(None, List(CallVarObject(None, "for1"))))),TmplType(None, TmplInterpretedID(None, call = CallObject(None, List(CallVarObject(None, "for2"))))))))
     val res = ValueMapper.mapFors(fors, context).get
-    assert("String" == res.head.types.toString)
-    assert("CharSequence" == res.last.types.toString)
+    assert("String" == res.types.toString)
+    assert("CharSequence" == res.types.head.toString)
   }
 
   test("Replace func name") {

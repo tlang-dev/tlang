@@ -3,7 +3,6 @@ package dev.tlang.tlang.astbuilder
 import dev.tlang.tlang.ast.common.operation.Operator
 import dev.tlang.tlang.ast.helper.HelperObjType
 import dev.tlang.tlang.ast.tmpl.call.{TmplCallArray, TmplCallFunc, TmplCallObj, TmplCallVar}
-import dev.tlang.tlang.ast.tmpl.condition.TmplOperation
 import dev.tlang.tlang.ast.tmpl.primitive._
 import dev.tlang.tlang.ast.tmpl.{TmplExprBlock, TmplIf, TmplMultiValue, TmplVar}
 import dev.tlang.tlang.astbuilder.context.ContextResource
@@ -102,8 +101,8 @@ class BuildTmplBlockTest extends AnyFunSuite {
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
     val impl = BuildTmplBlock.buildImpl(fakeContext, parser.tmplBlock().tmplContents.asScala.toList.head.tmplImpl())
-    assert("test1" == impl.fors.get.head.name.toString)
-    assert(1 == impl.fors.get.size)
+    assert("test1" == impl.fors.get.types.head.name.toString)
+    assert(1 == impl.fors.get.types.size)
   }
 
   test("Test impl with fors") {
@@ -115,10 +114,10 @@ class BuildTmplBlockTest extends AnyFunSuite {
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
     val impl = BuildTmplBlock.buildImpl(fakeContext, parser.tmplBlock().tmplContents.asScala.toList.head.tmplImpl())
-    assert("test1" == impl.fors.get.head.name.toString)
-    assert("test2" == impl.fors.get(1).name.toString)
-    assert("test3" == impl.fors.get.last.name.toString)
-    assert(3 == impl.fors.get.size)
+    assert("test1" == impl.fors.get.types.head.name.toString)
+    assert("test2" == impl.fors.get.types(1).name.toString)
+    assert("test3" == impl.fors.get.types.last.name.toString)
+    assert(3 == impl.fors.get.types.size)
   }
 
   test("Simple var") {
