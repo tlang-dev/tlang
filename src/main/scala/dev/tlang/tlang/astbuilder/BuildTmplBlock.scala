@@ -14,13 +14,24 @@ import scala.jdk.CollectionConverters._
 object BuildTmplBlock {
 
   def build(resource: ContextResource, tmpl: TmplBlockContext): TmplBlock = {
-    val pkg = if (tmpl.tmplPkg() != null && !tmpl.tmplPkg().isEmpty) Some(buildPkg(resource, tmpl.tmplPkg())) else None
-    val uses: List[TmplUse] = buildUses(resource, tmpl.tmplUses.asScala.toList)
+    if (tmpl.tmplFullBlock() != null) buildFullBlock(resource, tmpl, tmpl.tmplFullBlock())
+    else buildSpecialisedBlock(resource, tmpl, tmpl.tmplSpecialisedBlock())
+  }
+
+  def buildFullBlock(resource: ContextResource, tmpl: TmplBlockContext, full: TmplFullBlockContext): TmplBlock = {
+    val pkg = if (full.tmplPkg() != null && !full.tmplPkg().isEmpty) Some(buildPkg(resource, full.tmplPkg())) else None
+    val uses: List[TmplUse] = buildUses(resource, full.tmplUses.asScala.toList)
     TmplBlock(addContext(resource, tmpl), tmpl.name.getText, tmpl.lang.getText,
       if (tmpl.params != null && !tmpl.params.isEmpty) Some(BuildHelperBlock.buildParams(resource, tmpl.params.asScala.toList)) else None,
-      pkg, Some(uses),
-      buildContent(resource, tmpl.tmplContents.asScala.toList)
-    )
+      pkg, Some(uses), None,
+      buildContent(resource, full.tmplContents.asScala.toList))
+  }
+
+  def buildSpecialisedBlock(resource: ContextResource, tmpl: TmplBlockContext, spec: TmplSpecialisedBlockContext): TmplBlock = {
+    TmplBlock(addContext(resource, tmpl), tmpl.name.getText, tmpl.lang.getText,
+      if (tmpl.params != null && !tmpl.params.isEmpty) Some(BuildHelperBlock.buildParams(resource, tmpl.params.asScala.toList)) else None,
+      None, None, Some(tmpl.tmplSpecialisedBlock().`type`.getText),
+      buildContent(resource, List(spec.content)))
   }
 
   def buildPkg(resource: ContextResource, pkg: TmplPkgContext): TmplPkg = {
@@ -205,7 +216,7 @@ object BuildTmplBlock {
     TmplCallVar(addContext(resource, variable), buildId(resource, variable.name))
   }
 
-  def buildValueType(resource: ContextResource, valueType: TmplValueTypeContext): TmplValueType = {
+  def buildValueType(resource: ContextResource, valueType: TmplValueTypeContext): TmplValueType[_] = {
     valueType match {
       case callObj@_ if callObj.tmplCallObj() != null => buildCallObject(resource, callObj.tmplCallObj())
       case primitive@_ if primitive.tmplPrimitiveValue() != null => buildPrimitive(resource, primitive.tmplPrimitiveValue())
@@ -225,7 +236,7 @@ object BuildTmplBlock {
 
   def buildMultiValue(resource: ContextResource, value: TmplMultiValueContext): TmplMultiValue = TmplMultiValue(addContext(resource, value), value.values.asScala.toList.map(value => buildValueType(resource, value)))
 
-  def buildPrimitive(resource: ContextResource, value: TmplPrimitiveValueContext): TmplPrimitiveValue = value match {
+  def buildPrimitive(resource: ContextResource, value: TmplPrimitiveValueContext): TmplPrimitiveValue[_] = value match {
     case string@_ if string.tmplStringValue() != null => buildString(resource, string.tmplStringValue())
     case number@_ if number.tmplNumberValue() != null => buildNumber(resource, number.tmplNumberValue())
     case text@_ if text.tmplTextValue() != null => buildText(resource, text.tmplTextValue())
@@ -235,7 +246,8 @@ object BuildTmplBlock {
   }
 
   def buildEntity(resource: ContextResource, entity: TmplEntityValueContext): TmplEntityValue = TmplEntityValue(
-    buildId(resource, entity.name),
+    addContext(resource, entity),
+    buildOptionId(resource, entity.name),
     if (entity.params != null && !entity.params.isEmpty) Some(entity.params.asScala.toList.map(param => buildAttribute(resource, param))) else None,
     if (entity.attrs != null && !entity.attrs.isEmpty) Some(entity.attrs.asScala.toList.map(attr => buildAttribute(resource, attr))) else None
   )
@@ -267,7 +279,7 @@ object BuildTmplBlock {
 
   def buildString(resource: ContextResource, string: TmplStringValueContext): TmplStringValue = TmplStringValue(addContext(resource, string), buildString(resource, string.value))
 
-  def buildNumber(resource: ContextResource, number: TmplNumberValueContext): TmplPrimitiveValue = {
+  def buildNumber(resource: ContextResource, number: TmplNumberValueContext): TmplPrimitiveValue[_] = {
     val value = number.value.getText
     if (value.contains(".")) TmplDoubleValue(addContext(resource, number), value.toDouble)
     else TmplLongValue(addContext(resource, number), value.toLong)

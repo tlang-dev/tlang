@@ -51,7 +51,7 @@ class BuildTmplBlockTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    assert("dev.tlang.tlang" == BuildTmplBlock.buildUse(fakeContext, parser.tmplBlock().tmplUse().get(0)).parts.mkString("."))
+    assert("dev.tlang.tlang" == BuildTmplBlock.buildUse(fakeContext, parser.tmplBlock().tmplFullBlock().tmplUse().get(0)).parts.mkString("."))
   }
 
   test("Test uses in TmplBloc") {
@@ -63,7 +63,7 @@ class BuildTmplBlockTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val uses = BuildTmplBlock.buildUses(fakeContext, parser.tmplBlock().tmplUses.asScala.toList)
+    val uses = BuildTmplBlock.buildUses(fakeContext, parser.tmplBlock().tmplFullBlock().tmplUses.asScala.toList)
     assert("dev.tlang.tlang1" == uses.head.parts.mkString("."))
     assert("dev.tlang.tlang2" == uses(1).parts.mkString("."))
     assert("dev.tlang.tlang3" == uses.last.parts.mkString("."))
@@ -75,7 +75,7 @@ class BuildTmplBlockTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val uses = BuildTmplBlock.buildUses(fakeContext, parser.tmplBlock().tmplUses.asScala.toList)
+    val uses = BuildTmplBlock.buildUses(fakeContext, parser.tmplBlock().tmplFullBlock().tmplUses.asScala.toList)
     assert(uses.isEmpty)
   }
 
@@ -87,7 +87,7 @@ class BuildTmplBlockTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val impl = BuildTmplBlock.buildImpl(fakeContext, parser.tmplBlock().tmplContents.asScala.toList.head.tmplImpl())
+    val impl = BuildTmplBlock.buildImpl(fakeContext, parser.tmplBlock().tmplFullBlock().tmplContents.asScala.toList.head.tmplImpl())
     assert("test" == impl.name.toString)
     assert(impl.fors.isEmpty)
   }
@@ -100,7 +100,7 @@ class BuildTmplBlockTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val impl = BuildTmplBlock.buildImpl(fakeContext, parser.tmplBlock().tmplContents.asScala.toList.head.tmplImpl())
+    val impl = BuildTmplBlock.buildImpl(fakeContext, parser.tmplBlock().tmplFullBlock().tmplContents.asScala.toList.head.tmplImpl())
     assert("test1" == impl.fors.get.types.head.name.toString)
     assert(1 == impl.fors.get.types.size)
   }
@@ -113,7 +113,7 @@ class BuildTmplBlockTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val impl = BuildTmplBlock.buildImpl(fakeContext, parser.tmplBlock().tmplContents.asScala.toList.head.tmplImpl())
+    val impl = BuildTmplBlock.buildImpl(fakeContext, parser.tmplBlock().tmplFullBlock().tmplContents.asScala.toList.head.tmplImpl())
     assert("test1" == impl.fors.get.types.head.name.toString)
     assert("test2" == impl.fors.get.types(1).name.toString)
     assert("test3" == impl.fors.get.types.last.name.toString)
@@ -159,7 +159,7 @@ class BuildTmplBlockTest extends AnyFunSuite {
   test("Call func") {
     val lexer = new TLangLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
-        |myFunc(1)("param2", hasName = true)
+        |myFunc(1)("param2", hasName : true)
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)

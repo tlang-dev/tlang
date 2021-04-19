@@ -23,6 +23,8 @@ class TLangString(context: Option[ContextContent], value: String) extends Primit
   override def divide(value: PrimitiveValue[String]): Either[ExecError, TLangString] = Left(NotImplemented())
 
   override def modulo(value: PrimitiveValue[String]): Either[ExecError, TLangString] = Left(NotImplemented())
+
+  override def deepCopy(): TLangString = new TLangString(context, new String(value))
 }
 
 object TLangString extends TLangType {

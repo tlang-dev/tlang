@@ -28,4 +28,6 @@ case class EntityValue(context: Option[ContextContent],
   override def modulo(value: PrimitiveValue[EntityValue]): Either[ExecError, EntityValue] = Left(NotImplemented())
 
   override def getContext: Option[ContextContent] = context
+
+  override def deepCopy(): EntityValue = EntityValue(context, `type`, attrs, scope)
 }

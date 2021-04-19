@@ -30,16 +30,16 @@ abstract class CStyle {
     str.toString
   }
 
-  def genContents(impls: List[TmplContent]): String = {
-    var str = new StringBuilder
+  def genContents(impls: List[TmplContent[_]]): String = {
+    val str = new StringBuilder
     impls.foreach(str ++= genContent(_))
     str.toString()
   }
 
-  def genContent(impl: TmplContent): String = {
+  def genContent(impl: TmplContent[_]): String = {
     impl match {
       case func: TmplFunc => genFunc(func)
-      case expr: TmplExpression => genExpression(expr)
+      case expr: TmplExpression[_] => genExpression(expr)
       case impl: TmplImpl => genImpl(impl)
     }
   }
@@ -128,10 +128,10 @@ abstract class CStyle {
     } else ""
   }
 
-  def genExprContent(content: TmplExprContent, endOfStatement: Boolean = false, newLine: Boolean = false): String = {
+  def genExprContent(content: TmplExprContent[_], endOfStatement: Boolean = false, newLine: Boolean = false): String = {
     content match {
       case block: TmplExprBlock => genExprBlock(block)
-      case expression: TmplExpression => genExpression(expression, endOfStatement, newLine)
+      case expression: TmplExpression[_] => genExpression(expression, endOfStatement, newLine)
     }
   }
 
@@ -141,11 +141,11 @@ abstract class CStyle {
     str.toString()
   }
 
-  def genExpression(expr: TmplExpression, endOfStatement: Boolean = false, newLine: Boolean = false): String = {
+  def genExpression(expr: TmplExpression[_], endOfStatement: Boolean = false, newLine: Boolean = false): String = {
     expr match {
       case call: TmplCallObj => genEndOfStatement(genCallObj(call), endOfStatement, newLine)
       case func: TmplFunc => genFunc(func)
-      case valueType: TmplValueType => genValueType(valueType)
+      case valueType: TmplValueType[_] => genValueType(valueType)
       case variable: TmplVar => genEndOfStatement(genVar(variable), endOfStatement, newLine)
       case ifStmt: TmplIf => genIf(ifStmt)
       case forLoop: TmplFor => genFor(forLoop)
@@ -188,9 +188,9 @@ abstract class CStyle {
   def genIf(ifStmt: TmplIf): String = {
     val str = new StringBuilder
     str ++= "if(" ++= genOperation(ifStmt.cond) ++= ") "
-    str ++= genExprContent(ifStmt.content, ifStmt.content.isInstanceOf[TmplExpression])
+    str ++= genExprContent(ifStmt.content, ifStmt.content.isInstanceOf[TmplExpression[_]])
     if (ifStmt.elseBlock.isDefined) ifStmt.elseBlock.get match {
-      case Left(elseBlock) => str ++= " else " ++= genExprContent(elseBlock, elseBlock.isInstanceOf[TmplExpression])
+      case Left(elseBlock) => str ++= " else " ++= genExprContent(elseBlock, elseBlock.isInstanceOf[TmplExpression[_]])
       case Right(ifBlock) => str ++= " else " ++= genIf(ifBlock)
     }
     str ++= "\n"
@@ -207,13 +207,13 @@ abstract class CStyle {
   def genWhile(whileLoop: TmplWhile): String = {
     val str = new StringBuilder
     str ++= "while(" ++= genOperation(whileLoop.cond) ++= ") "
-    str ++= genExprContent(whileLoop.content, whileLoop.content.isInstanceOf[TmplExpression]) ++= "\n"
+    str ++= genExprContent(whileLoop.content, whileLoop.content.isInstanceOf[TmplExpression[_]]) ++= "\n"
     str.toString()
   }
 
   def genDoWhile(doWhile: TmplDoWhile): String = {
     val str = new StringBuilder
-    str ++= "do " ++= genExprContent(doWhile.content, doWhile.content.isInstanceOf[TmplExpression])
+    str ++= "do " ++= genExprContent(doWhile.content, doWhile.content.isInstanceOf[TmplExpression[_]])
     str ++= " while(" ++= genOperation(doWhile.cond) ++= ");\n"
     str.toString()
   }
@@ -241,11 +241,13 @@ abstract class CStyle {
   def genCallFunc(func: TmplCallFunc): String = {
     val str = new StringBuilder
     str ++= func.name.toString
-    func.currying.foreach(_.foreach(curry => {
-      str ++= "("
-      curry.params.foreach(str ++= _.map(attr => attr.name.fold("")(_.toString + ": ") + genOperation(attr.value)).mkString(", "))
-      str ++= ")"
-    }))
+    if (func.currying.isDefined) {
+      func.currying.foreach(_.foreach(curry => {
+        str ++= "("
+        curry.params.foreach(str ++= _.map(attr => attr.name.fold("")(_.toString + ": ") + genOperation(attr.value)).mkString(", "))
+        str ++= ")"
+      }))
+    } else str ++= "()"
     str.toString()
   }
 
@@ -263,17 +265,17 @@ abstract class CStyle {
     str.toString()
   }
 
-  def genValueType(valueType: TmplValueType): String = {
+  def genValueType(valueType: TmplValueType[_]): String = {
     valueType match {
       case call: TmplCallObj => genCallObj(call)
-      case primitive: TmplPrimitiveValue => genPrimitive(primitive)
+      case primitive: TmplPrimitiveValue[_] => genPrimitive(primitive)
     }
   }
 
-  def genSimpleValueType(valueType: TmplSimpleValueType): String = {
+  def genSimpleValueType(valueType: TmplSimpleValueType[_]): String = {
     valueType match {
       case call: TmplCallObj => genCallObj(call)
-      case value: TmplPrimitiveValue => genPrimitive(value)
+      case value: TmplPrimitiveValue[_] => genPrimitive(value)
     }
   }
 
@@ -308,7 +310,7 @@ abstract class CStyle {
     }
   }
 
-  def genPrimitive(primitive: TmplPrimitiveValue): String = {
+  def genPrimitive(primitive: TmplPrimitiveValue[_]): String = {
     primitive match {
       case string: TmplStringValue => genStringValue(string)
       case long: TmplLongValue => genLongValue(long)

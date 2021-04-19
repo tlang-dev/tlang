@@ -24,6 +24,7 @@ class TLangLong(context: Option[ContextContent], value: Long) extends PrimitiveV
 
   override def modulo(value: PrimitiveValue[Long]): Either[ExecError, TLangLong] = Right(new TLangLong(None, this.value % value.getElement))
 
+  override def deepCopy(): TLangLong = new TLangLong(context, value)
 }
 
 object TLangLong extends TLangType {

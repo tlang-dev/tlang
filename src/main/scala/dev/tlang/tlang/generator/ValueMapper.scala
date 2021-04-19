@@ -55,7 +55,7 @@ object ValueMapper {
     expr match {
       case call: TmplCallObj => mapCallObj(call, context)
       case func: TmplFunc => mapFunc(func, context)
-      case valueType: TmplValueType => mapValueType(valueType, context)
+      case valueType: TmplValueType[_] => mapValueType(valueType, context)
       case variable: TmplVar => mapVar(variable, context)
       case incl: TmplInclude => mapInclude(incl, context)
       case ret: TmplReturn => mapReturn(ret, context)
@@ -64,7 +64,7 @@ object ValueMapper {
     }
   }
 
-  def mapInclude(tmplInclude: TmplInclude, context: Context): TmplInclude = {
+  def mapInclude(tmplInclude: TmplInclude, context: Context): TmplExpression = {
     val contents = ListBuffer.empty[Either[TLangString, TmplBlockAsValue]]
     for (expr <- tmplInclude.calls) {
       ExecCallObject.run(expr, context) match {
@@ -225,10 +225,10 @@ object ValueMapper {
     variable
   }
 
-  def mapValueType(value: TmplValueType, context: Context): TmplValueType = {
+  def mapValueType(value: TmplValueType[_], context: Context): TmplValueType[_] = {
     value match {
       case multi: TmplMultiValue => mapMultiValue(multi, context)
-      case primitive: TmplPrimitiveValue => mapPrimitive(primitive, context)
+      case primitive: TmplPrimitiveValue[_] => mapPrimitive(primitive, context)
       case call: TmplCallObj => mapCallObj(call, context)
     }
   }
@@ -247,7 +247,7 @@ object ValueMapper {
     multi
   }
 
-  def mapPrimitive(primitive: TmplPrimitiveValue, context: Context): TmplPrimitiveValue = {
+  def mapPrimitive(primitive: TmplPrimitiveValue[_], context: Context): TmplPrimitiveValue[_] = {
     primitive match {
       case str: TmplStringValue => TmplStringValue(str.context, mapID(str.value, context))
       case text: TmplTextValue => TmplTextValue(text.context, mapID(text.value, context))

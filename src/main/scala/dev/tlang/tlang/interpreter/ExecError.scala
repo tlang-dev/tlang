@@ -1,6 +1,8 @@
 package dev.tlang.tlang.interpreter
 
-class ExecError(val code: String, val message: String = "") {
+import dev.tlang.tlang.astbuilder.context.ContextContent
+
+class ExecError(val code: String, val message: String = "", context: Option[ContextContent]=None) {
   override def toString: String = "[" + code + "] " + message
 }
 
@@ -14,6 +16,6 @@ case class WrongType(types: String) extends ExecError("WrongType", types)
 
 case class WrongNumberOfArguments(error: String) extends ExecError("WrongNumberOfArguments", error)
 
-case class NoValue(error: String) extends ExecError("NoValue", error)
+case class NoValue(error: String, context: Option[ContextContent]=None) extends ExecError("NoValue", error, context)
 
 case class ElementNotFound(error: String) extends ExecError("ElementNotFound", error)

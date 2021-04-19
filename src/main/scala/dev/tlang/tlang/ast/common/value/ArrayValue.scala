@@ -24,6 +24,8 @@ case class ArrayValue(context: Option[ContextContent], tbl: Option[List[ComplexA
   override def divide(value: PrimitiveValue[ArrayValue]): Either[ExecError, ArrayValue] = Left(NotImplemented())
 
   override def modulo(value: PrimitiveValue[ArrayValue]): Either[ExecError, ArrayValue] = Left(NotImplemented())
+
+  override def deepCopy(): ArrayValue = ArrayValue(context, tbl)
 }
 
 object ArrayValue extends TLangType {

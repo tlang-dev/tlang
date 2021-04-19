@@ -23,6 +23,8 @@ class TLangDouble(context: Option[ContextContent], value: Double) extends Primit
   override def divide(value: PrimitiveValue[Double]): Either[ExecError, TLangDouble] = Right(new TLangDouble(None, this.value / value.getElement))
 
   override def modulo(value: PrimitiveValue[Double]): Either[ExecError, TLangDouble] = Right(new TLangDouble(None, this.value % value.getElement))
+
+  override def deepCopy(): TLangDouble = new TLangDouble(context, value)
 }
 
 object TLangDouble extends TLangType {

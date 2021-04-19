@@ -33,7 +33,6 @@ object TmplFor {
       var error: Option[ExecError] = None
       for (i <- array.indices) {
         newScope.variables.update("_i", new TLangLong(None, i))
-        //        newScope.variables.update("_", array(i).value)
         val newCaller = CallFuncObject(None, Some("refFunc"), Some(List(CallFuncParam(None, Some(List(SetAttribute(None, Some("_"), array(i).value)))))))
         ExecCallFunc.run(newCaller, newContext) match {
           case Left(err) => error = Some(err)

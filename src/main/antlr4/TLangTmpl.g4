@@ -7,11 +7,15 @@ import TLangCommon, TLangHelper, CommonLexer;
  * The content of this block will be translated in the final language as it is
  */
 tmplBlock:
-	'tmpl' '[' lang=tmplID ']' name=tmplID ('('params += helperParam (',' params += helperParam)*')')? '{'
+	'tmpl' '[' lang=tmplID ']' name=tmplID ('('params += helperParam (',' params += helperParam)*')')? block = tmplFullBlock | tmplSpecialisedBlock;
+
+tmplFullBlock: '{'
 	(tmplPakage=tmplPkg)?
 	(tmplUses+=tmplUse)*
 	(tmplContents+=tmplContent)*
 	'}';
+
+tmplSpecialisedBlock: '[' type=ID ']' '{' (content=tmplContent)* '}';
 
 tmplContent: tmplImpl | tmplFunc | tmplExpression;
 
@@ -104,7 +108,7 @@ tmplAttribute: ((attr=tmplID)? (':' type=tmplType)? value=tmplOperation);
 tmplMultiValue: '(' (values+=tmplValueType) (',' values+=tmplValueType)* ')';
 
 tmplEntityValue:
-	'new' name=tmplID ('(' ((params+=tmplAttribute) (',' params+=tmplAttribute)*)? ')')?
+	'new' (name=tmplID)? ('(' ((params+=tmplAttribute) (',' params+=tmplAttribute)*)? ')')?
 	('{' ((attrs+=tmplAttribute) (',' attrs+=tmplAttribute)*)? '}')?;
 
 tmplOperation:

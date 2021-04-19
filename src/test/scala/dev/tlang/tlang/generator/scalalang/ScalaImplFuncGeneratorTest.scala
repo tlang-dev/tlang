@@ -22,7 +22,7 @@ class ScalaImplFuncGeneratorTest extends AnyFunSuite {
         |}}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val impl = BuildTmplBlock.buildImpl(fakeContext, parser.tmplBlock().tmplContents.asScala.toList.head.tmplImpl())
+    val impl = BuildTmplBlock.buildImpl(fakeContext, parser.tmplBlock().tmplFullBlock().tmplContents.asScala.toList.head.tmplImpl())
     val func = impl.content.get.head.asInstanceOf[TmplFunc]
     assert(ScalaImplFuncGenerator.gen(func).contains("def test {"))
   }
@@ -36,7 +36,7 @@ class ScalaImplFuncGeneratorTest extends AnyFunSuite {
         |}}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val impl = BuildTmplBlock.buildImpl(fakeContext, parser.tmplBlock().tmplContents.asScala.toList.head.tmplImpl())
+    val impl = BuildTmplBlock.buildImpl(fakeContext, parser.tmplBlock().tmplFullBlock().tmplContents.asScala.toList.head.tmplImpl())
     val func = impl.content.get.head.asInstanceOf[TmplFunc]
     assert(ScalaImplFuncGenerator.gen(func).contains("def test() {"))
   }
@@ -50,7 +50,7 @@ class ScalaImplFuncGeneratorTest extends AnyFunSuite {
         |}}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val impl = BuildTmplBlock.buildImpl(fakeContext, parser.tmplBlock().tmplContents.asScala.toList.head.tmplImpl())
+    val impl = BuildTmplBlock.buildImpl(fakeContext, parser.tmplBlock().tmplFullBlock().tmplContents.asScala.toList.head.tmplImpl())
     val func = impl.content.get.head.asInstanceOf[TmplFunc]
     assert(ScalaImplFuncGenerator.gen(func).contains("def test(myParam: MyType) {"))
   }
@@ -64,7 +64,7 @@ class ScalaImplFuncGeneratorTest extends AnyFunSuite {
         |}}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val impl = BuildTmplBlock.buildImpl(fakeContext, parser.tmplBlock().tmplContents.asScala.toList.head.tmplImpl())
+    val impl = BuildTmplBlock.buildImpl(fakeContext, parser.tmplBlock().tmplFullBlock().tmplContents.asScala.toList.head.tmplImpl())
     val func = impl.content.get.head.asInstanceOf[TmplFunc]
     assert(ScalaImplFuncGenerator.gen(func).contains("def test(myParam: Array[MyType]) {"))
   }
@@ -78,7 +78,7 @@ class ScalaImplFuncGeneratorTest extends AnyFunSuite {
         |}}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val impl = BuildTmplBlock.buildImpl(fakeContext, parser.tmplBlock().tmplContents.asScala.toList.head.tmplImpl())
+    val impl = BuildTmplBlock.buildImpl(fakeContext, parser.tmplBlock().tmplFullBlock().tmplContents.asScala.toList.head.tmplImpl())
     val func = impl.content.get.head.asInstanceOf[TmplFunc]
     assert(ScalaImplFuncGenerator.gen(func).contains("def test(myParam: MyType[JustAType[AlsoGeneric]], mySecondParam: MySecondType[SomeThing, AnotherThing[EvenSomethingElse]]) {"))
   }
@@ -92,7 +92,7 @@ class ScalaImplFuncGeneratorTest extends AnyFunSuite {
         |}}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val impl = BuildTmplBlock.buildImpl(fakeContext, parser.tmplBlock().tmplContents.asScala.toList.head.tmplImpl())
+    val impl = BuildTmplBlock.buildImpl(fakeContext, parser.tmplBlock().tmplFullBlock().tmplContents.asScala.toList.head.tmplImpl())
     val func = impl.content.get.head.asInstanceOf[TmplFunc]
     assert(ScalaImplFuncGenerator.gen(func).contains("def test(myParam: Array[MyType])(mySecondParam: MySecondType[JustTrying]) {"))
   }

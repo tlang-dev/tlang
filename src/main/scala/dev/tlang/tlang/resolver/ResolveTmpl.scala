@@ -44,18 +44,18 @@ object ResolveTmpl {
     else Right(())
   }
 
-  def resolveContent(content: TmplContent, module: Module, uses: List[DomainUse], currentResource: Resource, scope: Scope): Either[List[ResolverError], Unit] = {
+  def resolveContent(content: TmplContent[_], module: Module, uses: List[DomainUse], currentResource: Resource, scope: Scope): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
     content match {
       case func: TmplFunc => resolveFunc(func, module, uses, currentResource, scope)
       case impl: TmplImpl => resolveImpl(impl, module, uses, currentResource, scope)
-      case expr: TmplExprContent => resolveExprContent(expr, module, uses, currentResource, scope)
+      case expr: TmplExprContent[_] => resolveExprContent(expr, module, uses, currentResource, scope)
     }
     if (errors.nonEmpty) Left(errors.toList)
     else Right(())
   }
 
-  def resolveExprContent(expr: TmplExprContent, module: Module, uses: List[DomainUse], currentResource: Resource, scope: Scope): Either[List[ResolverError], Unit] = {
+  def resolveExprContent(expr: TmplExprContent[_], module: Module, uses: List[DomainUse], currentResource: Resource, scope: Scope): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
     expr match {
       case exprs: TmplExprBlock => exprs.exprs.foreach(expression => {
@@ -64,7 +64,7 @@ object ResolveTmpl {
           case _ =>
         }
       })
-      case expression: TmplExpression => resolveExpr(expression, module, uses, currentResource, scope) match {
+      case expression: TmplExpression[_] => resolveExpr(expression, module, uses, currentResource, scope) match {
         case Left(error) => errors.addAll(error)
         case _ =>
       }
@@ -81,11 +81,11 @@ object ResolveTmpl {
     else Right(())
   }
 
-  def resolveExpr(expr: TmplExpression, module: Module, uses: List[DomainUse], currentResource: Resource, scope: Scope): Either[List[ResolverError], Unit] = {
+  def resolveExpr(expr: TmplExpression[_], module: Module, uses: List[DomainUse], currentResource: Resource, scope: Scope): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
     expr match {
       case tmplVar: TmplVar => checkRet(errors, resolveVar(tmplVar, module, uses, currentResource, scope))
-      case value: TmplPrimitiveValue => checkRet(errors, resolvePrimitive(value, module, uses, currentResource, scope))
+      case value: TmplPrimitiveValue[_] => checkRet(errors, resolvePrimitive(value, module, uses, currentResource, scope))
       case call: TmplCallObj => checkRet(errors, resolveCall(call, module, uses, currentResource, scope))
       case operation: TmplOperation => checkRet(errors, resolveOperation(operation, module, uses, currentResource, scope))
       case func: TmplFunc => checkRet(errors, resolveFunc(func, module, uses, currentResource, scope))
@@ -247,7 +247,7 @@ object ResolveTmpl {
     else Right(())
   }
 
-  def resolvePrimitive(value: TmplPrimitiveValue, module: Module, uses: List[DomainUse], currentResource: Resource, scope: Scope): Either[List[ResolverError], Unit] = {
+  def resolvePrimitive(value: TmplPrimitiveValue[_], module: Module, uses: List[DomainUse], currentResource: Resource, scope: Scope): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
     if (errors.nonEmpty) Left(errors.toList)
     else Right(())

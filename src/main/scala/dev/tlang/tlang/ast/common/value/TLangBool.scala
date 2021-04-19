@@ -23,6 +23,8 @@ class TLangBool(context: Option[ContextContent], value: Boolean) extends Primiti
   override def divide(value: PrimitiveValue[Boolean]): Either[ExecError, TLangBool] = Left(NotImplemented())
 
   override def modulo(value: PrimitiveValue[Boolean]): Either[ExecError, TLangBool] = Left(NotImplemented())
+
+  override def deepCopy(): TLangBool = new TLangBool(context, value.booleanValue())
 }
 
 object TLangBool extends TLangType {

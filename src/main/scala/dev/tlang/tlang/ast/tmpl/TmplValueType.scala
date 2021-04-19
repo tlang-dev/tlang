@@ -1,3 +1,3 @@
 package dev.tlang.tlang.ast.tmpl
 
-abstract class TmplValueType extends TmplExpression
+abstract class TmplValueType[TYPE] extends TmplExpression[TYPE]

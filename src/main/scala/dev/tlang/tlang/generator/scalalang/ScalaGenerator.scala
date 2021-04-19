@@ -36,36 +36,36 @@ object ScalaGenerator {
   def genImpl(impl: TmplImpl): String = {
     val str = new StringBuilder
     str ++= "class " ++= impl.name.toString
-//    impl.fors.foreach(_.zipWithIndex.foreach {
-//      case (for1, 0) => str ++= " extends " ++= for1.name.toString
-//      case (for1, 1) => str ++= " with " ++= for1.name.toString
-//      case (for1, _) => str ++= ", " ++= for1.name.toString
-//    })
+    impl.fors.foreach(_.types.zipWithIndex.foreach {
+      case (for1, 0) => str ++= " extends " ++= for1.name.toString
+      case (for1, 1) => str ++= " with " ++= for1.name.toString
+      case (for1, _) => str ++= ", " ++= for1.name.toString
+    })
     str ++= " {\n" ++= genImplContent(impl.content) ++= "}\n\n"
     str.toString
   }
 
-  def genImplContent(content: Option[List[TmplContent]]): String = {
+  def genImplContent(content: Option[List[TmplContent[_]]]): String = {
     val str = new StringBuilder
     content.foreach(_.foreach {
       case func: TmplFunc => str ++= ScalaImplFuncGenerator.gen(func)
       case impl: TmplImpl => str ++= genImpl(impl)
-      case expr: TmplExpression => str ++= genExpression(expr)
+      case expr: TmplExpression[_] => str ++= genExpression(expr)
     })
     str.toString
   }
 
-  def genExpressions(exprs: Option[List[TmplExpression]]): String = {
+  def genExpressions(exprs: Option[List[TmplExpression[_]]]): String = {
     val str = new StringBuilder
     exprs.foreach(e => str ++= e.map(genExpression).mkString("\n"))
     str.toString
   }
 
-  def genExpression(expr: TmplExpression): String = {
+  def genExpression(expr: TmplExpression[_]): String = {
     expr match {
       case obj: TmplCallObj => genCallObject(obj)
       case func: TmplFunc => ScalaImplFuncGenerator.gen(func)
-      case value: TmplValueType => genValueType(value)
+      case value: TmplValueType[_] => genValueType(value)
       case variable: TmplVar => genVar(variable)
     }
   }
@@ -127,11 +127,11 @@ object ScalaGenerator {
     str.toString
   }
 
-  def genValueType(value: TmplValueType): String = {
+  def genValueType(value: TmplValueType[_]): String = {
     value match {
       case multi: TmplMultiValue => genMulti(multi)
       case callObj: TmplCallObj => genCallObject(callObj)
-      case primitive: TmplPrimitiveValue => genPrimitive(primitive)
+      case primitive: TmplPrimitiveValue[_] => genPrimitive(primitive)
     }
   }
 
@@ -154,7 +154,7 @@ object ScalaGenerator {
     str.toString
   }
 
-  def genPrimitive(value: TmplPrimitiveValue): String = {
+  def genPrimitive(value: TmplPrimitiveValue[_]): String = {
     value match {
       case string: TmplStringValue => genString(string)
       case double: TmplDoubleValue => genDouble(double)

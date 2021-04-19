@@ -40,7 +40,7 @@ object ExecOperation extends Executor {
 
   @tailrec
   def flatten(operator: Operator.operator, operation: Operation, ops: ListBuffer[(Option[Operator.operator], Value[_])], context: Context): Either[ExecError, List[(Option[Operator.operator], Value[_])]] = {
-    execOperation(operation, context, false) match {
+    execOperation(operation, context, newLevel = false) match {
       case Left(err) => Left(err)
       case Right(value) =>
         ops.addOne(Some(operator), value.get.head)
