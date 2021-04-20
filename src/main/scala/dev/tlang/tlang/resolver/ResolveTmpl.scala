@@ -44,7 +44,7 @@ object ResolveTmpl {
     else Right(())
   }
 
-  def resolveContent(content: TmplContent[_], module: Module, uses: List[DomainUse], currentResource: Resource, scope: Scope): Either[List[ResolverError], Unit] = {
+  def resolveContent(content: TmplNode[_], module: Module, uses: List[DomainUse], currentResource: Resource, scope: Scope): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
     content match {
       case func: TmplFunc => resolveFunc(func, module, uses, currentResource, scope)

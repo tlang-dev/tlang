@@ -23,12 +23,12 @@ class ScalaGenerator extends CodeGenerator {
 
 object ScalaGenerator {
 
-  def genBlocks(content: List[TmplContent]): String = {
+  def genBlocks(content: List[TmplNode[_]]): String = {
     val str = new StringBuilder
     content.foreach {
       case func: TmplFunc => str ++= ScalaImplFuncGenerator.gen(func)
       case impl: TmplImpl => str ++= genImpl(impl) ++ "\n\n"
-      case expr: TmplExpression => str ++= genExpression(expr)
+      case expr: TmplExpression[_] => str ++= genExpression(expr)
     }
     str.toString
   }
@@ -45,7 +45,7 @@ object ScalaGenerator {
     str.toString
   }
 
-  def genImplContent(content: Option[List[TmplContent[_]]]): String = {
+  def genImplContent(content: Option[List[TmplNode[_]]]): String = {
     val str = new StringBuilder
     content.foreach(_.foreach {
       case func: TmplFunc => str ++= ScalaImplFuncGenerator.gen(func)

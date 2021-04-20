@@ -74,7 +74,7 @@ class JavaGeneratorTest extends AnyFunSuite {
   }
 
   test("New variable in TmplBlock") {
-    val block = TmplBlock(None, "test", "java", None, None, None, None, Some(List(TmplVar(None, None, Some(TmplProp(None, List(TmplStringID(None, "private"), TmplStringID(None, "final")))), TmplStringID(None, "myVar"), Some(TmplType(None, TmplStringID(None, "List"), Some(TmplGeneric(None, List(TmplType(None, TmplStringID(None, "String"), None, isArray = true)))))), Some(TmplOperation(None, Right(TmplLongValue(None, 5))))))))
+    val block = TmplBlock(None, "test", "java", None, None, None, specialised = false, Some(List(TmplVar(None, None, Some(TmplProp(None, List(TmplStringID(None, "private"), TmplStringID(None, "final")))), TmplStringID(None, "myVar"), Some(TmplType(None, TmplStringID(None, "List"), Some(TmplGeneric(None, List(TmplType(None, TmplStringID(None, "String"), None, isArray = true)))))), Some(TmplOperation(None, Right(TmplLongValue(None, 5))))))))
     val res = new JavaGenerator().generate(block)
     assert(res.contains("private final List<String[]> myVar = 5;"))
   }
@@ -132,7 +132,7 @@ class JavaGeneratorTest extends AnyFunSuite {
   }
 
   test("For") {
-    val forLoop = TmplFor(TmplExprBlock(None, List(TmplCallObj(None, List(TmplCallFunc(None, TmplStringID(None, "myFunc"), None))))))
+    val forLoop = TmplFor(None, TmplExprBlock(None, List(TmplCallObj(None, List(TmplCallFunc(None, TmplStringID(None, "myFunc"), None))))))
     val res = JavaGenerator.genExpression(forLoop)
     assert("for() {\nmyFunc();\n}\n" == res)
   }

@@ -1,14 +1,17 @@
 package dev.tlang.tlang.ast.tmpl
 
 import dev.tlang.tlang.ast.common.call.CallObject
-import dev.tlang.tlang.ast.common.value.TLangString
 import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
+import dev.tlang.tlang.interpreter.Value
 
-case class TmplInclude(context: Option[ContextContent], calls: List[CallObject], var results: List[Either[TLangString, TmplBlockAsValue]] = List()) extends TmplExpression with AstContext {
-  override def deepCopy(): TmplInclude = TmplInclude(context, calls, results.map {
-    case Left(value) => Left(new TLangString(context, value.getElement))
-    case Right(value) => Right(value.deepCopy())
-  })
+case class TmplInclude(context: Option[ContextContent], calls: List[CallObject]) extends TmplExpression[TmplInclude] {
+  override def deepCopy(): TmplInclude = TmplInclude(context, calls)
 
   override def getContext: Option[ContextContent] = context
+
+  override def compareTo(value: Value[TmplInclude]): Int = 0
+
+  override def getElement: TmplInclude = this
+
+  override def getType: String = getClass.getName
 }

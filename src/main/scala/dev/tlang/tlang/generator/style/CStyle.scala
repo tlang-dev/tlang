@@ -30,13 +30,13 @@ abstract class CStyle {
     str.toString
   }
 
-  def genContents(impls: List[TmplContent[_]]): String = {
+  def genContents(impls: List[TmplNode[_]]): String = {
     val str = new StringBuilder
     impls.foreach(str ++= genContent(_))
     str.toString()
   }
 
-  def genContent(impl: TmplContent[_]): String = {
+  def genContent(impl: TmplNode[_]): String = {
     impl match {
       case func: TmplFunc => genFunc(func)
       case expr: TmplExpression[_] => genExpression(expr)
@@ -151,7 +151,7 @@ abstract class CStyle {
       case forLoop: TmplFor => genFor(forLoop)
       case whileLoop: TmplWhile => genWhile(whileLoop)
       case doWhile: TmplDoWhile => genDoWhile(doWhile)
-      case incl: TmplInclude => genInclude(incl)
+//      case incl: TmplInclude => genInclude(incl)
       case ret: TmplReturn => genEndOfStatement(genReturn(ret), endOfStatement, newLine)
       case affect: TmplAffect => genEndOfStatement(genAffect(affect), endOfStatement, newLine)
     }
@@ -164,14 +164,14 @@ abstract class CStyle {
     ret
   }
 
-  def genInclude(include: TmplInclude): String = {
-    val str = new StringBuilder
-    include.results.foreach {
-      case Left(tLangStr) => str ++= tLangStr.getElement ++= "\n"
-      case Right(block) => str ++= genBlock(block.block)
-    }
-    str.toString()
-  }
+//  def genInclude(include: TmplInclude): String = {
+//    val str = new StringBuilder
+//    include.results.foreach {
+//      case Left(tLangStr) => str ++= tLangStr.getElement ++= "\n"
+//      case Right(block) => str ++= genBlock(block.block)
+//    }
+//    str.toString()
+//  }
 
   def genAffect(affect: TmplAffect): String = {
     val str = new StringBuilder
@@ -324,7 +324,7 @@ abstract class CStyle {
   def genEntityValue(entity: TmplEntityValue): String = {
     val str = new StringBuilder
     str ++= " new " ++= entity.name.toString ++= "("
-    entity.attrs.foreach(attrs => str ++= attrs.map(attr => genAttribute(attr)).mkString(",\n"))
+    entity.attrs.foreach(attrs => str ++= attrs.map(attr => genAttribute(attr.asInstanceOf[TmplAttribute])).mkString(",\n"))
     str ++= ")"
     str.toString()
   }

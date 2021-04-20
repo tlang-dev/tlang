@@ -23,15 +23,15 @@ object BuildTmplBlock {
     val uses: List[TmplUse] = buildUses(resource, full.tmplUses.asScala.toList)
     TmplBlock(addContext(resource, tmpl), tmpl.name.getText, tmpl.lang.getText,
       if (tmpl.params != null && !tmpl.params.isEmpty) Some(BuildHelperBlock.buildParams(resource, tmpl.params.asScala.toList)) else None,
-      pkg, Some(uses), None,
-      buildContent(resource, full.tmplContents.asScala.toList))
+      pkg, Some(uses), specialised = false,
+      buildContents(resource, full.tmplContents.asScala.toList))
   }
 
   def buildSpecialisedBlock(resource: ContextResource, tmpl: TmplBlockContext, spec: TmplSpecialisedBlockContext): TmplBlock = {
     TmplBlock(addContext(resource, tmpl), tmpl.name.getText, tmpl.lang.getText,
       if (tmpl.params != null && !tmpl.params.isEmpty) Some(BuildHelperBlock.buildParams(resource, tmpl.params.asScala.toList)) else None,
-      None, None, Some(tmpl.tmplSpecialisedBlock().`type`.getText),
-      buildContent(resource, List(spec.content)))
+      None, None, specialised = true,
+      Some(List(buildSpecializedContent(resource, spec.content))))
   }
 
   def buildPkg(resource: ContextResource, pkg: TmplPkgContext): TmplPkg = {
@@ -48,19 +48,32 @@ object BuildTmplBlock {
       if (use.alias != null && !use.alias.isEmpty) Some(buildId(resource, use.alias)) else None)
   }
 
-  def buildContent(resource: ContextResource, content: List[TmplContentContext]): Option[List[TmplContent]] = {
-    if (content.nonEmpty) Some(content.map {
+  def buildContents(resource: ContextResource, content: List[TmplContentContext]): Option[List[TmplContent[_]]] = {
+    if (content.nonEmpty) Some(content.map(buildContent(resource, _)))
+    else None
+  }
+
+  def buildContent(resource: ContextResource, content: TmplContentContext): TmplContent[_] = {
+    content match {
       case impl@_ if impl.tmplImpl() != null => buildImpl(resource, impl.tmplImpl())
       case func@_ if func.tmplFunc() != null => buildFunc(resource, func.tmplFunc())
       case expr@_ if expr.tmplExpression() != null => buildExpression(resource, expr.tmplExpression())
-    })
-    else None
+    }
+  }
+
+  def buildSpecializedContent(resource: ContextResource, content: TmplSpecialisedContentContext): TmplNode[_] = {
+    content match {
+      case content@_ if content.tmplContent() != null => buildContent(resource, content.tmplContent())
+      case attr@_ if attr.tmplAttribute() != null => buildAttribute(resource, attr.tmplAttribute())
+      case setAttr@_ if setAttr.tmplSetAttribute() != null => buildSetAttribute(resource, setAttr.tmplSetAttribute())
+      case param@_ if param.tmplParam() != null => buildParam(resource, param.tmplParam())
+    }
   }
 
   def buildImpl(resource: ContextResource, impl: TmplImplContext): TmplImpl = {
     TmplImpl(addContext(resource, impl), buildAnnotations(resource, impl.annots.asScala.toList), buildProps(resource, impl.props),
       buildId(resource, impl.name), buildFors(resource, impl.forProps, impl.forNames), buildWiths(resource, impl.withProps, impl.withNames),
-      if (impl.tmplImplContents != null && !impl.tmplImplContents.isEmpty) buildContent(resource, impl.tmplImplContents.asScala.toList) else None)
+      if (impl.tmplImplContents != null && !impl.tmplImplContents.isEmpty) buildContents(resource, impl.tmplImplContents.asScala.toList) else None)
   }
 
   def buildFors(resource: ContextResource, props: TmplPropsContext, fors: java.util.List[TmplTypeContext]): Option[TmplImplFor] = {
@@ -103,11 +116,11 @@ object BuildTmplBlock {
   }
 
   def build(resource: ContextResource, params: TmplCurryingParamContext): List[TmplParam] = {
-    if (params.params != null && !params.params.isEmpty) params.params.asScala.map(param => build(resource, param)).toList
+    if (params.params != null && !params.params.isEmpty) params.params.asScala.map(param => buildParam(resource, param)).toList
     else List()
   }
 
-  def build(resource: ContextResource, param: TmplParamContext): TmplParam = {
+  def buildParam(resource: ContextResource, param: TmplParamContext): TmplParam = {
     TmplParam(addContext(resource, param), buildId(resource, param.name), buildType(resource, param.`type`))
   }
 
@@ -120,7 +133,7 @@ object BuildTmplBlock {
     else None
   }
 
-  def buildExprContent(resource: ContextResource, expr: TmplExprContentContext): TmplExprContent = {
+  def buildExprContent(resource: ContextResource, expr: TmplExprContentContext): TmplExprContent[_] = {
     expr match {
       case block@_ if expr.tmplExprBlock() != null => buildExprBlock(resource, block.tmplExprBlock())
       case exp@_ if exp.tmplExpression() != null => buildExpression(resource, expr.tmplExpression())
@@ -131,7 +144,7 @@ object BuildTmplBlock {
     TmplExprBlock(addContext(resource, block), block.exprs.asScala.toList.map(expr => buildExpression(resource, expr)))
   }
 
-  def buildExpression(resource: ContextResource, expr: TmplExpressionContext): TmplExpression = {
+  def buildExpression(resource: ContextResource, expr: TmplExpressionContext): TmplExpression[_] = {
     expr match {
       case tmplVar@_ if tmplVar.tmplVar() != null => buildVar(resource, tmplVar.tmplVar())
       case callObj@_ if callObj.tmplCallObj() != null => buildCallObject(resource, callObj.tmplCallObj())
@@ -230,6 +243,13 @@ object BuildTmplBlock {
       if (block.op != null) Some(BuildCommon.buildOperator(block.op.getText), buildOperation(resource, block.next)) else None)
   }
 
+  def buildInclAttribute(resource: ContextResource, attr: TmplInclAttributeContext): TmplNode[_] = {
+    attr match {
+      case incl@_ if incl.tmplInclude() != null => buildInclude(resource, incl.tmplInclude())
+      case attr@_ if attr.tmplAttribute() != null => buildAttribute(resource, attr.tmplAttribute())
+    }
+  }
+
   def buildAttribute(resource: ContextResource, attr: TmplAttributeContext): TmplAttribute = {
     TmplAttribute(addContext(resource, attr), buildOptionId(resource, attr.attr), if (attr.`type` != null) Some(buildType(resource, attr.`type`)) else None, buildOperation(resource, attr.value))
   }
@@ -248,8 +268,8 @@ object BuildTmplBlock {
   def buildEntity(resource: ContextResource, entity: TmplEntityValueContext): TmplEntityValue = TmplEntityValue(
     addContext(resource, entity),
     buildOptionId(resource, entity.name),
-    if (entity.params != null && !entity.params.isEmpty) Some(entity.params.asScala.toList.map(param => buildAttribute(resource, param))) else None,
-    if (entity.attrs != null && !entity.attrs.isEmpty) Some(entity.attrs.asScala.toList.map(attr => buildAttribute(resource, attr))) else None
+    if (entity.params != null && !entity.params.isEmpty) Some(entity.params.asScala.toList.map(param => buildInclAttribute(resource, param))) else None,
+    if (entity.attrs != null && !entity.attrs.isEmpty) Some(entity.attrs.asScala.toList.map(attr => buildInclAttribute(resource, attr))) else None
   )
 
   def buildArray(resource: ContextResource, `type`: Option[TmplType] = None, array: TmplArrayValueContext): TmplArrayValue = {

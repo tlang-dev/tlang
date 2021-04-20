@@ -1,5 +1,7 @@
 package dev.tlang.tlang.generator
 
+import dev.tlang.tlang.ast.common.call.CallObject
+import dev.tlang.tlang.ast.tmpl.primitive.TmplEntityValue
 import dev.tlang.tlang.ast.tmpl.{TmplNode, _}
 import dev.tlang.tlang.interpreter.context.Context
 import dev.tlang.tlang.interpreter.{ExecCallObject, ExecError, NoValue, Value}
@@ -8,9 +10,12 @@ import scala.collection.mutable.ListBuffer
 
 object TemplateBuilder {
 
-  def buildBlockAsValue(blockAsValue: TmplBlockAsValue): TmplBlockAsValue = {
-    buildBlock(blockAsValue.block, blockAsValue.context)
-    blockAsValue
+  def buildBlockAsValue(blockAsValue: TmplBlockAsValue): Either[ExecError, TmplBlockAsValue] = {
+    ValueMapper.mapBlock(blockAsValue)
+    buildBlock(blockAsValue.block, blockAsValue.context) match {
+      case Left(error) => Left(error)
+      case Right(_) => Right(blockAsValue)
+    }
   }
 
   def buildBlock(block: TmplBlock, context: Context): Either[ExecError, TmplBlock] = {
@@ -35,13 +40,78 @@ object TemplateBuilder {
     } else Right(None)
   }
 
-  def buildContents(tmplContents: Option[List[TmplContent[_]]], context: Context): Either[ExecError, Option[List[TmplContent[_]]]] = {
-    if (tmplContents.isDefined) {
-      forEach(tmplContents.get, context) match {
-        case Left(error) => Left(error)
-        case Right(value) => Right(Some(value.asInstanceOf[List[TmplContent[_]]]))
+  def buildContents(tmplContents: Option[List[TmplNode[_]]], context: Context): Either[ExecError, Option[List[TmplNode[_]]]] = {
+    if (tmplContents.isDefined) optionalForEach(tmplContents.get, context)
+    else Right(None)
+  }
+
+  def buildEntity(entity: TmplEntityValue, context: Context): Either[ExecError, TmplEntityValue] = {
+
+    def params(): Either[ExecError, TmplEntityValue] = {
+      if (entity.params.isDefined) {
+        buildInclAttributes(entity.params, context) match {
+          case Left(error) => Left(error)
+          case Right(nodes) =>
+            entity.params = nodes
+            attrs()
+        }
+      } else attrs()
+    }
+
+    def attrs(): Either[ExecError, TmplEntityValue] = {
+      if (entity.attrs.isDefined) {
+        buildInclAttributes(entity.attrs, context) match {
+          case Left(error) => Left(error)
+          case Right(nodes) =>
+            entity.attrs = nodes
+            Right(entity)
+        }
+      } else Right(entity)
+    }
+
+    if (entity.name.isDefined) includeTmplId(entity.name.get, context) match {
+      case Left(error) => Left(error)
+      case Right(value) =>
+        entity.name = Some(value.head.asInstanceOf[TmplID])
+        params()
+    } else params()
+
+  }
+
+  def buildInclAttributes(nodes: Option[List[TmplNode[_]]], context: Context): Either[ExecError, Option[List[TmplNode[_]]]] = {
+    if (nodes.isDefined) optionalForEach(nodes.get, context)
+    else Right(None)
+  }
+
+  def includeTmplInclude(tmplInclude: TmplInclude, context: Context): Either[ExecError, List[TmplNode[_]]] = {
+    var err: Option[ExecError] = None
+    var i = 0
+    val newNodes = ListBuffer.empty[TmplNode[_]]
+    while (err.isEmpty && i < tmplInclude.calls.length) {
+      callObject(tmplInclude.calls(i), context) match {
+        case Left(error) => err = Some(error)
+        case Right(nodes) => newNodes.addAll(nodes)
       }
-    } else Right(None)
+      i = i + 1
+    }
+    if (err.isDefined) Left(err.get)
+    else Right(newNodes.toList)
+  }
+
+  def callObject(callObject: CallObject, context: Context): Either[ExecError, List[TmplNode[_]]] = {
+    ExecCallObject.run(callObject, context) match {
+      case Left(error) => Left(error)
+      case Right(value) => value match {
+        case Some(value) =>
+          if (value.length == 1) {
+            goFurther(value.head) match {
+              case Left(error) => Left(error)
+              case Right(value) => Right(List(value))
+            }
+          } else goFurther(value)
+        case None => Left(NoValue("No value returned", callObject.getContext))
+      }
+    }
   }
 
   def includeTmplId(tmplID: TmplID, context: Context): Either[ExecError, List[TmplNode[_]]] = {
@@ -51,7 +121,7 @@ object TemplateBuilder {
         case Right(value) => value match {
           case Some(value) =>
             if (value.length == 1) {
-              goFurther(value(1)) match {
+              goFurther(value.head) match {
                 case Left(error) => Left(error)
                 case Right(value) => Right(List(TmplReplacedId(tmplID.getContext, inter.pre, value, inter.post)))
               }
@@ -86,9 +156,16 @@ object TemplateBuilder {
     value match {
       case valueBlock: TmplBlockAsValue =>
         buildBlockAsValue(valueBlock)
-        if (valueBlock.block.`type`.isDefined) Right(valueBlock.block.content.get.head.asInstanceOf[TmplNode[_]])
+        if (valueBlock.block.specialised) Right(valueBlock.block.content.get.head)
         else Right(valueBlock.block)
       case value: Value[_] => Right(value.asInstanceOf[TmplNode[_]])
+    }
+  }
+
+  def optionalForEach(nodes: List[TmplNode[_]], context: Context): Either[ExecError, Option[List[TmplNode[_]]]] = {
+    forEach(nodes, context) match {
+      case Left(err) => Left(err)
+      case Right(nodes) => Right(Some(nodes))
     }
   }
 
@@ -102,7 +179,11 @@ object TemplateBuilder {
           case Left(error) => err = Some(error)
           case Right(values) => newNodes.addAll(values)
         }
-        case _ => newNodes.addOne _
+        case tmplInclude: TmplInclude => includeTmplInclude(tmplInclude, context) match {
+          case Left(error) => err = Some(error)
+          case Right(values) => newNodes.addAll(values)
+        }
+        case node: TmplNode[_] => newNodes.addOne(node)
       }
       i = i + 1
     }

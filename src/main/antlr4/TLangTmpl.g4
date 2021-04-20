@@ -15,7 +15,11 @@ tmplFullBlock: '{'
 	(tmplContents+=tmplContent)*
 	'}';
 
-tmplSpecialisedBlock: '[' type=ID ']' '{' (content=tmplContent)* '}';
+tmplSpecialisedBlock: 'spec' '{' content=tmplSpecialisedContent '}';
+
+//tmplSpecialisedTypes: 'impl' | 'func' | 'expr' | 'attr' | 'setAttr' | 'param';
+
+tmplSpecialisedContent: tmplContent | tmplAttribute | tmplSetAttribute | tmplParam;
 
 tmplContent: tmplImpl | tmplFunc | tmplExpression;
 
@@ -103,13 +107,15 @@ tmplBoolValue: value= 'true' | 'false';
 
 tmplArrayValue: '[' (params+=tmplSetAttribute)? (',' params+=tmplSetAttribute)* ']';
 
+tmplInclAttribute: tmplInclude | tmplAttribute;
+
 tmplAttribute: ((attr=tmplID)? (':' type=tmplType)? value=tmplOperation);
 
 tmplMultiValue: '(' (values+=tmplValueType) (',' values+=tmplValueType)* ')';
 
 tmplEntityValue:
-	'new' (name=tmplID)? ('(' ((params+=tmplAttribute) (',' params+=tmplAttribute)*)? ')')?
-	('{' ((attrs+=tmplAttribute) (',' attrs+=tmplAttribute)*)? '}')?;
+	'new' (name=tmplID)? ('(' ((params+=tmplInclAttribute) (',' params+=tmplInclAttribute)*)? ')')?
+	('{' ((attrs+=tmplInclAttribute) (',' attrs+=tmplInclAttribute)*)? '}')?;
 
 tmplOperation:
      (content=tmplExpression (op=operator  next=tmplOperation)* |

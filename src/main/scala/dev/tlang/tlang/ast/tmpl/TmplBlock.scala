@@ -10,16 +10,16 @@ case class TmplBlock(context: Option[ContextContent], name: String, lang: String
                      var params: Option[List[HelperParam]],
                      var pkg: Option[TmplPkg] = None,
                      var uses: Option[List[TmplUse]] = None,
-                     var `type`: Option[String] = None,
-                     var content: Option[List[TmplContent[_]]] = None,
+                     var specialised: Boolean = false,
+                     var content: Option[List[TmplNode[_]]] = None,
                      scope: Scope = Scope()) extends DomainBlock with DeepCopy with TmplNode[TmplBlock] {
 
   override def deepCopy(): TmplBlock =
     TmplBlock(context, name, lang, params,
       if (pkg.isDefined) Some(pkg.get.deepCopy()) else None,
       if (uses.isDefined) Some(uses.get.map(_.deepCopy())) else None,
-      if (`type`.isDefined) Some(`type`.get) else None,
-      if (content.isDefined) Some(content.get.map(_.deepCopy().asInstanceOf[TmplContent[_]])) else None,
+      specialised,
+      if (content.isDefined) Some(content.get.map(_.deepCopy().asInstanceOf[TmplNode[_]])) else None,
       scope)
 
   override def getContext: Option[ContextContent] = context

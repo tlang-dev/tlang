@@ -10,8 +10,6 @@ import dev.tlang.tlang.interpreter.ExecCallObject
 import dev.tlang.tlang.interpreter.context.Context
 import dev.tlang.tlang.libraries.generator.Generator
 
-import scala.collection.mutable.ListBuffer
-
 object ValueMapper {
 
   def mapBlock(blockAsValue: TmplBlockAsValue): TmplBlockAsValue = {
@@ -33,52 +31,56 @@ object ValueMapper {
     uses
   }
 
-  def mapContent(content: Option[List[TmplContent]], context: Context): Option[List[TmplContent]] = {
+  def mapContent(content: Option[List[TmplNode[_]]], context: Context): Option[List[TmplNode[_]]] = {
     if (content.isDefined) {
-      val newContent: List[TmplContent] = content.get.map {
+      val newContent: List[TmplNode[_]] = content.get.map {
         case func: TmplFunc => mapFunc(func, context)
-        case expr: TmplExpression => mapExpression(expr, context)
+        case expr: TmplExpression[_] => mapExpression(expr, context)
         case impl: TmplImpl => mapImpl(impl, context)
+        // Specialized content
+        case attr: TmplAttribute => mapAttribute(attr, context)
+        case setAttr: TmplSetAttribute => mapSetAttribute(setAttr, context)
+        case param: TmplParam => mapParam(param, context)
       }
       Some(newContent)
     } else None
   }
 
-  def mapExpressions(exprs: Option[List[TmplExpression]], context: Context): Option[List[TmplExpression]] = {
+  def mapExpressions(exprs: Option[List[TmplExpression[_]]], context: Context): Option[List[TmplExpression[_]]] = {
     if (exprs.isDefined) {
-      val newExprs: List[TmplExpression] = exprs.get.map(mapExpression(_, context))
+      val newExprs: List[TmplExpression[_]] = exprs.get.map(mapExpression(_, context))
       Some(newExprs)
     } else None
   }
 
-  def mapExpression(expr: TmplExpression, context: Context): TmplExpression = {
+  def mapExpression(expr: TmplExpression[_], context: Context): TmplExpression[_] = {
     expr match {
       case call: TmplCallObj => mapCallObj(call, context)
       case func: TmplFunc => mapFunc(func, context)
       case valueType: TmplValueType[_] => mapValueType(valueType, context)
       case variable: TmplVar => mapVar(variable, context)
-      case incl: TmplInclude => mapInclude(incl, context)
+      //      case incl: TmplInclude => mapInclude(incl, context)
       case ret: TmplReturn => mapReturn(ret, context)
       case affect: TmplAffect => mapAffect(affect, context)
       case _ => expr
     }
   }
 
-  def mapInclude(tmplInclude: TmplInclude, context: Context): TmplExpression = {
-    val contents = ListBuffer.empty[Either[TLangString, TmplBlockAsValue]]
-    for (expr <- tmplInclude.calls) {
-      ExecCallObject.run(expr, context) match {
-        case Left(error) => println(error.message)
-        case Right(value) =>
-          value.get.foreach {
-            case str: TLangString => contents.addOne(Left(str))
-            case block: TmplBlockAsValue => contents.addOne(Right(mapBlock(block)))
-          }
-      }
-    }
-    tmplInclude.results = contents.toList
-    tmplInclude
-  }
+  //  def mapInclude(tmplInclude: TmplInclude, context: Context): TmplExpression[_] = {
+  //    val contents = ListBuffer.empty[Either[TLangString, TmplBlockAsValue]]
+  //    for (expr <- tmplInclude.calls) {
+  //      ExecCallObject.run(expr, context) match {
+  //        case Left(error) => println(error.message)
+  //        case Right(value) =>
+  //          value.get.foreach {
+  //            case str: TLangString => contents.addOne(Left(str))
+  //            case block: TmplBlockAsValue => contents.addOne(Right(mapBlock(block)))
+  //          }
+  //      }
+  //    }
+  //    tmplInclude.results = contents.toList
+  //    tmplInclude
+  //  }
 
   def mapImpl(impl: TmplImpl, context: Context): TmplImpl = {
     impl.name = mapID(impl.name, context)
@@ -211,13 +213,22 @@ object ValueMapper {
 
   def mapSetAttributes(attrs: Option[List[TmplSetAttribute]], context: Context): Option[List[TmplSetAttribute]] = {
     if (attrs.isDefined) {
-      val newAttrs: List[TmplSetAttribute] = attrs.get.map(attr => {
-        attr.name = if (attr.name.isDefined) Some(mapID(attr.name.get, context)) else None
-        attr.value = mapOperation(attr.value, context)
-        attr
-      })
+      val newAttrs: List[TmplSetAttribute] = attrs.get.map(mapSetAttribute(_, context))
       Some(newAttrs)
     } else None
+  }
+
+  def mapSetAttribute(attr: TmplSetAttribute, context: Context): TmplSetAttribute = {
+    attr.name = if (attr.name.isDefined) Some(mapID(attr.name.get, context)) else None
+    attr.value = mapOperation(attr.value, context)
+    attr
+  }
+
+  def mapAttribute(attrs: TmplAttribute, context: Context): TmplAttribute = {
+    attrs.attr = mapOptID(attrs.attr, context)
+    if (attrs.`type`.isDefined) attrs.`type` = Some(mapType(attrs.`type`.get, context))
+    attrs.value = mapOperation(attrs.value, context)
+    attrs
   }
 
   def mapCallVar(variable: TmplCallVar, context: Context): TmplCallVar = {
@@ -278,6 +289,11 @@ object ValueMapper {
       gen.get.types = gen.get.types.map(mapType(_, context))
       gen
     } else None
+  }
+
+  def mapOptID(id: Option[TmplID], context: Context): Option[TmplStringID] = {
+    if (id.isDefined) Some(mapID(id.get, context))
+    else None
   }
 
   def mapID(id: TmplID, context: Context): TmplStringID = {

@@ -4,7 +4,7 @@ import dev.tlang.tlang.ast.common.operation.Operator
 import dev.tlang.tlang.ast.helper.HelperObjType
 import dev.tlang.tlang.ast.tmpl.call.{TmplCallArray, TmplCallFunc, TmplCallObj, TmplCallVar}
 import dev.tlang.tlang.ast.tmpl.primitive._
-import dev.tlang.tlang.ast.tmpl.{TmplExprBlock, TmplIf, TmplMultiValue, TmplVar}
+import dev.tlang.tlang.ast.tmpl.{TmplAttribute, TmplExprBlock, TmplIf, TmplMultiValue, TmplVar}
 import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.{TLangLexer, TLangParser}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
@@ -222,15 +222,15 @@ class BuildTmplBlockTest extends AnyFunSuite {
     val parser = new TLangParser(tokens)
     val res = BuildTmplBlock.build(fakeContext, parser.tmplBlock()).content.get.head.asInstanceOf[TmplEntityValue]
     val attr1 = res.attrs.get.head
-    assert(1 == res.params.get.head.value.content.toOption.get.asInstanceOf[TmplLongValue].value)
-    assert("param2" == res.params.get.last.attr.get.toString)
-    assert("value2" == res.params.get.last.value.content.toOption.get.asInstanceOf[TmplStringValue].value.toString)
-    assert("attr1" == attr1.attr.get.toString)
-    assert("Int" == attr1.`type`.get.name.toString)
-    assert(attr1.`type`.get.isArray)
-    assert(1 == attr1.value.content.toOption.get.asInstanceOf[TmplArrayValue].params.get.head.value.content.toOption.get.asInstanceOf[TmplLongValue].value)
-    assert(2 == attr1.value.content.toOption.get.asInstanceOf[TmplArrayValue].params.get(1).value.content.toOption.get.asInstanceOf[TmplLongValue].value)
-    assert(3 == attr1.value.content.toOption.get.asInstanceOf[TmplArrayValue].params.get.last.value.content.toOption.get.asInstanceOf[TmplLongValue].value)
+    assert(1 == res.params.get.head.asInstanceOf[TmplAttribute].value.content.toOption.get.asInstanceOf[TmplLongValue].value)
+    assert("param2" == res.params.get.last.asInstanceOf[TmplAttribute].attr.get.toString)
+    assert("value2" == res.params.get.last.asInstanceOf[TmplAttribute].value.content.toOption.get.asInstanceOf[TmplStringValue].value.toString)
+    assert("attr1" == attr1.asInstanceOf[TmplAttribute].attr.get.toString)
+    assert("Int" == attr1.asInstanceOf[TmplAttribute].`type`.get.name.toString)
+    assert(attr1.asInstanceOf[TmplAttribute].`type`.get.isArray)
+    assert(1 == attr1.asInstanceOf[TmplAttribute].value.content.toOption.get.asInstanceOf[TmplArrayValue].params.get.head.value.content.toOption.get.asInstanceOf[TmplLongValue].value)
+    assert(2 == attr1.asInstanceOf[TmplAttribute].value.content.toOption.get.asInstanceOf[TmplArrayValue].params.get(1).value.content.toOption.get.asInstanceOf[TmplLongValue].value)
+    assert(3 == attr1.asInstanceOf[TmplAttribute].value.content.toOption.get.asInstanceOf[TmplArrayValue].params.get.last.value.content.toOption.get.asInstanceOf[TmplLongValue].value)
   }
 
   test("If") {

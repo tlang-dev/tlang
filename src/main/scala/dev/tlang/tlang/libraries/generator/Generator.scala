@@ -12,7 +12,7 @@ import dev.tlang.tlang.generator.scalalang.ScalaGenerator
 import dev.tlang.tlang.generator.typescript.TypeScriptGenerator
 import dev.tlang.tlang.generator.xml.XMLGenerator
 import dev.tlang.tlang.generator.yml.YMLGenerator
-import dev.tlang.tlang.generator.{CodeGenerator, ValueMapper}
+import dev.tlang.tlang.generator.{CodeGenerator, TemplateBuilder}
 import dev.tlang.tlang.interpreter._
 import dev.tlang.tlang.interpreter.context.{Context, ContextUtils}
 
@@ -47,8 +47,10 @@ object Generator {
     generators.get(block.block.lang) match {
       case None => Left(ElementNotFound("This language does not exist: " + block.block.lang))
       case Some(generator) =>
-        val newBlock = ValueMapper.mapBlock(block)
-        Right(new TLangString(None, generator.generate(newBlock.block)))
+        TemplateBuilder.buildBlockAsValue(block) match {
+          case Left(error) => Left(error)
+          case Right(newBlock) => Right(new TLangString(None, generator.generate(newBlock.block)))
+        }
     }
   }
 
