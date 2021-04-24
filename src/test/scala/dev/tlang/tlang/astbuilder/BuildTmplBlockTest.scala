@@ -3,8 +3,8 @@ package dev.tlang.tlang.astbuilder
 import dev.tlang.tlang.ast.common.operation.Operator
 import dev.tlang.tlang.ast.helper.HelperObjType
 import dev.tlang.tlang.ast.tmpl.call.{TmplCallArray, TmplCallFunc, TmplCallObj, TmplCallVar}
-import dev.tlang.tlang.ast.tmpl.primitive._
-import dev.tlang.tlang.ast.tmpl.{TmplAttribute, TmplExprBlock, TmplIf, TmplMultiValue, TmplVar}
+import dev.tlang.tlang.ast.tmpl.primitive.{TmplArrayValue, _}
+import dev.tlang.tlang.ast.tmpl._
 import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.{TLangLexer, TLangParser}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
@@ -51,7 +51,7 @@ class BuildTmplBlockTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    assert("dev.tlang.tlang" == BuildTmplBlock.buildUse(fakeContext, parser.tmplBlock().tmplFullBlock().tmplUse().get(0)).parts.mkString("."))
+    assert("dev.tlang.tlang" == BuildTmplBlock.buildUse(fakeContext, parser.tmplBlock().block.tmplFullBlock().tmplUse().get(0)).parts.mkString("."))
   }
 
   test("Test uses in TmplBloc") {
@@ -63,7 +63,7 @@ class BuildTmplBlockTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val uses = BuildTmplBlock.buildUses(fakeContext, parser.tmplBlock().tmplFullBlock().tmplUses.asScala.toList)
+    val uses = BuildTmplBlock.buildUses(fakeContext, parser.tmplBlock().block.tmplFullBlock().tmplUses.asScala.toList)
     assert("dev.tlang.tlang1" == uses.head.parts.mkString("."))
     assert("dev.tlang.tlang2" == uses(1).parts.mkString("."))
     assert("dev.tlang.tlang3" == uses.last.parts.mkString("."))
@@ -75,7 +75,7 @@ class BuildTmplBlockTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val uses = BuildTmplBlock.buildUses(fakeContext, parser.tmplBlock().tmplFullBlock().tmplUses.asScala.toList)
+    val uses = BuildTmplBlock.buildUses(fakeContext, parser.tmplBlock().block.tmplFullBlock().tmplUses.asScala.toList)
     assert(uses.isEmpty)
   }
 
@@ -87,7 +87,7 @@ class BuildTmplBlockTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val impl = BuildTmplBlock.buildImpl(fakeContext, parser.tmplBlock().tmplFullBlock().tmplContents.asScala.toList.head.tmplImpl())
+    val impl = BuildTmplBlock.buildImpl(fakeContext, parser.tmplBlock().block.tmplFullBlock().tmplContents.asScala.toList.head.tmplImpl())
     assert("test" == impl.name.toString)
     assert(impl.fors.isEmpty)
   }
@@ -100,7 +100,7 @@ class BuildTmplBlockTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val impl = BuildTmplBlock.buildImpl(fakeContext, parser.tmplBlock().tmplFullBlock().tmplContents.asScala.toList.head.tmplImpl())
+    val impl = BuildTmplBlock.buildImpl(fakeContext, parser.tmplBlock().block.tmplFullBlock().tmplContents.asScala.toList.head.tmplImpl())
     assert("test1" == impl.fors.get.types.head.name.toString)
     assert(1 == impl.fors.get.types.size)
   }
@@ -113,7 +113,7 @@ class BuildTmplBlockTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val impl = BuildTmplBlock.buildImpl(fakeContext, parser.tmplBlock().tmplFullBlock().tmplContents.asScala.toList.head.tmplImpl())
+    val impl = BuildTmplBlock.buildImpl(fakeContext, parser.tmplBlock().block.tmplFullBlock().tmplContents.asScala.toList.head.tmplImpl())
     assert("test1" == impl.fors.get.types.head.name.toString)
     assert("test2" == impl.fors.get.types(1).name.toString)
     assert("test3" == impl.fors.get.types.last.name.toString)
@@ -165,10 +165,10 @@ class BuildTmplBlockTest extends AnyFunSuite {
     val parser = new TLangParser(tokens)
     val res = BuildTmplBlock.build(fakeContext, parser.tmplBlock()).content.get.head.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallFunc]
     assert("myFunc" == res.name.toString)
-    assert(1 == res.currying.get.head.params.get.head.value.content.toOption.get.asInstanceOf[TmplLongValue].value)
-    assert("param2" == res.currying.get.last.params.get.head.value.content.toOption.get.asInstanceOf[TmplStringValue].value.toString)
-    assert("hasName" == res.currying.get.last.params.get.last.name.get.toString)
-    assert(res.currying.get.last.params.get.last.value.content.toOption.get.asInstanceOf[TmplBoolValue].value)
+    assert(1 == res.currying.get.head.params.get.head.asInstanceOf[TmplSetAttribute].value.content.toOption.get.asInstanceOf[TmplLongValue].value)
+    assert("param2" == res.currying.get.last.params.get.head.asInstanceOf[TmplSetAttribute].value.content.toOption.get.asInstanceOf[TmplStringValue].value.toString)
+    assert("hasName" == res.currying.get.last.params.get.last.asInstanceOf[TmplSetAttribute].name.get.toString)
+    assert(res.currying.get.last.params.get.last.asInstanceOf[TmplSetAttribute].value.content.toOption.get.asInstanceOf[TmplBoolValue].value)
   }
 
   test("Condition block") {
@@ -206,9 +206,9 @@ class BuildTmplBlockTest extends AnyFunSuite {
     val array = res.values.last.asInstanceOf[TmplArrayValue]
     assert(1 == res.values.head.asInstanceOf[TmplLongValue].value)
     assert("value2" == res.values(1).asInstanceOf[TmplStringValue].value.toString)
-    assert(1 == array.params.get.head.value.content.toOption.get.asInstanceOf[TmplLongValue].value)
-    assert(2 == array.params.get(1).value.content.toOption.get.asInstanceOf[TmplLongValue].value)
-    assert(3 == array.params.get.last.value.content.toOption.get.asInstanceOf[TmplLongValue].value)
+    assert(1 == array.params.get.head.asInstanceOf[TmplSetAttribute].value.content.toOption.get.asInstanceOf[TmplLongValue].value)
+    assert(2 == array.params.get(1).asInstanceOf[TmplSetAttribute].value.content.toOption.get.asInstanceOf[TmplLongValue].value)
+    assert(3 == array.params.get.last.asInstanceOf[TmplSetAttribute].value.content.toOption.get.asInstanceOf[TmplLongValue].value)
   }
 
   test("Entity") {
@@ -228,9 +228,9 @@ class BuildTmplBlockTest extends AnyFunSuite {
     assert("attr1" == attr1.asInstanceOf[TmplAttribute].attr.get.toString)
     assert("Int" == attr1.asInstanceOf[TmplAttribute].`type`.get.name.toString)
     assert(attr1.asInstanceOf[TmplAttribute].`type`.get.isArray)
-    assert(1 == attr1.asInstanceOf[TmplAttribute].value.content.toOption.get.asInstanceOf[TmplArrayValue].params.get.head.value.content.toOption.get.asInstanceOf[TmplLongValue].value)
-    assert(2 == attr1.asInstanceOf[TmplAttribute].value.content.toOption.get.asInstanceOf[TmplArrayValue].params.get(1).value.content.toOption.get.asInstanceOf[TmplLongValue].value)
-    assert(3 == attr1.asInstanceOf[TmplAttribute].value.content.toOption.get.asInstanceOf[TmplArrayValue].params.get.last.value.content.toOption.get.asInstanceOf[TmplLongValue].value)
+    assert(1 == attr1.asInstanceOf[TmplAttribute].value.content.toOption.get.asInstanceOf[TmplArrayValue].params.get.head.asInstanceOf[TmplSetAttribute].value.content.toOption.get.asInstanceOf[TmplLongValue].value)
+    assert(2 == attr1.asInstanceOf[TmplAttribute].value.content.toOption.get.asInstanceOf[TmplArrayValue].params.get(1).asInstanceOf[TmplSetAttribute].value.content.toOption.get.asInstanceOf[TmplLongValue].value)
+    assert(3 == attr1.asInstanceOf[TmplAttribute].value.content.toOption.get.asInstanceOf[TmplArrayValue].params.get.last.asInstanceOf[TmplSetAttribute].value.content.toOption.get.asInstanceOf[TmplLongValue].value)
   }
 
   test("If") {

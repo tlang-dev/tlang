@@ -7,6 +7,7 @@ import dev.tlang.tlang.ast.tmpl.func.TmplFunc
 import dev.tlang.tlang.ast.tmpl.primitive.{TmplStringValue, TmplTextValue}
 import dev.tlang.tlang.ast.tmpl._
 import dev.tlang.tlang.ast.tmpl.condition.TmplOperation
+import dev.tlang.tlang.generator.mapper.ValueMapper
 import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.interpreter.context.{Context, Scope}
 import org.scalatest.funsuite.AnyFunSuite

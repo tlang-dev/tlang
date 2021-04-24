@@ -14,8 +14,8 @@ import scala.jdk.CollectionConverters._
 object BuildTmplBlock {
 
   def build(resource: ContextResource, tmpl: TmplBlockContext): TmplBlock = {
-    if (tmpl.tmplFullBlock() != null) buildFullBlock(resource, tmpl, tmpl.tmplFullBlock())
-    else buildSpecialisedBlock(resource, tmpl, tmpl.tmplSpecialisedBlock())
+    if (tmpl.block.tmplFullBlock() != null) buildFullBlock(resource, tmpl, tmpl.block.tmplFullBlock())
+    else buildSpecialisedBlock(resource, tmpl, tmpl.block.tmplSpecialisedBlock())
   }
 
   def buildFullBlock(resource: ContextResource, tmpl: TmplBlockContext, full: TmplFullBlockContext): TmplBlock = {
@@ -195,7 +195,7 @@ object BuildTmplBlock {
     TmplCallObj(addContext(resource, obj), obj.objs.asScala.toList.map(obj => buildCallObjectType(resource, obj)))
   }
 
-  def buildCallObjectType(resource: ContextResource, objType: TmplCallObjTypeContext): TmplCallObjType = {
+  def buildCallObjectType(resource: ContextResource, objType: TmplCallObjTypeContext): TmplCallObjType[_] = {
     objType match {
       case array@_ if array.tmplCallArray() != null => buildCallArray(resource, array.tmplCallArray())
       case func@_ if func.tmplCallFunc() != null => buildCallFunc(resource, func.tmplCallFunc())
@@ -216,13 +216,20 @@ object BuildTmplBlock {
   }
 
   def buildCallFuncParams(resource: ContextResource, param: TmplCurryParamsContext): TmplCurryParam = {
-    TmplCurryParam(addContext(resource, param), if (param.params != null && !param.params.isEmpty) Some(param.params.asScala.toList.map(param => buildSetAttribute(resource, param))) else None)
+    TmplCurryParam(addContext(resource, param), if (param.params != null && !param.params.isEmpty) Some(param.params.asScala.toList.map(param => buildInclSetAttribute(resource, param))) else None)
   }
 
   def buildSetAttribute(resource: ContextResource, param: TmplSetAttributeContext): TmplSetAttribute = {
     TmplSetAttribute(addContext(resource, param),
       buildIdOrString(resource, param.name),
       buildOperation(resource, param.value))
+  }
+
+  def buildInclSetAttribute(resource: ContextResource, attr: TmplInclSetAttributeContext): TmplNode[_] = {
+    attr match {
+      case incl@_ if incl.tmplInclude() != null => buildInclude(resource, incl.tmplInclude())
+      case attr@_ if attr.tmplSetAttribute() != null => buildSetAttribute(resource, attr.tmplSetAttribute())
+    }
   }
 
   def buildCallVar(resource: ContextResource, variable: TmplCallVariableContext): TmplCallVar = {
@@ -274,7 +281,7 @@ object BuildTmplBlock {
 
   def buildArray(resource: ContextResource, `type`: Option[TmplType] = None, array: TmplArrayValueContext): TmplArrayValue = {
     TmplArrayValue(addContext(resource, array), `type`,
-      if (array.params != null && !array.params.isEmpty) Some(array.params.asScala.toList.map(param => buildSetAttribute(resource, param))) else None)
+      if (array.params != null && !array.params.isEmpty) Some(array.params.asScala.toList.map(param => buildInclSetAttribute(resource, param))) else None)
   }
 
   def buildOptionId(resource: ContextResource, id: TmplIDContext): Option[TmplID] = {

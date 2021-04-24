@@ -1,11 +1,11 @@
 package dev.tlang.tlang.ast.tmpl.call
 
-import dev.tlang.tlang.ast.tmpl.{TmplExpression, TmplSimpleValueType}
-import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
+import dev.tlang.tlang.ast.tmpl.{TmplExpression, TmplNode, TmplSimpleValueType}
+import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
 
-case class TmplCallObj(context: Option[ContextContent], var calls: List[TmplCallObjType]) extends TmplSimpleValueType[TmplCallObj] with TmplExpression[TmplCallObj] with AstContext {
-  override def deepCopy(): TmplCallObj = TmplCallObj(context, calls.map(_.deepCopy().asInstanceOf[TmplCallObjType]))
+case class TmplCallObj(context: Option[ContextContent], var calls: List[TmplCallObjType[_]]) extends TmplSimpleValueType[TmplCallObj] with TmplExpression[TmplCallObj] {
+  override def deepCopy(): TmplCallObj = TmplCallObj(context, calls.map(_.deepCopy().asInstanceOf[TmplCallObjType[_]]))
 
   override def getContext: Option[ContextContent] = context
 

@@ -7,6 +7,7 @@ import dev.tlang.tlang.ast.helper.{HelperObjType, HelperParam}
 import dev.tlang.tlang.ast.tmpl._
 import dev.tlang.tlang.ast.tmpl.condition.TmplOperation
 import dev.tlang.tlang.ast.tmpl.primitive.{TmplEntityValue, TmplStringValue}
+import dev.tlang.tlang.generator.builder.{EntityBuilder, TemplateBuilder}
 import dev.tlang.tlang.interpreter.context.{Context, Scope}
 import dev.tlang.tlang.libraries.builtin.BuiltIntLibs
 import org.scalatest.funsuite.AnyFunSuite
@@ -81,7 +82,7 @@ class TemplateBuilderTest extends AnyFunSuite {
     )))),
       functions = mutable.Map("forEach" -> BuiltIntLibs.buildIntLibs("forEach")))))
 
-    val res = TemplateBuilder.buildEntity(entity, context).toOption.get
+    val res = EntityBuilder.buildEntity(entity, context).toOption.get
     assert("myValue1" == res.params.get.head.asInstanceOf[TmplAttribute].value.content.toOption.get.asInstanceOf[TmplStringValue].toString)
     assert("myValue2" == res.params.get(1).asInstanceOf[TmplAttribute].value.content.toOption.get.asInstanceOf[TmplStringValue].toString)
     assert("myValue3" == res.params.get(2).asInstanceOf[TmplAttribute].value.content.toOption.get.asInstanceOf[TmplStringValue].toString)

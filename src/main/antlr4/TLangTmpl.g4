@@ -7,7 +7,9 @@ import TLangCommon, TLangHelper, CommonLexer;
  * The content of this block will be translated in the final language as it is
  */
 tmplBlock:
-	'tmpl' '[' lang=tmplID ']' name=tmplID ('('params += helperParam (',' params += helperParam)*')')? block = tmplFullBlock | tmplSpecialisedBlock;
+	'tmpl' '[' lang=tmplID ']' name=tmplID ('('params += helperParam (',' params += helperParam)*')')? block = tmplBlockContentType;
+
+tmplBlockContentType: tmplFullBlock | tmplSpecialisedBlock;
 
 tmplFullBlock: '{'
 	(tmplPakage=tmplPkg)?
@@ -19,7 +21,7 @@ tmplSpecialisedBlock: 'spec' '{' content=tmplSpecialisedContent '}';
 
 //tmplSpecialisedTypes: 'impl' | 'func' | 'expr' | 'attr' | 'setAttr' | 'param';
 
-tmplSpecialisedContent: tmplContent | tmplAttribute | tmplSetAttribute | tmplParam;
+tmplSpecialisedContent: tmplContent | tmplAttribute | 'setAttr' tmplSetAttribute | tmplParam;
 
 tmplContent: tmplImpl | tmplFunc | tmplExpression;
 
@@ -85,9 +87,11 @@ tmplCallObjType: tmplCallArray | tmplCallFunc | tmplCallVariable;
 
 tmplCallFunc: ((name=tmplID) | '_') (currying += tmplCurryParams)+;
 
-tmplCurryParams:'(' (params+=tmplSetAttribute (',' params+=tmplSetAttribute)*)? ')';
+tmplCurryParams:'(' (params+=tmplInclSetAttribute (',' params+=tmplInclSetAttribute)*)? ')';
 
 tmplSetAttribute: (name=tmplIdOrString ':')? value=tmplOperation;
+
+tmplInclSetAttribute: tmplInclude | tmplSetAttribute;
 
 tmplCallArray: name=tmplID '[' elem=tmplOperation ']';
 
@@ -105,7 +109,7 @@ tmplTextValue: value=tmplText;
 
 tmplBoolValue: value= 'true' | 'false';
 
-tmplArrayValue: '[' (params+=tmplSetAttribute)? (',' params+=tmplSetAttribute)* ']';
+tmplArrayValue: '[' (params+=tmplInclSetAttribute)? (',' params+=tmplInclSetAttribute)* ']';
 
 tmplInclAttribute: tmplInclude | tmplAttribute;
 

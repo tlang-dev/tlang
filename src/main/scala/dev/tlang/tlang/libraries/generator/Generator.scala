@@ -3,16 +3,17 @@ package dev.tlang.tlang.libraries.generator
 import dev.tlang.tlang.ast.common.value.TLangString
 import dev.tlang.tlang.ast.helper._
 import dev.tlang.tlang.ast.tmpl.TmplBlockAsValue
-import dev.tlang.tlang.generator.dart.DartGenerator
-import dev.tlang.tlang.generator.groovy.GroovyGenerator
-import dev.tlang.tlang.generator.java.JavaGenerator
-import dev.tlang.tlang.generator.json.JSONGenerator
-import dev.tlang.tlang.generator.rust.RustGenerator
-import dev.tlang.tlang.generator.scalalang.ScalaGenerator
-import dev.tlang.tlang.generator.typescript.TypeScriptGenerator
-import dev.tlang.tlang.generator.xml.XMLGenerator
-import dev.tlang.tlang.generator.yml.YMLGenerator
-import dev.tlang.tlang.generator.{CodeGenerator, TemplateBuilder}
+import dev.tlang.tlang.generator.langs.dart.DartGenerator
+import dev.tlang.tlang.generator.langs.groovy.GroovyGenerator
+import dev.tlang.tlang.generator.langs.java.JavaGenerator
+import dev.tlang.tlang.generator.langs.json.JSONGenerator
+import dev.tlang.tlang.generator.langs.rust.RustGenerator
+import dev.tlang.tlang.generator.langs.scalalang.ScalaGenerator
+import dev.tlang.tlang.generator.langs.typescript.TypeScriptGenerator
+import dev.tlang.tlang.generator.langs.xml.XMLGenerator
+import dev.tlang.tlang.generator.langs.yml.YMLGenerator
+import dev.tlang.tlang.generator.CodeGenerator
+import dev.tlang.tlang.generator.builder.TemplateBuilder
 import dev.tlang.tlang.interpreter._
 import dev.tlang.tlang.interpreter.context.{Context, ContextUtils}
 

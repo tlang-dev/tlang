@@ -1,5 +1,5 @@
 package dev.tlang.tlang.ast.tmpl.call
 
-import dev.tlang.tlang.ast.tmpl.DeepCopy
+import dev.tlang.tlang.ast.tmpl.TmplNode
 
-abstract class TmplCallObjType extends DeepCopy
+abstract class TmplCallObjType[TYPE] extends TmplNode[TYPE]
