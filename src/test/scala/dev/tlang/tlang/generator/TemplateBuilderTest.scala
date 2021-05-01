@@ -6,7 +6,7 @@ import dev.tlang.tlang.ast.common.value.{ArrayValue, ComplexAttribute, LazyValue
 import dev.tlang.tlang.ast.helper.{HelperObjType, HelperParam}
 import dev.tlang.tlang.ast.tmpl._
 import dev.tlang.tlang.ast.tmpl.condition.TmplOperation
-import dev.tlang.tlang.ast.tmpl.primitive.{TmplEntityValue, TmplStringValue}
+import dev.tlang.tlang.ast.tmpl.primitive.{TmplArrayValue, TmplEntityValue, TmplStringValue}
 import dev.tlang.tlang.generator.builder.{EntityBuilder, TemplateBuilder}
 import dev.tlang.tlang.interpreter.context.{Context, Scope}
 import dev.tlang.tlang.libraries.builtin.BuiltIntLibs
@@ -58,7 +58,7 @@ class TemplateBuilderTest extends AnyFunSuite {
     assert("pkg1.pkg2.pkg3.pkg4.pkg5" == res.parts.mkString("."))
   }
 
-  test("Test entity with for in call") {
+  test("Entity with for in call") {
     val tmpl = TmplBlock(None, "myTmpl", "scala", Some(List(HelperParam(None, Some("index"), HelperObjType(None, "String")))), None, None, specialised = true, Some(List(
       TmplAttribute(None, None, None, TmplOperation(None, Right(TmplStringValue(None, TmplInterpretedID(None, Some("myValue"), CallObject(None, List(CallVarObject(None, "index"))), None)))))
     )))
@@ -88,5 +88,12 @@ class TemplateBuilderTest extends AnyFunSuite {
     assert("myValue3" == res.params.get(2).asInstanceOf[TmplAttribute].value.content.toOption.get.asInstanceOf[TmplStringValue].toString)
     assert("myValue4" == res.params.get(3).asInstanceOf[TmplAttribute].value.content.toOption.get.asInstanceOf[TmplStringValue].toString)
     assert("myValue5" == res.params.get.last.asInstanceOf[TmplAttribute].value.content.toOption.get.asInstanceOf[TmplStringValue].toString)
+  }
+
+  test("Build array with call") {
+    val array = TmplArrayValue(None, None, Some(List(TmplSetAttribute(None, None, TmplOperation(None, Right(TmplStringValue(None, TmplInterpretedID(None, Some("before_"), CallObject(None, List(CallVarObject(None, "var1"))), Some("_after")))))))))
+    val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangString(None, "during")))))
+    val res = TemplateBuilder.buildArray(array, context).toOption.get.params.get
+    assert("before_during_after" == res.head.asInstanceOf[TmplSetAttribute].value.content.toOption.get.toString)
   }
 }

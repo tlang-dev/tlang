@@ -351,6 +351,7 @@ object TemplateBuilder {
       case ret: TmplReturn => toList(buildReturn(ret, context))
       case func: TmplFunc => toList(FuncBuilder.buildFunc(func, context))
       case exprBlock: TmplExprBlock => toList(buildExpBlock(exprBlock, context))
+      case stringValue: TmplStringValue => toList(buildStringValue(stringValue, context))
       //case expr: TmplExpression[_] => buildExpression(expr, context)
       case _: TmplNode[_] => Right(List(node))
     }
@@ -358,8 +359,8 @@ object TemplateBuilder {
 
   def toList[TYPE](either: Either[ExecError, TmplNode[_]]): Either[ExecError, List[TYPE]] = {
     either match {
-      case Left(error) => Left(error)
-      case Right(value) => Right(List(value.asInstanceOf[TYPE]))
+        case Left(error) => Left(error)
+        case Right(value) => Right(List(value.asInstanceOf[TYPE]))
     }
   }
 
