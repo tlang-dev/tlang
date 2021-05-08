@@ -6,23 +6,21 @@ object LexerRunner {
 
   def run(src: Array[Char], pos: Pos, seq: Seq, lexer: Lexer): Seq = {
     if (pos.charNum >= src.length) seq
-    else run(src, pos, seq, seq, lexer, lexer)
+    else run(src, pos, Bridge(seq, Some(lexer)))
   }
 
-  def run(src: Array[Char], pos: Pos, father: Seq, current: Seq, fatherLexer: Lexer, currentLexer: Lexer): Seq = {
-    if (pos.charNum >= src.length) father
-    else {
-      managerTokenFound(findTokenInLexer(src, pos, currentLexer), src, pos, father, current, fatherLexer, currentLexer, findId)
-    }
+  def run(src: Array[Char], pos: Pos, bridge: Bridge): Seq = {
+    if (pos.charNum >= src.length) bridge.seq
+    else managerTokenFound(findTokenInLexer(src, pos, bridge.lexer.get), src, pos, bridge, findId)
   }
 
-  def managerTokenFound(token: Option[(Child, Pos)], src: Array[Char], pos: Pos, father: Seq, current: Seq, fatherLexer: Lexer, currentLexer: Lexer, nextSearch: (Array[Char], Pos, Seq, Seq, Lexer, Lexer) => Seq): Seq = {
+  def managerTokenFound(token: Option[(Child, Pos)], src: Array[Char], pos: Pos, bridge: Bridge, nextSearch: (Array[Char], Pos, Bridge) => Seq): Seq = {
     token match {
       case Some(newToken) =>
-        val newSeq = addTokenToSeq(current, newToken._1.token.token, newToken._2)
-        if (newToken._1.lexer.isDefined) run(src, newToken._2, current, newSeq, currentLexer, newToken._1.lexer.get)
-        else findId(src, newToken._2, current, newSeq, currentLexer, currentLexer)
-      case None => nextSearch(src, pos, father, current, fatherLexer, currentLexer)
+        val newSeq = addTokenToSeq(bridge.seq, newToken._1.token.token, newToken._2)
+        if (newToken._1.lexer.isDefined) run(src, newToken._2, Bridge(newSeq, Some(newToken._1.lexer.get), Some(bridge)))
+        else findId(src, newToken._2, Bridge(newSeq, Some(bridge.lexer.get), Some(bridge)))
+      case None => nextSearch(src, pos, bridge)
     }
   }
 
@@ -32,33 +30,32 @@ object LexerRunner {
     newSeq
   }
 
-  def findId(src: Array[Char], pos: Pos, father: Seq, current: Seq, fatherLexer: Lexer, currentLexer: Lexer): Seq = {
-    val token = currentLexer.tokens.find(token => token.token.token == "$ID")
+  def findId(src: Array[Char], pos: Pos, bridge: Bridge): Seq = {
+    val token = bridge.lexer.get.tokens.find(token => token.token.token == "$ID")
     if (token.isDefined) {
       findVariableToken(src, pos, token.get.token) match {
         case Some(tokenStr) =>
-          val newSeq = addTokenToSeq(current, tokenStr._1, tokenStr._2)
-          if (token.get.lexer.isDefined) run(src, tokenStr._2, current, newSeq, currentLexer, token.get.lexer.get)
-          else findId(src, tokenStr._2, current, newSeq, currentLexer, currentLexer)
-        case None => findTillTheEnd(src, pos, father, current, fatherLexer, currentLexer)
+          val newSeq = addTokenToSeq(bridge.seq, tokenStr._1, tokenStr._2)
+          if (token.get.lexer.isDefined) run(src, tokenStr._2, Bridge(newSeq, token.get.lexer, Some(bridge)))
+          else findId(src, tokenStr._2, Bridge(newSeq, Some(bridge.lexer.get), Some(bridge)))
+        case None => findTillTheEnd(src, pos, Bridge(bridge.seq, bridge.lexer, bridge.father))
       }
-    } else findTillTheEnd(src, pos, father, current, fatherLexer, currentLexer)
+    } else findTillTheEnd(src, pos, bridge)
 
   }
 
 
-  def findTillTheEnd(src: Array[Char], pos: Pos, father: Seq, current: Seq, fatherLexer: Lexer, currentLexer: Lexer): Seq = {
-    if (pos.charNum >= src.length) father
-    else if (findEndToken(src, pos, currentLexer.endToken)) {
-      val newSeq = addTokenToSeq(father, currentLexer.endToken.get.token, pos)
-      val tokLen = currentLexer.endToken.get.token.length
-      run(src, Pos(pos.charNum + tokLen, pos.line, pos.col + tokLen), father, father, fatherLexer, fatherLexer)
-    } else if(currentLexer.endToken.isDefined){
-      val newSeq = addTokenToSeq(current, src(pos.charNum).toString, pos)
-      run(src, Pos(pos.charNum + 1, pos.line, pos.col + 1), father, current, fatherLexer, currentLexer)
+  def findTillTheEnd(src: Array[Char], pos: Pos, bridge: Bridge): Seq = {
+    if (pos.charNum >= src.length) bridge.father.get.seq
+    else if (findEndToken(src, pos, bridge.lexer.get.endToken)) {
+      addTokenToSeq(bridge.father.get.seq, bridge.lexer.get.endToken.get.token, pos)
+      val tokLen = bridge.lexer.get.endToken.get.token.length
+      run(src, Pos(pos.charNum + tokLen, pos.line, pos.col + tokLen), bridge.father.get)
+    } else if (bridge.lexer.get.endToken.isDefined) {
+      addTokenToSeq(bridge.seq, src(pos.charNum).toString, pos)
+      run(src, Pos(pos.charNum + 1, pos.line, pos.col + 1), bridge)
     } else {
-//      addTokenToSeq(father, src(pos.charNum).toString, pos)
-      run(src, Pos(pos.charNum, pos.line, pos.col), father, father, fatherLexer, fatherLexer)
+      run(src, Pos(pos.charNum, pos.line, pos.col), bridge.father.get)
     }
   }
 

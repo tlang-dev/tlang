@@ -45,24 +45,6 @@ class LexerRunnerTest extends AnyFunSuite {
     assertSeq(seq.children.last, " something", 0)
   }
 
-  // Not working yet
-  //  test("Find use with parts") {
-  //    val src = "use pkg.pkg.pkg".toCharArray
-  //    val seq = Seq("", pos = Pos(0, 0, 0))
-  //    val lexer = Lexer(List((Token("use", None), Lexer(List(
-  //      (Token("pkg", None), Lexer(List(), None)),
-  //      (Token(".", None), Lexer(List(), Some(Token("pkg", None))))
-  //    ), None))), None)
-  //    LexerRunner.run(src, Pos(0, 0, 0), seq, lexer)
-  //    assert("use" == seq.children.head.seq)
-  //    assert(" " == seq.children.head.children.head.seq)
-  //    assert("pkg" == seq.children.head.children(1).seq)
-  //    assert("." == seq.children.head.children(2).seq)
-  //    assert("pkg" == seq.children.head.children(2).children.head.seq)
-  //    assert("." == seq.children.head.children.last.seq)
-  //    assert("pkg" == seq.children.head.children.last.children.head.seq)
-  //  }
-
   test("Find use with ID") {
     val src = "use anything".toCharArray
     val seq = Seq("", pos = Pos(0, 0, 0))
@@ -79,7 +61,6 @@ class LexerRunnerTest extends AnyFunSuite {
     val src = "use .pkg1.pkg2.pkg3".toCharArray
     val seq = Seq("", pos = Pos(0, 0, 0))
     val lexer = Lexer(List(Child(Token("use", None), Some(Lexer(List(
-      //      (Token("$ID", None), Lexer(List(), None)),
       Child(Token(".", None), Some(Lexer(List(Child(Token("$ID", None), Some(Lexer(List(), None)))), None)))
     ), Some(Token("$EOF", None)))))), None)
     LexerRunner.run(src, Pos(0, 0, 0), seq, lexer)
@@ -93,28 +74,23 @@ class LexerRunnerTest extends AnyFunSuite {
     assert("pkg3" == seq.children.head.children.last.children.head.seq)
   }
 
-  /*test("Find use with variable parts without first .") {
+  test("Find use with variable parts without first .") {
     val src = "use pkg1.pkg2.pkg3".toCharArray
     val seq = Seq("", pos = Pos(0, 0, 0))
-    val lexer = Lexer(List((Token("use", None), Lexer(List(
-      (Token("$ID", None), Lexer(List((Token(".", None), Lexer(List((Token("$ID", None), Lexer(List(), None))), None))), None)),
-    ), Some(Token("$EOF", None))))), None)
+    val lexer = Lexer(List(Child(Token("use", None), Some(Lexer(List(
+      Child(Token("$ID", None), Some(Lexer(List(Child(Token(".", None), Some(Lexer(List(Child(Token("$ID", None), Some(Lexer(List(), None)))), None)))), None))),
+    ), Some(Token("$EOF", None)))))), None)
     LexerRunner.run(src, Pos(0, 0, 0), seq, lexer)
     assert("use" == seq.children.head.seq)
     assert(" " == seq.children.head.children.head.seq)
     assert("pkg1" == seq.children.head.children.last.seq)
     assert("." == seq.children.head.children.last.children.head.seq)
     assert("pkg2" == seq.children.head.children.last.children.head.children.head.seq)
-    assert("." == seq.children.head.children.last.children.last.children.head.children.head.seq)
-    assert("pkg3" == seq.children.head.children.last.children.last.children.head.children.last.children.head.seq)
-  }*/
+    assert("." == seq.children.head.children.last.children.last.seq)
+    assert("pkg3" == seq.children.head.children.last.children.last.children.head.seq)
+  }
 
   def assertSeq(seq: Seq, str: String, startPos: Int): Unit = {
-    //    var currentSeq = seq
-    //    str.foreach(s => {
-    //      assert(s.toString == currentSeq.seq)
-    //      currentSeq = currentSeq.children.headOption.orNull
-    //    })
     str.toSeq.zipWithIndex.foreach(s => assert(s._1.toString == seq.children(s._2 + startPos).seq))
   }
 }
