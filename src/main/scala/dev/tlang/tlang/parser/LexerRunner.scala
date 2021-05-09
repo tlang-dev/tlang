@@ -47,10 +47,15 @@ object LexerRunner {
 
   def findTillTheEnd(src: Array[Char], pos: Pos, bridge: Bridge): Seq = {
     if (pos.charNum >= src.length) bridge.father.get.seq
-    else if (findEndToken(src, pos, bridge.lexer.get.endToken)) {
+    else if (findEndToken(src, pos, bridge.lexer)) {
       addTokenToSeq(bridge.father.get.seq, bridge.lexer.get.endToken.get.token, pos)
       val tokLen = bridge.lexer.get.endToken.get.token.length
       run(src, Pos(pos.charNum + tokLen, pos.line, pos.col + tokLen), bridge.father.get)
+    } else if (bridge.father.isDefined && findEndToken(src, pos, bridge.father.get.lexer)) {
+//      if(bridge.father.isDefined)
+      addTokenToSeq(bridge.father.get.seq, bridge.father.get.lexer.get.endToken.get.token, pos)
+      val tokLen = bridge.father.get.lexer.get.endToken.get.token.length
+      run(src, Pos(pos.charNum + tokLen, pos.line, pos.col + tokLen), bridge.father.get.father.get)
     } else if (bridge.lexer.get.endToken.isDefined) {
       addTokenToSeq(bridge.seq, src(pos.charNum).toString, pos)
       run(src, Pos(pos.charNum + 1, pos.line, pos.col + 1), bridge)
@@ -59,91 +64,14 @@ object LexerRunner {
     }
   }
 
-  def findEndToken(src: Array[Char], pos: Pos, endToken: Option[Token]): Boolean = {
-    if (endToken.isDefined) {
-      findToken(src, pos, endToken.get) match {
+  def findEndToken(src: Array[Char], pos: Pos, lexer: Option[Lexer]): Boolean = {
+    if (lexer.isDefined && lexer.get.endToken.isDefined) {
+      findToken(src, pos, lexer.get.endToken.get) match {
         case Some(_) => true
         case None => false
       }
     } else false
   }
-
-  //  def manageChildCall(src: Array[Char], pos: Pos, father: Seq, current: Seq, lexer: Lexer):Seq = {
-  //    run(src, pos, father, current, lexer)
-  //
-  //  }
-
-  //  def run(src: Array[Char], pos: Pos, seq: Seq, lexer: Lexer): Pos = {
-  //    var i = pos.charNum
-  //    var line = pos.line
-  //    var col = pos.col
-  //    var currentSeq = seq
-  //    var end = false
-  //    var added = 0
-  //    while (!end && i < src.length) {
-  //      findTokenInLexer(src, Pos(i, line, col), lexer) match {
-  //        case Some(value) =>
-  //          val newSeq = Seq(value._1.token.token, pos = Pos(i, line, col))
-  //          seq.children.addOne(newSeq)
-  //          added = added + 1
-  //          i = value._2.charNum
-  //          line = value._2.line
-  //          col = value._2.col
-  //          if(value._1.lexer.isDefined) {
-  //            val newPos = run(src, Pos(i, line, col), newSeq, value._1.lexer.get)
-  //            i = newPos.charNum
-  //            line = newPos.line
-  //            col = newPos.col
-  //            if (lexer.endToken.isEmpty) end = true
-  //          }
-  //        case None =>
-  //          lexer.tokens.find(token => token.token.token == "$ID").foreach(token => {
-  //            findVariableToken(src, Pos(i, line, col), token.token) match {
-  //              case Some(value) =>
-  //                val newSeq = Seq(value._1, pos = Pos(i, line, col))
-  //                seq.children.addOne(newSeq)
-  //                added = added + 1
-  //                i = value._2.charNum
-  //                line = value._2.line
-  //                col = value._2.col
-  //                if(token.lexer.isDefined) {
-  //                  val newPos = run(src, Pos(i, line, col), newSeq, token.lexer.get)
-  //                  i = newPos.charNum
-  //                  line = newPos.line
-  //                  col = newPos.col
-  //                  if (lexer.endToken.isEmpty) end = true
-  //                }
-  //              case None =>
-  //            }
-  //          })
-  //          if (lexer.endToken.isDefined && lexer.endToken.get.token != "$EOF") {
-  //            findToken(src, Pos(i, line, col), lexer.endToken.get) match {
-  //              case Some(value) =>
-  //                val newSeq = Seq(lexer.endToken.get.token, pos = Pos(i, line, col))
-  //                currentSeq.children.addOne(newSeq)
-  //                currentSeq = newSeq
-  //                i = value.charNum
-  //                line = value.line
-  //                col = value.col
-  //                end = true
-  //              case None =>
-  //            }
-  //          }
-  //          if (!end && i < src.length) {
-  //            val newSeq = Seq(src(i).toString, pos = Pos(i, line, col))
-  //            currentSeq.children.addOne(newSeq)
-  //            currentSeq = newSeq
-  //            if (src(i) == '\n') {
-  //              col = 0
-  //              line = line + 1
-  //            } else col = col + 1
-  //            i = i + 1
-  //          }
-  //      }
-  //    }
-  //    Pos(i, line, col)
-  //  }
-
 
   def findTokenInLexer(src: Array[Char], pos: Pos, lexer: Lexer): Option[(Child, Pos)] = {
     var i = pos.charNum
