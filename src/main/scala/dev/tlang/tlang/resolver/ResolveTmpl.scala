@@ -162,6 +162,10 @@ object ResolveTmpl {
 
   def resolveFor(tmplFor: TmplFor, module: Module, uses: List[DomainUse], currentResource: Resource, scope: Scope): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
+    checkRet(errors, resolveTmplId(tmplFor.variable, module, uses, currentResource, scope))
+    if (tmplFor.start.isDefined) checkRet(errors, resolveOperation(tmplFor.start.get, module, uses, currentResource, scope))
+    checkRet(errors, resolveOperation(tmplFor.cond, module, uses, currentResource, scope))
+    checkRet(errors, resolveExprContent(tmplFor.content, module, uses, currentResource, scope))
     if (errors.nonEmpty) Left(errors.toList)
     else Right(())
   }
@@ -190,6 +194,14 @@ object ResolveTmpl {
       case Left(block) => checkRet(errors, resolveExprContent(block, module, uses, currentResource, scope))
       case Right(nextIf) => checkRet(errors, resolveIf(nextIf, module, uses, currentResource, scope))
     }
+    if (errors.nonEmpty) Left(errors.toList)
+    else Right(())
+  }
+
+  def resolveAnonFunc(anonFunc: TmplAnonFunc, module: Module, uses: List[DomainUse], currentResource: Resource, scope: Scope): Either[List[ResolverError], Unit] = {
+    val errors = ListBuffer.empty[ResolverError]
+    checkRet(errors, resolveFuncCurry(anonFunc.currying, module, uses, currentResource, scope))
+    checkRet(errors, resolveExprContent(anonFunc.content, module, uses, currentResource, scope))
     if (errors.nonEmpty) Left(errors.toList)
     else Right(())
   }
@@ -230,10 +242,18 @@ object ResolveTmpl {
 
   def resolveCurrying(curries: Option[List[TmplFuncCurry]], module: Module, uses: List[DomainUse], currentResource: Resource, scope: Scope): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
-    curries.foreach(_.foreach(_.params.foreach(_.foreach(param => {
+    curries.foreach(_.foreach(resolveFuncCurry(_, module, uses, currentResource, scope)))
+    if (errors.nonEmpty) Left(errors.toList)
+    else Right(())
+  }
+
+  def resolveFuncCurry(curry: TmplFuncCurry, module: Module, uses: List[DomainUse], currentResource: Resource, scope: Scope): Either[List[ResolverError], Unit] = {
+    val errors = ListBuffer.empty[ResolverError]
+    curry.params.foreach(_.foreach(param => {
+      checkRet(errors, resolveAnnots(param.annots, module, uses, currentResource, scope))
       checkRet(errors, resolveTmplId(param.name, module, uses, currentResource, scope))
-      checkRet(errors, resolveType(param.`type`, module, uses, currentResource, scope))
-    }))))
+      param.`type`.foreach(t => checkRet(errors, resolveType(t, module, uses, currentResource, scope)))
+    }))
     if (errors.nonEmpty) Left(errors.toList)
     else Right(())
   }

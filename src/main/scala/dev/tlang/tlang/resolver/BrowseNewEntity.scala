@@ -7,13 +7,18 @@ import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.interpreter.context.Scope
 import dev.tlang.tlang.loader
 import dev.tlang.tlang.loader.Resource
+import dev.tlang.tlang.resolver.ResolveContext.extractErrors
 
 import scala.collection.mutable.ListBuffer
 
 object BrowseNewEntity {
 
   def browseEntity(entity: EntityValue, module: loader.Module, uses: List[DomainUse], currentResource: Resource): Either[List[ResolverError], Unit] = {
-    browseAttrs(entity.attrs, None, module, uses, entity.scope, currentResource)
+    val errors = ListBuffer.empty[ResolverError]
+    extractErrors(errors, FollowType.followType(entity.getType, module, uses, entity.scope, currentResource))
+    extractErrors(errors, browseAttrs(entity.attrs, None, module, uses, entity.scope, currentResource))
+    if (errors.nonEmpty) Left(errors.toList)
+    else Right(())
   }
 
   def browseAttrs(attrs: Option[List[ComplexAttribute]], model: Option[ModelSetEntity], module: loader.Module, uses: List[DomainUse], scope: Scope, currentResource: Resource): Either[List[ResolverError], Unit] = {

@@ -5,6 +5,8 @@ import dev.tlang.tlang.ast.tmpl._
 import dev.tlang.tlang.ast.tmpl.call._
 import dev.tlang.tlang.ast.tmpl.condition.TmplOperation
 import dev.tlang.tlang.ast.tmpl.func.{TmplFunc, TmplFuncCurry}
+import dev.tlang.tlang.ast.tmpl.loop.ForType.ForType
+import dev.tlang.tlang.ast.tmpl.loop.{ForType, TmplFor}
 import dev.tlang.tlang.ast.tmpl.primitive._
 import dev.tlang.tlang.astbuilder.BuildAst.addContext
 import dev.tlang.tlang.astbuilder.context.ContextResource
@@ -90,7 +92,7 @@ object BuildTmplBlock {
 
   def buildFunc(resource: ContextResource, func: TmplFuncContext): TmplFunc = {
     val curries =
-      if (func.curries != null && !func.curries.isEmpty) Some(func.curries.asScala.map(curry => build(resource, curry)).toList)
+      if (func.curries != null && !func.curries.isEmpty) Some(func.curries.asScala.map(curry => buildFuncCurry(resource, curry)).toList)
       else None
     TmplFunc(addContext(resource, func), buildAnnotations(resource, func.annots.asScala.toList), buildProps(resource, func.props), buildId(resource, func.name), curries,
       if (func.content != null) Some(buildExprBlock(resource, func.content)) else None,
@@ -111,7 +113,7 @@ object BuildTmplBlock {
     else None
   }
 
-  def build(resource: ContextResource, curry: TmplCurryingContext): TmplFuncCurry = {
+  def buildFuncCurry(resource: ContextResource, curry: TmplCurryingContext): TmplFuncCurry = {
     TmplFuncCurry(addContext(resource, curry), Option(build(resource, curry.param)))
   }
 
@@ -121,7 +123,10 @@ object BuildTmplBlock {
   }
 
   def buildParam(resource: ContextResource, param: TmplParamContext): TmplParam = {
-    TmplParam(addContext(resource, param), buildId(resource, param.name), buildType(resource, param.`type`))
+    TmplParam(addContext(resource, param),
+      buildAnnotations(resource, param.annots.asScala.toList),
+      buildId(resource, param.name),
+      if (param.`type` != null && !param.`type`.isEmpty) Some(buildType(resource, param.`type`)) else None)
   }
 
   def buildType(resource: ContextResource, `type`: TmplTypeContext): TmplType = {
@@ -156,6 +161,8 @@ object BuildTmplBlock {
       case incl@_ if incl.tmplInclude() != null => buildInclude(resource, incl.tmplInclude())
       case ret@_ if ret.tmplReturn() != null => buildReturn(resource, ret.tmplReturn())
       case affect@_ if affect.tmplAffect() != null => buildAffect(resource, affect.tmplAffect())
+      case tmplFor@_ if tmplFor.tmplFor() != null => buildTmplFor(resource, tmplFor.tmplFor())
+      case anonFunc@_ if anonFunc.tmplAnonFunc() != null => buildTmplAnonFunc(resource, anonFunc.tmplAnonFunc())
     }
   }
 
@@ -167,6 +174,10 @@ object BuildTmplBlock {
     TmplInclude(addContext(resource, include), include.calls.asScala.toList.map(call => BuildHelperStatement.buildCallObject(resource, call)))
   }
 
+  def buildTmplAnonFunc(resource: ContextResource, anonFunc: TmplAnonFuncContext): TmplAnonFunc = {
+    TmplAnonFunc(addContext(resource, anonFunc), buildFuncCurry(resource, anonFunc.params), buildExprContent(resource, anonFunc.content))
+  }
+
   def buildIf(resource: ContextResource, ifStmt: TmplIfContext): TmplIf = {
     val elseBlock = if (ifStmt.elseThen != null && !ifStmt.elseThen.isEmpty) {
       ifStmt.elseThen match {
@@ -175,6 +186,19 @@ object BuildTmplBlock {
       }
     } else None
     TmplIf(addContext(resource, ifStmt), buildOperation(resource, ifStmt.cond), buildExprContent(resource, ifStmt.content), elseBlock)
+  }
+
+  def buildTmplFor(resource: ContextResource, tmplFor: TmplForContext): TmplFor = {
+    TmplFor(addContext(resource, tmplFor),
+      buildId(resource, tmplFor.variable),
+      if (tmplFor.start != null && !tmplFor.start.isEmpty) Some(buildOperation(resource, tmplFor.start)) else None,
+      buildForType(tmplFor.`type`.getText), buildOperation(resource, tmplFor.array), buildExprContent(resource, tmplFor.tmplExprContent()))
+  }
+
+  def buildForType(forType: String): ForType = forType match {
+    case "in" => ForType.IN
+    case "to" => ForType.TO
+    case "until" => ForType.UNTIL
   }
 
   def buildVar(resource: ContextResource, variable: TmplVarContext): TmplVar = {
@@ -192,7 +216,7 @@ object BuildTmplBlock {
   }
 
   def buildCallObject(resource: ContextResource, obj: TmplCallObjContext): TmplCallObj = {
-    TmplCallObj(addContext(resource, obj), obj.objs.asScala.toList.map(obj => buildCallObjectType(resource, obj)))
+    TmplCallObj(addContext(resource, obj), buildProps(resource, obj.props), obj.objs.asScala.toList.map(obj => buildCallObjectType(resource, obj)))
   }
 
   def buildCallObjectType(resource: ContextResource, objType: TmplCallObjTypeContext): TmplCallObjType[_] = {

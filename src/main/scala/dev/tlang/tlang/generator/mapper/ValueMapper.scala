@@ -5,6 +5,7 @@ import dev.tlang.tlang.ast.tmpl._
 import dev.tlang.tlang.ast.tmpl.call._
 import dev.tlang.tlang.ast.tmpl.condition.TmplOperation
 import dev.tlang.tlang.ast.tmpl.func.{TmplFunc, TmplFuncCurry}
+import dev.tlang.tlang.ast.tmpl.loop.TmplFor
 import dev.tlang.tlang.ast.tmpl.primitive.{TmplPrimitiveValue, TmplStringValue, TmplTextValue}
 import dev.tlang.tlang.interpreter.ExecCallObject
 import dev.tlang.tlang.interpreter.context.Context
@@ -62,6 +63,7 @@ object ValueMapper {
       //      case incl: TmplInclude => mapInclude(incl, context)
       case ret: TmplReturn => mapReturn(ret, context)
       case affect: TmplAffect => mapAffect(affect, context)
+      case tmplFor: TmplFor => mapFor(tmplFor, context)
       case _ => expr
     }
   }
@@ -113,7 +115,7 @@ object ValueMapper {
     func.props = mapProps(func.props, context)
     func.name = mapID(func.name, context)
     func.curries = mapCurries(func.curries, context)
-    func.content = mapExprBlock(func.content, context)
+    func.content = mapOptExprBlock(func.content, context)
     func.ret = mapTypes(func.ret, context)
     func
   }
@@ -147,11 +149,21 @@ object ValueMapper {
     } else None
   }
 
-  def mapExprBlock(block: Option[TmplExprBlock], context: Context): Option[TmplExprBlock] = {
-    if (block.isDefined) {
-      val exprs = block.get.exprs.map(expr => mapExpression(expr, context))
-      Some(TmplExprBlock(block.get.context, exprs))
-    } else None
+  def mapExprContent(content: TmplExprContent[_], context: Context): TmplExprContent[_] = {
+    content match {
+      case block: TmplExprBlock => mapExprBlock(block, context)
+      case expression: TmplExpression[_] => mapExpression(expression, context)
+    }
+  }
+
+  def mapOptExprBlock(block: Option[TmplExprBlock], context: Context): Option[TmplExprBlock] = {
+    if (block.isDefined) Some(mapExprBlock(block.get, context))
+    else None
+  }
+
+  def mapExprBlock(block: TmplExprBlock, context: Context): TmplExprBlock = {
+    val exprs = block.exprs.map(expr => mapExpression(expr, context))
+    TmplExprBlock(block.context, exprs)
   }
 
   def mapCurries(curries: Option[List[TmplFuncCurry]], context: Context): Option[List[TmplFuncCurry]] = {
@@ -167,9 +179,24 @@ object ValueMapper {
   }
 
   def mapParam(param: TmplParam, context: Context): TmplParam = {
+    param.annots = mapAnnots(param.annots, context)
     param.name = mapID(param.name, context)
-    param.`type` = mapType(param.`type`, context)
+    if (param.`type`.isDefined) param.`type` = Some(mapType(param.`type`.get, context))
     param
+  }
+
+  def mapAnonFunc(anonFunc: TmplAnonFunc, context: Context): TmplAnonFunc = {
+    anonFunc.currying = mapFuncCurry(anonFunc.currying, context)
+    anonFunc.content = mapExprContent(anonFunc.content, context)
+    anonFunc
+  }
+
+  def mapFor(tmplFor: TmplFor, context: Context): TmplFor = {
+    tmplFor.variable = mapID(tmplFor.variable, context)
+    if (tmplFor.start.isDefined) tmplFor.start = Some(mapOperation(tmplFor.start.get, context))
+    tmplFor.cond = mapOperation(tmplFor.cond, context)
+    tmplFor.content = mapExprContent(tmplFor.content, context)
+    tmplFor
   }
 
   def mapReturn(ret: TmplReturn, context: Context): TmplReturn = {

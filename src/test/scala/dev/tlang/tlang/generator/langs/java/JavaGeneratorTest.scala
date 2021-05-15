@@ -80,8 +80,8 @@ class JavaGeneratorTest extends AnyFunSuite {
   }
 
   test("Func with parameters and returns") {
-    val content = TmplFunc(None, None, None, TmplStringID(None, "myFunc"), Some(List(TmplFuncCurry(None, Some(List(TmplParam(None, TmplStringID(None, "myDouble"), TmplType(None, TmplStringID(None, "Double"))), TmplParam(None, TmplStringID(None, "myString"), TmplType(None, TmplStringID(None, "String")))))))),
-      Some(TmplExprBlock(None, List(TmplCallObj(None, List(TmplCallVar(None, TmplStringID(None, "myVar"))))))), Some(List(TmplType(None, TmplStringID(None, "boolean")))))
+    val content = TmplFunc(None, None, None, TmplStringID(None, "myFunc"), Some(List(TmplFuncCurry(None, Some(List(TmplParam(None, None, TmplStringID(None, "myDouble"), Some(TmplType(None, TmplStringID(None, "Double")))), TmplParam(None, None, TmplStringID(None, "myString"), Some(TmplType(None, TmplStringID(None, "String"))))))))),
+      Some(TmplExprBlock(None, List(TmplCallObj(None, None, List(TmplCallVar(None, TmplStringID(None, "myVar"))))))), Some(List(TmplType(None, TmplStringID(None, "boolean")))))
     val res = JavaGenerator.genContent(content)
     assert(res.contains("public boolean myFunc(Double myDouble, String myString) {\n" +
       "myVar;\n" +
@@ -90,21 +90,21 @@ class JavaGeneratorTest extends AnyFunSuite {
 
   test("If with one expression") {
     val cond = TmplOperation(None,  Right(TmplLongValue(None, 1)), Some((Operator.EQUAL, TmplOperation(None, Right(TmplLongValue(None, 1))))))
-    val ifStmt = TmplIf(None, cond, TmplCallObj(None, List(TmplCallVar(None, TmplStringID(None, "myVar")))), None)
+    val ifStmt = TmplIf(None, cond, TmplCallObj(None, None, List(TmplCallVar(None, TmplStringID(None, "myVar")))), None)
     val res = JavaGenerator.genExpression(ifStmt, endOfStatement = true)
     assert(res.contains("if(1 == 1) myVar;"))
   }
 
   test("If with expression and else expression") {
     val cond = TmplOperation(None,  Right(TmplLongValue(None, 1)), Some((Operator.LESSER, TmplOperation(None, Right(TmplLongValue(None, 1))))))
-    val ifStmt = TmplIf(None, cond, TmplCallObj(None, List(TmplCallVar(None, TmplStringID(None, "myVar")))), Some(Left(TmplCallObj(None, List(TmplCallFunc(None, TmplStringID(None, "myFunc"), None))))))
+    val ifStmt = TmplIf(None, cond, TmplCallObj(None, None, List(TmplCallVar(None, TmplStringID(None, "myVar")))), Some(Left(TmplCallObj(None, None, List(TmplCallFunc(None, TmplStringID(None, "myFunc"), None))))))
     val res = JavaGenerator.genExpression(ifStmt)
     assert(res.contains("if(1 < 1) myVar; else myFunc();"))
   }
 
   test("If with expression block and else block") {
     val cond = TmplOperation(None, Right( TmplLongValue(None, 1)), Some((Operator.GREATER, TmplOperation(None, Right(TmplLongValue(None, 1))))))
-    val ifStmt = TmplIf(None, cond, TmplExprBlock(None, List(TmplCallObj(None, List(TmplCallVar(None, TmplStringID(None, "myVar")))))), Some(Left(TmplExprBlock(None, List(TmplCallObj(None, List(TmplCallFunc(None, TmplStringID(None, "myFunc"), None))))))))
+    val ifStmt = TmplIf(None, cond, TmplExprBlock(None, List(TmplCallObj(None, None, List(TmplCallVar(None, TmplStringID(None, "myVar")))))), Some(Left(TmplExprBlock(None, List(TmplCallObj(None, None, List(TmplCallFunc(None, TmplStringID(None, "myFunc"), None))))))))
     val res = JavaGenerator.genExpression(ifStmt)
     assert(res.contains("if(1 > 1) {\nmyVar;\n} else {\nmyFunc();\n}"))
   }
@@ -112,30 +112,30 @@ class JavaGeneratorTest extends AnyFunSuite {
   test("If with expression and else if expression") {
     val cond = TmplOperation(None, Right(TmplLongValue(None, 1)), Some((Operator.GREATER_OR_EQUAL, TmplOperation(None, Right(TmplLongValue(None, 1))))))
     val cond2 = TmplOperation(None, Right(TmplLongValue(None, 1)), Some((Operator.LESSER_OR_EQUAL, TmplOperation(None, Right(TmplLongValue(None, 1))))))
-    val ifStmt = TmplIf(None, cond, TmplCallObj(None, List(TmplCallVar(None, TmplStringID(None, "myVar")))), Some(Right(TmplIf(None, cond2, TmplCallObj(None, List(TmplCallFunc(None, TmplStringID(None, "myFunc"), None))), None))))
+    val ifStmt = TmplIf(None, cond, TmplCallObj(None, None, List(TmplCallVar(None, TmplStringID(None, "myVar")))), Some(Right(TmplIf(None, cond2, TmplCallObj(None, None, List(TmplCallFunc(None, TmplStringID(None, "myFunc"), None))), None))))
     val res = JavaGenerator.genExpression(ifStmt)
     assert(res.contains("if(1 >= 1) myVar; else if(1 <= 1) myFunc();"))
   }
 
   test("While") {
     val cond = TmplOperation(None, Right(TmplLongValue(None, 1)), Some((Operator.NOT_EQUAL, TmplOperation(None, Right(TmplLongValue(None, 1))))))
-    val whileLoop = TmplWhile(None, cond, TmplCallObj(None, List(TmplCallFunc(None, TmplStringID(None, "myFunc"), None))))
+    val whileLoop = TmplWhile(None, cond, TmplCallObj(None, None, List(TmplCallFunc(None, TmplStringID(None, "myFunc"), None))))
     val res = JavaGenerator.genExpression(whileLoop)
     assert("while(1 != 1) myFunc();\n" == res)
   }
 
   test("Do while") {
     val cond = TmplOperation(None, Right(TmplLongValue(None, 1)), Some((Operator.NOT_EQUAL, TmplOperation(None, Right(TmplLongValue(None, 1))))))
-    val whileLoop = TmplDoWhile(None, TmplCallObj(None, List(TmplCallFunc(None, TmplStringID(None, "myFunc"), None))), cond)
+    val whileLoop = TmplDoWhile(None, TmplCallObj(None, None,  List(TmplCallFunc(None, TmplStringID(None, "myFunc"), None))), cond)
     val res = JavaGenerator.genExpression(whileLoop)
     assert("do myFunc(); while(1 != 1);\n" == res)
   }
 
-  test("For") {
-    val forLoop = TmplFor(None, TmplExprBlock(None, List(TmplCallObj(None, List(TmplCallFunc(None, TmplStringID(None, "myFunc"), None))))))
+  /*test("For") {
+    val forLoop = TmplFor(None, TmplExprBlock(None, List(TmplCallObj(None, None, List(TmplCallFunc(None, TmplStringID(None, "myFunc"), None))))))
     val res = JavaGenerator.genExpression(forLoop)
     assert("for() {\nmyFunc();\n}\n" == res)
-  }
+  }*/
 
   test("Condition block with OR") {
     val cond = TmplOperation(None, Right(TmplLongValue(None, 1)), Some(Operator.EQUAL, TmplOperation(None, Right(TmplLongValue(None, 1)), Some((Operator.OR, TmplOperation(None, Left(TmplOperation(None, Right(TmplLongValue(None, 1)), Some((Operator.NOT_EQUAL, TmplOperation(None, Right(TmplLongValue(None, 1)))))))))))))

@@ -93,6 +93,8 @@ class IndentTest extends AnyFunSuite {
   /*
   This step does not change the bracket positions, just the content
    */
+  /*
+  Removed for now. It's gonna be replaced when using the new parser
   test("Test with nested set of {}") {
     val txt =
       """   One first line{
@@ -117,6 +119,6 @@ class IndentTest extends AnyFunSuite {
     Indent.doNextBracket(str, 0, 0, changes)
     assert(6 == changes.size)
     assert(txtRes.equals(str.toString()))
-  }
+  }*/
 
 }

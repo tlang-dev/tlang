@@ -51,6 +51,7 @@ tmplCurryingParam:
 	((params+=tmplParam) (',' params+=tmplParam)*)?;
 
 tmplParam:
+    (annots+=tmplAnnot)*
 	accessor=tmplID? name=tmplID (':' type=tmplType)?;
 
 tmplType:
@@ -65,23 +66,25 @@ tmplExprBlock: '{' exprs+=tmplExpression* '}';
 
 tmplExpression:	tmplVar | tmplCallObj | tmplValueType | tmplFunc
                 | tmplIf | tmplFor | tmplWhile | tmplDoWhile | tmplInclude | tmplReturn
-                | tmplAffect | tmplCast;
+                | tmplAffect | tmplCast | tmplAnonFunc;
 
 tmplIf: 'if' '(' cond=tmplOperation ')' content=tmplExprContent elseThen=tmplElse?;
 
 tmplElse: 'else' (tmplIf | tmplExprContent);
 
-tmplFor: 'for' '(' var=tmplID start=tmplOperation? type=('in' | 'to' | 'until') array=tmplOperation ')' content=tmplExprContent;
+tmplFor: 'for' '(' variable=tmplID ('=' start=tmplOperation)? type=('in' | 'to' | 'until') array=tmplOperation ')' content=tmplExprContent;
 
 tmplWhile: 'while' '(' cond=tmplOperation ')' content=tmplExprContent;
 
 tmplDoWhile: 'do' content=tmplExprContent 'while' '(' cond=tmplOperation ')';
 
+tmplAnonFunc: params=tmplCurrying '=>' content=tmplExprContent;
+
 tmplVar:
     (annots+=tmplAnnot)*
     'var' props=tmplProps name=tmplID (':' type=tmplType)? ('=' value=tmplOperation)?;
 
-tmplCallObj: objs+=tmplCallObjType ('.'objs+=tmplCallObjType)*;
+tmplCallObj: props=tmplProps objs+=tmplCallObjType ('.'objs+=tmplCallObjType)*;
 
 tmplCallObjType: tmplCallArray | tmplCallFunc | tmplCallVariable;
 

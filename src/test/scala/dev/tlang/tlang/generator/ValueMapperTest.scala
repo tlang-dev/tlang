@@ -89,7 +89,7 @@ class ValueMapperTest extends AnyFunSuite {
   test("Replace content with call var") {
     val values: mutable.Map[String, Value[_]] = mutable.Map("name" -> new TLangString(None, "MyVar"))
     val context = Context(List(Scope(values, mutable.Map(), mutable.Map())))
-    val call = Some(List(TmplCallObj(None, List(TmplCallVar(None, TmplInterpretedID(None, call = CallObject(None, List(CallVarObject(None, "name")))))))))
+    val call = Some(List(TmplCallObj(None, None, List(TmplCallVar(None, TmplInterpretedID(None, call = CallObject(None, List(CallVarObject(None, "name")))))))))
     val res = ValueMapper.mapContent(call, context).get.head
     assert("MyVar" == res.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallVar].name.toString)
   }
@@ -97,7 +97,7 @@ class ValueMapperTest extends AnyFunSuite {
   test("Replace expressions with call var") {
     val values: mutable.Map[String, Value[_]] = mutable.Map("name" -> new TLangString(None, "MyVar"))
     val context = Context(List(Scope(values, mutable.Map(), mutable.Map())))
-    val call = Some(List(TmplCallObj(None, List(TmplCallVar(None, TmplInterpretedID(None, call = CallObject(None, List(CallVarObject(None, "name")))))))))
+    val call = Some(List(TmplCallObj(None, None, List(TmplCallVar(None, TmplInterpretedID(None, call = CallObject(None, List(CallVarObject(None, "name")))))))))
     val res = ValueMapper.mapExpressions(call, context).get.head
     assert("MyVar" == res.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallVar].name.toString)
   }
@@ -109,7 +109,7 @@ class ValueMapperTest extends AnyFunSuite {
   test("Replace call array") {
     val values: mutable.Map[String, Value[_]] = mutable.Map("name" -> new TLangString(None, "MyCall"))
     val context = Context(List(Scope(values, mutable.Map(), mutable.Map())))
-    val call = TmplCallObj(None, List(TmplCallArray(None, TmplInterpretedID(None, call = CallObject(None, List(CallVarObject(None, "name")))), TmplOperation(None, Right(TmplStringValue(None, TmplInterpretedID(None, call = CallObject(None, List(CallVarObject(None, "position1"))))))))))
+    val call = TmplCallObj(None, None, List(TmplCallArray(None, TmplInterpretedID(None, call = CallObject(None, List(CallVarObject(None, "name")))), TmplOperation(None, Right(TmplStringValue(None, TmplInterpretedID(None, call = CallObject(None, List(CallVarObject(None, "position1"))))))))))
     val res = ValueMapper.mapCallObj(call, context)
     assert("MyCall" == res.calls.head.asInstanceOf[TmplCallArray].name.toString)
   }
@@ -117,7 +117,7 @@ class ValueMapperTest extends AnyFunSuite {
   test("Replace call var") {
     val values: mutable.Map[String, Value[_]] = mutable.Map("name" -> new TLangString(None, "MyVar"))
     val context = Context(List(Scope(values, mutable.Map(), mutable.Map())))
-    val call = TmplCallObj(None, List(TmplCallVar(None, TmplInterpretedID(None, call = CallObject(None, List(CallVarObject(None, "name")))))))
+    val call = TmplCallObj(None, None, List(TmplCallVar(None, TmplInterpretedID(None, call = CallObject(None, List(CallVarObject(None, "name")))))))
     val res = ValueMapper.mapExpression(call, context)
     assert("MyVar" == res.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallVar].name.toString)
   }
@@ -125,7 +125,7 @@ class ValueMapperTest extends AnyFunSuite {
   test("Replace call func") {
     val values: mutable.Map[String, Value[_]] = mutable.Map("name" -> new TLangString(None, "MyFunc"))
     val context = Context(List(Scope(values, mutable.Map(), mutable.Map())))
-    val call = TmplCallObj(None, List(TmplCallFunc(None, TmplInterpretedID(None, call = CallObject(None, List(CallVarObject(None, "name")))), None)))
+    val call = TmplCallObj(None, None, List(TmplCallFunc(None, TmplInterpretedID(None, call = CallObject(None, List(CallVarObject(None, "name")))), None)))
     val res = ValueMapper.mapExpression(call, context)
     assert("MyFunc" == res.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallFunc].name.toString)
   }

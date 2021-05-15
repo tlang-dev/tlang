@@ -4,7 +4,8 @@ import dev.tlang.tlang.ast.common.operation.Operator
 import dev.tlang.tlang.ast.tmpl._
 import dev.tlang.tlang.ast.tmpl.call._
 import dev.tlang.tlang.ast.tmpl.condition.TmplOperation
-import dev.tlang.tlang.ast.tmpl.func.TmplFunc
+import dev.tlang.tlang.ast.tmpl.func.{TmplFunc, TmplFuncCurry}
+import dev.tlang.tlang.ast.tmpl.loop.ForType.ForType
 import dev.tlang.tlang.ast.tmpl.loop.{TmplDoWhile, TmplFor, TmplWhile}
 import dev.tlang.tlang.ast.tmpl.primitive._
 
@@ -67,18 +68,28 @@ abstract class CStyle {
     str ++= genAnnotations(func.annots)
     str ++= func.props.fold(defaultFuncProps())(prop => genProps(prop)) ++= " "
     str ++= func.ret.fold("void")(ret => genType(ret.head)) ++= " "
-    str ++= func.name.toString ++= "("
-    if (func.curries.isDefined) {
-      func.curries.get.head.params.foreach(params => str ++= params.map(genParam).mkString(", "))
-    }
-    str ++= ")"
+    str ++= func.name.toString
+    str ++= genCurrying(func.curries)
     str ++= func.postPros.fold("")(prop => genProps(prop) + " ")
     if (func.content.isDefined) str ++= " " ++= genExprBlock(func.content.get) ++= "\n\n"
     else str ++= comma() ++= "\n\n"
     str.toString()
   }
 
-  def genAnnotations(annots: Option[List[TmplAnnotation]]): String = {
+  def genCurrying(curries: Option[List[TmplFuncCurry]]): String = {
+    if (curries.isDefined) curries.get.map(genFuncCurry).mkString("")
+    else ""
+  }
+
+  def genFuncCurry(curry: TmplFuncCurry): String = {
+    val str = new StringBuilder
+    str ++= "("
+    curry.params.foreach(params => str ++= params.map(genParam).mkString(", "))
+    str ++= ")"
+    str.toString()
+  }
+
+  def genAnnotations(annots: Option[List[TmplAnnotation]], sep: String = "\n"): String = {
     if (annots.isDefined) {
       val str = new StringBuilder
       annots.get.foreach(annot => {
@@ -88,7 +99,7 @@ abstract class CStyle {
           str ++= annot.values.get.map(value => value.name + " = " + genPrimitive(value.value)).mkString(", ")
           str ++= ")"
         }
-        str ++= "\n"
+        str ++= sep
       })
       str.toString()
     }
@@ -108,7 +119,9 @@ abstract class CStyle {
 
   def genParam(param: TmplParam): String = {
     val str = new StringBuilder
-    str ++= genType(param.`type`) ++= " " ++= param.name.toString
+    str ++= genAnnotations(param.annots, sep = " ")
+    if (param.`type`.isDefined) str ++= genType(param.`type`.get) ++= " "
+    str ++= param.name.toString
     str.toString()
   }
 
@@ -143,7 +156,7 @@ abstract class CStyle {
 
   def genExpression(expr: TmplExpression[_], endOfStatement: Boolean = false, newLine: Boolean = false): String = {
     expr match {
-      case call: TmplCallObj => genEndOfStatement(genCallObj(call), endOfStatement, newLine)
+      case call: TmplCallObj => genEndOfStatement(genTmplCallObj(call), endOfStatement, newLine)
       case func: TmplFunc => genFunc(func)
       case valueType: TmplValueType[_] => genValueType(valueType)
       case variable: TmplVar => genEndOfStatement(genVar(variable), endOfStatement, newLine)
@@ -154,6 +167,7 @@ abstract class CStyle {
       //      case incl: TmplInclude => genInclude(incl)
       case ret: TmplReturn => genEndOfStatement(genReturn(ret), endOfStatement, newLine)
       case affect: TmplAffect => genEndOfStatement(genAffect(affect), endOfStatement, newLine)
+      case anonFunc: TmplAnonFunc => genAnonFunc(anonFunc)
     }
   }
 
@@ -175,13 +189,20 @@ abstract class CStyle {
 
   def genAffect(affect: TmplAffect): String = {
     val str = new StringBuilder
-    str ++= genCallObj(affect.variable) ++= " = " ++= genOperation(affect.value)
+    str ++= genTmplCallObj(affect.variable) ++= " = " ++= genOperation(affect.value)
     str.toString()
   }
 
   def genReturn(ret: TmplReturn): String = {
     val str = new StringBuilder
     str ++= "return " ++= genOperation(ret.operation)
+    str.toString()
+  }
+
+  def genAnonFunc(anonFunc: TmplAnonFunc): String = {
+    val str = new StringBuilder
+    str ++= genFuncCurry(anonFunc.currying)
+    str ++= genExprContent(anonFunc.content)
     str.toString()
   }
 
@@ -199,9 +220,19 @@ abstract class CStyle {
 
   def genFor(forLoop: TmplFor): String = {
     val str = new StringBuilder
-    str ++= "for(" ++= ") "
+    str ++= "for("
+    str ++= forLoop.variable.toString
+    str ++= " " ++= genForType(forLoop.forType) ++= " "
+    str ++= genOperation(forLoop.cond)
+    str ++= ") "
     str ++= genExprContent(forLoop.content) ++= "\n"
     str.toString()
+  }
+
+  def genForType(forType: ForType): String = forType match {
+    case dev.tlang.tlang.ast.tmpl.loop.ForType.IN => "in"
+    case dev.tlang.tlang.ast.tmpl.loop.ForType.TO => "to"
+    case dev.tlang.tlang.ast.tmpl.loop.ForType.UNTIL => "until"
   }
 
   def genWhile(whileLoop: TmplWhile): String = {
@@ -218,8 +249,9 @@ abstract class CStyle {
     str.toString()
   }
 
-  def genCallObj(callObj: TmplCallObj): String = {
+  def genTmplCallObj(callObj: TmplCallObj): String = {
     val str = new StringBuilder
+    callObj.props.foreach(prop => str ++= genProps(prop, addSpace = true))
     str ++= callObj.calls.map(genCallObjType).mkString(".")
     str.toString()
   }
@@ -267,14 +299,14 @@ abstract class CStyle {
 
   def genValueType(valueType: TmplValueType[_]): String = {
     valueType match {
-      case call: TmplCallObj => genCallObj(call)
+      case call: TmplCallObj => genTmplCallObj(call)
       case primitive: TmplPrimitiveValue[_] => genPrimitive(primitive)
     }
   }
 
   def genSimpleValueType(valueType: TmplSimpleValueType[_]): String = {
     valueType match {
-      case call: TmplCallObj => genCallObj(call)
+      case call: TmplCallObj => genTmplCallObj(call)
       case value: TmplPrimitiveValue[_] => genPrimitive(value)
     }
   }
@@ -323,9 +355,17 @@ abstract class CStyle {
 
   def genEntityValue(entity: TmplEntityValue): String = {
     val str = new StringBuilder
-    str ++= " new " ++= entity.name.toString ++= "("
-    entity.attrs.foreach(attrs => str ++= attrs.map(attr => genAttribute(attr.asInstanceOf[TmplAttribute])).mkString(",\n"))
-    str ++= ")"
+    str ++= " new " ++= entity.name.getOrElse("").toString
+    if (entity.params.isDefined) {
+      str ++= "("
+      str ++= entity.params.get.map(param => genAttribute(param.asInstanceOf[TmplAttribute])).mkString(",\n")
+      str ++= ")"
+    }
+    if (entity.attrs.isDefined) {
+      str ++= "{"
+      entity.attrs.get.map(attr => genAttribute(attr.asInstanceOf[TmplAttribute])).mkString(",\n")
+      str ++= "}"
+    }
     str.toString()
   }
 
@@ -365,18 +405,22 @@ abstract class CStyle {
 
   def genSetAttribute(attr: TmplSetAttribute): String = {
     val str = new StringBuilder
-    if (attr.name.isDefined) str ++= genTmplID(attr.name) ++= ": "
+    if (attr.name.isDefined) str ++= genOptTmplID(attr.name) ++= ": "
     str ++= genOperation(attr.value)
     str.toString()
   }
 
-  def genTmplID(tmplId: Option[TmplID]): String = {
-    if (tmplId.isDefined) tmplId.get match {
+  def genOptTmplID(tmplId: Option[TmplID]): String = {
+    if (tmplId.isDefined) genTmplID(tmplId.get)
+    else ""
+  }
+
+  def genTmplID(tmplId: TmplID): String = {
+    tmplId match {
       case interp: TmplInterpretedID => interp.toString
       case str: TmplStringID => "\"" + str.toString + "\""
       case block: TmplBlockID => block.toString
     }
-    else ""
   }
 
   def comma(): String = if (commaRequired()) ";" else ""
@@ -392,4 +436,5 @@ abstract class CStyle {
   def defaultFuncProps(): String
 
   def genDefaultVarKeyword(): String
+
 }

@@ -72,15 +72,6 @@ object BrowseHelperStatement {
     else Right(())
   }
 
-  //  def resolveCondition(condition: Condition, module: loader.Module, uses: List[DomainUse], scope: Scope, currentResource: Resource): Either[List[ResolverError], Unit] = {
-  //    val errors = ListBuffer.empty[ResolverError]
-  //    extractErrors(errors, browseStatement(condition.statement1, module, uses, scope, currentResource))
-  //    condition.statement2.foreach(stmt => extractErrors(errors, browseStatement(stmt, module, uses, scope, currentResource)))
-  //    condition.nextBlock.foreach(block => extractErrors(errors, browseOperation(block, module, uses, scope, currentResource)))
-  //    if (errors.nonEmpty) Left(errors.toList)
-  //    else Right(())
-  //  }
-
   def browseMultiVal(multiValue: MultiValue, module: loader.Module, uses: List[DomainUse], scope: Scope, currentResource: Resource): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
     multiValue.values.foreach {

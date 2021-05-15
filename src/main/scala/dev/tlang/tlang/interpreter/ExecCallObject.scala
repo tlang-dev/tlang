@@ -93,12 +93,12 @@ object ExecCallObject extends Executor {
   }
 
   def resolveCallVar(name: String, callable: Option[List[Value[_]]], context: Context): Either[ExecError, Option[List[Value[_]]]] = {
-    pickFirst(callable) match {
-      case Left(error) => Left(error)
-      case Right(value) => value match {
-        case impl: EntityImpl => findInImpl(name, impl, context)
-        case valueType: EntityValue => findInEntity(name, valueType, context)
-        case _ => Right(callable)
+          pickFirst(callable) match {
+            case Left(error) => Left(error)
+            case Right(value) => value match {
+              case impl: EntityImpl => findInImpl(name, impl, context)
+              case valueType: EntityValue => findInEntity(name, valueType, context)
+              case _ => Right(callable)
       }
     }
   }
