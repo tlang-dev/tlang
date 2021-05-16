@@ -1,5 +1,6 @@
 package dev.tlang.tlang.libraries.builtin
 
+import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.call._
 import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value.{ArrayValue, ComplexAttribute, LazyValue, TLangString}
@@ -19,7 +20,7 @@ class TmplForTest extends AnyFunSuite {
       ComplexAttribute(None, value = Operation(None, None, Right(new TLangString(None, "val2")))),
       ComplexAttribute(None, value = Operation(None, None, Right(new TLangString(None, "val3")))))))
 
-    val calledFunc = HelperFunc(None, "anyFunc", Some(List(HelperCurrying(None, List(HelperParam(None, Some("param1"), HelperObjType(None, TLangString.getType)))))), None, HelperContent(None, Some(List(
+    val calledFunc = HelperFunc(None, "anyFunc", Some(List(HelperCurrying(None, List(HelperParam(None, Some("param1"), ObjType(None, None, TLangString.getType)))))), None, HelperContent(None, Some(List(
       HelperInternalFunc((context: Context) => {
         //        res += context.scopes.last.variables("param1").asInstanceOf[TLangString].getValue
         res += ContextUtils.findVar(context, "param1").get.asInstanceOf[TLangString].getElement

@@ -1,5 +1,6 @@
 package dev.tlang.tlang.ast.common.value
 
+import dev.tlang.tlang.ast.common.{ObjType, ValueType}
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.{ExecError, Value}
 
@@ -29,4 +30,6 @@ class TLangDouble(context: Option[ContextContent], value: Double) extends Primit
 
 object TLangDouble extends TLangType {
   override def getType: String = "Double"
+
+  override def getValueType: ValueType = ObjType(None, Some("TLang"), getType)
 }

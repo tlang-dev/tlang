@@ -1,10 +1,10 @@
 package dev.tlang.tlang.resolver
 
-import dev.tlang.tlang.loader.{Module, Resource}
 import dev.tlang.tlang.ast.DomainUse
 import dev.tlang.tlang.ast.common.value.AssignVar
 import dev.tlang.tlang.ast.helper.HelperFunc
 import dev.tlang.tlang.ast.model.ModelContent
+import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.loader.{Module, Resource}
 
 object ResolveUtils {
@@ -25,6 +25,19 @@ object ResolveUtils {
     while (entity.isEmpty && i < contents.size) {
       contents(i) match {
         case newEntity: AssignVar => if (newEntity.name == name) entity = Some(newEntity)
+        case _ =>
+      }
+      i += 1
+    }
+    entity
+  }
+
+  def findInModels(contents: List[ModelContent[_]], name: String): Option[ModelSetEntity] = {
+    var i = 0
+    var entity: Option[ModelSetEntity] = None
+    while (entity.isEmpty && i < contents.size) {
+      contents(i) match {
+        case newModel: ModelSetEntity => if (newModel.name == name) entity = Some(newModel)
         case _ =>
       }
       i += 1

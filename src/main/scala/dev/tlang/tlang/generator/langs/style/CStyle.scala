@@ -78,7 +78,7 @@ abstract class CStyle {
 
   def genCurrying(curries: Option[List[TmplFuncCurry]]): String = {
     if (curries.isDefined) curries.get.map(genFuncCurry).mkString("")
-    else ""
+    else "()"
   }
 
   def genFuncCurry(curry: TmplFuncCurry): String = {
@@ -417,9 +417,8 @@ abstract class CStyle {
 
   def genTmplID(tmplId: TmplID): String = {
     tmplId match {
-      case interp: TmplInterpretedID => interp.toString
       case str: TmplStringID => "\"" + str.toString + "\""
-      case block: TmplBlockID => block.toString
+      case _ => tmplId.toString
     }
   }
 

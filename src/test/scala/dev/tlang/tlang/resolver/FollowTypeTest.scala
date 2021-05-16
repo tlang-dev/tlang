@@ -1,13 +1,14 @@
 package dev.tlang.tlang.resolver
 
-import dev.tlang.tlang.ast.{DomainModel, DomainUse}
+import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.call.{CallFuncObject, CallObject, CallVarObject}
 import dev.tlang.tlang.ast.common.operation.Operation
-import dev.tlang.tlang.ast.common.value.{AssignVar, ComplexAttribute, EntityValue, TLangBool, TLangString}
+import dev.tlang.tlang.ast.common.value.{AssignVar, ComplexAttribute, EntityValue}
 import dev.tlang.tlang.ast.model.ModelBlock
-import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetRef}
+import dev.tlang.tlang.ast.model.set.{ModelSetEntity, ModelSetRef}
+import dev.tlang.tlang.ast.{DomainModel, DomainUse}
 import dev.tlang.tlang.interpreter.context.{Context, ContextUtils, Scope}
-import dev.tlang.tlang.loader.{BuildModuleTree, FileResourceLoader, Resource, ResourceLoader, TBagManager}
+import dev.tlang.tlang.loader._
 import dev.tlang.tlang.loader.remote.RemoteLoader
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -33,22 +34,27 @@ class FollowTypeTest extends AnyFunSuite {
       if (name == "Main.tlang") {
         Right(
           """
-            |expose myEntity
+            |use MyPackage.MyFile
+            |}""".stripMargin)
+      } else if (name == "manifest.yaml") {
+        Right(defaultManifest)
+      } else {
+        Right(
+          """
+            |expose MyEntityType
             |helper {
              func theFunc() {}
             |}
             |model {
-            |set MyEntity {myFunc &theFunc()}
+            |set MyEntityType {myFunc: &theFunc()}
             |}""".stripMargin)
-      } else {
-        Right(defaultManifest)
       }
     }
     val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
-    val entity = EntityValue(None, Some("MyEntity"), Some(List(ComplexAttribute(None, Some("param1"), value = Operation(None, None, Right(CallObject(None, List(CallVarObject(None, "MyEntity"), CallFuncObject(None, Some("theFunc"), None)))))))))
+    val entity = EntityValue(None, Some(ObjType(None, Some("MyFile"), "MyEntityType")), Some(List(ComplexAttribute(None, Some("attr1"), value = Operation(None, None, Right(CallObject(None, List(CallVarObject(None, "MyEntityType"), CallFuncObject(None, Some("theFunc"), None)))))))))
     val block = ModelBlock(None, Some(List(AssignVar(None, "myVar", None, Operation(None, None, Right(entity)), Some(Scope())))))
-    ResolveModel.resolveModel(block, module, List(DomainUse(None, List("Main", "MyEntity"))), Resource("Root", "", "", "", DomainModel(None, None, List())))
-        assert("myValue"==ContextUtils.findVar(Context(List(entity.scope)), "attr1").get.asInstanceOf[TLangString].getElement)
+    ResolveModel.resolveModel(block, module, List(DomainUse(None, List("MyPackage", "MyFile"))), Resource("Root", "", "", "", DomainModel(None, None, List())))
+    assert("theFunc" == ContextUtils.findModel(Context(List(entity.scope)), "MyEntityType").get.asInstanceOf[ModelSetEntity].attrs.get.head.value.asInstanceOf[ModelSetRef].refs.head)
     //    assert("myString" == ContextUtils.findVar(Context(List(entity.scope)), "param1").get.asInstanceOf[TLangString].getElement)
   }
 

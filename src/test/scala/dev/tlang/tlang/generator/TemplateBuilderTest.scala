@@ -1,9 +1,10 @@
 package dev.tlang.tlang.generator
 
+import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.call._
 import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value.{ArrayValue, ComplexAttribute, LazyValue, TLangString}
-import dev.tlang.tlang.ast.helper.{HelperObjType, HelperParam}
+import dev.tlang.tlang.ast.helper.HelperParam
 import dev.tlang.tlang.ast.tmpl._
 import dev.tlang.tlang.ast.tmpl.condition.TmplOperation
 import dev.tlang.tlang.ast.tmpl.primitive.{TmplArrayValue, TmplEntityValue, TmplStringValue}
@@ -16,12 +17,12 @@ import scala.collection.mutable
 
 class TemplateBuilderTest extends AnyFunSuite {
 
-//  test("Build pkg") {
-//    val context = Context()
-//    val block = TmplBlock(None, "block1", "scala", None, None, None, specialised = true, None, Scope())
-//    val blockAsValue = TmplBlockAsValue(None, block, context)
-//    TemplateBuilder.buildBlockAsValue(blockAsValue)
-//  }
+  //  test("Build pkg") {
+  //    val context = Context()
+  //    val block = TmplBlock(None, "block1", "scala", None, None, None, specialised = true, None, Scope())
+  //    val blockAsValue = TmplBlockAsValue(None, block, context)
+  //    TemplateBuilder.buildBlockAsValue(blockAsValue)
+  //  }
 
   test("build Pkg") {
     val pkg = Some(new TmplPkg(List(TmplStringID(None, "pkg1"))))
@@ -36,7 +37,7 @@ class TemplateBuilderTest extends AnyFunSuite {
   }
 
   test("build Pkg with for in call") {
-    val tmpl = TmplBlock(None, "myTmpl", "scala", Some(List(HelperParam(None, Some("index"), HelperObjType(None, "String")))), None, None, specialised = true, Some(List(
+    val tmpl = TmplBlock(None, "myTmpl", "scala", Some(List(HelperParam(None, Some("index"), ObjType(None, None, "String")))), None, None, specialised = true, Some(List(
       TmplStringValue(None, TmplInterpretedID(None, Some("pkg"), CallObject(None, List(CallVarObject(None, "index"))), None))
     )))
 
@@ -59,7 +60,7 @@ class TemplateBuilderTest extends AnyFunSuite {
   }
 
   test("Entity with for in call") {
-    val tmpl = TmplBlock(None, "myTmpl", "scala", Some(List(HelperParam(None, Some("index"), HelperObjType(None, "String")))), None, None, specialised = true, Some(List(
+    val tmpl = TmplBlock(None, "myTmpl", "scala", Some(List(HelperParam(None, Some("index"), ObjType(None, None, "String")))), None, None, specialised = true, Some(List(
       TmplAttribute(None, None, None, TmplOperation(None, Right(TmplStringValue(None, TmplInterpretedID(None, Some("myValue"), CallObject(None, List(CallVarObject(None, "index"))), None)))))
     )))
 

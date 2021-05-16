@@ -1,6 +1,7 @@
 package dev.tlang.tlang.astbuilder
 
 import dev.tlang.tlang.TLangParser._
+import dev.tlang.tlang.ast.common.ValueType
 import dev.tlang.tlang.ast.helper.{HelperBlock, _}
 import dev.tlang.tlang.astbuilder.BuildAst.addContext
 import dev.tlang.tlang.astbuilder.context.ContextResource
@@ -31,16 +32,16 @@ object BuildHelperBlock {
     params.map(param => HelperParam(addContext(resource, param), if (param.param != null) Some(param.param.getText) else None, buildParamType(resource, param.`type`)))
   }
 
-  def buildParamType(resource: ContextResource, param: HelperParamTypeContext): HelperParamType = {
+  def buildParamType(resource: ContextResource, param: HelperParamTypeContext): ValueType = {
     param match {
-      case param@_ if param.helperObjType() != null => HelperObjType(addContext(resource, param.helperObjType()), param.helperObjType().tpye.getText)
-      case param@_ if param.helperArrayType() != null => HelperArrayType(addContext(resource, param.helperArrayType()), param.helperArrayType().tpye.getText)
+      case param@_ if param.objType() != null => BuildCommon.buildObjType(resource, param.objType())
+      case param@_ if param.arrayType() != null => BuildCommon.buildArrayType(resource, param.arrayType())
       case param@_ if param.helperFuncType() != null => buildFuncType(resource, param.helperFuncType())
     }
   }
 
   def buildFuncType(resource: ContextResource, func: HelperFuncTypeContext): HelperFuncType = {
-    HelperFuncType(
+    HelperFuncType(None,
       if (func.currying != null && !func.currying.isEmpty) Some(buildCurrying(resource, func.currying.asScala.toList)) else None,
       if (func.retVals != null && !func.retVals.isEmpty) Some(func.retVals.asScala.toList.map(retVal => buildParamType(resource, retVal))) else None)
   }

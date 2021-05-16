@@ -1,5 +1,6 @@
 package dev.tlang.tlang.ast.common.value
 
+import dev.tlang.tlang.ast.common.{ObjType, ValueType}
 import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
 import dev.tlang.tlang.interpreter.{ExecError, Value}
 
@@ -29,4 +30,6 @@ class TLangLong(context: Option[ContextContent], value: Long) extends PrimitiveV
 
 object TLangLong extends TLangType {
   override def getType: String = "Long"
+
+  override def getValueType: ValueType = ObjType(None, Some("TLang"), getType)
 }

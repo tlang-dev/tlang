@@ -1,6 +1,7 @@
 package dev.tlang.tlang.ast.common.call
 
 import dev.tlang.tlang.ast.common.value.TLangType
+import dev.tlang.tlang.ast.common.{ObjType, ValueType}
 import dev.tlang.tlang.ast.helper.HelperFunc
 import dev.tlang.tlang.ast.tmpl.TmplBlock
 import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
@@ -18,4 +19,6 @@ case class CallRefFuncObject(context: Option[ContextContent], name: Option[Strin
 
 object CallRefFuncObject extends TLangType {
   override def getType: String = "CallRefFuncObject"
+
+  override def getValueType: ValueType = ObjType(None, Some("TLang"), getType)
 }

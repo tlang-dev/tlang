@@ -1,5 +1,6 @@
 package dev.tlang.tlang.ast.common.value
 
+import dev.tlang.tlang.ast.common.{ObjType, ValueType}
 import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
 import dev.tlang.tlang.interpreter.{ExecError, NotImplemented, Value}
 
@@ -29,4 +30,6 @@ class TLangBool(context: Option[ContextContent], value: Boolean) extends Primiti
 
 object TLangBool extends TLangType {
   override def getType: String = "Bool"
+
+  override def getValueType: ValueType = ObjType(None, Some("TLang"), getType)
 }

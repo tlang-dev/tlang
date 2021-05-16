@@ -1,7 +1,7 @@
 package dev.tlang.tlang.astbuilder
 
+import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.operation.Operator
-import dev.tlang.tlang.ast.helper.HelperObjType
 import dev.tlang.tlang.ast.tmpl.call.{TmplCallArray, TmplCallFunc, TmplCallObj, TmplCallVar}
 import dev.tlang.tlang.ast.tmpl.primitive.{TmplArrayValue, _}
 import dev.tlang.tlang.ast.tmpl._
@@ -39,9 +39,9 @@ class BuildTmplBlockTest extends AnyFunSuite {
     val tmpl = BuildTmplBlock.build(fakeContext, parser.tmplBlock())
     assert("myTmpl" == tmpl.name)
     assert("param1" == tmpl.params.get.head.param.get)
-    assert("String" == tmpl.params.get.head.`type`.asInstanceOf[HelperObjType].name)
+    assert("String" == tmpl.params.get.head.`type`.asInstanceOf[ObjType].name)
     assert("param2" == tmpl.params.get.last.param.get)
-    assert("Bool" == tmpl.params.get.last.`type`.asInstanceOf[HelperObjType].name)
+    assert("Bool" == tmpl.params.get.last.`type`.asInstanceOf[ObjType].name)
   }
 
   test("Test use in TmplBloc") {

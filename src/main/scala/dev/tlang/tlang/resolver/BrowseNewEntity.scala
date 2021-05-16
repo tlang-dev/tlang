@@ -15,7 +15,7 @@ object BrowseNewEntity {
 
   def browseEntity(entity: EntityValue, module: loader.Module, uses: List[DomainUse], currentResource: Resource): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
-    extractErrors(errors, FollowType.followType(entity.getType, module, uses, entity.scope, currentResource))
+    if (entity.`type`.isDefined) extractErrors(errors, FollowType.followType(entity.`type`.get, module, uses, entity.scope, currentResource))
     extractErrors(errors, browseAttrs(entity.attrs, None, module, uses, entity.scope, currentResource))
     if (errors.nonEmpty) Left(errors.toList)
     else Right(())

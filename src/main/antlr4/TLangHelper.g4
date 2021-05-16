@@ -20,11 +20,7 @@ helperCurrying: params += helperParam (',' params += helperParam)*;
 
 helperParam: (param=ID)? type=helperParamType;
 
-helperParamType: helperObjType | helperArrayType | helperFuncType;
-
-helperObjType: tpye=ID;
-
-helperArrayType: tpye=ID'['']';
+helperParamType: objType | arrayType | helperFuncType;
 
 helperFuncType: type='(' (currying+=helperCurrying)? ')' ('(' currying+=helperCurrying ')')* ':' retVals+=helperParamType (',' retVals+=helperParamType)*;
 

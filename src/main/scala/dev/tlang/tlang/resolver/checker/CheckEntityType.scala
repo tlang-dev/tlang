@@ -11,13 +11,13 @@ object CheckEntityType {
 
   def checkEntityType(entity: EntityValue, entityType: ModelSetEntity): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
-    if (entity.`type`.isEmpty || entity.`type`.get != entityType.name) errors.addOne(TypeError(entity.context, entity.`type`.getOrElse("Undefined"), entityType.name))
+    if (entity.`type`.isEmpty || entity.`type`.get.getType != entityType.name) errors.addOne(TypeError(entity.context, entity.`type`.getOrElse("Undefined").toString, entityType.name))
 //    if (entityType.params.isEmpty && entity.params.nonEmpty) errors.addOne(TypeError(entity.context, "params are empty in " + entityType.name, "params are not empty in entity"))
     if (entityType.attrs.nonEmpty) {
       entityType.attrs.foreach(_.foreach(attr => {
         if (entity.attrs.isDefined) {
           entity.attrs.get.find(entityAttr => entityAttr.`type`.isDefined
-            && attr.attr.isDefined && entityAttr.`type`.get == attr.attr.get) match {
+            && attr.attr.isDefined && entityAttr.`type`.get.getType == attr.attr.get) match {
             case Some(value) => checkType(errors, attr.attr.get, value.value)
             case None => errors.addOne(TypeError(attr.context, attr.attr.get + " not found", attr.attr.get))
           }

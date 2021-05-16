@@ -64,7 +64,7 @@ class ResolveContextTest extends AnyFunSuite {
 
     val scope = module.resources(module.mainFile).ast.body.head.asInstanceOf[HelperBlock].funcs.get.head.scope
     assert("MyFile/myEntity" == scope.variables.head._1)
-    assert("MyEntity" == scope.variables.head._2.asInstanceOf[Operation].content.toOption.get.asInstanceOf[EntityValue].`type`.get)
+    assert("MyEntity" == scope.variables.head._2.asInstanceOf[Operation].content.toOption.get.asInstanceOf[EntityValue].`type`.get.getType)
   }
 
   test("Resolve context with template") {
@@ -287,7 +287,7 @@ class ResolveContextTest extends AnyFunSuite {
     val resource = Resource("", "", "", "Main", block)
 
     val entityType = ResolveContext.findInResource(resource, CallVarObject(None, "myEntity2")).toOption.get.get.asInstanceOf[Operation].content.toOption.get.asInstanceOf[EntityValue].`type`.get
-    assert("AnyEntity2" == entityType)
+    assert("AnyEntity2" == entityType.getType)
   }
 
   test("Find func") {

@@ -27,7 +27,7 @@ class BuildModelBlockTest extends AnyFunSuite {
   test("Test setting model entity with attributes") {
     val lexer = new TLangLexer(CharStreams.fromString(
       """model {
-        |set firstEntity (attr1 String, Type2, Type3[]) {
+        |set firstEntity (attr1: String, Type2, Type3[]) {
         |}
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
@@ -45,8 +45,8 @@ class BuildModelBlockTest extends AnyFunSuite {
     val lexer = new TLangLexer(CharStreams.fromString(
       """model {
         |set firstEntity {
-        |var1 String
-        |var2 Type2[]
+        |var1: String,
+        |var2: Type2[],
         |Type3
         |}
         |}""".stripMargin))
@@ -65,7 +65,7 @@ class BuildModelBlockTest extends AnyFunSuite {
   test("Function as parameter") {
     val lexer = new TLangLexer(CharStreams.fromString(
       """model {
-        |set firstEntity (attr1 (String, Int[]):(Bool), (String):(Int[], Bool)) {
+        |set firstEntity (attr1: (String, Int[]):(Bool), (String):(Int[], Bool)) {
         |}
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
@@ -91,7 +91,7 @@ class BuildModelBlockTest extends AnyFunSuite {
     val lexer = new TLangLexer(CharStreams.fromString(
       """model {
         |set firstEntity {
-        |attr1 (String, Int[]):(Bool)
+        |attr1: (String, Int[]):(Bool),
         |(String):(Int[], Bool)
         |}
         |}""".stripMargin))
@@ -118,7 +118,7 @@ class BuildModelBlockTest extends AnyFunSuite {
     val lexer = new TLangLexer(CharStreams.fromString(
       """model {
         |set firstEntity (():(String, Int[])){
-        |attr1 ():(Bool, Int[])
+        |attr1: ():(Bool, Int[])
         |}
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
@@ -139,7 +139,7 @@ class BuildModelBlockTest extends AnyFunSuite {
     val lexer = new TLangLexer(CharStreams.fromString(
       """model {
         |set firstEntity ((String, Int[])){
-        |attr1 (String, Int[])
+        |attr1: (String, Int[])
         |}
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
@@ -160,7 +160,7 @@ class BuildModelBlockTest extends AnyFunSuite {
   test("Reference as parameter") {
     val lexer = new TLangLexer(CharStreams.fromString(
       """model {
-        |set firstEntity (param1 &entity1){
+        |set firstEntity (param1: &entity1){
         |}
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
@@ -175,7 +175,7 @@ class BuildModelBlockTest extends AnyFunSuite {
   test("Reference as parameter with multiple refs") {
     val lexer = new TLangLexer(CharStreams.fromString(
       """model {
-        |set firstEntity (param1 &entity1.attr1.subAttr1){
+        |set firstEntity (param1: &entity1.attr1.subAttr1){
         |}
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
@@ -193,7 +193,7 @@ class BuildModelBlockTest extends AnyFunSuite {
     val lexer = new TLangLexer(CharStreams.fromString(
       """model {
         |set firstEntity {
-        |attr1 &entity1
+        |attr1: &entity1
         |}
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
@@ -209,7 +209,7 @@ class BuildModelBlockTest extends AnyFunSuite {
     val lexer = new TLangLexer(CharStreams.fromString(
       """model {
         |set firstEntity {
-        |attr1 &entity1.attr1.subAttr1
+        |attr1: &entity1.attr1.subAttr1
         |}
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
@@ -247,8 +247,8 @@ class BuildModelBlockTest extends AnyFunSuite {
       """model {
         |set firstEntity {
         |impl {
-        |var1 String
-        |var2 Type2[]
+        |var1: String,
+        |var2: Type2[],
         |Type3
         |}
         |}

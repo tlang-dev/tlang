@@ -52,7 +52,7 @@ object BuildHelperStatement {
   }
 
   def buildIf(resource: ContextResource, anIf: HelperIfContext): HelperIf = {
-    HelperIf(addContext(resource, anIf), BuildCommon.buildOperation(resource, Some(TLangBool.getType), anIf.cond),
+    HelperIf(addContext(resource, anIf), BuildCommon.buildOperation(resource, Some(TLangBool.getValueType), anIf.cond),
       if (!anIf.body.content.isEmpty) Some(BuildHelperBlock.buildContent(resource, anIf.body)) else None,
       if (anIf.orElse != null) Some(BuildHelperBlock.buildContent(resource, anIf.orElse.body)) else None)
   }
@@ -96,9 +96,9 @@ object BuildHelperStatement {
 
   def buildFor(resource: ContextResource, aFor: HelperForContext): HelperFor = {
     HelperFor(addContext(resource, aFor), aFor.`var`.getText,
-      if (aFor.start != null) Some(BuildCommon.buildOperation(resource, Some(TLangLong.getType), aFor.start)) else None,
+      if (aFor.start != null) Some(BuildCommon.buildOperation(resource, Some(TLangLong.getValueType), aFor.start)) else None,
       buildForType(aFor.`type`),
-      BuildCommon.buildOperation(resource, Some(ArrayValue.getType), aFor.array),
+      BuildCommon.buildOperation(resource, Some(ArrayValue.getValueType), aFor.array),
       BuildHelperBlock.buildContent(resource, aFor.body)
     )
   }

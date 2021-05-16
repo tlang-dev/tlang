@@ -2,6 +2,7 @@ package dev.tlang.tlang.ast.model.let
 
 import dev.tlang.tlang.ast.common.call.CallFuncParam
 import dev.tlang.tlang.ast.common.value.TLangType
+import dev.tlang.tlang.ast.common.{ObjType, ValueType}
 import dev.tlang.tlang.ast.helper.HelperFunc
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
@@ -18,4 +19,6 @@ case class ModelLetRefFunc(context: Option[ContextContent], func: HelperFunc, cu
 
 object ModelLetRefFunc extends TLangType {
   override def getType: String = "FuncRef"
+
+  override def getValueType: ValueType = ObjType(None, Some("TLang"), getType)
 }

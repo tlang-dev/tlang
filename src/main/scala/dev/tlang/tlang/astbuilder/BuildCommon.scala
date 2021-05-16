@@ -4,6 +4,7 @@ import dev.tlang.tlang.TLangParser._
 import dev.tlang.tlang.ast.common.call.ComplexValueStatement
 import dev.tlang.tlang.ast.common.operation.{Operation, Operator}
 import dev.tlang.tlang.ast.common.value._
+import dev.tlang.tlang.ast.common.{ArrayType, ObjType, ValueType}
 import dev.tlang.tlang.astbuilder.BuildAst.addContext
 import dev.tlang.tlang.astbuilder.context.ContextResource
 
@@ -12,7 +13,7 @@ import scala.jdk.CollectionConverters._
 object BuildCommon {
 
   def buildAssignVar(resource: ContextResource, assign: AssignVarContext): AssignVar = {
-    val varType = if (assign.`type` != null && assign.`type`.getText.nonEmpty) Some(assign.`type`.getText) else None
+    val varType = if (assign.`type` != null && assign.`type`.getText.nonEmpty) Some(BuildCommon.buildValueType(resource, assign.valueType())) else None
     AssignVar(addContext(resource, assign), assign.name.getText,
       varType,
       buildOperation(resource, varType, assign.value))
@@ -25,7 +26,7 @@ object BuildCommon {
   //    }
   //  }
 
-  def buildOperation(resource: ContextResource, expectedType: Option[String], operation: OperationContext): Operation = {
+  def buildOperation(resource: ContextResource, expectedType: Option[ValueType], operation: OperationContext): Operation = {
     val content: Either[Operation, ComplexValueStatement[_]] =
       if (operation.content != null && !operation.content.isEmpty) Right(buildComplexValueType(resource, expectedType, operation.content))
       else Left(buildOperation(resource, expectedType, operation.innerBlock))
@@ -53,7 +54,7 @@ object BuildCommon {
     }
   }
 
-  def buildComplexValueType(resource: ContextResource, `type`: Option[String] = None, valueType: ComplexValueTypeContext): ComplexValueStatement[_] = {
+  def buildComplexValueType(resource: ContextResource, `type`: Option[ValueType] = None, valueType: ComplexValueTypeContext): ComplexValueStatement[_] = {
     valueType match {
       case call@_ if call.callObj() != null => BuildHelperStatement.buildCallObject(resource, call.callObj())
       case value@_ if value.primitiveValue() != null => buildPrimitiveValue(resource, `type`, value.primitiveValue())
@@ -63,7 +64,7 @@ object BuildCommon {
     }
   }
 
-  def buildPrimitiveValue(resource: ContextResource, `type`: Option[String] = None, value: PrimitiveValueContext): PrimitiveValue[_] = {
+  def buildPrimitiveValue(resource: ContextResource, `type`: Option[ValueType] = None, value: PrimitiveValueContext): PrimitiveValue[_] = {
     value match {
       case string@_ if string.stringValue() != null => new TLangString(addContext(resource, string.stringValue()), AstBuilderUtils.extraString(string.stringValue().value.getText))
       case number@_ if number.numberValue() != null =>
@@ -84,8 +85,8 @@ object BuildCommon {
   //    if (types.nonEmpty) Some(types.map(valType => buildSimpleValueType(resource, None, valType))) else None
   //  }
 
-  def buildEntityValue(resource: ContextResource, `type`: Option[String] = None, entity: EntityValueContext): EntityValue = {
-    EntityValue(addContext(resource, entity), if (`type`.isDefined) Some(`type`.get) else None,
+  def buildEntityValue(resource: ContextResource, `type`: Option[ValueType] = None, entity: EntityValueContext): EntityValue = {
+    EntityValue(addContext(resource, entity), `type`,
       buildComplexAttributes(resource, entity.attrs.asScala.toList))
   }
 
@@ -111,12 +112,33 @@ object BuildCommon {
   }
 
   def buildComplexAttribute(resource: ContextResource, attr: ComplexAttributeContext): ComplexAttribute = {
-    val attrType = if (attr.`type` != null && attr.`type`.getText.nonEmpty) Some(attr.`type`.getText) else None
+    val attrType = if (attr.`type` != null && attr.`type`.getText.nonEmpty) Some(buildValueType(resource, attr.valueType()))
+    else None
     ComplexAttribute(addContext(resource, attr),
       if (attr.attr != null && attr.attr.getText.nonEmpty) Some(attr.attr.getText) else None,
       attrType,
       buildOperation(resource, attrType, attr.value)
     )
+  }
+
+  def buildValueType(resource: ContextResource, valueType: ValueTypeContext): ValueType = {
+    valueType match {
+      case obj@_ if obj.objType() != null => buildObjType(resource, obj.objType())
+      case array@_ if array.arrayType() != null => buildArrayType(resource, array.arrayType())
+
+    }
+  }
+
+  def buildObjType(resource: ContextResource, objType: ObjTypeContext): ObjType = {
+    ObjType(addContext(resource, objType),
+      if (objType.exTpye != null && objType.exTpye.getText.nonEmpty) Some(objType.exTpye.getText) else None,
+      objType.`type`.getText)
+  }
+
+  def buildArrayType(resource: ContextResource, arrayType: ArrayTypeContext): ArrayType = {
+    ArrayType(addContext(resource, arrayType),
+      if (arrayType.exTpye != null && arrayType.exTpye.getText.nonEmpty) Some(arrayType.exTpye.getText) else None,
+      arrayType.`type`.getText)
   }
 
 }
