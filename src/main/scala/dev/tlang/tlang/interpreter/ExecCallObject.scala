@@ -4,7 +4,9 @@ import dev.tlang.tlang.ast.common.call.{CallFuncObject, CallObject, CallObjectTy
 import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value._
 import dev.tlang.tlang.ast.helper.HelperStatement
+import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetRef}
 import dev.tlang.tlang.ast.tmpl.TmplBlockAsValue
+import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.ExecCallFunc.manageTmplParameters
 import dev.tlang.tlang.interpreter.context.{Context, ContextUtils}
 
@@ -85,7 +87,7 @@ object ExecCallObject extends Executor {
   private def findInCallable(statement: CallObjectType, callable: Option[List[Value[_]]], context: Context): Either[ExecError, Option[List[Value[_]]]] = {
     statement match {
       case callArray: CallArrayObject => resolveArrayInCallable(callArray, callable, context)
-      //case caller: HelperCallFuncObject => resolveFunc(caller, callable, context)
+      //case caller: CallFuncObject => resolveFunc(caller, callable, context)
       case refFunc: CallRefFuncObject => Right(Some(List(refFunc)))
       case CallVarObject(_, name) => resolveCallVar(name, callable, context)
       case _ => Left(NotImplemented())
@@ -93,12 +95,12 @@ object ExecCallObject extends Executor {
   }
 
   def resolveCallVar(name: String, callable: Option[List[Value[_]]], context: Context): Either[ExecError, Option[List[Value[_]]]] = {
-          pickFirst(callable) match {
-            case Left(error) => Left(error)
-            case Right(value) => value match {
-              case impl: EntityImpl => findInImpl(name, impl, context)
-              case valueType: EntityValue => findInEntity(name, valueType, context)
-              case _ => Right(callable)
+    pickFirst(callable) match {
+      case Left(error) => Left(error)
+      case Right(value) => value match {
+        case impl: EntityImpl => findInImpl(name, impl, context)
+        case valueType: EntityValue => findInEntity(name, valueType, context)
+        case _ => Right(callable)
       }
     }
   }
@@ -116,7 +118,7 @@ object ExecCallObject extends Executor {
           case _ => Left(WrongType("Should be Int or String instead of " + posValue.getType))
 
         }
-        case None => Left(CallableNotFound("position"))
+        case None => Left(CallableNotFound("position", array.context))
       }
 
     }
@@ -158,8 +160,14 @@ object ExecCallObject extends Executor {
   }
 
   def findInEntity(name: String, entity: EntityValue, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
-    if (entity.attrs.isDefined) findInAttrs(name, entity.attrs.get, context)
-    else Left(CallableNotFound(name))
+    if (entity.attrs.isDefined) findInAttrs(name, entity.attrs.get, context) match {
+      case Left(error) => Left(error)
+      case Right(value) => value match {
+        case Some(value) => Right(Some(value))
+        case None => findModelInEntity(name, entity, context)
+      }
+    }
+    else findModelInEntity(name, entity, context)
   }
 
   def findInAttrs(name: String, attrs: List[ComplexAttribute], context: Context): Either[ExecError, Option[List[Value[_]]]] = {
@@ -168,7 +176,39 @@ object ExecCallObject extends Executor {
         case operation: Operation => ExecOperation.run(operation, context)
         case _ => Right(Some(List(value.value)))
       }
-      case None => Left(CallableNotFound(name))
+      case None => Right(None)
+    }
+  }
+
+  def findModelInEntity(name: String, entity: EntityValue, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+    entity.`type` match {
+      case Some(entityType) =>
+        val typeName = entityType.getContextType
+        entity.scope.models.get(typeName) match {
+          case Some(value) =>
+            val model = value.asInstanceOf[ModelSetEntity]
+            findInModel(name, model, Context(model.scope :: context.scopes))
+          case None => Left(CallableNotFound(name, entity.context))
+        }
+      case None => Right(None)
+    }
+
+
+  }
+
+  def findInModel(name: String, model: ModelSetEntity, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+    if (model.params.isDefined) findInSetAttrs(name, model.params.get, context, model.getContext)
+    else Left(CallableNotFound(name, model.context))
+  }
+
+  def findInSetAttrs(name: String, attrs: List[ModelSetAttribute], context: Context, contextContent: Option[ContextContent]): Either[ExecError, Option[List[Value[_]]]] = {
+    attrs.find(_.attr.getOrElse(false).equals(name)) match {
+      case Some(value) => value.value match {
+        case ref: ModelSetRef => ExecModelSetRef.run(ref, context)
+        //case funcRef: ModelSetFuncDef => Right(Some(List(funcRef)))
+        case _ => Left(WrongType("Should be a ref", contextContent))
+      }
+      case None => Left(CallableNotFound(name, contextContent))
     }
   }
 
