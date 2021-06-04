@@ -1,6 +1,6 @@
 package dev.tlang.tlang.astbuilder
 
-import dev.tlang.tlang.ast.tmpl.TmplStringID
+import dev.tlang.tlang.ast.tmpl.{TmplParam, TmplStringID}
 import dev.tlang.tlang.ast.tmpl.func.TmplFunc
 import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.{TLangLexer, TLangParser}
@@ -22,7 +22,7 @@ class BuildTmplFuncTest extends AnyFunSuite {
         |}}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val impl = BuildTmplBlock.buildImpl(fakeContext, parser.tmplBlock().tmplContents.asScala.toList.head.tmplImpl())
+    val impl = BuildTmplBlock.buildImpl(fakeContext, parser.tmplBlock().block.tmplFullBlock().tmplContents.asScala.toList.head.tmplImpl())
     assert("func1".equals(impl.content.get.head.asInstanceOf[TmplFunc].name.toString))
   }
 
@@ -35,7 +35,7 @@ class BuildTmplFuncTest extends AnyFunSuite {
         |}}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val impl = BuildTmplBlock.buildImpl(fakeContext, parser.tmplBlock().tmplContents.asScala.toList.head.tmplImpl())
+    val impl = BuildTmplBlock.buildImpl(fakeContext, parser.tmplBlock().block.tmplFullBlock().tmplContents.asScala.toList.head.tmplImpl())
     assert("func1".equals(impl.content.get.head.asInstanceOf[TmplFunc].name.toString))
   }
 
@@ -48,14 +48,14 @@ class BuildTmplFuncTest extends AnyFunSuite {
         |}}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val impl = BuildTmplBlock.buildImpl(fakeContext, parser.tmplBlock().tmplContents.asScala.toList.head.tmplImpl())
+    val impl = BuildTmplBlock.buildImpl(fakeContext, parser.tmplBlock().block.tmplFullBlock().tmplContents.asScala.toList.head.tmplImpl())
     val func = impl.content.get.head.asInstanceOf[TmplFunc]
     val param = func.curries.get.head.params.get.head
     assert("func1".equals(func.name.toString))
     assert("myParam" == param.name.asInstanceOf[TmplStringID].id)
-    assert("MyType" == param.`type`.name.toString)
-    assert(!param.`type`.isArray)
-    assert(param.`type`.generic.isEmpty)
+    assert("MyType" == param.`type`.get.name.toString)
+    assert(!param.`type`.get.isArray)
+    assert(param.`type`.get.generic.isEmpty)
   }
 
   test("Test build func with one array parameter") {
@@ -67,14 +67,14 @@ class BuildTmplFuncTest extends AnyFunSuite {
         |}}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val impl = BuildTmplBlock.buildImpl(fakeContext, parser.tmplBlock().tmplContents.asScala.toList.head.tmplImpl())
+    val impl = BuildTmplBlock.buildImpl(fakeContext, parser.tmplBlock().block.tmplFullBlock().tmplContents.asScala.toList.head.tmplImpl())
     val func = impl.content.get.head.asInstanceOf[TmplFunc]
     val param = func.curries.get.head.params.get.head
     assert("func1" == func.name.toString)
     assert("myParam" == param.name.asInstanceOf[TmplStringID].id)
-    assert("MyType" == param.`type`.name.toString)
-    assert(param.`type`.isArray)
-    assert(param.`type`.generic.isEmpty)
+    assert("MyType" == param.`type`.get.name.toString)
+    assert(param.`type`.get.isArray)
+    assert(param.`type`.get.generic.isEmpty)
   }
 
   test("Test build func with one generic parameter") {
@@ -86,16 +86,16 @@ class BuildTmplFuncTest extends AnyFunSuite {
         |}}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val impl = BuildTmplBlock.buildImpl(fakeContext, parser.tmplBlock().tmplContents.asScala.toList.head.tmplImpl())
+    val impl = BuildTmplBlock.buildImpl(fakeContext, parser.tmplBlock().block.tmplFullBlock().tmplContents.asScala.toList.head.tmplImpl())
     val func = impl.content.get.head.asInstanceOf[TmplFunc]
     val param = func.curries.get.head.params.get.head
     assert("func1" == func.name.toString)
     assert("myParam" == param.name.asInstanceOf[TmplStringID].id)
-    assert("MyType" == param.`type`.name.toString)
-    assert("AnotherType" == param.`type`.generic.head.types.head.name.toString)
-    assert("YetAnotherType" == param.`type`.generic.head.types.last.name.toString)
-    assert("AndSoOn" == param.`type`.generic.head.types.last.generic.get.types.head.name.toString)
-    assert(!param.`type`.isArray)
+    assert("MyType" == param.`type`.get.name.toString)
+    assert("AnotherType" == param.`type`.get.generic.head.types.head.name.toString)
+    assert("YetAnotherType" == param.`type`.get.generic.head.types.last.name.toString)
+    assert("AndSoOn" == param.`type`.get.generic.head.types.last.generic.get.types.head.name.toString)
+    assert(!param.`type`.get.isArray)
   }
 
   test("Test build func with currying") {
@@ -107,7 +107,7 @@ class BuildTmplFuncTest extends AnyFunSuite {
         |}}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
-    val impl = BuildTmplBlock.buildImpl(fakeContext, parser.tmplBlock().tmplContents.asScala.toList.head.tmplImpl())
+    val impl = BuildTmplBlock.buildImpl(fakeContext, parser.tmplBlock().block.tmplFullBlock().tmplContents.asScala.toList.head.tmplImpl())
     val func = impl.content.get.head.asInstanceOf[TmplFunc]
     val param1 = func.curries.get.head.params.get.head
     val param2 = func.curries.get.last.params.get.head
@@ -115,14 +115,14 @@ class BuildTmplFuncTest extends AnyFunSuite {
     assert("func1" == func.name.toString)
 
     assert("myParam" == param1.name.asInstanceOf[TmplStringID].id)
-    assert("MyType" == param1.`type`.name.toString)
-    assert(!param1.`type`.isArray)
-    assert(param1.`type`.generic.isEmpty)
+    assert("MyType" == param1.`type`.get.name.toString)
+    assert(!param1.`type`.get.isArray)
+    assert(param1.`type`.get.generic.isEmpty)
 
     assert("myParam2" == param2.name.asInstanceOf[TmplStringID].id)
-    assert("MyType2" == param2.`type`.name.toString)
-    assert(param2.`type`.isArray)
-    assert(param2.`type`.generic.isEmpty)
+    assert("MyType2" == param2.`type`.get.name.toString)
+    assert(param2.`type`.get.isArray)
+    assert(param2.`type`.get.generic.isEmpty)
   }
 
 }

@@ -1,6 +1,7 @@
 package dev.tlang.tlang.ast.common.value
 
 import dev.tlang.tlang.ast.common.call.ComplexValueStatement
+import dev.tlang.tlang.ast.common.{ObjType, ValueType}
 import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
 import dev.tlang.tlang.interpreter.Value
 
@@ -16,4 +17,6 @@ case class MultiValue(context: Option[ContextContent], values: List[Value[_]]) e
 
 object MultiValue extends TLangType {
   override def getType: String = "MultiValue"
+
+  override def getValueType: ValueType = ObjType(None, Some("TLang"), getType)
 }

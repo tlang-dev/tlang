@@ -4,7 +4,13 @@ import CommonLexer;
 
 /* Common elements */
 
-assignVar: 'let' name=ID (':' type=ID)? '=' value=operation;
+assignVar: 'let' name=ID (':' type=valueType)? '=' value=operation;
+
+valueType: objType | arrayType;
+
+objType: (exTpye=ID '.')? type=ID;
+
+arrayType: (exTpye=ID '.')? type=ID '['']';
 
 operation: (content=complexValueType (op=operator  next=operation)* |
                '(' content=complexValueType ')' (op=operator  next=operation)* |
@@ -49,4 +55,4 @@ impl: 'impl' (':' type=ID)? '{' attrs+=complexAttribute* '}';
 
 multiValue: '(' (values+=operation) (',' values+=operation)+ ')'; // '+' is needed to avoid confusion with operation
 
-complexAttribute: (((attr=ID) (':' type=ID)? '=')? value=operation);
+complexAttribute: (((attr=ID) (':' type=valueType)? '=')? value=operation);

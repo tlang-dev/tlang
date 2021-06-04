@@ -1,12 +1,13 @@
 package dev.tlang.tlang.ast.helper
 
 import dev.tlang.tlang.ast.common.value.TLangType
+import dev.tlang.tlang.ast.common.{ObjType, ValueType}
 import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
 import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.interpreter.context.Scope
 
 case class HelperFunc(context: Option[ContextContent], name: String, currying: Option[List[HelperCurrying]] = None,
-                      returns: Option[List[HelperParamType]] = None, block: HelperContent, scope: Scope = Scope()) extends HelperStatement with Value[HelperFunc] with AstContext {
+                      returns: Option[List[ValueType]] = None, block: HelperContent, scope: Scope = Scope()) extends HelperStatement with Value[HelperFunc] with AstContext {
   override def getElement: HelperFunc = this
 
   override def getType: String = HelperFunc.getType
@@ -18,4 +19,6 @@ case class HelperFunc(context: Option[ContextContent], name: String, currying: O
 
 object HelperFunc extends TLangType {
   override def getType: String = "HelperFunc"
+
+  override def getValueType: ValueType = ObjType(None, Some("TLang"), getType)
 }

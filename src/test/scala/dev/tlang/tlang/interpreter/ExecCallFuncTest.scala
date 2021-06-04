@@ -1,5 +1,6 @@
 package dev.tlang.tlang.interpreter
 
+import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.call._
 import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value.{LazyValue, TLangString}
@@ -15,7 +16,7 @@ class ExecCallFuncTest extends AnyFunSuite {
   test("Run function with one simple parameter") {
     val callInsideFunc = CallObject(None, List(CallVarObject(None, "valToReturn")))
     val block = HelperContent(None, Some(List(callInsideFunc)))
-    val funcDef = HelperFunc(None, "myFunc", Some(List(HelperCurrying(None, List(HelperParam(None, Some("valToReturn"), HelperObjType(None, "String")))))), None, block = block)
+    val funcDef = HelperFunc(None, "myFunc", Some(List(HelperCurrying(None, List(HelperParam(None, Some("valToReturn"), ObjType(None, None, "String")))))), None, block = block)
     val caller = SetAttribute(None, value = Operation(None, None, Right(CallObject(None, List(CallVarObject(None, "var1"))))))
     val funcCaller = CallFuncObject(None, Some("myFunc"), Some(List(CallFuncParam(None, Some(List(caller))))))
     val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangString(None, "MyValue")), functions = mutable.Map("myFunc" -> funcDef))))
@@ -32,7 +33,7 @@ class ExecCallFuncTest extends AnyFunSuite {
   }
 
   test("Call template with parameters") {
-    val block = TmplBlock(None, "myBlock", "scala", Some(List(HelperParam(None, Some("var1"), HelperObjType(None, "String")))), Some(new TmplPkg(List(TmplStringID(None, "myPackage")))))
+    val block = TmplBlock(None, "myBlock", "scala", Some(List(HelperParam(None, Some("var1"), ObjType(None, None, "String")))), Some(new TmplPkg(List(TmplStringID(None, "myPackage")))))
     val caller = SetAttribute(None, value = Operation(None, None, Right(CallObject(None, List(CallVarObject(None, "var1"))))))
     val tmplCaller = CallFuncObject(None, Some("myTmpl"), Some(List(CallFuncParam(None, Some(List(caller))))))
     val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangString(None, "MyValue")), templates = mutable.Map("myTmpl" -> block))))

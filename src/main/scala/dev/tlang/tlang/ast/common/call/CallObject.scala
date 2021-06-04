@@ -1,10 +1,11 @@
 package dev.tlang.tlang.ast.common.call
 
 import dev.tlang.tlang.ast.common.value.TLangType
-import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
+import dev.tlang.tlang.ast.common.{ObjType, ValueType}
+import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
 
-case class CallObject(context: Option[ContextContent], statements: List[CallObjectType]) extends ComplexValueStatement[CallObject] with AstContext {
+case class CallObject(context: Option[ContextContent], statements: List[CallObjectType]) extends ComplexValueStatement[CallObject] {
   override def getElement: CallObject = this
 
   override def getType: String = CallObject.getType
@@ -16,4 +17,6 @@ case class CallObject(context: Option[ContextContent], statements: List[CallObje
 
 object CallObject extends TLangType {
   override def getType: String = "CallObject"
+
+  override def getValueType: ValueType = ObjType(None, Some("TLang"), getType)
 }

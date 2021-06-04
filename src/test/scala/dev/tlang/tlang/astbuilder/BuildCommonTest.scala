@@ -33,6 +33,6 @@ class BuildCommonTest extends AnyFunSuite {
     assert("elm1" == impl.attrs.get(1).value.content.toOption.get.asInstanceOf[ArrayValue].tbl.get.head.value.content.toOption.get.asInstanceOf[TLangString].getElement)
     assert("elm2" == impl.attrs.get(1).value.content.toOption.get.asInstanceOf[ArrayValue].tbl.get.last.value.content.toOption.get.asInstanceOf[TLangString].getElement)
     assert("newEntity" == impl.attrs.get.last.attr.get)
-    assert("NewEntity" == impl.attrs.get.last.`type`.get)
+    assert("NewEntity" == impl.attrs.get.last.`type`.get.getType)
   }
 }

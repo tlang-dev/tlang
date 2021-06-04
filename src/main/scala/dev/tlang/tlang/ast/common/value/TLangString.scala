@@ -1,5 +1,6 @@
 package dev.tlang.tlang.ast.common.value
 
+import dev.tlang.tlang.ast.common.{ObjType, ValueType}
 import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
 import dev.tlang.tlang.interpreter.{ExecError, NotImplemented, Value}
 
@@ -23,8 +24,12 @@ class TLangString(context: Option[ContextContent], value: String) extends Primit
   override def divide(value: PrimitiveValue[String]): Either[ExecError, TLangString] = Left(NotImplemented())
 
   override def modulo(value: PrimitiveValue[String]): Either[ExecError, TLangString] = Left(NotImplemented())
+
+  override def deepCopy(): TLangString = new TLangString(context, new String(value))
 }
 
 object TLangString extends TLangType {
   override def getType: String = "String"
+
+  override def getValueType: ValueType = ObjType(None, Some("TLang"), getType)
 }

@@ -7,11 +7,21 @@ import TLangCommon, TLangHelper, CommonLexer;
  * The content of this block will be translated in the final language as it is
  */
 tmplBlock:
-	'tmpl' '[' lang=tmplID ']' name=tmplID ('('params += helperParam (',' params += helperParam)*')')? '{'
+	'tmpl' '[' lang=tmplID ']' name=tmplID ('('params += helperParam (',' params += helperParam)*')')? block = tmplBlockContentType;
+
+tmplBlockContentType: tmplFullBlock | tmplSpecialisedBlock;
+
+tmplFullBlock: '{'
 	(tmplPakage=tmplPkg)?
 	(tmplUses+=tmplUse)*
 	(tmplContents+=tmplContent)*
 	'}';
+
+tmplSpecialisedBlock: 'spec' '{' content=tmplSpecialisedContent '}';
+
+//tmplSpecialisedTypes: 'impl' | 'func' | 'expr' | 'attr' | 'setAttr' | 'param';
+
+tmplSpecialisedContent: tmplContent | tmplAttribute | 'setAttr' tmplSetAttribute | tmplParam;
 
 tmplContent: tmplImpl | tmplFunc | tmplExpression;
 
@@ -27,13 +37,13 @@ tmplProps: ('[' (props+=tmplID)+ ']')?;
 
 tmplImpl:
     (annots+=tmplAnnot)*
-	'impl' props=tmplProps  name=tmplID (('for' forProps=tmplProps  forNames+=tmplID) (',' forNames+=tmplID)* (('with' withProps=tmplProps  withNames+=tmplID) (',' withNames+=tmplID)*)?)? '{'
+	'impl' props=tmplProps  name=tmplID (('for' forProps=tmplProps  forNames+=tmplType) (',' forNames+=tmplType)* (('with' withProps=tmplProps  withNames+=tmplType) (',' withNames+=tmplType)*)?)? '{'
 	(tmplImplContents+=tmplContent)*
 	'}';
 
 tmplFunc:
     (annots+=tmplAnnot)*
-	'func' props=tmplProps name=tmplID curries+=tmplCurrying* (':' types+=tmplType (',' types+=tmplType)*)? content=tmplExprBlock?;
+	'func' props=tmplProps name=tmplID curries+=tmplCurrying* (':' types+=tmplType (',' types+=tmplType)*)? postProps=tmplProps content=tmplExprBlock?;
 
 tmplCurrying: '(' param=tmplCurryingParam ')';
 
@@ -41,6 +51,7 @@ tmplCurryingParam:
 	((params+=tmplParam) (',' params+=tmplParam)*)?;
 
 tmplParam:
+    (annots+=tmplAnnot)*
 	accessor=tmplID? name=tmplID (':' type=tmplType)?;
 
 tmplType:
@@ -54,31 +65,36 @@ tmplExprContent: tmplExpression | tmplExprBlock;
 tmplExprBlock: '{' exprs+=tmplExpression* '}';
 
 tmplExpression:	tmplVar | tmplCallObj | tmplValueType | tmplFunc
-                | tmplIf | tmplFor | tmplWhile | tmplDoWhile | tmplInclude | tmplReturn | tmplAffect;
+                | tmplIf | tmplFor | tmplWhile | tmplDoWhile | tmplInclude | tmplReturn
+                | tmplAffect | tmplCast | tmplAnonFunc;
 
 tmplIf: 'if' '(' cond=tmplOperation ')' content=tmplExprContent elseThen=tmplElse?;
 
 tmplElse: 'else' (tmplIf | tmplExprContent);
 
-tmplFor: 'for' '(' var=tmplID start=tmplOperation? type=('in' | 'to' | 'until') array=tmplOperation ')' content=tmplExprContent;
+tmplFor: 'for' '(' variable=tmplID ('=' start=tmplOperation)? type=('in' | 'to' | 'until') array=tmplOperation ')' content=tmplExprContent;
 
 tmplWhile: 'while' '(' cond=tmplOperation ')' content=tmplExprContent;
 
 tmplDoWhile: 'do' content=tmplExprContent 'while' '(' cond=tmplOperation ')';
 
+tmplAnonFunc: params=tmplCurrying '=>' content=tmplExprContent;
+
 tmplVar:
     (annots+=tmplAnnot)*
     'var' props=tmplProps name=tmplID (':' type=tmplType)? ('=' value=tmplOperation)?;
 
-tmplCallObj: objs+=tmplCallObjType ('.'objs+=tmplCallObjType)*;
+tmplCallObj: props=tmplProps objs+=tmplCallObjType ('.'objs+=tmplCallObjType)*;
 
 tmplCallObjType: tmplCallArray | tmplCallFunc | tmplCallVariable;
 
 tmplCallFunc: ((name=tmplID) | '_') (currying += tmplCurryParams)+;
 
-tmplCurryParams:'(' (params+=tmplSetAttribute (',' params+=tmplSetAttribute)*)? ')';
+tmplCurryParams:'(' (params+=tmplInclSetAttribute (',' params+=tmplInclSetAttribute)*)? ')';
 
-tmplSetAttribute: (name=tmplID '=')? value=tmplOperation;
+tmplSetAttribute: (name=tmplIdOrString ':')? value=tmplOperation;
+
+tmplInclSetAttribute: tmplInclude | tmplSetAttribute;
 
 tmplCallArray: name=tmplID '[' elem=tmplOperation ']';
 
@@ -96,28 +112,32 @@ tmplTextValue: value=tmplText;
 
 tmplBoolValue: value= 'true' | 'false';
 
-tmplArrayValue: '[' (params+=tmplSetAttribute)? (',' params+=tmplSetAttribute)* ']';
+tmplArrayValue: '[' (params+=tmplInclSetAttribute)? (',' params+=tmplInclSetAttribute)* ']';
+
+tmplInclAttribute: tmplInclude | tmplAttribute;
 
 tmplAttribute: ((attr=tmplID)? (':' type=tmplType)? value=tmplOperation);
 
 tmplMultiValue: '(' (values+=tmplValueType) (',' values+=tmplValueType)* ')';
 
 tmplEntityValue:
-	'new' ('(' ((params+=tmplAttribute) (',' params+=tmplAttribute)*) ')')? '{'
-	attrs+=tmplAttribute*
-	'}';
+	'new' (name=tmplID)? ('(' ((params+=tmplInclAttribute) (',' params+=tmplInclAttribute)*)? ')')?
+	('{' ((attrs+=tmplInclAttribute) (',' attrs+=tmplInclAttribute)*)? '}')?;
 
 tmplOperation:
      (content=tmplExpression (op=operator  next=tmplOperation)* |
      '(' content=tmplExpression ')' (op=operator  next=tmplOperation)* |
      '(' content=tmplExpression (op=operator  next=tmplOperation)* ')' |
-     '(' innerBlock=tmplOperation ')' (op=operator  next=tmplOperation)*);
+     '(' innerBlock=tmplOperation ')' (op=operator  next=tmplOperation)*)
+     ('.' combine=tmplCallObj)?;
 
 tmplInclude: '<[' ((calls+=callObj)*) ']>';
 
 tmplReturn: 'return' call=tmplOperation;
 
 tmplAffect: variable=tmplCallObj '=' value=tmplOperation;
+
+tmplCast: '(' toCast=tmplOperation 'as' type=tmplType ')' ('.' combine=tmplCallObj)?;
 
 tmplID: ID | tmplIntprID;
 
@@ -130,3 +150,5 @@ tmplIntprString: 's"' (pre=ID)? '${' callObj '}' (pos=ID)? '"';
 tmplText: TEXT | tmplIntprText;
 
 tmplIntprText: 's"""' (pre=ID)? '${' callObj '}' (pos=ID)? '"""';
+
+tmplIdOrString: tmplID | tmplString;

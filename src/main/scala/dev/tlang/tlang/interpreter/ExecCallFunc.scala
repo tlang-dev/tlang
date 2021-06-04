@@ -26,7 +26,7 @@ object ExecCallFunc extends Executor {
           ContextUtils.findRefFunc(context, caller.name.get) match {
             case Some(refFunc) =>
               val newCaller = mergeCallers(caller, refFunc)
-              ExecCallRefFunc.run(newCaller, context)
+              ExecCallRefFunc.run(newCaller, Context(context.scopes :+ refFunc.scope))
             //                      refFunc.func.get match {
             //                        case Left(func) =>
             //                          val newCaller = mergeCallers(caller, refFunc)
@@ -50,7 +50,8 @@ object ExecCallFunc extends Executor {
       caller.currying.get.zipWithIndex.foreach(param => {
         param._1.params.get.zipWithIndex.foreach(attr => {
           ExecOperation.run(attr._1.value, context) match {
-            case Left(value) => //Left(value)
+            case Left(value) =>
+              println("Error:" + value.toString)
             case Right(optionVal) => optionVal match {
               case Some(value) => if (value.size == 1) {
                 value.head match {

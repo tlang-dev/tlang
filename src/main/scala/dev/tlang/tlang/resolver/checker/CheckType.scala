@@ -14,11 +14,11 @@ object CheckType {
 
   def followCall(valType: String, complexValue: ComplexValueStatement[_], scope: Scope): Either[List[ResolverError], Unit] = {
     complexValue match {
-      case _ => checkType(valType, complexValue)
       case callObject: CallObject => FollowCallToTheEnd.followCallToTheEnd(callObject, Context(List(scope))) match {
         case Left(value) => Right(())
         case Right(value) =>Right(())
       }
+      case _ => checkType(valType, complexValue)
     }
   }
 

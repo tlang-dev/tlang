@@ -32,7 +32,7 @@ class BuildModelNewEntityTest extends AnyFunSuite {
     val parser = new TLangParser(tokens)
     val newEntity = BuildModelBlock.build(fakeContext, parser.modelBlock()).content.get.head.asInstanceOf[AssignVar]
     assert("firstEntity".equals(newEntity.name))
-    assert("AnyEntity".equals(newEntity.`type`.get))
+    assert("AnyEntity".equals(newEntity.`type`.get.getType))
   }
 
   test("Test new entity with parameters") {
@@ -50,14 +50,14 @@ class BuildModelNewEntityTest extends AnyFunSuite {
     val newEntity = BuildModelBlock.build(fakeContext, parser.modelBlock()).content.get.head.asInstanceOf[AssignVar]
     val params = newEntity.value.getElement.content.toOption.get.asInstanceOf[EntityValue].attrs
     assert("firstEntity".equals(newEntity.name))
-    assert("AnyEntity".equals(newEntity.`type`.get))
+    assert("AnyEntity".equals(newEntity.`type`.get.getType))
     assert(params.get.head.attr.isEmpty)
     assert("myString".equals(params.get.head.value.content.toOption.get.asInstanceOf[TLangString].getElement))
     assert("var1".equals(params.get(1).attr.get))
     assert("elm1".equals(params.get(1).value.content.toOption.get.asInstanceOf[ArrayValue].tbl.get.head.value.content.toOption.get.asInstanceOf[TLangString].getElement))
     assert("elm2".equals(params.get(1).value.content.toOption.get.asInstanceOf[ArrayValue].tbl.get.last.value.content.toOption.get.asInstanceOf[TLangString].getElement))
     assert("newEntity".equals(params.get.last.attr.get))
-    assert("NewEntity".equals(params.get.last.`type`.get))
+    assert("NewEntity".equals(params.get.last.`type`.get.getType))
   }
 
 }

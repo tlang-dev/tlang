@@ -64,7 +64,7 @@ class ResolveContextTest extends AnyFunSuite {
 
     val scope = module.resources(module.mainFile).ast.body.head.asInstanceOf[HelperBlock].funcs.get.head.scope
     assert("MyFile/myEntity" == scope.variables.head._1)
-    assert("MyEntity" == scope.variables.head._2.asInstanceOf[Operation].content.toOption.get.asInstanceOf[EntityValue].`type`.get)
+    assert("MyEntity" == scope.variables.head._2.asInstanceOf[Operation].content.toOption.get.asInstanceOf[EntityValue].`type`.get.getType)
   }
 
   test("Resolve context with template") {
@@ -287,7 +287,7 @@ class ResolveContextTest extends AnyFunSuite {
     val resource = Resource("", "", "", "Main", block)
 
     val entityType = ResolveContext.findInResource(resource, CallVarObject(None, "myEntity2")).toOption.get.get.asInstanceOf[Operation].content.toOption.get.asInstanceOf[EntityValue].`type`.get
-    assert("AnyEntity2" == entityType)
+    assert("AnyEntity2" == entityType.getType)
   }
 
   test("Find func") {
@@ -303,7 +303,7 @@ class ResolveContextTest extends AnyFunSuite {
 
   test("Find var") {
     val contents: List[ModelContent[_]] = List(
-      ModelSetEntity(None, "myEntity", None, None),
+      ModelSetEntity(None, "myEntity", None, None, None),
       AssignVar(None, "myEntity", None, Operation(None, None, Right(EntityValue(None, None, None)))),
       AssignVar(None, "myEntity2", None, Operation(None, None, Right(EntityValue(None, None, None)))),
     )
@@ -325,7 +325,7 @@ class ResolveContextTest extends AnyFunSuite {
 
   test("Find empty var") {
     val contents: List[ModelContent[_]] = List(
-      ModelSetEntity(None, "myEntity", None, None),
+      ModelSetEntity(None, "myEntity", None, None, None),
       AssignVar(None, "myEntity", None, Operation(None, None, Right(EntityValue(None, None, None)))),
       AssignVar(None, "myEntity2", None, Operation(None, None, Right(EntityValue(None, None, None)))),
     )

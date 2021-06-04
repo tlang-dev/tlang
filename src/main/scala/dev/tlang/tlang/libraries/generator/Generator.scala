@@ -1,17 +1,20 @@
 package dev.tlang.tlang.libraries.generator
 
+import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.value.TLangString
 import dev.tlang.tlang.ast.helper._
 import dev.tlang.tlang.ast.tmpl.TmplBlockAsValue
-import dev.tlang.tlang.generator.groovy.GroovyGenerator
-import dev.tlang.tlang.generator.java.JavaGenerator
-import dev.tlang.tlang.generator.json.JSONGenerator
-import dev.tlang.tlang.generator.rust.RustGenerator
-import dev.tlang.tlang.generator.scalalang.ScalaGenerator
-import dev.tlang.tlang.generator.typescript.TypeScriptGenerator
-import dev.tlang.tlang.generator.xml.XMLGenerator
-import dev.tlang.tlang.generator.yml.YMLGenerator
-import dev.tlang.tlang.generator.{CodeGenerator, ValueMapper}
+import dev.tlang.tlang.generator.CodeGenerator
+import dev.tlang.tlang.generator.builder.TemplateBuilder
+import dev.tlang.tlang.generator.langs.dart.DartGenerator
+import dev.tlang.tlang.generator.langs.groovy.GroovyGenerator
+import dev.tlang.tlang.generator.langs.java.JavaGenerator
+import dev.tlang.tlang.generator.langs.json.JSONGenerator
+import dev.tlang.tlang.generator.langs.rust.RustGenerator
+import dev.tlang.tlang.generator.langs.scalalang.ScalaGenerator
+import dev.tlang.tlang.generator.langs.typescript.TypeScriptGenerator
+import dev.tlang.tlang.generator.langs.xml.XMLGenerator
+import dev.tlang.tlang.generator.langs.yml.YMLGenerator
 import dev.tlang.tlang.interpreter._
 import dev.tlang.tlang.interpreter.context.{Context, ContextUtils}
 
@@ -21,6 +24,7 @@ object Generator {
     "scala" -> new ScalaGenerator(),
     "java" -> new JavaGenerator(),
     "typescript" -> new TypeScriptGenerator(),
+    "dart" -> new DartGenerator(),
     "groovy" -> new GroovyGenerator(),
     "json" -> new JSONGenerator(),
     "rust" -> new RustGenerator(),
@@ -28,8 +32,8 @@ object Generator {
     "yml" -> new YMLGenerator(),
   )
 
-  def generateFunc: HelperFunc = HelperFunc(None, "generate", Some(List(HelperCurrying(None, List(HelperParam(None, Some("block"), HelperObjType(None, TmplBlockAsValue.getType)))))),
-    Some(List(HelperObjType(None, TLangString.getType))), HelperContent(None, Some(List(
+  def generateFunc: HelperFunc = HelperFunc(None, "generate", Some(List(HelperCurrying(None, List(HelperParam(None, Some("block"), ObjType(None, None, TmplBlockAsValue.getType)))))),
+    Some(List(ObjType(None, None, TLangString.getType))), HelperContent(None, Some(List(
       HelperInternalFunc((context: Context) => {
         ContextUtils.findVar(context, "block") match {
           case Some(block) => generate(block.asInstanceOf[TmplBlockAsValue], context) match {
@@ -45,8 +49,10 @@ object Generator {
     generators.get(block.block.lang) match {
       case None => Left(ElementNotFound("This language does not exist: " + block.block.lang))
       case Some(generator) =>
-        val newBlock = ValueMapper.mapBlock(block)
-        Right(new TLangString(None, generator.generate(newBlock.block)))
+        TemplateBuilder.buildBlockAsValue(block) match {
+          case Left(error) => Left(error)
+          case Right(newBlock) => Right(new TLangString(None, generator.generate(newBlock.block)))
+        }
     }
   }
 

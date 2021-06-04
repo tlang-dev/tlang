@@ -1,14 +1,11 @@
 package dev.tlang.tlang.resolver
 
 import dev.tlang.tlang.ast.helper.HelperBlock
-import dev.tlang.tlang.loader.{BuildModuleTree, FileResourceLoader, ResourceLoader, TBagManager}
 import dev.tlang.tlang.loader.remote.RemoteLoader
+import dev.tlang.tlang.loader._
+import org.scalatest.funsuite.AnyFunSuite
 
 import java.nio.file.Paths
-import dev.tlang.tlang.ast.helper.HelperBlock
-import dev.tlang.tlang.loader.remote.RemoteLoader
-import dev.tlang.tlang.loader.{BuildModuleTree, FileResourceLoader, LoaderError, ResourceLoader, TBagManager}
-import org.scalatest.funsuite.AnyFunSuite
 
 class ResolveExternalResourcesTest extends AnyFunSuite {
 

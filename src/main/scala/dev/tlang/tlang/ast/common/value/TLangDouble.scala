@@ -1,5 +1,6 @@
 package dev.tlang.tlang.ast.common.value
 
+import dev.tlang.tlang.ast.common.{ObjType, ValueType}
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.{ExecError, Value}
 
@@ -23,8 +24,12 @@ class TLangDouble(context: Option[ContextContent], value: Double) extends Primit
   override def divide(value: PrimitiveValue[Double]): Either[ExecError, TLangDouble] = Right(new TLangDouble(None, this.value / value.getElement))
 
   override def modulo(value: PrimitiveValue[Double]): Either[ExecError, TLangDouble] = Right(new TLangDouble(None, this.value % value.getElement))
+
+  override def deepCopy(): TLangDouble = new TLangDouble(context, value)
 }
 
 object TLangDouble extends TLangType {
   override def getType: String = "Double"
+
+  override def getValueType: ValueType = ObjType(None, Some("TLang"), getType)
 }

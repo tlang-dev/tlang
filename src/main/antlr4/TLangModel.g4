@@ -20,15 +20,15 @@ modelContent: assignVar | modelSetEntity;
 */
 
 modelSetEntity:
-    'set' name=ID ('(' ((params+=modelSetAttribute) (',' params+=modelSetAttribute)*) ')')? '{'
-    attrs+=modelSetAttribute*
+    'set' name=ID ('ext' ext=objType)? ('(' ((params+=modelSetAttribute) (',' params+=modelSetAttribute)*) ')')? '{'
+    (attrs+=modelSetAttribute (',' attrs+=modelSetAttribute)*)?
     '}'
 ;
 
 //SET: 'set';
 
 modelSetAttribute:
-    attr=ID? value=modelSetValueType;
+    (attr=ID ':')? value=modelSetValueType;
 
 modelSetValueType: modelSetType | modelSetArray | modelSetFuncDef | modelSetRef | modelSetImpl | modelSetImplArray;
 
@@ -38,12 +38,12 @@ modelSetArray: array=ID '[' ']';
 
 modelSetFuncDef: '(' (paramTypes+=modelSetValueType (',' paramTypes+=modelSetValueType)*)? ')' (':'  '(' retTypes+=modelSetValueType (',' retTypes+=modelSetValueType)* ')' )?;
 
-modelSetRef: '&' refs+=ID ('.' refs+=ID)* (('(' currying+=modelSetRefCurrying  ')') ('(' currying+=modelSetRefCurrying ')')*)?;
+modelSetRef: '&' refs+=ID ('.' refs+=ID)* ('(' (currying+=modelSetRefCurrying)?  ')' ('(' (currying+=modelSetRefCurrying)? ')')*)?;
 
 modelSetRefCurrying:values+=modelSetRefValue (',' values+=modelSetRefValue)*;
 
 modelSetRefValue: modelSetRef | operation;
 
-modelSetImpl: 'impl' '{' attrs+=modelSetAttribute* '}';
+modelSetImpl: 'impl' '{' attrs+=modelSetAttribute (',' attrs+=modelSetAttribute)* '}';
 
 modelSetImplArray: 'impl' '[' ']';

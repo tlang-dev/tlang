@@ -1,3 +1,12 @@
 package dev.tlang.tlang.ast.helper
 
-case class HelperFuncType(params: Option[List[HelperCurrying]], returns: Option[List[HelperParamType]]) extends HelperParamType
+import dev.tlang.tlang.ast.common.ValueType
+import dev.tlang.tlang.astbuilder.context.ContextContent
+
+case class HelperFuncType(context: Option[ContextContent], params: Option[List[HelperCurrying]], returns: Option[List[ValueType]]) extends ValueType {
+  override def getContextType: String = getType
+
+  override def getType: String = getClass.getName
+
+  override def getContext: Option[ContextContent] = context
+}

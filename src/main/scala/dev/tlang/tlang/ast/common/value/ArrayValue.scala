@@ -1,5 +1,6 @@
 package dev.tlang.tlang.ast.common.value
 
+import dev.tlang.tlang.ast.common.{ObjType, ValueType}
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.{ExecError, NotImplemented, Value}
 
@@ -24,8 +25,12 @@ case class ArrayValue(context: Option[ContextContent], tbl: Option[List[ComplexA
   override def divide(value: PrimitiveValue[ArrayValue]): Either[ExecError, ArrayValue] = Left(NotImplemented())
 
   override def modulo(value: PrimitiveValue[ArrayValue]): Either[ExecError, ArrayValue] = Left(NotImplemented())
+
+  override def deepCopy(): ArrayValue = ArrayValue(context, tbl)
 }
 
 object ArrayValue extends TLangType {
   override def getType: String = "ArrayValue"
+
+  override def getValueType: ValueType = ObjType(None, Some("TLang"), getType)
 }

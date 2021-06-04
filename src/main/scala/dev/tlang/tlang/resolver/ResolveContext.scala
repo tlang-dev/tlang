@@ -69,7 +69,7 @@ object ResolveContext {
     nextCaller match {
       case CallFuncObject(_, name, _) => browseBody(name.get, resource)
       case CallVarObject(_, name) => browseBody(name, resource)
-      case CallRefFuncObject(_, name, _, _) => browseBody(name.get, resource)
+      case CallRefFuncObject(_, name, _, _, _) => browseBody(name.get, resource)
       case _ => Right(None)
     }
   }

@@ -1,6 +1,7 @@
 package dev.tlang.tlang.astbuilder
 
-import dev.tlang.tlang.ast.helper.{HelperArrayType, HelperFuncType, HelperObjType}
+import dev.tlang.tlang.ast.common.{ArrayType, ObjType}
+import dev.tlang.tlang.ast.helper.HelperFuncType
 import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.{TLangLexer, TLangParser}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
@@ -54,12 +55,12 @@ class BuildHelperBlockTest extends AnyFunSuite {
     val funcType = curry.params.last.`type`.asInstanceOf[HelperFuncType]
     assert("myFunc".equals(func.name))
     assert("param1".equals(curry.params.head.param.get))
-    assert("String".equals(curry.params.head.`type`.asInstanceOf[HelperObjType].name))
+    assert("String".equals(curry.params.head.`type`.asInstanceOf[ObjType].name))
     assert("param2".equals(curry.params(1).param.get))
-    assert("Int".equals(curry.params(1).`type`.asInstanceOf[HelperArrayType].name))
+    assert("Int".equals(curry.params(1).`type`.asInstanceOf[ArrayType].name))
     assert("param3".equals(curry.params.last.param.get))
     assert(funcType.params.isEmpty)
-    assert("Bool".equals(funcType.returns.get.head.asInstanceOf[HelperObjType].name))
+    assert("Bool".equals(funcType.returns.get.head.asInstanceOf[ObjType].name))
   }
 
   test("With returned values declared") {
@@ -72,8 +73,8 @@ class BuildHelperBlockTest extends AnyFunSuite {
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLangParser(tokens)
     val returns = BuildHelperBlock.build(fakeContext, parser.helperBlock()).funcs.get.head.returns.get
-    assert("String".equals(returns.head.asInstanceOf[HelperObjType].name))
-    assert("Int".equals(returns.last.asInstanceOf[HelperArrayType].name))
+    assert("String".equals(returns.head.asInstanceOf[ObjType].name))
+    assert("Int".equals(returns.last.asInstanceOf[ArrayType].name))
   }
 
   test("With params and returned values") {
@@ -90,20 +91,20 @@ class BuildHelperBlockTest extends AnyFunSuite {
     val funcType = curry.params.last.`type`.asInstanceOf[HelperFuncType]
     assert("myFunc".equals(func.name))
     assert("param1".equals(curry.params.head.param.get))
-    assert("String".equals(curry.params.head.`type`.asInstanceOf[HelperObjType].name))
+    assert("String".equals(curry.params.head.`type`.asInstanceOf[ObjType].name))
     assert("param2".equals(curry.params(1).param.get))
-    assert("Int".equals(curry.params(1).`type`.asInstanceOf[HelperArrayType].name))
+    assert("Int".equals(curry.params(1).`type`.asInstanceOf[ArrayType].name))
     assert("param3".equals(curry.params.last.param.get))
-    assert("Int".equals(funcType.params.get.head.params.head.`type`.asInstanceOf[HelperArrayType].name))
-    assert("String".equals(funcType.params.get.head.params.last.`type`.asInstanceOf[HelperObjType].name))
-    assert("Bool".equals(funcType.returns.get.head.asInstanceOf[HelperObjType].name))
+    assert("Int".equals(funcType.params.get.head.params.head.`type`.asInstanceOf[ArrayType].name))
+    assert("String".equals(funcType.params.get.head.params.last.`type`.asInstanceOf[ObjType].name))
+    assert("Bool".equals(funcType.returns.get.head.asInstanceOf[ObjType].name))
 
     val returns = func.returns.get
     val retFuncType = func.returns.get.last.asInstanceOf[HelperFuncType]
-    assert("String".equals(returns.head.asInstanceOf[HelperObjType].name))
-    assert("Int".equals(returns(1).asInstanceOf[HelperArrayType].name))
-    assert("String".equals(retFuncType.params.get.head.params.head.`type`.asInstanceOf[HelperObjType].name))
-    assert("Int".equals(retFuncType.returns.get.head.asInstanceOf[HelperArrayType].name))
+    assert("String".equals(returns.head.asInstanceOf[ObjType].name))
+    assert("Int".equals(returns(1).asInstanceOf[ArrayType].name))
+    assert("String".equals(retFuncType.params.get.head.params.head.`type`.asInstanceOf[ObjType].name))
+    assert("Int".equals(retFuncType.returns.get.head.asInstanceOf[ArrayType].name))
   }
 
   test("Currying") {
@@ -121,13 +122,13 @@ class BuildHelperBlockTest extends AnyFunSuite {
     val funcType = secondCurry.params.head.`type`.asInstanceOf[HelperFuncType]
     assert("myFunc".equals(func.name))
     assert("param1".equals(firstCurry.params.head.param.get))
-    assert("String".equals(firstCurry.params.head.`type`.asInstanceOf[HelperObjType].name))
+    assert("String".equals(firstCurry.params.head.`type`.asInstanceOf[ObjType].name))
     assert("param2".equals(firstCurry.params(1).param.get))
-    assert("Int".equals(firstCurry.params(1).`type`.asInstanceOf[HelperArrayType].name))
+    assert("Int".equals(firstCurry.params(1).`type`.asInstanceOf[ArrayType].name))
     assert("param3".equals(secondCurry.params.head.param.get))
     assert(funcType.params.isEmpty)
-    assert("Bool".equals(funcType.returns.get.head.asInstanceOf[HelperObjType].name))
-    assert("String".equals(secondCurry.params.last.`type`.asInstanceOf[HelperObjType].name))
+    assert("Bool".equals(funcType.returns.get.head.asInstanceOf[ObjType].name))
+    assert("String".equals(secondCurry.params.last.`type`.asInstanceOf[ObjType].name))
   }
 
 

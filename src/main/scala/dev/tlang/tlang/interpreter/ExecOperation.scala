@@ -40,7 +40,7 @@ object ExecOperation extends Executor {
 
   @tailrec
   def flatten(operator: Operator.operator, operation: Operation, ops: ListBuffer[(Option[Operator.operator], Value[_])], context: Context): Either[ExecError, List[(Option[Operator.operator], Value[_])]] = {
-    execOperation(operation, context, false) match {
+    execOperation(operation, context, newLevel = false) match {
       case Left(err) => Left(err)
       case Right(value) =>
         ops.addOne(Some(operator), value.get.head)
@@ -89,7 +89,8 @@ object ExecOperation extends Executor {
         val val1 = value1.asInstanceOf[Value[Any]]
         val val2 = value2.asInstanceOf[Value[Any]]
         operator match {
-          case Operator.EQUAL => Right(new TLangBool(None, val1.compareTo(val2) == 0))
+          case Operator.EQUAL =>
+            Right(new TLangBool(None, val1.compareTo(val2) == 0))
           case Operator.GREATER => Right(new TLangBool(None, val1.compareTo(val2) > 0))
           case Operator.LESSER => Right(new TLangBool(None, val1.compareTo(val2) < 0))
           case Operator.GREATER_OR_EQUAL => Right(new TLangBool(None, val1.compareTo(val2) >= 0))

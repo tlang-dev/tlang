@@ -1,5 +1,6 @@
 package dev.tlang.tlang.libraries.tio.file
 
+import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.value.TLangString
 import dev.tlang.tlang.ast.helper._
 import dev.tlang.tlang.interpreter.context.{Context, ContextUtils}
@@ -10,7 +11,7 @@ import java.nio.file.Files
 
 object IOFile {
 
-  def writeFunc: HelperFunc = HelperFunc(None, "write", Some(List(HelperCurrying(None, List(HelperParam(None, Some("file"), HelperObjType(None, TLangString.getType)), HelperParam(None, Some("content"), HelperObjType(None, TLangString.getType)))))), None, HelperContent(None, Some(List(
+  def writeFunc: HelperFunc = HelperFunc(None, "write", Some(List(HelperCurrying(None, List(HelperParam(None, Some("file"), ObjType(None, None, TLangString.getType)), HelperParam(None, Some("content"), ObjType(None, None, TLangString.getType)))))), None, HelperContent(None, Some(List(
     HelperInternalFunc((context: Context) => {
       ContextUtils.findVar(context, "file") match {
         case Some(file) => ContextUtils.findVar(context, "content") match {

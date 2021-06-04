@@ -1,5 +1,7 @@
 package dev.tlang.tlang.ast.model.let
 
+import dev.tlang.tlang.ast.common.{ObjType, ValueType}
+import dev.tlang.tlang.ast.common.value.TLangBool.getType
 import dev.tlang.tlang.ast.common.value.TLangType
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
@@ -19,4 +21,6 @@ case class ModelLetRefVar(context: Option[ContextContent], variable: Value[_]) e
 
 object ModelLetRefVar extends TLangType {
   override def getType: String = "VarRef"
+
+  override def getValueType: ValueType = ObjType(None, Some("TLang"), getType)
 }

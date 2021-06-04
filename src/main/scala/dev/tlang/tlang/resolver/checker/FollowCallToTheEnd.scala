@@ -1,5 +1,6 @@
 package dev.tlang.tlang.resolver.checker
 
+import dev.tlang.tlang.ast.common.{ArrayType, ObjType, ValueType}
 import dev.tlang.tlang.ast.common.call._
 import dev.tlang.tlang.ast.common.value.EntityValue
 import dev.tlang.tlang.ast.helper._
@@ -48,7 +49,7 @@ object FollowCallToTheEnd {
     }
   }
 
-  def followFuncReturnType(params: Option[List[HelperParamType]], callObject: CallObject, context: Context, callIndex: Int): Either[ResolverError, Option[Element[_]]] = {
+  def followFuncReturnType(params: Option[List[ValueType]], callObject: CallObject, context: Context, callIndex: Int): Either[ResolverError, Option[Element[_]]] = {
     params match {
       case Some(value) =>
         if (value.length == 1) followParamType(value.head, callObject, context, callIndex)
@@ -89,11 +90,11 @@ object FollowCallToTheEnd {
   //    }
   //  }
 
-  def followParamType(paramType: HelperParamType, callObject: CallObject, context: Context, callIndex: Int): Either[ResolverError, Option[Element[_]]] = {
+  def followParamType(paramType: ValueType, callObject: CallObject, context: Context, callIndex: Int): Either[ResolverError, Option[Element[_]]] = {
     paramType match {
-      case arrayType: HelperArrayType => Right(None)
+      case arrayType: ArrayType => Right(None)
       case funcType: HelperFuncType => Right(None)
-      case objType: HelperObjType => ContextUtils.findModel(context, objType.name) match {
+      case objType: ObjType => ContextUtils.findModel(context, objType.name) match {
         case Some(value) => followNextCall(objType.getContext, Some(value), callObject, context, callIndex)
         case None => Left(ResourceNotFound(objType.context, objType.name))
       }
