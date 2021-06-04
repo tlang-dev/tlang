@@ -22,7 +22,7 @@ class FollowCallToTheEndTest extends AnyFunSuite {
   test("Call var in set entity") {
     val call = CallObject(None, List(CallVarObject(None, "param1")))
     val context = Context(List(Scope()))
-    val entity = ModelSetEntity(None, "myEntity", Some(List(ModelSetAttribute(None, Some("param1"), ModelSetType(None, TLangString.getType)))), None)
+    val entity = ModelSetEntity(None, "myEntity", None, Some(List(ModelSetAttribute(None, Some("param1"), ModelSetType(None, TLangString.getType)))), None)
     val elem = FollowCallToTheEnd.followSetEntity(entity, call, context, 0).toOption.get.get
     assert(TLangString.getType == elem.asInstanceOf[ModelSetType].`type`)
   }
@@ -30,7 +30,7 @@ class FollowCallToTheEndTest extends AnyFunSuite {
   test("Call set ref with func") {
     val call = CallObject(None, List(CallFuncObject(None, Some("myFunc"), None)))
     val ref = ModelSetRef(None, List("myFunc"), None)
-    val func = HelperFunc(None, "myFunc", None, Some(List(ObjType(None,None, TLangString.getType))), HelperContent(None, None))
+    val func = HelperFunc(None, "myFunc", None, Some(List(ObjType(None, None, TLangString.getType))), HelperContent(None, None))
     val context = Context(List(Scope(functions = mutable.Map("myFunc" -> func))))
     val elem = FollowCallToTheEnd.followSetRef(ref, call, context, 0).toOption.get.get
     assert(TLangString.getType == elem.asInstanceOf[TLangString].getType)
@@ -38,9 +38,9 @@ class FollowCallToTheEndTest extends AnyFunSuite {
 
   test("Call func in set entity") {
     val call = CallObject(None, List(CallVarObject(None, "var1"), CallFuncObject(None, Some("param1"), None)))
-    val entity = ModelSetEntity(None, "myEntity", Some(List(ModelSetAttribute(None, Some("param1"), ModelSetRef(None, List("myFunc"), None)))), None)
+    val entity = ModelSetEntity(None, "myEntity", None, Some(List(ModelSetAttribute(None, Some("param1"), ModelSetRef(None, List("myFunc"), None)))), None)
     val context = Context(List(Scope(
-      functions = mutable.Map("myFunc" -> HelperFunc(None, "myFunc", None, Some(List(ObjType(None,None,  TLangString.getType))), HelperContent(None, None))),
+      functions = mutable.Map("myFunc" -> HelperFunc(None, "myFunc", None, Some(List(ObjType(None, None, TLangString.getType))), HelperContent(None, None))),
       models = mutable.Map("var1" -> entity))))
     val elem = FollowCallToTheEnd.followCallToTheEnd(call, context).toOption.get.get
     assert(TLangString.getType == elem.asInstanceOf[TLangString].getType)

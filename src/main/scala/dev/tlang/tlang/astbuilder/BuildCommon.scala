@@ -125,7 +125,6 @@ object BuildCommon {
     valueType match {
       case obj@_ if obj.objType() != null => buildObjType(resource, obj.objType())
       case array@_ if array.arrayType() != null => buildArrayType(resource, array.arrayType())
-
     }
   }
 

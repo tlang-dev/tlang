@@ -26,7 +26,7 @@ object ExecCallFunc extends Executor {
           ContextUtils.findRefFunc(context, caller.name.get) match {
             case Some(refFunc) =>
               val newCaller = mergeCallers(caller, refFunc)
-              ExecCallRefFunc.run(newCaller, context)
+              ExecCallRefFunc.run(newCaller, Context(context.scopes :+ refFunc.scope))
             //                      refFunc.func.get match {
             //                        case Left(func) =>
             //                          val newCaller = mergeCallers(caller, refFunc)

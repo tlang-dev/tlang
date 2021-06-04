@@ -20,7 +20,7 @@ modelContent: assignVar | modelSetEntity;
 */
 
 modelSetEntity:
-    'set' name=ID ('(' ((params+=modelSetAttribute) (',' params+=modelSetAttribute)*) ')')? '{'
+    'set' name=ID ('ext' ext=objType)? ('(' ((params+=modelSetAttribute) (',' params+=modelSetAttribute)*) ')')? '{'
     (attrs+=modelSetAttribute (',' attrs+=modelSetAttribute)*)?
     '}'
 ;

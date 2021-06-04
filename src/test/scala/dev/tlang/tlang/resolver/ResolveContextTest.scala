@@ -303,7 +303,7 @@ class ResolveContextTest extends AnyFunSuite {
 
   test("Find var") {
     val contents: List[ModelContent[_]] = List(
-      ModelSetEntity(None, "myEntity", None, None),
+      ModelSetEntity(None, "myEntity", None, None, None),
       AssignVar(None, "myEntity", None, Operation(None, None, Right(EntityValue(None, None, None)))),
       AssignVar(None, "myEntity2", None, Operation(None, None, Right(EntityValue(None, None, None)))),
     )
@@ -325,7 +325,7 @@ class ResolveContextTest extends AnyFunSuite {
 
   test("Find empty var") {
     val contents: List[ModelContent[_]] = List(
-      ModelSetEntity(None, "myEntity", None, None),
+      ModelSetEntity(None, "myEntity", None, None, None),
       AssignVar(None, "myEntity", None, Operation(None, None, Right(EntityValue(None, None, None)))),
       AssignVar(None, "myEntity2", None, Operation(None, None, Right(EntityValue(None, None, None)))),
     )

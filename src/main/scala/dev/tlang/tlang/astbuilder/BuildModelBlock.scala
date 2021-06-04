@@ -19,7 +19,8 @@ object BuildModelBlock {
   }
 
   def buildSetEntity(resource: ContextResource, setEntity: ModelSetEntityContext): ModelSetEntity = {
-    ModelSetEntity(addContext(resource, setEntity), setEntity.name.getText, extractSetEntityAttrDefs(resource, setEntity.params.asScala.toList), extractSetEntityAttrDefs(resource, setEntity.attrs.asScala.toList))
+    val ext = if (setEntity.ext != null && !setEntity.ext.isEmpty) Some(BuildCommon.buildObjType(resource, setEntity.ext)) else None
+    ModelSetEntity(addContext(resource, setEntity), setEntity.name.getText, ext, extractSetEntityAttrDefs(resource, setEntity.params.asScala.toList), extractSetEntityAttrDefs(resource, setEntity.attrs.asScala.toList))
   }
 
   def extractSetEntityAttrDefs(resource: ContextResource, attrs: List[ModelSetAttributeContext]): Option[List[ModelSetAttribute]] = {

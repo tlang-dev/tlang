@@ -1,16 +1,18 @@
 package dev.tlang.tlang.interpreter
 
+import dev.tlang.tlang.ast.common.ValueType
 import dev.tlang.tlang.ast.common.call.{CallFuncObject, CallObject, CallObjectType, CallVarObject, _}
 import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value._
-import dev.tlang.tlang.ast.helper.HelperStatement
+import dev.tlang.tlang.ast.helper.{HelperFunc, HelperStatement}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetRef}
 import dev.tlang.tlang.ast.tmpl.TmplBlockAsValue
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.ExecCallFunc.manageTmplParameters
-import dev.tlang.tlang.interpreter.context.{Context, ContextUtils}
+import dev.tlang.tlang.interpreter.context.{Context, ContextUtils, Scope}
 
 import scala.annotation.tailrec
+import scala.collection.mutable
 
 object ExecCallObject extends Executor {
 
@@ -87,19 +89,19 @@ object ExecCallObject extends Executor {
   private def findInCallable(statement: CallObjectType, callable: Option[List[Value[_]]], context: Context): Either[ExecError, Option[List[Value[_]]]] = {
     statement match {
       case callArray: CallArrayObject => resolveArrayInCallable(callArray, callable, context)
-      //case caller: CallFuncObject => resolveFunc(caller, callable, context)
+      case caller: CallFuncObject => resolveFunc(caller, callable, context)
       case refFunc: CallRefFuncObject => Right(Some(List(refFunc)))
-      case CallVarObject(_, name) => resolveCallVar(name, callable, context)
+      case CallVarObject(_, name) => resolveCallVar(name, callable, context, statement)
       case _ => Left(NotImplemented())
     }
   }
 
-  def resolveCallVar(name: String, callable: Option[List[Value[_]]], context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+  def resolveCallVar(name: String, callable: Option[List[Value[_]]], context: Context, caller: CallObjectType): Either[ExecError, Option[List[Value[_]]]] = {
     pickFirst(callable) match {
       case Left(error) => Left(error)
       case Right(value) => value match {
         case impl: EntityImpl => findInImpl(name, impl, context)
-        case valueType: EntityValue => findInEntity(name, valueType, context)
+        case valueType: EntityValue => findInEntity(name, valueType, context, caller)
         case _ => Right(callable)
       }
     }
@@ -159,15 +161,15 @@ object ExecCallObject extends Executor {
     else Left(CallableNotFound(name))
   }
 
-  def findInEntity(name: String, entity: EntityValue, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+  def findInEntity(name: String, entity: EntityValue, context: Context, caller: CallObjectType): Either[ExecError, Option[List[Value[_]]]] = {
     if (entity.attrs.isDefined) findInAttrs(name, entity.attrs.get, context) match {
       case Left(error) => Left(error)
       case Right(value) => value match {
         case Some(value) => Right(Some(value))
-        case None => findModelInEntity(name, entity, context)
+        case None => findModelInEntity(name, entity, context, caller)
       }
     }
-    else findModelInEntity(name, entity, context)
+    else findModelInEntity(name, entity, context, caller)
   }
 
   def findInAttrs(name: String, attrs: List[ComplexAttribute], context: Context): Either[ExecError, Option[List[Value[_]]]] = {
@@ -180,65 +182,100 @@ object ExecCallObject extends Executor {
     }
   }
 
-  def findModelInEntity(name: String, entity: EntityValue, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+  def findModelInEntity(name: String, entity: EntityValue, context: Context, caller: CallObjectType): Either[ExecError, Option[List[Value[_]]]] = {
     entity.`type` match {
-      case Some(entityType) =>
-        val typeName = entityType.getContextType
-        entity.scope.models.get(typeName) match {
-          case Some(value) =>
-            val model = value.asInstanceOf[ModelSetEntity]
-            findInModel(name, model, Context(model.scope :: context.scopes))
-          case None => Left(CallableNotFound(name, entity.context))
-        }
-      case None => Right(None)
+      case Some(entityType) => findModelFromType(name, entityType, entity.scope, context, caller)
+      case None => Left(CallableNotFound(name, entity.getContext))
     }
-
-
   }
 
-  def findInModel(name: String, model: ModelSetEntity, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
-    if (model.params.isDefined) findInSetAttrs(name, model.params.get, context, model.getContext)
-    else Left(CallableNotFound(name, model.context))
+  def findModelFromType(name: String, modelType: ValueType, currentScope: Scope, context: Context, caller: CallObjectType): Either[ExecError, Option[List[Value[_]]]] = {
+    val typeName = modelType.getContextType
+    currentScope.models.get(typeName) match {
+      case Some(value) =>
+        val model = value.asInstanceOf[ModelSetEntity]
+        findInModel(name, model, Context(model.scope :: context.scopes), caller) match {
+          case Left(error) => Left(error)
+          case Right(res) => res match {
+            case Some(_) => Right(res)
+            case None =>
+              if (model.ext.isDefined) findModelFromType(name, model.ext.get, model.scope, context, caller)
+              else Left(CallableNotFound(name, modelType.getContext))
+          }
+        }
+      case None => Left(CallableNotFound(name, modelType.getContext))
+    }
   }
 
-  def findInSetAttrs(name: String, attrs: List[ModelSetAttribute], context: Context, contextContent: Option[ContextContent]): Either[ExecError, Option[List[Value[_]]]] = {
+  def findInModel(name: String, model: ModelSetEntity, context: Context, caller: CallObjectType): Either[ExecError, Option[List[Value[_]]]] = {
+    if (model.params.isDefined) findInSetAttrs(name, model.params.get, context, model.getContext, caller)
+    else Right(None)
+  }
+
+  def findInSetAttrs(name: String, attrs: List[ModelSetAttribute], context: Context, contextContent: Option[ContextContent], caller: CallObjectType): Either[ExecError, Option[List[Value[_]]]] = {
     attrs.find(_.attr.getOrElse(false).equals(name)) match {
       case Some(value) => value.value match {
-        case ref: ModelSetRef => ExecModelSetRef.run(ref, context)
+        case ref: ModelSetRef =>
+          caller match {
+            case _: CallFuncObject => Right(Some(List(ExecUtils.modelRefToCallRefFunc(ref))))
+            case _: CallVarObject => ExecModelSetRef.run(ref, context)
+          }
+
         //case funcRef: ModelSetFuncDef => Right(Some(List(funcRef)))
         case _ => Left(WrongType("Should be a ref", contextContent))
       }
-      case None => Left(CallableNotFound(name, contextContent))
+      case None => Right(None)
     }
   }
 
-  /* For now the returned functions are directly executed, a reference will be needed.
-  def resolveFunc(caller: HelperCallFuncObject, callable: Option[List[Value[_]]], context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+  // For now the returned functions are directly executed, a reference will be needed.
+  def resolveFunc(caller: CallFuncObject, callable: Option[List[Value[_]]], context: Context): Either[ExecError, Option[List[Value[_]]]] = {
 
     def execFunc(func: HelperFunc): Either[ExecError, Option[List[Value[_]]]] = {
       val newName = "_call_" + caller.name.getOrElse("func")
-      val newCaller = HelperCallFuncObject(Some(newName), caller.currying)
-      execFuncWithCaller(newCaller, func)
-    }
-
-    def execFuncWithCaller(newCaller: HelperCallFuncObject, func: HelperFunc): Either[ExecError, Option[List[Value[_]]]] = {
-      val newScope = Scope(functions = mutable.Map(newCaller.name.get -> func))
-      val newContext = Context(context.scopes :+ newScope)
-      ExecCallFunc.run(newCaller, newContext)
+      val newCaller = CallFuncObject(func.context, Some(newName), caller.currying)
+      execFuncWithCaller(newCaller, func, context)
     }
 
     pickFirst(callable) match {
       case Left(error) => Left(error)
       case Right(value) => value match {
         case func: HelperFunc => execFunc(func)
-        case ref: ModelLetRefFunc =>
-          val newName = "_call_" + ref.func.name
-          val newCaller = HelperCallFuncObject(Some(newName), ref.currying)
-          execFuncWithCaller(newCaller, ref.func)
-        case _ => Left(NotImplemented())
+        case entity: EntityValue => execFuncInEntity(caller, entity, Context(entity.scope :: context.scopes))
+        //        case ref:  =>
+        //          val newName = "_call_" + ref.func.name
+        //          val newCaller = HelperCallFuncObject(Some(newName), ref.currying)
+        //          execFuncWithCaller(newCaller, ref.func)
+        case _ => Left(NotImplemented(value.getType, value.getContext))
       }
     }
-  }*/
+  }
+
+  def execFuncWithCaller(newCaller: CallFuncObject, func: HelperFunc, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+    val newScope = Scope(functions = mutable.Map(newCaller.name.get -> func))
+    val newContext = Context(context.scopes :+ newScope)
+    ExecCallFunc.run(newCaller, newContext)
+  }
+
+  def execRefFuncWithCaller(newCaller: CallFuncObject, refFunc: CallRefFuncObject, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+    val newScope = Scope(refFunctions = mutable.Map(newCaller.name.get -> refFunc))
+    val newContext = Context(context.scopes :+ newScope)
+    ExecCallFunc.run(newCaller, newContext)
+  }
+
+  def execFuncInEntity(caller: CallFuncObject, entity: EntityValue, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+    findInEntity(caller.name.get, entity, Context(List(entity.scope)), caller) match {
+      case Left(error) => Left(error)
+      case Right(value) =>
+        if (value.isEmpty || value.get.size != 1) Left(WrongValueReturned("Only one value was expected to be returned from entity attribute (" + caller.name + ")", caller.context))
+        else {
+          value.get.head match {
+            case refFunc: CallRefFuncObject => execRefFuncWithCaller(caller, refFunc, context)
+            case _ => Left(NotImplemented(value.get.head.getType, value.get.head.getContext))
+          }
+        }
+    }
+  }
 
   def pickFirst(callable: Option[List[Value[_]]]): Either[ExecError, Value[_]] = {
     if (callable.isDefined && callable.get.nonEmpty) Right(callable.get.head)
