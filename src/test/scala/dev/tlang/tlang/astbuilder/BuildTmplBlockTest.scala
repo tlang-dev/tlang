@@ -31,7 +31,7 @@ class BuildTmplBlockTest extends AnyFunSuite {
 
   test("Template parameters") {
     val lexer = new TLangLexer(CharStreams.fromString(
-      """tmpl[scala] myTmpl (param1 String, param2 Bool) {
+      """tmpl[scala] myTmpl (param1: String, param2: Bool) {
         |use dev.tlang.tlang
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)

@@ -18,11 +18,11 @@ helperFunc:
 
 helperCurrying: params += helperParam (',' params += helperParam)*;
 
-helperParam: (param=ID)? type=helperParamType;
+helperParam: (param=ID ':')? type=helperParamType;
 
 helperParamType: objType | arrayType | helperFuncType;
 
-helperFuncType: type='(' (currying+=helperCurrying)? ')' ('(' currying+=helperCurrying ')')* ':' retVals+=helperParamType (',' retVals+=helperParamType)*;
+helperFuncType: type='(' (currying+=helperCurrying)? ')' ('(' currying+=helperCurrying ')')* '=>' retVals+=helperParamType (',' retVals+=helperParamType)*;
 
 helperContent: content+=helperStatement*;
 

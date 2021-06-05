@@ -44,7 +44,7 @@ class BuildHelperBlockTest extends AnyFunSuite {
   test("One set of parameters") {
     val lexer = new TLangLexer(CharStreams.fromString(
       """helper {
-        |func myFunc(param1 String, param2 Int[], param3 () : Bool) {
+        |func myFunc(param1: String, param2: Int[], param3: () => Bool) {
         |}
         |}
         |""".stripMargin))
@@ -80,7 +80,7 @@ class BuildHelperBlockTest extends AnyFunSuite {
   test("With params and returned values") {
     val lexer = new TLangLexer(CharStreams.fromString(
       """helper {
-        |func myFunc(param1 String, param2 Int[], param3 (Int[], String) : Bool):  String, Int[], (String): Int[] {
+        |func myFunc(param1: String, param2: Int[], param3: (Int[], String) => Bool):  String, Int[], (String) => Int[] {
         |}
         |}
         |""".stripMargin))
@@ -110,7 +110,7 @@ class BuildHelperBlockTest extends AnyFunSuite {
   test("Currying") {
     val lexer = new TLangLexer(CharStreams.fromString(
       """helper {
-        |func myFunc(param1 String, param2 Int[])(param3 () : Bool, param4 String) {
+        |func myFunc(param1: String, param2: Int[])(param3: () => Bool, param4: String) {
         |}
         |}
         |""".stripMargin))

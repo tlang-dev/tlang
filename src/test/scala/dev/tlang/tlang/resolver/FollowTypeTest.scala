@@ -52,7 +52,7 @@ class FollowTypeTest extends AnyFunSuite {
     }
     val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
     val entity = EntityValue(None, Some(ObjType(None, Some("MyFile"), "MyEntityType")), Some(List(ComplexAttribute(None, Some("attr1"), value = Operation(None, None, Right(CallObject(None, List(CallVarObject(None, "MyEntityType"), CallFuncObject(None, Some("theFunc"), None)))))))))
-    val block = ModelBlock(None, Some(List(AssignVar(None, "myVar", None, Operation(None, None, Right(entity)), Some(Scope())))))
+    val block = ModelBlock(None, Some(List(AssignVar(None, "myVar", None, Operation(None, None, Right(entity)), Scope()))))
     ResolveModel.resolveModel(block, module, List(DomainUse(None, List("MyPackage", "MyFile"))), Resource("Root", "", "", "", DomainModel(None, None, List())))
     assert("theFunc" == ContextUtils.findModel(Context(List(entity.scope)), "MyEntityType").get.asInstanceOf[ModelSetEntity].attrs.get.head.value.asInstanceOf[ModelSetRef].refs.head)
     //    assert("myString" == ContextUtils.findVar(Context(List(entity.scope)), "param1").get.asInstanceOf[TLangString].getElement)
