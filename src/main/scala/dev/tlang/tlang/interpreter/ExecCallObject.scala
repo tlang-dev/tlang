@@ -208,7 +208,7 @@ object ExecCallObject extends Executor {
   }
 
   def findInModel(name: String, model: ModelSetEntity, context: Context, caller: CallObjectType): Either[ExecError, Option[List[Value[_]]]] = {
-    if (model.params.isDefined) findInSetAttrs(name, model.params.get, context, model.getContext, caller)
+    if (model.attrs.isDefined) findInSetAttrs(name, model.attrs.get, context, model.getContext, caller)
     else Right(None)
   }
 
@@ -218,7 +218,7 @@ object ExecCallObject extends Executor {
         case ref: ModelSetRef =>
           caller match {
             case _: CallFuncObject => Right(Some(List(ExecUtils.modelRefToCallRefFunc(ref))))
-            case _: CallVarObject => ExecModelSetRef.run(ref, context)
+            case _: CallVarObject => ExecModelSetRef.run(ref, Context(List(ref.scope)))
           }
 
         //case funcRef: ModelSetFuncDef => Right(Some(List(funcRef)))

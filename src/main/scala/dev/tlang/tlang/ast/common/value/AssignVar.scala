@@ -7,7 +7,7 @@ import dev.tlang.tlang.ast.model.ModelContent
 import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
 import dev.tlang.tlang.interpreter.context.Scope
 
-case class AssignVar(context: Option[ContextContent], name: String, `type`: Option[ValueType] = None, value: Operation, scope: Option[Scope] = None) extends HelperStatement with ModelContent[AssignVar] with AstContext {
+case class AssignVar(context: Option[ContextContent], name: String, `type`: Option[ValueType] = None, value: Operation, scope: Scope = Scope()) extends HelperStatement with ModelContent[AssignVar] with AstContext {
   override def getContext: Option[ContextContent] = context
 
   override def getElement: AssignVar = this
