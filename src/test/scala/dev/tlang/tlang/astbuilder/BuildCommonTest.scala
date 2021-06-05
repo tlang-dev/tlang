@@ -15,8 +15,8 @@ class BuildCommonTest extends AnyFunSuite {
       """model {
         |let firstEntity = {
         |impl: MyEntity {
-        |"myString"
-        |var1 = ["elm1", "elm2"]
+        |"myString",
+        |var1 = ["elm1", "elm2"],
         |newEntity :NewEntity = {
         |}
         |}

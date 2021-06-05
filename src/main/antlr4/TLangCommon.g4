@@ -51,7 +51,7 @@ callVariable: name=ID;
 
 entityValue: '{' attrs+=complexAttribute* '}';
 
-impl: 'impl' (':' type=ID)? '{' attrs+=complexAttribute* '}';
+impl: 'impl' (':' type=ID)? '{' (attrs+=complexAttribute)? (',' attrs+=complexAttribute)* '}';
 
 multiValue: '(' (values+=operation) (',' values+=operation)+ ')'; // '+' is needed to avoid confusion with operation
 

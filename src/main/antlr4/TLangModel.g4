@@ -44,6 +44,6 @@ modelSetRefCurrying:values+=modelSetRefValue (',' values+=modelSetRefValue)*;
 
 modelSetRefValue: modelSetRef | operation;
 
-modelSetImpl: 'impl' '{' attrs+=modelSetAttribute (',' attrs+=modelSetAttribute)* '}';
+modelSetImpl: 'impl' ('{' attrs+=modelSetAttribute (',' attrs+=modelSetAttribute)* '}')?;
 
 modelSetImplArray: 'impl' '[' ']';
