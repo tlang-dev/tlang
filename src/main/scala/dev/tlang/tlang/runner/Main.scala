@@ -1,11 +1,9 @@
 package dev.tlang.tlang.runner
 
-import dev.tlang.tlang.bagman.{FileResourceWriter, Packager, ResourceWriter}
-import dev.tlang.tlang.loader.{FileResourceLoader, ModuleLoader, ResourceLoader, TBagManager}
-
-import java.io.File
+import dev.tlang.tlang.bagman.Packager
 import dev.tlang.tlang.lsp.LSPServer
 
+import java.io.File
 import java.nio.file.Paths
 
 object Main {
@@ -33,7 +31,7 @@ object Main {
       if (path.exists() && path.isFile && path.getName.endsWith("." + FILE_EXTENSION)) {
 
       } else if (path.isDirectory) {
-
+        RunMain.runDir(path.getAbsolutePath)
       } else println("The path \"" + path.toString + "\" is either not a directory or not a .tlang file")
     } else println("Please provide a directory or a .tlang file")
   }
