@@ -43,7 +43,7 @@ class FormatterTest extends AnyFunSuite {
     val parser = new TLangParser(tokens)
     val impl = BuildTmplBlock.build(fakeContext, parser.tmplBlock())
     val res = Formatter.format(NewJavaGenerator.genBlock(impl), JavaFormatter.formatter())
-    assert("public class MyClass {" + RET + JavaFormatter.spaces + RET + "}" + RET == res)
+    assert("public class MyClass {" + RET + RET + "}" + RET == res)
   }
 
   test("Format func in class") {
@@ -59,7 +59,7 @@ class FormatterTest extends AnyFunSuite {
     val impl = BuildTmplBlock.build(fakeContext, parser.tmplBlock())
     val res = Formatter.format(NewJavaGenerator.genBlock(impl), JavaFormatter.formatter())
     assert(
-      "public class MyClass {" + RET + JavaFormatter.spaces + RET + "}" + RET == res)
+      "public class MyClass {" + RET + JavaFormatter.spaces + "public String myFunc() {" + RET + RET + JavaFormatter.spaces + "}" + RET + RET + "}" + RET == res)
   }
 
 }
