@@ -18,8 +18,6 @@ class NewJavaGenerator extends CodeGenerator {
 
 object NewJavaGenerator {
 
-  val RET: String = System.lineSeparator()
-
   def genBlock(tmpl: TmplBlock): Seq = {
     val root = Seq()
     root += genPackage(tmpl.pkg)

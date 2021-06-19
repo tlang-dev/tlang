@@ -8,7 +8,7 @@ object JavaFormatter {
 
   def RET: String = System.lineSeparator()
 
-  def spaces: String = "    ";
+  def spaces: String = "    "
 
   def formatter(): List[Selector] = {
     List(

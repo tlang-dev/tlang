@@ -45,10 +45,10 @@ object Formatter {
   def applyRule(seq: Seq, rule: Rule, str: StringBuilder, ind: Indent): Indent = {
     rule match {
       case rule: LineReturnAfter =>
-        val newInd = indent(str, ind)
+        indent(str, ind)
         str ++= seq.seq
         for (_ <- 0 until rule.total) str ++= RET
-        newInd
+        Indent(ind.ind, newLine = true)
       case rule: AddSpaceBefore =>
         val newInd = indent(str, ind)
         str ++= " "
@@ -69,6 +69,17 @@ object Formatter {
         val newInd = Indent(ind.ind - 1, newLine = true)
         indent(str, newInd)
         str ++= seq.seq ++= RET
+        newInd
+      case _: LineReturnAndOutdent =>
+        str ++= RET
+        str ++= seq.seq
+        val newInd = Indent(ind.ind - 1, newLine = true)
+        indent(str, newInd)
+        newInd
+      case _: Outdent =>
+        val newInd = Indent(ind.ind - 1, newLine = true)
+        indent(str, newInd)
+        str ++= seq.seq
         newInd
       case _ =>
         val newInd = indent(str, ind)

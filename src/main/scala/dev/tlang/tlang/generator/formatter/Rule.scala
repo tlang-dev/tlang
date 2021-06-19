@@ -11,3 +11,7 @@ case class LineReturnAfter(total: Int = 1) extends Rule
 case class LineReturnAfterAndIndent() extends Rule
 
 case class LineReturnAndOutdentAndLineReturn() extends Rule
+
+case class LineReturnAndOutdent() extends Rule
+
+case class Outdent() extends Rule

@@ -46,4 +46,10 @@ object Seq {
     for (i <- 0 until seqs.size) current = current += seqs(i)
     current
   }
+
+  def addTo(seq:Seq, seqs: String*): Seq = {
+    var current = seq
+    for (i <- 0 until seqs.size) current = current += seqs(i)
+    seq
+  }
 }
