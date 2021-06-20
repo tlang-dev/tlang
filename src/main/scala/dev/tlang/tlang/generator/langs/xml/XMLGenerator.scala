@@ -3,11 +3,12 @@ package dev.tlang.tlang.generator.langs.xml
 import dev.tlang.tlang.ast.tmpl._
 import dev.tlang.tlang.ast.tmpl.condition.TmplOperation
 import dev.tlang.tlang.ast.tmpl.primitive._
+import dev.tlang.tlang.generator.formatter.Formatter
 import dev.tlang.tlang.generator.{CodeGenerator, Seq}
 
 class XMLGenerator extends CodeGenerator {
   override def generate(tmpl: TmplBlock): String = {
-    ""
+    Formatter.format(XMLGenerator.genBlock(tmpl), XMLFormatter.formatter())
   }
 }
 
@@ -76,10 +77,6 @@ object XMLGenerator {
   }
 
   def genTmplID(tmplId: TmplID): Seq = {
-    //    tmplId match {
-    //      case str: TmplStringID => Seq(str.toString)
-    //      case _ => Seq(tmplId.toString)
-    //    }
     Seq(tmplId.toString)
   }
 
@@ -90,6 +87,4 @@ object XMLGenerator {
     }
   }
 
-
 }
-

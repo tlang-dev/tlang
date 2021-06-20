@@ -48,7 +48,7 @@ object ExecCallFunc extends Executor {
     val refFuncs: mutable.Map[String, CallRefFuncObject] = mutable.Map()
     if (caller.currying.isDefined) {
       caller.currying.get.zipWithIndex.foreach(param => {
-        param._1.params.get.zipWithIndex.foreach(attr => {
+        param._1.params.foreach(_.zipWithIndex.foreach(attr => {
           ExecOperation.run(attr._1.value, context) match {
             case Left(value) =>
               println("Error:" + value.toString)
@@ -62,7 +62,7 @@ object ExecCallFunc extends Executor {
               case None =>
             }
           }
-        })
+        }))
       })
     }
     Context(context.scopes :+ Scope(variables = vars, refFunctions = refFuncs) :+ helperFunc.scope)
