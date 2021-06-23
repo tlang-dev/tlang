@@ -21,8 +21,7 @@ LINE_COMMENT
     : '//' ~[\r\n]* -> skip
 ;
 
-
-
+ESCAPED_ID: '`'  ( ~('\n' | '\r' | '\t' | ' ') )*? '`';
 //ML_COMMENT : '/*' -> '*/';
 //SL_COMMENT : '//' !('\n'|'\r')* ('\r'? '\n')?;
 

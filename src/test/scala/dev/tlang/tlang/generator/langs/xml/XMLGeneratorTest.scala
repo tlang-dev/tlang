@@ -43,4 +43,26 @@ class XMLGeneratorTest extends AnyFunSuite {
     assert("""<XMLDoc param1="one" param2="true"><ChildOne/><ChildTwo childParam1="1" childParam2="two"/></XMLDoc>""" == res)
   }
 
+
+  test("XML header tag") {
+    val lexer = new TLangLexer(CharStreams.fromString(
+      """tmpl[java] myTmpl {
+        |
+        |new `?xml`(
+        |version "1.0",
+        |encoding "UTF-8"
+        |)
+        |
+        |new XMLDoc(
+        |param1 "one",
+        |param2 true
+        |)
+        |}""".stripMargin))
+    val tokens = new CommonTokenStream(lexer)
+    val parser = new TLangParser(tokens)
+    val impl = BuildTmplBlock.build(fakeContext, parser.tmplBlock())
+    val res =  XMLGenerator.genBlock(impl).toString
+    assert("""<?xml version="1.0" encoding="UTF-8" ?><XMLDoc param1="one" param2="true"/>""" == res)
+  }
+
 }

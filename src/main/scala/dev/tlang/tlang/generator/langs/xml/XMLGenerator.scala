@@ -51,12 +51,29 @@ object XMLGenerator {
   }
 
   def genEntityValue(entity: TmplEntityValue): Seq = {
+    if (entity.name.isDefined) entity.name.get.toString match {
+      case "?xml" => genXMLTag(entity)
+      case "!DOCTYPE" => genDOCTYPETag()
+      case _ => genNormalEntity(entity)
+    }
+    else Seq()
+  }
+
+  def genXMLTag(entity: TmplEntityValue): Seq = {
+    val seq = Seq("<?xml")
+    seq += genParams(entity.params)
+    Seq.addTo(seq, " ", "?>")
+  }
+
+  def genDOCTYPETag(): Seq = {
+    val seq = Seq("<!DOCTYPE>")
+    seq
+  }
+
+  def genNormalEntity(entity: TmplEntityValue): Seq = {
     val seq = Seq("<")
     seq += genOptTmplID(entity.name)
-    entity.params.foreach(_.foreach(attribute => {
-      val attr = attribute.asInstanceOf[TmplAttribute]
-      seq += " " += genOptTmplID(attr.attr) += "=\"" += genOperation(attr.value) += "\""
-    }))
+    seq += genParams(entity.params)
     if (entity.attrs.isEmpty) Seq.addTo(seq, "/>")
     else {
       seq += ">"
@@ -67,6 +84,15 @@ object XMLGenerator {
       seq += "</" += genOptTmplID(entity.name) += ">"
       seq
     }
+  }
+
+  def genParams(params: Option[List[TmplNode[_]]]): Seq = {
+    val seq = Seq()
+    params.foreach(_.foreach(attribute => {
+      val attr = attribute.asInstanceOf[TmplAttribute]
+      seq += " " += genOptTmplID(attr.attr) += "=\"" += genOperation(attr.value) += "\""
+    }))
+    seq
   }
 
   def genOptTmplID(tmplID: Option[TmplID]): Seq = {

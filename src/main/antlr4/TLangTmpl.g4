@@ -139,7 +139,7 @@ tmplAffect: variable=tmplCallObj '=' value=tmplOperation;
 
 tmplCast: '(' toCast=tmplOperation 'as' type=tmplType ')' ('.' combine=tmplCallObj)?;
 
-tmplID: ID | tmplIntprID;
+tmplID: ID | tmplIntprID | ESCAPED_ID;
 
 tmplIntprID: (pre=ID)? '${' callObj '}' (pos=ID)?;
 
