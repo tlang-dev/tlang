@@ -108,7 +108,7 @@ object NewJavaGenerator {
         str += "@" += annot.name.toString
         if (annot.values.isDefined) {
           str += "("
-          str += mkSeq(annot.values.get.map(value => value.name + "=" + genPrimitive(value.value)), ",")
+          str += mkSeqFromSeq(annot.values.get.map(value => Seq.addTo(Seq(), value.name.toString, "=" ) += genPrimitive(value.value)), ",")
           str += ")"
         }
         str += sep
@@ -149,7 +149,7 @@ object NewJavaGenerator {
   def genGeneric(gen: Option[TmplGeneric]): Seq = {
     if (gen.isDefined) {
       val str = Seq()
-      str += "<" += mkSeq(gen.get.types.map(genType), ",") += ">"
+      str += "<" += mkSeqFromSeq(gen.get.types.map(genType), ",") += ">"
       str
     } else Seq()
   }
@@ -163,7 +163,7 @@ object NewJavaGenerator {
 
   def genExprBlock(block: TmplExprBlock): Seq = {
     val str = Seq()
-    str += "{" += mkSeq(block.exprs.map(b => genExpression(b, endOfStatement = true)), "") += "}"
+    str += "{" += mkSeqFromSeq(block.exprs.map(b => genExpression(b, endOfStatement = true)), "") += "}"
     str
   }
 
@@ -191,7 +191,7 @@ object NewJavaGenerator {
   def genEndOfStatement(statement: Seq, endOfStatement: Boolean): Seq = {
     var ret = statement
     if (endOfStatement) ret = ret += ";"
-    ret
+    statement
   }
 
   def genAffect(affect: TmplAffect): Seq = {
@@ -258,7 +258,7 @@ object NewJavaGenerator {
   def genTmplCallObj(callObj: TmplCallObj): Seq = {
     val str = Seq()
     callObj.props.foreach(prop => str += genProps(prop, addSpace = true))
-    str += mkSeq(callObj.calls.map(genCallObjType), ".")
+    str += mkSeqFromSeq(callObj.calls.map(genCallObjType), ".")
     str
   }
 
@@ -424,6 +424,21 @@ object NewJavaGenerator {
       var currentSeq = seq
       for (i <- 0 until list.size - 1) {
         currentSeq = currentSeq += list(i).toString
+        if (sep.nonEmpty) currentSeq = currentSeq += sep
+      }
+      currentSeq += list.last.toString
+      seq
+    }
+  }
+
+  def mkSeqFromSeq(list: List[Seq], sep: String): Seq = {
+    if (list.isEmpty) Seq()
+    else if (list.size == 1) list.head
+    else {
+      val seq = Seq()
+      var currentSeq = seq
+      for (i <- 0 until list.size - 1) {
+        currentSeq = currentSeq += list(i)
         if (sep.nonEmpty) currentSeq = currentSeq += sep
       }
       currentSeq += list.last.toString

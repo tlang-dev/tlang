@@ -17,6 +17,7 @@ object JavaFormatter {
       Selector("class", ListBuffer(Selector("{", rule = Some(AddSpaceBefore(false))))),
       Selector("class", ListBuffer(Selector("{", rule = Some(LineReturnAfterAndIndent())))),
       Selector("class", ListBuffer(Selector("}", rule = Some(LineReturnAndOutdentAndLineReturn())))),
+      Selector(",", rule = Some(AddSpaceAfter())),
     )
   }
 

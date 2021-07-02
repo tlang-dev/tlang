@@ -24,7 +24,7 @@ object Formatter {
       _ind = indent(str, ind)
       str ++= seq.seq
     }
-    val newSelectors: List[Selector] = matching.filter(selector => selector.children.nonEmpty).flatMap(_.children) ++ notMatching
+    val newSelectors: List[Selector] = matching.filter(selector => selector.children.nonEmpty).flatMap(_.children) ++ matching.filter(selector => selector.children.isEmpty) ++ notMatching
     //    seq.children.foreach(child => format(child, newSelectors, str, ind))
     for (child <- seq.children) {
       _ind = format(child, newSelectors, str, _ind)
