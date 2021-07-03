@@ -324,8 +324,8 @@ object NewJavaGenerator {
       case Right(cond) => str += genExpression(cond)
     }
     if (block.next.isDefined) {
-      str += " " += genOperator(block.next.get._1)
-      str += " " += genOperation(block.next.get._2)
+      str += genOperator(block.next.get._1)
+      str += genOperation(block.next.get._2)
     }
     str
   }

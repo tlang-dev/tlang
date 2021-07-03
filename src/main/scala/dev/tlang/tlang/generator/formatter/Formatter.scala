@@ -58,6 +58,10 @@ object Formatter {
         val newInd = indent(str, ind)
         str ++= seq.seq ++= " "
         newInd
+      case rule: AddSpaceBeforeAndAfter =>
+        val newInd = indent(str, ind)
+        str ++= " " ++= seq.seq ++= " "
+        newInd
       case _: LineReturnAfterAndIndent =>
         // val ind1 = indent(str, ind)
         str ++= seq.seq ++= RET
