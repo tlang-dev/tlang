@@ -28,3 +28,11 @@ object TypeError {
 }
 
 case class DoesNotExist(context: Option[ContextContent], call: String) extends ResolverError("DoesNotExist", "'" + call + "' does not exist")
+
+case class NameAlreadyUsed(context: Option[ContextContent], name: String) extends ResolverError("NameAlreadyUsed", NameAlreadyUsed.genMessage(context, name))
+
+object NameAlreadyUsed {
+  def genMessage(context: Option[ContextContent], name: String): String = {
+    ResolverError.genMessage(context) + "name already used in scope: " + name
+  }
+}
