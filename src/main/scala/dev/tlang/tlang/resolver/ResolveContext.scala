@@ -9,6 +9,7 @@ import dev.tlang.tlang.ast.tmpl.{TmplBlock, TmplBlockAsValue}
 import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.interpreter.context.{Context, Scope}
 import dev.tlang.tlang.loader.{BuildModuleTree, Module, Resource}
+import dev.tlang.tlang.resolver.checker.CheckExistingElement
 
 import scala.collection.mutable.ListBuffer
 
@@ -24,11 +25,15 @@ object ResolveContext {
         case Some(header) => header.uses.getOrElse(List())
       }
 
-      ast.body.foreach {
-        case HelperBlock(_, funcs) => funcs.foreach(func => extractErrors(errors, BrowseFunc.resolveFuncs(func, module, uses, resource._2)))
-        case model: ModelBlock => extractErrors(errors, ResolveModel.resolveModel(model, module, uses, resource._2))
-        case block: TmplBlock => extractErrors(errors, ResolveTmpl.resolveTmpl(block, module, uses, resource._2))
-        case _ => Right(())
+      CheckExistingElement.checkExistingElement(resource._2) match {
+        case Left(errs) => errors.addAll(errs)
+        case Right(_) =>
+          ast.body.foreach {
+            case HelperBlock(_, funcs) => funcs.foreach(func => extractErrors(errors, BrowseFunc.resolveFuncs(func, module, uses, resource._2)))
+            case model: ModelBlock => extractErrors(errors, ResolveModel.resolveModel(model, module, uses, resource._2))
+            case block: TmplBlock => extractErrors(errors, ResolveTmpl.resolveTmpl(block, module, uses, resource._2))
+            case _ => Right(())
+          }
       }
     })
     if (errors.nonEmpty) Left(errors.toList)

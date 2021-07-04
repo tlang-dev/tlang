@@ -17,7 +17,7 @@ domainHeader:
     (uses += domainUse)*
 ;
 
-domainUse: 'use' uses+=ID ('.' uses+=ID)? ('as' alias=tmplID)?;
+domainUse: 'use' uses+=ID ('.' uses+=ID)? ('as' alias=ID)?;
 
 domainExpose: 'expose' expose=ID;
 
