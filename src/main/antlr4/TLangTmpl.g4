@@ -23,7 +23,7 @@ tmplSpecialisedBlock: 'spec' '{' content=tmplSpecialisedContent '}';
 
 tmplSpecialisedContent: tmplContent | tmplAttribute | 'setAttr' tmplSetAttribute | tmplParam;
 
-tmplContent: tmplImpl | tmplFunc | tmplExpression;
+tmplContent: tmplImpl | tmplFunc | tmplExpression | tmplOperation;
 
 tmplPkg: 'pkg' parts+=tmplID ('.' parts+=tmplID)*;
 
@@ -66,7 +66,7 @@ tmplExprBlock: '{' exprs+=tmplExpression* '}';
 
 tmplExpression:	tmplVar | tmplCallObj | tmplValueType | tmplFunc
                 | tmplIf | tmplFor | tmplWhile | tmplDoWhile | tmplInclude | tmplReturn
-                | tmplAffect | tmplCast | tmplAnonFunc;
+                | tmplAffect | tmplCast | tmplAnonFunc | tmplPrimitiveValue;
 
 tmplIf: 'if' '(' cond=tmplOperation ')' content=tmplExprContent elseThen=tmplElse?;
 
@@ -139,7 +139,7 @@ tmplAffect: variable=tmplCallObj '=' value=tmplOperation;
 
 tmplCast: '(' toCast=tmplOperation 'as' type=tmplType ')' ('.' combine=tmplCallObj)?;
 
-tmplID: ID | tmplIntprID;
+tmplID: ID | tmplIntprID | ESCAPED_ID;
 
 tmplIntprID: (pre=ID)? '${' callObj '}' (pos=ID)?;
 

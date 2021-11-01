@@ -316,6 +316,7 @@ object BuildTmplBlock {
   def buildId(resource: ContextResource, id: TmplIDContext): TmplID = id match {
     case id@_ if id.ID() != null => TmplStringID(addContext(resource, id), id.ID().getSymbol.getText)
     case interId@_ if interId.tmplIntprID() != null => TmplInterpretedID(addContext(resource, id), AstBuilderUtils.getText(interId.tmplIntprID().pre), BuildHelperStatement.buildCallObject(resource, interId.tmplIntprID().callObj()), AstBuilderUtils.getText(interId.tmplIntprID().pos))
+    case escaped@_ if escaped.ESCAPED_ID() != null => TmplStringID(addContext(resource, escaped), escaped.ESCAPED_ID().getText.replace("`", ""))
   }
 
   def buildString(resource: ContextResource, str: TmplStringContext): TmplID = str match {
