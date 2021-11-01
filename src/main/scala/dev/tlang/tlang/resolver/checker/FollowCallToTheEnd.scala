@@ -27,9 +27,9 @@ object FollowCallToTheEnd {
 
   def followCallVar(callVar: CallVarObject, callObject: CallObject, context: Context, callIndex: Int): Either[ResolverError, Option[Element[_]]] = {
     ContextUtils.findModel(context, callVar.name) match {
-      case Some(value) =>
-        if (callIndex >= callObject.statements.length - 1) Right(Some(value))
-        else followModel(value, callObject, context, callIndex + 1)
+          case Some(value) =>
+            if (callIndex >= callObject.statements.length - 1) Right(Some(value))
+            else followModel(value, callObject, context, callIndex + 1)
       case None => Left(ResourceNotFound(callVar.context, callVar.name))
     }
   }
