@@ -33,7 +33,7 @@ object BuildAst {
   }
 
   def buildUse(resource: ContextResource, use: DomainUseContext): DomainUse = {
-    DomainUse(addContext(resource, use), use.uses.asScala.toList.map(_.getText))
+    DomainUse(addContext(resource, use), use.uses.asScala.toList.map(_.getText), AstBuilderUtils.getText(use.alias))
   }
 
   def addContext(resource: ContextResource, parser: ParserRuleContext): Option[ContextContent] = {
