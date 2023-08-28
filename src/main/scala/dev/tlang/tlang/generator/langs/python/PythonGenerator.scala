@@ -49,12 +49,12 @@ object PythonGenerator {
     cur = impl.props.fold(Seq.add(cur, "class"))(prop => cur += genProps(prop)) += " " += impl.name.toString
     if (impl.fors.isDefined) {
       cur = cur += " " += impl.fors.get.props.fold(Seq("("))(genProps(_)) += " "
-      cur = cur += mkSeq(impl.fors.get.types.map(implFor => genType(implFor)), ",")
+      //cur = cur += mkSeq(impl.fors.get.types.map(implFor => genType(implFor)), ",")
       cur = cur += ")"
     }
     if (impl.withs.isDefined) {
       cur = cur += " " += impl.withs.get.props.fold(Seq("implements"))(genProps(_)) += " "
-      cur = cur += mkSeq(impl.fors.get.types.map(implFor => genType(implFor)), ",")
+      //cur = cur += mkSeq(impl.fors.get.types.map(implFor => genType(implFor)), ",")
     }
     if (impl.content.isDefined) cur ++= genContents(impl.content.get)
     str
@@ -67,7 +67,7 @@ object PythonGenerator {
     str += genCurrying(func.curries)
     str += func.postPros.fold(Seq())(prop => genProps(prop) += " ")
     str += ":"
-    if (func.content.isDefined) str += genExprBlock(func.content.get)
+    //if (func.content.isDefined) str += genExprBlock(func.content.get)
     str
   }
 
@@ -93,8 +93,8 @@ object PythonGenerator {
 
   def genParam(param: TmplParam): String = {
     val str = Seq()
-    if (param.`type`.isDefined) str += genType(param.`type`.get) += " "
-    str += param.name.toString
+/*    if (param.`type`.isDefined) str += genType(param.`type`.get) += " "*/
+    //str += param.name.toString
     str.toString()
   }
 }

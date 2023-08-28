@@ -279,9 +279,20 @@ object ResolveTmpl {
       checkRet(errors, resolveTmplId(annot.name, module, uses, currentResource, scope))
       annot.values.foreach(_.foreach(param => {
         checkRet(errors, resolveTmplId(param.name, module, uses, currentResource, scope))
-        checkRet(errors, resolvePrimitive(param.value, module, uses, currentResource, scope))
+        checkRet(errors, resolveValueType(param.value, module, uses, currentResource, scope))
       }))
     }))
+    if (errors.nonEmpty) Left(errors.toList)
+    else Right(())
+  }
+
+  def resolveValueType(value: TmplValueType[_], module: Module, uses: List[DomainUse], currentResource: Resource, scope: Scope): Either[List[ResolverError], Unit] = {
+    val errors = ListBuffer.empty[ResolverError]
+    value match {
+      case callObj: TmplCallObj => resolveCall(callObj, module, uses,currentResource, scope)
+      case primitiveValue: TmplPrimitiveValue[_] => resolvePrimitive(primitiveValue, module, uses, currentResource, scope)
+      case _ => println("Match not implemented for Type:" + value.getType + " in ResolveTmpl.resolveValueType")
+    }
     if (errors.nonEmpty) Left(errors.toList)
     else Right(())
   }

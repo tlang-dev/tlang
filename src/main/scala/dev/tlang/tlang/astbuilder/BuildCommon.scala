@@ -72,7 +72,7 @@ object BuildCommon {
         if (numbVal.contains(".")) new TLangDouble(addContext(resource, number.numberValue()), numbVal.toDouble) else new TLangLong(addContext(resource, number.numberValue()), numbVal.toLong)
       case text@_ if text.textValue() != null => new TLangString(addContext(resource, text.textValue()), AstBuilderUtils.extraText(text.textValue().value.getText))
       case entity@_ if entity.entityValue() != null => buildEntityValue(resource, `type`, entity.entityValue())
-      case bool@_ if bool.boolValue() != null => new TLangBool(addContext(resource, bool.boolValue()), bool.boolValue().value.getText == "true")
+      case bool@_ if bool.boolValue() != null => new TLangBool(addContext(resource, bool.boolValue()), bool.boolValue().getText == "true")
       case array@_ if array.arrayValue() != null => buildArray(resource, array.arrayValue())
     }
   }

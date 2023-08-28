@@ -1,6 +1,6 @@
 package dev.tlang.tlang.astbuilder
 
-import dev.tlang.tlang.TLangParser.{TmplExpressionContext, _}
+import dev.tlang.tlang.TLangParser._
 import dev.tlang.tlang.ast.tmpl._
 import dev.tlang.tlang.ast.tmpl.call._
 import dev.tlang.tlang.ast.tmpl.condition.TmplOperation
@@ -101,7 +101,7 @@ object BuildTmplBlock {
 
   def buildAnnotations(resource: ContextResource, annots: List[TmplAnnotContext]): Option[List[TmplAnnotation]] = {
     if (annots.nonEmpty) Some(annots.map(annot => {
-      val params = annot.annotParams.asScala.toList.map(param => TmplAnnotationParam(addContext(resource, param), buildId(resource, param.name), buildPrimitive(resource, param.value)))
+      val params = annot.annotParams.asScala.toList.map(param => TmplAnnotationParam(addContext(resource, param), buildId(resource, param.name), buildValueType(resource, param.value)))
       TmplAnnotation(addContext(resource, annot), buildId(resource, annot.name), if (params.nonEmpty) Some(params) else None)
     }))
     else None
@@ -130,7 +130,13 @@ object BuildTmplBlock {
   }
 
   def buildType(resource: ContextResource, `type`: TmplTypeContext): TmplType = {
-    TmplType(addContext(resource, `type`), buildId(resource, `type`.`type`), buildGeneric(resource, `type`.generic), `type`.array != null)
+    TmplType(addContext(resource, `type`), buildId(resource, `type`.`type`), buildGeneric(resource, `type`.generic), `type`.array != null, instance = buildInstance(resource, `type`.instance))
+  }
+
+  def buildInstance(resource: ContextResource, instance: TmplCurryParamsContext): Option[TmplCurryParam] = {
+    if (instance != null && !instance.params.isEmpty) Some(buildCallFuncParams(resource, instance))
+    else if (instance != null) Some(TmplCurryParam(addContext(resource, instance), None))
+    else None
   }
 
   def buildGeneric(resource: ContextResource, generic: TmplGenericContext): Option[TmplGeneric] = {
@@ -204,7 +210,9 @@ object BuildTmplBlock {
   def buildVar(resource: ContextResource, variable: TmplVarContext): TmplVar = {
     TmplVar(addContext(resource, variable), buildAnnotations(resource, variable.annots.asScala.toList), buildProps(resource, variable.props), buildId(resource, variable.name),
       if (variable.`type` != null) Some(buildType(resource, variable.`type`)) else None,
-      if (variable.value != null) Some(buildOperation(resource, variable.value)) else None)
+      if (variable.value != null) Some(buildOperation(resource, variable.value)) else None,
+      variable.optional != null
+    )
   }
 
   def buildReturn(resource: ContextResource, ret: TmplReturnContext): TmplReturn = {

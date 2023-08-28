@@ -1,4 +1,4 @@
-package dev.tlang.tlang.generator.langs.java
+package dev.tlang.tlang.generator.langs.kotlin
 
 import dev.tlang.tlang.ast.common.operation.Operator
 import dev.tlang.tlang.ast.tmpl._
@@ -8,15 +8,16 @@ import dev.tlang.tlang.ast.tmpl.func.{TmplFunc, TmplFuncCurry}
 import dev.tlang.tlang.ast.tmpl.loop.ForType.ForType
 import dev.tlang.tlang.ast.tmpl.loop.{TmplDoWhile, TmplFor, TmplWhile}
 import dev.tlang.tlang.ast.tmpl.primitive._
+import dev.tlang.tlang.generator.formatter.Formatter
 import dev.tlang.tlang.generator.{CodeGenerator, Seq}
 
-class NewJavaGenerator extends CodeGenerator {
+class KotlinGenerator extends CodeGenerator {
   override def generate(tmpl: TmplBlock): String = {
-    ""
+    Formatter.format(KotlinGenerator.genBlock(tmpl), KotlinFormatter.formatter())
   }
 }
 
-object NewJavaGenerator {
+object KotlinGenerator {
 
   def genBlock(tmpl: TmplBlock): Seq = {
     val root = Seq()
@@ -28,7 +29,7 @@ object NewJavaGenerator {
 
   def genPackage(pkg: Option[TmplPkg]): Seq = {
     val seq = Seq()
-    pkg.foreach(p => seq -> "package" += " " += mkSeq(p.parts, ".") += ";")
+    pkg.foreach(p => seq -> "package" += " " += mkSeq(p.parts, ".") += KotlinFormatter.RET)
     seq
   }
 
@@ -36,7 +37,7 @@ object NewJavaGenerator {
     val str: Array[Seq] = Array.ofDim[Seq](uses.fold(0)(_.size))
     uses.foreach(_.zipWithIndex.foreach(use => {
       val seq = Seq("import")
-      seq += " " += mkSeq(use._1.parts, ".") += ";"
+      seq += " " += mkSeq(use._1.parts, ".") += KotlinFormatter.RET
       str(use._2) = seq
     }))
     str
@@ -59,14 +60,15 @@ object NewJavaGenerator {
   def genImpl(impl: TmplImpl): Seq = {
     val str = Seq()
     var cur = str
-    cur += genAnnotations(impl.annots)
-    cur = impl.props.fold(Seq.add(cur, "public", " ", "class"))(prop => cur += genProps(prop)) += " " += impl.name.toString
+    cur += genAnnotations(impl.annots, KotlinFormatter.RET)
+    cur = impl.props.fold(Seq.add(cur, "class"))(prop => cur += genProps(prop)) += " " += impl.name.toString
     if (impl.fors.isDefined) {
-      cur = cur += " " += impl.fors.get.props.fold(Seq("extends"))(genProps(_)) += " "
+      cur = cur += " " += impl.fors.get.props.fold(Seq(":"))(genProps(_)) += " "
       cur = cur += mkSeq(impl.fors.get.types.map(implFor => genType(implFor)), ",")
     }
     if (impl.withs.isDefined) {
-      cur = cur += " " += impl.withs.get.props.fold(Seq("implements"))(genProps(_)) += " "
+      val sep = if (impl.fors.isDefined) "" else ":"
+      cur = cur += " " += impl.withs.get.props.fold(Seq(sep))(genProps(_)) += " "
       cur = cur += mkSeq(impl.fors.get.types.map(implFor => genType(implFor)), ",")
     }
     cur += "{"
@@ -78,11 +80,15 @@ object NewJavaGenerator {
   def genFunc(func: TmplFunc): Seq = {
     val str = Seq()
     str += genAnnotations(func.annots)
-    str += func.props.fold(Seq("public"))(prop => genProps(prop)) += " "
-    str += func.ret.fold(Seq("void"))(ret => genType(ret.head)) += " "
+    //    str += func.props.fold(Seq("public"))(prop => genProps(prop)) += " "
+    func.props.foreach(prop => str += genProps(prop, addSpace = true))
+    str += "fun "
     str += func.name.toString
+    //    str += func.ret.fold(Seq("void"))(ret => genType(ret.head)) += " "
     str += genCurrying(func.curries)
     str += func.postPros.fold(Seq())(prop => genProps(prop) += " ")
+    if (func.ret.isDefined) str += ":"
+    func.ret.foreach(ret => str += genType(ret.head))
     if (func.content.isDefined) str += genExprBlock(func.content.get)
     else str += ";"
     str
@@ -108,7 +114,8 @@ object NewJavaGenerator {
         str += "@" += annot.name.toString
         if (annot.values.isDefined) {
           str += "("
-          str += mkSeqFromSeq(annot.values.get.map(value => Seq.addTo(Seq(), value.name.toString, "=" ) += genValueType(value.value)), ",")
+          str += mkSeqFromSeq(annot.values.get.map(value => genAnnotValue(value)), ",")
+          //          str += mkSeqFromSeq(annot.values.get.map(value => Seq(value.name.toString) += Seq("=") += genPrimitive(value.value)), ",")
           str += ")"
         }
         str += sep
@@ -116,6 +123,14 @@ object NewJavaGenerator {
       str
     }
     else Seq()
+  }
+
+  private def genAnnotValue(value: TmplAnnotationParam): Seq = {
+    val seq = Seq()
+    seq += value.name.toString
+    seq += "="
+    seq += genValueType(value.value)
+    seq
   }
 
   def genOptionalProps(props: Option[TmplProp], addSpace: Boolean = false): Seq = {
@@ -133,8 +148,9 @@ object NewJavaGenerator {
   def genParam(param: TmplParam): String = {
     val str = Seq()
     str += genAnnotations(param.annots, sep = " ")
-    if (param.`type`.isDefined) str += genType(param.`type`.get) += " "
     str += param.name.toString
+    str += ":"
+    if (param.`type`.isDefined) str += genType(param.`type`.get)
     str.toString()
   }
 
@@ -143,6 +159,15 @@ object NewJavaGenerator {
     str += `type`.name.toString
     str += genGeneric(`type`.generic)
     if (`type`.isArray) str += "[]"
+    if(`type`.instance.isDefined) str += genTypeCurry(`type`.instance.get)
+    str
+  }
+
+  def genTypeCurry(curry: TmplCurryParam): Seq = {
+    val str = Seq()
+    str += "("
+    curry.params.foreach(params => str += mkSeq(params.map(genContent), ","))
+    str += ")"
     str
   }
 
@@ -190,7 +215,7 @@ object NewJavaGenerator {
 
   def genEndOfStatement(statement: Seq, endOfStatement: Boolean): Seq = {
     var ret = statement
-    if (endOfStatement) ret = ret += ";"
+    if (endOfStatement) ret = ret
     statement
   }
 
@@ -293,14 +318,34 @@ object NewJavaGenerator {
 
   def genVar(variable: TmplVar): Seq = {
     val str = Seq()
-    str += genAnnotations(variable.annots)
-    variable.props.foreach(prop => str += genProps(prop, addSpace = true))
-    if (variable.`type`.isDefined) str += genType(variable.`type`.get) += " "
-    else str += "var" += " "
+    str += genAnnotations(variable.annots, KotlinFormatter.RET)
+    variable.props.foreach(prop => str += genPropsForVar(prop, variable, addSpace = true))
+    if(variable.props.isEmpty) {
+      if(variable.isOptional) str += "var " else str += "val "
+    }
     str += variable.name.toString
-    variable.value.foreach(str += "=" += genOperation(_))
-    str += ";"
+    if (variable.`type`.isDefined) {
+      str += ":"
+      str += genType(variable.`type`.get)
+    }
+    if(variable.isOptional) str += "?"
+    if(variable.value.isDefined){
+      str += "="
+      str += genOperation(variable.value.get)
+    }
+    str += KotlinFormatter.RET
     str
+  }
+
+  def genPropsForVar(props: TmplProp, variable: TmplVar, addSpace: Boolean = false): Seq = {
+    val seq = Seq()
+    if(props.props.nonEmpty && props.props.head.toString.equals("lateinit")) {
+      seq += "lateinit var"
+    } else {
+      seq += mkSeq(props.props, " ")
+    }
+    if (addSpace) seq += " "
+    seq
   }
 
   def genValueType(valueType: TmplValueType[_]): Seq = {
@@ -389,7 +434,7 @@ object NewJavaGenerator {
     str
   }
 
-  def genStringValue(string: TmplStringValue): Seq = Seq("\"") += string.value.toString += "\""
+  def genStringValue(string: TmplStringValue): Seq = Seq.build("\"", string.value.toString, "\"")
 
   def genLongValue(long: TmplLongValue): Seq = Seq(long.value.toString)
 

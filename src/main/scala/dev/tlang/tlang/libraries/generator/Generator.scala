@@ -10,6 +10,7 @@ import dev.tlang.tlang.generator.langs.dart.DartGenerator
 import dev.tlang.tlang.generator.langs.groovy.GroovyGenerator
 import dev.tlang.tlang.generator.langs.java.JavaGenerator
 import dev.tlang.tlang.generator.langs.json.JSONGenerator
+import dev.tlang.tlang.generator.langs.kotlin.KotlinGenerator
 import dev.tlang.tlang.generator.langs.rust.RustGenerator
 import dev.tlang.tlang.generator.langs.scalalang.ScalaGenerator
 import dev.tlang.tlang.generator.langs.typescript.TypeScriptGenerator
@@ -30,6 +31,7 @@ object Generator {
     "rust" -> new RustGenerator(),
     "xml" -> new XMLGenerator(),
     "yml" -> new YMLGenerator(),
+    "kotlin" -> new KotlinGenerator(),
   )
 
   def generateFunc: HelperFunc = HelperFunc(None, "generate", Some(List(HelperCurrying(None, List(HelperParam(None, Some("block"), ObjType(None, None, TmplBlockAsValue.getType)))))),

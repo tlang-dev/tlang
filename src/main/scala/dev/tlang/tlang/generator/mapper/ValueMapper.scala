@@ -11,6 +11,8 @@ import dev.tlang.tlang.interpreter.ExecCallObject
 import dev.tlang.tlang.interpreter.context.Context
 import dev.tlang.tlang.libraries.generator.Generator
 
+import scala.collection.mutable.ListBuffer
+
 object ValueMapper {
 
   def mapBlock(blockAsValue: TmplBlockAsValue): TmplBlockAsValue = {
@@ -34,16 +36,19 @@ object ValueMapper {
 
   def mapContent(content: Option[List[TmplNode[_]]], context: Context): Option[List[TmplNode[_]]] = {
     if (content.isDefined) {
-      val newContent: List[TmplNode[_]] = content.get.map {
-        case func: TmplFunc => mapFunc(func, context)
-        case expr: TmplExpression[_] => mapExpression(expr, context)
-        case impl: TmplImpl => mapImpl(impl, context)
+      var newContent = ListBuffer.empty[TmplNode[_]]
+
+        content.get.foreach {
+        case func: TmplFunc => newContent += mapFunc(func, context)
+        case expr: TmplExpression[_] => newContent += mapExpression(expr, context)
+        case impl: TmplImpl => newContent += mapImpl(impl, context)
+        case block: TmplBlock =>  mapContent(block.content, context).foreach { blocks => newContent.addAll(blocks)}
         // Specialized content
-        case attr: TmplAttribute => mapAttribute(attr, context)
-        case setAttr: TmplSetAttribute => mapSetAttribute(setAttr, context)
-        case param: TmplParam => mapParam(param, context)
+        case attr: TmplAttribute => newContent += mapAttribute(attr, context)
+        case setAttr: TmplSetAttribute => newContent += mapSetAttribute(setAttr, context)
+        case param: TmplParam => newContent += mapParam(param, context)
       }
-      Some(newContent)
+      Some(newContent.toList)
     } else None
   }
 
@@ -135,7 +140,7 @@ object ValueMapper {
     if (params.isDefined) {
       params.get.foreach(param => {
         param.name = mapID(param.name, context)
-        param.value = mapPrimitive(param.value, context)
+        param.value = mapValueType(param.value, context)
       })
       params
     } else None

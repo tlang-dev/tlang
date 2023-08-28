@@ -31,7 +31,7 @@ numberValue: value=NUMBER;
 
 textValue: value=TEXT;
 
-boolValue: value= 'true' | 'false';
+boolValue: 'true' | 'false';
 
 arrayValue: '[' (params+=complexAttribute)? (',' params+=complexAttribute)* ']';
 

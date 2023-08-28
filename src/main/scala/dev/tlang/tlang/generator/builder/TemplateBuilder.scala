@@ -322,6 +322,39 @@ object TemplateBuilder {
     else Right(newNodes.toList)
   }
 
+  def buildAnnotation(param: TmplAnnotation, context: Context): Either[ExecError, TmplAnnotation] = {
+    var err: Option[ExecError] = None
+    if (param.values.isDefined) {
+      //      val result = ListBuffer.empty[TmplValueType[_]]
+
+      param.values.get.foreach {
+        param =>
+          buildValueType(param.value, context) match {
+            case Left(error) => err = Some(error)
+            case Right(value) => param.value = value
+          }
+      }
+      //      param.values = Some(result.toList)
+    }
+
+    if (err.isDefined) Left(err.get)
+    else Right(param)
+  }
+
+  def buildVar(variable: TmplVar, context: Context): Either[ExecError, TmplVar] = {
+    var err: Option[ExecError] = None
+    if (variable.annots.isDefined) {
+      val newAnnots = ListBuffer.empty[TmplAnnotation]
+      variable.annots.get.foreach(annot => TemplateBuilder.buildAnnotation(annot, context) match {
+        case Left(error) => err = Some(error)
+        case Right(value) => newAnnots += value
+      })
+      variable.annots = Some(newAnnots.toList)
+    }
+    if (err.isDefined) Left(err.get)
+    else Right(variable)
+  }
+
   def visitNodes(nodes: List[TmplNode[_]], context: Context): Either[ExecError, List[TmplNode[_]]] = {
     var err: Option[ExecError] = None
     var i = 0
@@ -352,6 +385,7 @@ object TemplateBuilder {
       case func: TmplFunc => toList(FuncBuilder.buildFunc(func, context))
       case exprBlock: TmplExprBlock => toList(buildExpBlock(exprBlock, context))
       case stringValue: TmplStringValue => toList(buildStringValue(stringValue, context))
+      case variable:TmplVar => toList(buildVar(variable, context))
       //case expr: TmplExpression[_] => buildExpression(expr, context)
       case _: TmplNode[_] => Right(List(node))
     }
@@ -359,8 +393,8 @@ object TemplateBuilder {
 
   def toList[TYPE](either: Either[ExecError, TmplNode[_]]): Either[ExecError, List[TYPE]] = {
     either match {
-        case Left(error) => Left(error)
-        case Right(value) => Right(List(value.asInstanceOf[TYPE]))
+      case Left(error) => Left(error)
+      case Right(value) => Right(List(value.asInstanceOf[TYPE]))
     }
   }
 

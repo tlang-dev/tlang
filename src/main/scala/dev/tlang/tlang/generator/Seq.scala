@@ -21,8 +21,21 @@ case class Seq(var seq: String = "", var children: ListBuffer[Seq] = ListBuffer.
   }
 
   def ++=(seqs: Iterable[Seq]): Seq = {
-    children.addAll(seqs)
-    this
+    if (seqs.nonEmpty) {
+      children.addAll(seqs)
+      seqs.last
+    } else {
+      this
+    }
+  }
+
+  def ++=(seqs: Seq*): Seq = {
+    if (seqs.nonEmpty) {
+      children.addAll(seqs)
+      seqs.last
+    } else {
+      this
+    }
   }
 
   override def toString: String = {
@@ -47,7 +60,7 @@ object Seq {
     current
   }
 
-  def addTo(seq:Seq, seqs: String*): Seq = {
+  def addTo(seq: Seq, seqs: String*): Seq = {
     var current = seq
     for (i <- 0 until seqs.size) current = current += seqs(i)
     seq

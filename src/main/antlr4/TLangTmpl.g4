@@ -31,7 +31,7 @@ tmplUse: 'use' parts+=tmplID ('.' parts+=tmplID)* ('as' alias=tmplID)?;
 
 tmplAnnot: '@' name=tmplID ('(' annotParams+=tmplAnnotParam (',' annotParams+=tmplAnnotParam)* ')')?;
 
-tmplAnnotParam:name=tmplID '=' value=tmplPrimitiveValue;
+tmplAnnotParam:name=tmplID '=' value=tmplValueType;
 
 tmplProps: ('[' (props+=tmplID)+ ']')?;
 
@@ -55,7 +55,7 @@ tmplParam:
 	accessor=tmplID? name=tmplID (':' type=tmplType)?;
 
 tmplType:
-	type=tmplID ('<' (generic=tmplGeneric) '>')? (array='[' ']')?;
+	type=tmplID ('<' (generic=tmplGeneric) '>')? (instance=tmplCurryParams)? (array='[' ']')?;
 
 tmplGeneric:
 	(types+=tmplType (',' types+=tmplType)*);
@@ -82,7 +82,9 @@ tmplAnonFunc: params=tmplCurrying '=>' content=tmplExprContent;
 
 tmplVar:
     (annots+=tmplAnnot)*
-    'var' props=tmplProps name=tmplID (':' type=tmplType)? ('=' value=tmplOperation)?;
+    'var' props=tmplProps name=tmplID (':' type=tmplType)? (optional=tmplOptionalValue)? ('=' value=tmplOperation)?;
+
+tmplOptionalValue: '?';
 
 tmplCallObj: props=tmplProps objs+=tmplCallObjType ('.'objs+=tmplCallObjType)*;
 

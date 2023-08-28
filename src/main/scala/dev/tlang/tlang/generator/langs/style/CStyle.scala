@@ -96,7 +96,7 @@ abstract class CStyle {
         str ++= "@" ++= annot.name.toString
         if (annot.values.isDefined) {
           str ++= "("
-          str ++= annot.values.get.map(value => value.name + " = " + genPrimitive(value.value)).mkString(", ")
+          str ++= annot.values.get.map(value => value.name + " = " + genValueType(value.value)).mkString(", ")
           str ++= ")"
         }
         str ++= sep
