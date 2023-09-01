@@ -9,7 +9,10 @@ import dev.tlang.tlang.ast.tmpl.loop.ForType.ForType
 import dev.tlang.tlang.ast.tmpl.loop.{TmplDoWhile, TmplFor, TmplWhile}
 import dev.tlang.tlang.ast.tmpl.primitive._
 import dev.tlang.tlang.generator.formatter.Formatter
+import dev.tlang.tlang.generator.langs.kotlin
 import dev.tlang.tlang.generator.{CodeGenerator, Seq}
+
+import scala.language.postfixOps
 
 class KotlinGenerator extends CodeGenerator {
   override def generate(tmpl: TmplBlock): String = {
@@ -49,11 +52,12 @@ object KotlinGenerator {
     str
   }
 
-  def genContent(impl: TmplNode[_]): Seq = {
+  def genContent(impl: TmplNode[_], addEndOfStatement: Boolean = false): Seq = {
     impl match {
       case func: TmplFunc => genFunc(func)
-      case expr: TmplExpression[_] => genExpression(expr)
+      case expr: TmplExpression[_] => genExpression(expr, addEndOfStatement)
       case impl: TmplImpl => genImpl(impl)
+      case exprBlock: TmplExprBlock => genExprBlock(exprBlock, addEndOfStatement)
     }
   }
 
@@ -89,7 +93,7 @@ object KotlinGenerator {
     str += func.postPros.fold(Seq())(prop => genProps(prop) += " ")
     if (func.ret.isDefined) str += ":"
     func.ret.foreach(ret => str += genType(ret.head))
-    if (func.content.isDefined) str += genExprBlock(func.content.get)
+    if (func.content.isDefined) str += genContent(func.content.get, addEndOfStatement = true)
     else str += ";"
     str
   }
@@ -159,14 +163,14 @@ object KotlinGenerator {
     str += `type`.name.toString
     str += genGeneric(`type`.generic)
     if (`type`.isArray) str += "[]"
-    if(`type`.instance.isDefined) str += genTypeCurry(`type`.instance.get)
+    if (`type`.instance.isDefined) str += genTypeCurry(`type`.instance.get)
     str
   }
 
   def genTypeCurry(curry: TmplCurryParam): Seq = {
     val str = Seq()
     str += "("
-    curry.params.foreach(params => str += mkSeq(params.map(genContent), ","))
+    curry.params.foreach(params => str += mkSeq(params.map(param => genContent(param)), ","))
     str += ")"
     str
   }
@@ -186,9 +190,9 @@ object KotlinGenerator {
     }
   }
 
-  def genExprBlock(block: TmplExprBlock): Seq = {
+  def genExprBlock(block: TmplExprBlock, endOfStatement: Boolean = false): Seq = {
     val str = Seq()
-    str += "{" += mkSeqFromSeq(block.exprs.map(b => genExpression(b, endOfStatement = true)), "") += "}"
+    str += "{" += mkSeqFromSeq(block.exprs.map(b => genContent(b, endOfStatement)), "") += "}"
     str
   }
 
@@ -215,7 +219,7 @@ object KotlinGenerator {
 
   def genEndOfStatement(statement: Seq, endOfStatement: Boolean): Seq = {
     var ret = statement
-    if (endOfStatement) ret = ret
+    if (endOfStatement) ret = ret += KotlinFormatter.RET
     statement
   }
 
@@ -320,16 +324,16 @@ object KotlinGenerator {
     val str = Seq()
     str += genAnnotations(variable.annots, KotlinFormatter.RET)
     variable.props.foreach(prop => str += genPropsForVar(prop, variable, addSpace = true))
-    if(variable.props.isEmpty) {
-      if(variable.isOptional) str += "var " else str += "val "
+    if (variable.props.isEmpty) {
+      if (variable.isOptional) str += "var " else str += "val "
     }
     str += variable.name.toString
     if (variable.`type`.isDefined) {
       str += ":"
       str += genType(variable.`type`.get)
     }
-    if(variable.isOptional) str += "?"
-    if(variable.value.isDefined){
+    if (variable.isOptional) str += "?"
+    if (variable.value.isDefined) {
       str += "="
       str += genOperation(variable.value.get)
     }
@@ -339,7 +343,7 @@ object KotlinGenerator {
 
   def genPropsForVar(props: TmplProp, variable: TmplVar, addSpace: Boolean = false): Seq = {
     val seq = Seq()
-    if(props.props.nonEmpty && props.props.head.toString.equals("lateinit")) {
+    if (props.props.nonEmpty && props.props.head.toString.equals("lateinit")) {
       seq += "lateinit var"
     } else {
       seq += mkSeq(props.props, " ")
@@ -405,7 +409,24 @@ object KotlinGenerator {
   }
 
   def genEntityValue(entity: TmplEntityValue): Seq = {
-    Seq()
+    val str = Seq()
+    if (entity.name.isDefined) str += entity.name.get.toString
+    str += "("
+    str += genEntityValueAttribute(entity.attrs)
+    str += ")"
+    str
+  }
+
+  def genEntityValueAttribute(attrs: Option[List[TmplNode[_]]]): Seq = {
+    val str = Seq()
+    attrs.foreach(_.foreach { attr =>
+      attr match {
+        case operation: TmplOperation => str += genOperation(operation)
+        case attribute: TmplAttribute => str += genAttribute(attribute)
+        case include: TmplInclude =>
+      }
+    })
+    str
   }
 
   def genAttribute(attr: TmplAttribute): Seq = {
@@ -456,7 +477,11 @@ object KotlinGenerator {
 
   def genTmplID(tmplId: TmplID): Seq = {
     tmplId match {
-      case str: TmplStringID => Seq("\"") += str.toString += "\""
+      case str: TmplStringID =>
+        val seq = Seq("\"")
+        seq += str.toString
+        seq += "\""
+        seq
       case _ => Seq(tmplId.toString)
     }
   }

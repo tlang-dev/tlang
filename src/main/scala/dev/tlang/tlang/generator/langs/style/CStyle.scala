@@ -150,7 +150,7 @@ abstract class CStyle {
 
   def genExprBlock(block: TmplExprBlock): String = {
     val str = new StringBuilder
-    str ++= "{\n" ++= block.exprs.map(b => genExpression(b, endOfStatement = true)).mkString("\n") ++= "\n}"
+    str ++= "{\n" ++= block.exprs.map(b => genContent(b)).mkString("\n") ++= "\n}"
     str.toString()
   }
 

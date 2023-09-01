@@ -147,10 +147,13 @@ tmplIntprID: (pre=ID)? '${' callObj '}' (pos=ID)?;
 
 tmplString: STRING | tmplIntprString;
 
-tmplIntprString: 's"' (pre=ID)? '${' callObj '}' (pos=ID)? '"';
+tmplIntprString: 's"' (pre=.)? '${' callObj '}' (pos=.)? '"';
 
 tmplText: TEXT | tmplIntprText;
 
-tmplIntprText: 's"""' (pre=ID)? '${' callObj '}' (pos=ID)? '"""';
+tmplIntprText: 's"""' (pre=.)? '${' callObj '}' (pos=.)? '"""';
 
 tmplIdOrString: tmplID | tmplString;
+
+//ANY_STRING: ('\\' .)+;
+//ANY_STRING: ;

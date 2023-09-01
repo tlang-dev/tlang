@@ -6,7 +6,7 @@ import dev.tlang.tlang.ast.tmpl.call._
 import dev.tlang.tlang.ast.tmpl.condition.TmplOperation
 import dev.tlang.tlang.ast.tmpl.func.{TmplFunc, TmplFuncCurry}
 import dev.tlang.tlang.ast.tmpl.loop.TmplFor
-import dev.tlang.tlang.ast.tmpl.primitive.{TmplPrimitiveValue, TmplStringValue, TmplTextValue}
+import dev.tlang.tlang.ast.tmpl.primitive.{TmplEntityValue, TmplPrimitiveValue, TmplStringValue, TmplTextValue}
 import dev.tlang.tlang.interpreter.ExecCallObject
 import dev.tlang.tlang.interpreter.context.Context
 import dev.tlang.tlang.libraries.generator.Generator
@@ -15,13 +15,20 @@ import scala.collection.mutable.ListBuffer
 
 object ValueMapper {
 
-  def mapBlock(blockAsValue: TmplBlockAsValue): TmplBlockAsValue = {
+  def mapBlockAsValue(blockAsValue: TmplBlockAsValue): TmplBlockAsValue = {
     val block = blockAsValue.block
     val con = blockAsValue.context
     block.pkg = mapPkg(block.pkg, con)
     block.uses = mapUses(block.uses, con)
     block.content = mapContent(block.content, con)
     blockAsValue
+  }
+
+  def mapBlock(block: TmplBlock, context: Context): TmplBlock = {
+    block.pkg = mapPkg(block.pkg, context)
+    block.uses = mapUses(block.uses, context)
+    block.content = mapContent(block.content, context)
+    block
   }
 
   def mapPkg(pkg: Option[TmplPkg], context: Context): Option[TmplPkg] = {
@@ -36,17 +43,18 @@ object ValueMapper {
 
   def mapContent(content: Option[List[TmplNode[_]]], context: Context): Option[List[TmplNode[_]]] = {
     if (content.isDefined) {
-      var newContent = ListBuffer.empty[TmplNode[_]]
+      val newContent = ListBuffer.empty[TmplNode[_]]
 
-        content.get.foreach {
+      content.get.foreach {
         case func: TmplFunc => newContent += mapFunc(func, context)
         case expr: TmplExpression[_] => newContent += mapExpression(expr, context)
         case impl: TmplImpl => newContent += mapImpl(impl, context)
-        case block: TmplBlock =>  mapContent(block.content, context).foreach { blocks => newContent.addAll(blocks)}
+        case block: TmplBlock => mapContent(block.content, context).foreach { blocks => newContent.addAll(blocks) }
         // Specialized content
         case attr: TmplAttribute => newContent += mapAttribute(attr, context)
         case setAttr: TmplSetAttribute => newContent += mapSetAttribute(setAttr, context)
         case param: TmplParam => newContent += mapParam(param, context)
+        //        newContent ++= mapNode(_, context)
       }
       Some(newContent.toList)
     } else None
@@ -69,6 +77,7 @@ object ValueMapper {
       case ret: TmplReturn => mapReturn(ret, context)
       case affect: TmplAffect => mapAffect(affect, context)
       case tmplFor: TmplFor => mapFor(tmplFor, context)
+      case primitiveValue: TmplPrimitiveValue[_] => mapPrimitive(primitiveValue, context)
       case _ => expr
     }
   }
@@ -120,7 +129,7 @@ object ValueMapper {
     func.props = mapProps(func.props, context)
     func.name = mapID(func.name, context)
     func.curries = mapCurries(func.curries, context)
-    func.content = mapOptExprBlock(func.content, context)
+    func.content = func.content.map(mapExprBlock(_, context))
     func.ret = mapTypes(func.ret, context)
     func
   }
@@ -167,8 +176,15 @@ object ValueMapper {
   }
 
   def mapExprBlock(block: TmplExprBlock, context: Context): TmplExprBlock = {
-    val exprs = block.exprs.map(expr => mapExpression(expr, context))
-    TmplExprBlock(block.context, exprs)
+    val exprs = ListBuffer.empty[TmplNode[_]]
+    //    block.exprs.foreach(_.getType)
+    block.exprs.foreach {
+      case block: TmplBlock => mapContent(block.content, context).foreach {
+        _.foreach(exprs += _)
+      }
+      case expr: TmplExpression[_] => exprs += mapExpression(expr, context)
+    }
+    TmplExprBlock(block.context, exprs.toList)
   }
 
   def mapCurries(curries: Option[List[TmplFuncCurry]], context: Context): Option[List[TmplFuncCurry]] = {
@@ -294,8 +310,14 @@ object ValueMapper {
     primitive match {
       case str: TmplStringValue => TmplStringValue(str.context, mapID(str.value, context))
       case text: TmplTextValue => TmplTextValue(text.context, mapID(text.value, context))
+      case entityValue: TmplEntityValue => mapEntityValue(entityValue, context)
       case _ => primitive
     }
+  }
+
+  def mapEntityValue(entity: TmplEntityValue, context: Context): TmplEntityValue = {
+    entity.name = mapOptID(entity.name, context)
+    entity
   }
 
   def mapVar(variable: TmplVar, context: Context): TmplVar = {

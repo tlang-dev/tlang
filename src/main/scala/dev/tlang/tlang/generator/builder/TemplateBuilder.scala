@@ -18,7 +18,7 @@ object TemplateBuilder {
     buildBlock(blockAsValue.block, blockAsValue.context) match {
       case Left(error) => Left(error)
       case Right(_) =>
-        ValueMapper.mapBlock(blockAsValue)
+        ValueMapper.mapBlockAsValue(blockAsValue)
         Right(blockAsValue)
     }
   }

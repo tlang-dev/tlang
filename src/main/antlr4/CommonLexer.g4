@@ -9,7 +9,10 @@ ID:
 WS : ( ' ' | '\t' | '\r' | '\n' )+ -> channel(HIDDEN);
 
 fragment ESCAPED_QUOTE : '\\"';
-STRING :   '"' ( ESCAPED_QUOTE | ~('\n'|'\r') )*? '"';
+//STRING :   '"' ( ESCAPED_QUOTE | ~('\n'|'\r') )*? '"';
+STRING: '"' (~["\r\n] | '\\' .)* '"';
+
+
 
 NUMBER     : '0'..'9'+ ('.' '0'..'9'+)?;
 

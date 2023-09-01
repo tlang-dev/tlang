@@ -163,7 +163,7 @@ object NewJavaGenerator {
 
   def genExprBlock(block: TmplExprBlock): Seq = {
     val str = Seq()
-    str += "{" += mkSeqFromSeq(block.exprs.map(b => genExpression(b, endOfStatement = true)), "") += "}"
+    str += "{" += mkSeqFromSeq(block.exprs.map(b => genContent(b)), "") += "}"
     str
   }
 

@@ -3,8 +3,8 @@ package dev.tlang.tlang.ast.tmpl
 import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
 import dev.tlang.tlang.interpreter.Value
 
-case class TmplExprBlock(context: Option[ContextContent], var exprs: List[TmplExpression[_]]) extends TmplExprContent[TmplExprBlock] with AstContext {
-  override def deepCopy(): TmplExprBlock = TmplExprBlock(context, exprs.map(_.deepCopy().asInstanceOf[TmplExpression[_]]))
+case class TmplExprBlock(context: Option[ContextContent], var exprs: List[TmplNode[_]]) extends TmplExprContent[TmplExprBlock] with AstContext {
+  override def deepCopy(): TmplExprBlock = TmplExprBlock(context, exprs.map(_.deepCopy().asInstanceOf[TmplNode[_]]))
 
   override def getContext: Option[ContextContent] = context
 

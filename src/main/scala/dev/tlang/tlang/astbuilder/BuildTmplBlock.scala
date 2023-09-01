@@ -169,6 +169,7 @@ object BuildTmplBlock {
       case affect@_ if affect.tmplAffect() != null => buildAffect(resource, affect.tmplAffect())
       case tmplFor@_ if tmplFor.tmplFor() != null => buildTmplFor(resource, tmplFor.tmplFor())
       case anonFunc@_ if anonFunc.tmplAnonFunc() != null => buildTmplAnonFunc(resource, anonFunc.tmplAnonFunc())
+      case primitive@_ if primitive.tmplPrimitiveValue() != null => buildPrimitive(resource, primitive.tmplPrimitiveValue())
     }
   }
 
