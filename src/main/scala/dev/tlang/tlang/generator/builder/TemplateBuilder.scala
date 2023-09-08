@@ -2,10 +2,10 @@ package dev.tlang.tlang.generator.builder
 
 import dev.tlang.tlang.ast.common.call.CallObject
 import dev.tlang.tlang.ast.tmpl._
-import dev.tlang.tlang.ast.tmpl.call.{TmplCallFunc, TmplCallObj, TmplCallObjType, TmplCurryParam}
+import dev.tlang.tlang.ast.tmpl.call.{TmplCallFunc, TmplCallObj, TmplCallObjectLink, TmplCurryParam}
 import dev.tlang.tlang.ast.tmpl.condition.TmplOperation
 import dev.tlang.tlang.ast.tmpl.func.TmplFunc
-import dev.tlang.tlang.ast.tmpl.primitive.{TmplArrayValue, TmplEntityValue, TmplStringValue}
+import dev.tlang.tlang.ast.tmpl.primitive.{TmplArrayValue, TmplEntityValue, TmplStringValue, TmplTextValue}
 import dev.tlang.tlang.generator.mapper.ValueMapper
 import dev.tlang.tlang.interpreter.context.Context
 import dev.tlang.tlang.interpreter.{ExecCallObject, ExecError, NoValue, Value}
@@ -17,7 +17,8 @@ object TemplateBuilder {
   def buildBlockAsValue(blockAsValue: TmplBlockAsValue): Either[ExecError, TmplBlockAsValue] = {
     buildBlock(blockAsValue.block, blockAsValue.context) match {
       case Left(error) => Left(error)
-      case Right(_) =>
+      case Right(newBLock) =>
+        blockAsValue.block = newBLock
         ValueMapper.mapBlockAsValue(blockAsValue)
         Right(blockAsValue)
     }
@@ -26,7 +27,8 @@ object TemplateBuilder {
   def buildBlock(block: TmplBlock, context: Context): Either[ExecError, TmplBlock] = {
     buildPkg(block.pkg, context) match {
       case Left(error) => Left(error)
-      case Right(value) => block.pkg = value
+      case Right(value) =>
+        block.pkg = value
         buildContents(block.content, context) match {
           case Left(error) => Left(error)
           case Right(value) => block.content = value
@@ -39,7 +41,7 @@ object TemplateBuilder {
     forEach(callObject.calls, context) match {
       case Left(error) => Left(error)
       case Right(values) =>
-        callObject.calls = values.asInstanceOf[List[TmplCallObjType[_]]]
+        callObject.calls = values.asInstanceOf[List[TmplCallObjectLink]]
         Right(callObject)
     }
   }
@@ -206,11 +208,21 @@ object TemplateBuilder {
   def buildValueType(value: TmplValueType[_], context: Context): Either[ExecError, TmplValueType[_]] = {
     value match {
       case strValue: TmplStringValue => buildStringValue(strValue, context)
+      case strValue: TmplTextValue => buildTextValue(strValue, context)
       case _ => Right(value)
     }
   }
 
   def buildStringValue(str: TmplStringValue, context: Context): Either[ExecError, TmplStringValue] = {
+    includeTmplId(str.value, context) match {
+      case Left(error) => Left(error)
+      case Right(value) =>
+        str.value = value.head.asInstanceOf[TmplID]
+        Right(str)
+    }
+  }
+
+  def buildTextValue(str: TmplTextValue, context: Context): Either[ExecError, TmplTextValue] = {
     includeTmplId(str.value, context) match {
       case Left(error) => Left(error)
       case Right(value) =>
@@ -385,7 +397,7 @@ object TemplateBuilder {
       case func: TmplFunc => toList(FuncBuilder.buildFunc(func, context))
       case exprBlock: TmplExprBlock => toList(buildExpBlock(exprBlock, context))
       case stringValue: TmplStringValue => toList(buildStringValue(stringValue, context))
-      case variable:TmplVar => toList(buildVar(variable, context))
+      case variable: TmplVar => toList(buildVar(variable, context))
       //case expr: TmplExpression[_] => buildExpression(expr, context)
       case _: TmplNode[_] => Right(List(node))
     }

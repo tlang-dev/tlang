@@ -7,14 +7,14 @@ import TLangCommon, CommonLexer;
  * The helper is interpreted and therefore, offers dynamic results for the template
  */
 helperBlock:
-	'helper' '{'
+	Helper LBRACE
 	(helperFuncs+=helperFunc)*
-	'}';
+	RBRACE;
 
 helperFunc:
-	'func' name=ID ('(' (currying+=helperCurrying)? ')')* (':' retVals+=helperParamType (',' retVals+=helperParamType)*)?'{'
+	Func name=ID ('(' (currying+=helperCurrying)? ')')* (':' retVals+=helperParamType (',' retVals+=helperParamType)*)?LBRACE
 	    body=helperContent
-	'}';
+	RBRACE;
 
 helperCurrying: params += helperParam (',' params += helperParam)*;
 
@@ -29,17 +29,17 @@ helperContent: content+=helperStatement*;
 helperStatement: assignVar | operation | helperIf | helperFor;
 
 helperIf:
-    'if' '(' cond=operation ')' '{'
+    If '(' cond=operation ')' LBRACE
         body=helperContent
-    '}' orElse=helperElse?;
+    RBRACE orElse=helperElse?;
 
 helperElse:
-    'else' '{'
+    Else LBRACE
         body=helperContent
-    '}';
+    RBRACE;
 
 helperFor:
-    'for' '(' var=ID start=operation? type=('in' | 'to' | 'until') array=operation ')' '{'
+   For '(' var=ID start=operation? type=(In | To | Until) array=operation ')' LBRACE
         body=helperContent
-    '}'
+    RBRACE
 ;

@@ -21,8 +21,8 @@ object NewJavaGenerator {
   def genBlock(tmpl: TmplBlock): Seq = {
     val root = Seq()
     root += genPackage(tmpl.pkg)
-    root ++= genIncludes(tmpl.uses)
-    tmpl.content.foreach(root ++= genContents(_))
+    root -> genIncludes(tmpl.uses)
+    tmpl.content.foreach(root -> genContents(_))
     root
   }
 
@@ -70,7 +70,7 @@ object NewJavaGenerator {
       cur = cur += mkSeq(impl.fors.get.types.map(implFor => genType(implFor)), ",")
     }
     cur += "{"
-    if (impl.content.isDefined) cur ++= genContents(impl.content.get)
+    if (impl.content.isDefined) cur -> genContents(impl.content.get)
     cur += "}"
     str
   }
@@ -108,7 +108,7 @@ object NewJavaGenerator {
         str += "@" += annot.name.toString
         if (annot.values.isDefined) {
           str += "("
-          str += mkSeqFromSeq(annot.values.get.map(value => Seq.addTo(Seq(), value.name.toString, "=" ) += genValueType(value.value)), ",")
+          str += mkSeqFromSeq(annot.values.get.map(value => Seq.addTo(Seq(), value.name.toString, "=") += genValueType(value.value)), ",")
           str += ")"
         }
         str += sep
@@ -258,7 +258,15 @@ object NewJavaGenerator {
   def genTmplCallObj(callObj: TmplCallObj): Seq = {
     val str = Seq()
     callObj.props.foreach(prop => str += genProps(prop, addSpace = true))
-    str += mkSeqFromSeq(callObj.calls.map(genCallObjType), ".")
+    str += genCallObjType(callObj.firstCall)
+    callObj.calls.foreach(link => str += genCallLink(link))
+    str
+  }
+
+  def genCallLink(objLink: TmplCallObjectLink): Seq = {
+    val str = Seq()
+    str += objLink.link
+    str += genCallObjType(objLink.call)
     str
   }
 

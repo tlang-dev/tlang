@@ -17,8 +17,8 @@ domainHeader:
     (uses += domainUse)*
 ;
 
-domainUse: 'use' uses+=ID ('.' uses+=ID)? ('as' alias=ID)?;
+domainUse: Use uses+=ID ('.' uses+=ID)? (As alias=ID)?;
 
-domainExpose: 'expose' expose=ID;
+domainExpose: Expose expose=ID;
 
 domainBlock: helperBlock | tmplBlock | modelBlock;

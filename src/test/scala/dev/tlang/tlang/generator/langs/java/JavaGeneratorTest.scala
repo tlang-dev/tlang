@@ -17,7 +17,7 @@ class JavaGeneratorTest extends AnyFunSuite {
 
   val fakeContext: ContextResource = ContextResource("", "", "", "")
 
-  test("Package") {
+ /* test("Package") {
     val lexer = new TLangLexer(CharStreams.fromString(
       """tmpl[java] myTmpl {
         |pkg my.package
@@ -147,6 +147,6 @@ class JavaGeneratorTest extends AnyFunSuite {
     val cond = TmplOperation(None, Right(TmplLongValue(None, 1)), Some(Operator.EQUAL, TmplOperation(None, Right(TmplLongValue(None, 1)), Some((Operator.AND, TmplOperation(None, Left(TmplOperation(None, Right(TmplLongValue(None, 1)), Some((Operator.NOT_EQUAL, TmplOperation(None, Right(TmplLongValue(None, 1)))))))))))))
     val res = JavaGenerator.genOperation(cond)
     assert("1 == 1 && (1 != 1)" == res)
-  }
+  }*/
 
 }

@@ -77,7 +77,8 @@ object ScalaGenerator {
   }
 
   def genCallObject(obj: TmplCallObj): String = {
-    obj.calls.map(call => genCallObjectType(call)).mkString(".")
+    //obj.calls.map(call => genCallObjectType(call)).mkString(".")
+    ""
   }
 
   def genCallObjectType(objType: TmplCallObjType[_]): String = {

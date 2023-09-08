@@ -46,7 +46,7 @@ object BuildTmplBlock {
   }
 
   def buildUse(resource: ContextResource, use: TmplUseContext): TmplUse = {
-    TmplUse(use.parts.asScala.toList.map(part => buildId(resource, part)),
+    TmplUse(addContext(resource, use), use.parts.asScala.toList.map(part => buildId(resource, part)),
       if (use.alias != null && !use.alias.isEmpty) Some(buildId(resource, use.alias)) else None)
   }
 
@@ -101,7 +101,7 @@ object BuildTmplBlock {
 
   def buildAnnotations(resource: ContextResource, annots: List[TmplAnnotContext]): Option[List[TmplAnnotation]] = {
     if (annots.nonEmpty) Some(annots.map(annot => {
-      val params = annot.annotParams.asScala.toList.map(param => TmplAnnotationParam(addContext(resource, param), buildId(resource, param.name), buildValueType(resource, param.value)))
+      val params = annot.annotParams.asScala.toList.map(param => TmplAnnotationParam(addContext(resource, param), buildOptionId(resource, param.name), buildValueType(resource, param.value)))
       TmplAnnotation(addContext(resource, annot), buildId(resource, annot.name), if (params.nonEmpty) Some(params) else None)
     }))
     else None
@@ -225,7 +225,11 @@ object BuildTmplBlock {
   }
 
   def buildCallObject(resource: ContextResource, obj: TmplCallObjContext): TmplCallObj = {
-    TmplCallObj(addContext(resource, obj), buildProps(resource, obj.props), obj.objs.asScala.toList.map(obj => buildCallObjectType(resource, obj)))
+    TmplCallObj(addContext(resource, obj), buildProps(resource, obj.props), buildCallObjectType(resource, obj.firstCall), obj.objs.asScala.toList.map(obj => buildCallObjectLink(resource, obj)))
+  }
+
+  def buildCallObjectLink(resource: ContextResource, objLink: TmplCallObjLinkContext): TmplCallObjectLink = {
+    TmplCallObjectLink(addContext(resource, objLink), objLink.access.getText, buildCallObjectType(resource, objLink.obj))
   }
 
   def buildCallObjectType(resource: ContextResource, objType: TmplCallObjTypeContext): TmplCallObjType[_] = {

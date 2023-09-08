@@ -4,7 +4,7 @@ import CommonLexer;
 
 /* Common elements */
 
-assignVar: 'let' name=ID (':' type=valueType)? '=' value=operation;
+assignVar: Let name=ID (':' type=valueType)? '=' value=operation;
 
 valueType: objType | arrayType;
 
@@ -31,7 +31,7 @@ numberValue: value=NUMBER;
 
 textValue: value=TEXT;
 
-boolValue: 'true' | 'false';
+boolValue: True | False;
 
 arrayValue: '[' (params+=complexAttribute)? (',' params+=complexAttribute)* ']';
 
@@ -49,9 +49,9 @@ setAttribute: (attr=ID '=')? value=operation;
 
 callVariable: name=ID;
 
-entityValue: '{' attrs+=complexAttribute* '}';
+entityValue: LBRACE attrs+=complexAttribute* RBRACE;
 
-impl: 'impl' (':' type=ID)? '{' (attrs+=complexAttribute)? (',' attrs+=complexAttribute)* '}';
+impl: Impl (':' type=ID)? LBRACE (attrs+=complexAttribute)? (',' attrs+=complexAttribute)* '}';
 
 multiValue: '(' (values+=operation) (',' values+=operation)+ ')'; // '+' is needed to avoid confusion with operation
 

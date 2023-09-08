@@ -7,17 +7,17 @@ import TLangCommon, TLangHelper, CommonLexer;
  * The content of this block will be translated in the final language as it is
  */
 tmplBlock:
-	'tmpl' '[' lang=tmplID ']' name=tmplID ('('params += helperParam (',' params += helperParam)*')')? block = tmplBlockContentType;
+	Tmpl LSQUARE lang=tmplID RSQUARE name=tmplID ('('params += helperParam (',' params += helperParam)*RPARENT)? block = tmplBlockContentType;
 
 tmplBlockContentType: tmplFullBlock | tmplSpecialisedBlock;
 
-tmplFullBlock: '{'
+tmplFullBlock: LBRACE
 	(tmplPakage=tmplPkg)?
 	(tmplUses+=tmplUse)*
 	(tmplContents+=tmplContent)*
-	'}';
+	RBRACE;
 
-tmplSpecialisedBlock: 'spec' '{' content=tmplSpecialisedContent '}';
+tmplSpecialisedBlock: Spec LBRACE content=tmplSpecialisedContent RBRACE;
 
 //tmplSpecialisedTypes: 'impl' | 'func' | 'expr' | 'attr' | 'setAttr' | 'param';
 
@@ -25,27 +25,27 @@ tmplSpecialisedContent: tmplContent | tmplAttribute | 'setAttr' tmplSetAttribute
 
 tmplContent: tmplImpl | tmplFunc | tmplExpression | tmplOperation;
 
-tmplPkg: 'pkg' parts+=tmplID ('.' parts+=tmplID)*;
+tmplPkg: Pkg parts+=tmplID ('.' parts+=tmplID)*;
 
-tmplUse: 'use' parts+=tmplID ('.' parts+=tmplID)* ('as' alias=tmplID)?;
+tmplUse: Use parts+=tmplID ('.' parts+=tmplID)* (As alias=tmplID)?;
 
-tmplAnnot: '@' name=tmplID ('(' annotParams+=tmplAnnotParam (',' annotParams+=tmplAnnotParam)* ')')?;
+tmplAnnot: '@' name=tmplID (LPARENT annotParams+=tmplAnnotParam (',' annotParams+=tmplAnnotParam)* RPARENT)?;
 
-tmplAnnotParam:name=tmplID '=' value=tmplValueType;
+tmplAnnotParam:(name=tmplID '=')? value=tmplValueType;
 
 tmplProps: ('[' (props+=tmplID)+ ']')?;
 
 tmplImpl:
     (annots+=tmplAnnot)*
-	'impl' props=tmplProps  name=tmplID (('for' forProps=tmplProps  forNames+=tmplType) (',' forNames+=tmplType)* (('with' withProps=tmplProps  withNames+=tmplType) (',' withNames+=tmplType)*)?)? '{'
+	Impl props=tmplProps  name=tmplID ((For forProps=tmplProps  forNames+=tmplType) (',' forNames+=tmplType)* ((With withProps=tmplProps  withNames+=tmplType) (',' withNames+=tmplType)*)?)? LBRACE
 	(tmplImplContents+=tmplContent)*
-	'}';
+	RBRACE;
 
 tmplFunc:
     (annots+=tmplAnnot)*
-	'func' props=tmplProps name=tmplID curries+=tmplCurrying* (':' types+=tmplType (',' types+=tmplType)*)? postProps=tmplProps content=tmplExprBlock?;
+	Func props=tmplProps name=tmplID curries+=tmplCurrying* (':' types+=tmplType (',' types+=tmplType)*)? postProps=tmplProps content=tmplExprBlock?;
 
-tmplCurrying: '(' param=tmplCurryingParam ')';
+tmplCurrying: LPARENT param=tmplCurryingParam RPARENT;
 
 tmplCurryingParam:
 	((params+=tmplParam) (',' params+=tmplParam)*)?;
@@ -62,37 +62,39 @@ tmplGeneric:
 
 tmplExprContent: tmplExpression | tmplExprBlock;
 
-tmplExprBlock: '{' exprs+=tmplExpression* '}';
+tmplExprBlock: LBRACE exprs+=tmplExpression* RBRACE;
 
 tmplExpression:	tmplVar | tmplCallObj | tmplValueType | tmplFunc
                 | tmplIf | tmplFor | tmplWhile | tmplDoWhile | tmplInclude | tmplReturn
                 | tmplAffect | tmplCast | tmplAnonFunc | tmplPrimitiveValue;
 
-tmplIf: 'if' '(' cond=tmplOperation ')' content=tmplExprContent elseThen=tmplElse?;
+tmplIf: If LPARENT cond=tmplOperation RPARENT content=tmplExprContent elseThen=tmplElse?;
 
-tmplElse: 'else' (tmplIf | tmplExprContent);
+tmplElse: Else (tmplIf | tmplExprContent);
 
-tmplFor: 'for' '(' variable=tmplID ('=' start=tmplOperation)? type=('in' | 'to' | 'until') array=tmplOperation ')' content=tmplExprContent;
+tmplFor: For LPARENT variable=tmplID ('=' start=tmplOperation)? type=('in' | 'to' | 'until') array=tmplOperation RPARENT content=tmplExprContent;
 
-tmplWhile: 'while' '(' cond=tmplOperation ')' content=tmplExprContent;
+tmplWhile: While LPARENT cond=tmplOperation RPARENT content=tmplExprContent;
 
-tmplDoWhile: 'do' content=tmplExprContent 'while' '(' cond=tmplOperation ')';
+tmplDoWhile: Do content=tmplExprContent While LPARENT cond=tmplOperation RPARENT;
 
 tmplAnonFunc: params=tmplCurrying '=>' content=tmplExprContent;
 
 tmplVar:
     (annots+=tmplAnnot)*
-    'var' props=tmplProps name=tmplID (':' type=tmplType)? (optional=tmplOptionalValue)? ('=' value=tmplOperation)?;
+    Var props=tmplProps name=tmplID (':' type=tmplType)? (optional=tmplOptionalValue)? (':=' value=tmplOperation)?;
 
 tmplOptionalValue: '?';
 
-tmplCallObj: props=tmplProps objs+=tmplCallObjType ('.'objs+=tmplCallObjType)*;
+tmplCallObj: props=tmplProps firstCall=tmplCallObjType objs+=tmplCallObjLink*;
+
+tmplCallObjLink: ((access= ('.' | '?.' | '!.' | '!!.' | '::')) obj=tmplCallObjType);
 
 tmplCallObjType: tmplCallArray | tmplCallFunc | tmplCallVariable;
 
 tmplCallFunc: ((name=tmplID) | '_') (currying += tmplCurryParams)+;
 
-tmplCurryParams:'(' (params+=tmplInclSetAttribute (',' params+=tmplInclSetAttribute)*)? ')';
+tmplCurryParams:LPARENT (params+=tmplInclSetAttribute (',' params+=tmplInclSetAttribute)*)? RPARENT;
 
 tmplSetAttribute: (name=tmplIdOrString ':')? value=tmplOperation;
 
@@ -112,7 +114,7 @@ tmplNumberValue: value=NUMBER;
 
 tmplTextValue: value=tmplText;
 
-tmplBoolValue: value= 'true' | 'false';
+tmplBoolValue: value= True | False;
 
 tmplArrayValue: '[' (params+=tmplInclSetAttribute)? (',' params+=tmplInclSetAttribute)* ']';
 
@@ -120,40 +122,37 @@ tmplInclAttribute: tmplInclude | tmplAttribute;
 
 tmplAttribute: ((attr=tmplID)? (':' type=tmplType)? value=tmplOperation);
 
-tmplMultiValue: '(' (values+=tmplValueType) (',' values+=tmplValueType)* ')';
+tmplMultiValue: LPARENT (values+=tmplValueType) (',' values+=tmplValueType)* RPARENT;
 
 tmplEntityValue:
-	'new' (name=tmplID)? ('(' ((params+=tmplInclAttribute) (',' params+=tmplInclAttribute)*)? ')')?
-	('{' ((attrs+=tmplInclAttribute) (',' attrs+=tmplInclAttribute)*)? '}')?;
+	New (name=tmplID)? (LPARENT ((params+=tmplInclAttribute) (',' params+=tmplInclAttribute)*)? RPARENT)?
+	(LBRACE ((attrs+=tmplInclAttribute) (',' attrs+=tmplInclAttribute)*)? RBRACE)?;
 
 tmplOperation:
      (content=tmplExpression (op=operator  next=tmplOperation)* |
-     '(' content=tmplExpression ')' (op=operator  next=tmplOperation)* |
-     '(' content=tmplExpression (op=operator  next=tmplOperation)* ')' |
-     '(' innerBlock=tmplOperation ')' (op=operator  next=tmplOperation)*)
+     LPARENT content=tmplExpression RPARENT (op=operator  next=tmplOperation)* |
+     LPARENT content=tmplExpression (op=operator  next=tmplOperation)* RPARENT |
+     LPARENT innerBlock=tmplOperation RPARENT (op=operator  next=tmplOperation)*)
      ('.' combine=tmplCallObj)?;
 
 tmplInclude: '<[' ((calls+=callObj)*) ']>';
 
-tmplReturn: 'return' call=tmplOperation;
+tmplReturn: Return call=tmplOperation;
 
 tmplAffect: variable=tmplCallObj '=' value=tmplOperation;
 
-tmplCast: '(' toCast=tmplOperation 'as' type=tmplType ')' ('.' combine=tmplCallObj)?;
+tmplCast: LPARENT toCast=tmplOperation 'as' type=tmplType RPARENT ('.' combine=tmplCallObj)?;
 
 tmplID: ID | tmplIntprID | ESCAPED_ID;
 
-tmplIntprID: (pre=ID)? '${' callObj '}' (pos=ID)?;
+tmplIntprID: (pre=ID)? INTEPRETED callObj RBRACE (pos=ID)?;
 
 tmplString: STRING | tmplIntprString;
 
-tmplIntprString: 's"' (pre=.)? '${' callObj '}' (pos=.)? '"';
+tmplIntprString: 's"' (pre=.)? INTEPRETED callObj RBRACE (pos=.)? '"';
 
 tmplText: TEXT | tmplIntprText;
 
-tmplIntprText: 's"""' (pre=.)? '${' callObj '}' (pos=.)? '"""';
+tmplIntprText: 's"""' (pre=.)? INTEPRETED callObj RBRACE (pos=.)? '"""';
 
 tmplIdOrString: tmplID | tmplString;
-
-//ANY_STRING: ('\\' .)+;
-//ANY_STRING: ;

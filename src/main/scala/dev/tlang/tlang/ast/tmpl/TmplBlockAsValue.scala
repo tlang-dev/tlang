@@ -7,7 +7,7 @@ import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.interpreter.context.Context
 
-case class TmplBlockAsValue(astContext: Option[ContextContent], block: TmplBlock, context: Context) extends Value[TmplBlock] with DeepCopy {
+case class TmplBlockAsValue(astContext: Option[ContextContent], var block: TmplBlock, context: Context) extends Value[TmplBlock] with DeepCopy {
   override def getElement: TmplBlock = this.block
 
   override def getType: String = TmplBlockAsValue.getType

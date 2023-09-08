@@ -56,7 +56,7 @@ object PythonGenerator {
       cur = cur += " " += impl.withs.get.props.fold(Seq("implements"))(genProps(_)) += " "
       //cur = cur += mkSeq(impl.fors.get.types.map(implFor => genType(implFor)), ",")
     }
-    if (impl.content.isDefined) cur ++= genContents(impl.content.get)
+    if (impl.content.isDefined) cur -> genContents(impl.content.get)
     str
   }
 

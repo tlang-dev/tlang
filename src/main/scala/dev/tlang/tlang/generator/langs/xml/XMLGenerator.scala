@@ -16,7 +16,7 @@ object XMLGenerator {
 
   def genBlock(tmpl: TmplBlock): Seq = {
     val root = Seq()
-    tmpl.content.foreach(root ++= genContents(_))
+    tmpl.content.foreach(root -> genContents(_))
     root
   }
 

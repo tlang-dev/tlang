@@ -2,10 +2,15 @@ package dev.tlang.tlang.generator
 
 import scala.collection.mutable.ListBuffer
 
-case class Seq(var seq: String = "", var children: ListBuffer[Seq] = ListBuffer.empty[Seq]) {
+case class Seq(var seq: String = "", children: ListBuffer[Seq] = ListBuffer.empty[Seq], var opening: Option[Seq] = None, var closing: Option[Seq] = None, blockName: String = "") {
 
   def ->(seq: String): Seq = {
     this.seq = seq
+    this
+  }
+
+  def ->(seq: Seq): Seq = {
+    children.addOne(seq)
     this
   }
 
@@ -20,7 +25,7 @@ case class Seq(var seq: String = "", var children: ListBuffer[Seq] = ListBuffer.
     newSeq
   }
 
-  def ++=(seqs: Iterable[Seq]): Seq = {
+  def ->(seqs: Iterable[Seq]): Seq = {
     if (seqs.nonEmpty) {
       children.addAll(seqs)
       seqs.last
@@ -29,13 +34,24 @@ case class Seq(var seq: String = "", var children: ListBuffer[Seq] = ListBuffer.
     }
   }
 
-  def ++=(seqs: Seq*): Seq = {
+  def ->(seqs: Seq*): Seq = {
     if (seqs.nonEmpty) {
       children.addAll(seqs)
       seqs.last
     } else {
       this
     }
+  }
+
+  def open(seq: Seq): Seq = {
+    if (this.opening.isEmpty)
+      this.opening = Some(seq)
+    seq
+  }
+
+  def close(seq: Seq): Seq = {
+    this.closing = Some(seq)
+    seq
   }
 
   override def toString: String = {
@@ -46,6 +62,7 @@ case class Seq(var seq: String = "", var children: ListBuffer[Seq] = ListBuffer.
 }
 
 object Seq {
+
 
   def build(seqs: String*): Seq = {
     val seq = Seq(seqs.head)
@@ -61,6 +78,12 @@ object Seq {
   }
 
   def addTo(seq: Seq, seqs: String*): Seq = {
+    var current = seq
+    for (i <- 0 until seqs.size) current = current += seqs(i)
+    seq
+  }
+
+  def addToLine(seq: Seq, seqs: Seq*): Seq = {
     var current = seq
     for (i <- 0 until seqs.size) current = current += seqs(i)
     seq

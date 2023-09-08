@@ -15,8 +15,8 @@ object Formatter {
 
   def format(seq: Seq, selectors: List[Selector], str: StringBuilder, ind: Indent): Indent = {
     var _ind = ind
-    val matching = selectors.filter(select => select.token == seq.seq)
-    val notMatching = selectors.filterNot(select => select.token == seq.seq)
+    val matching = selectors.filter(select => select.token == seq.blockName)
+    val notMatching = selectors.filterNot(select => select.token == seq.blockName)
     val applSelects = findApplicableRules(matching)
     if (applSelects.nonEmpty) {
       _ind = applyRules(seq, applSelects, str, 0, _ind)
@@ -26,8 +26,20 @@ object Formatter {
     }
     val newSelectors: List[Selector] = matching.filter(selector => selector.children.nonEmpty).flatMap(_.children) ++ matching.filter(selector => selector.children.isEmpty) ++ notMatching
     //    seq.children.foreach(child => format(child, newSelectors, str, ind))
+    if(seq.opening.isDefined) {
+      _ind = applyOpening(seq.opening.get, newSelectors, str, _ind)
+    }
     for (child <- seq.children) {
       _ind = format(child, newSelectors, str, _ind)
+    }
+    _ind
+  }
+
+  def applyOpening(seq: Seq, selectors: List[Selector], str: StringBuilder, ind: Indent): Indent = {
+    str ++= seq.seq
+    var _ind = ind
+    for (child <- seq.children) {
+      _ind = applyOpening(child, selectors, str, _ind)
     }
     _ind
   }

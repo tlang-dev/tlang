@@ -252,7 +252,7 @@ abstract class CStyle {
   def genTmplCallObj(callObj: TmplCallObj): String = {
     val str = new StringBuilder
     callObj.props.foreach(prop => str ++= genProps(prop, addSpace = true))
-    str ++= callObj.calls.map(genCallObjType).mkString(".")
+//    str ++= callObj.calls.map(genCallObjType).mkString(".")
     str.toString()
   }
 

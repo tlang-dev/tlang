@@ -9,7 +9,6 @@ import dev.tlang.tlang.ast.tmpl.loop.ForType.ForType
 import dev.tlang.tlang.ast.tmpl.loop.{TmplDoWhile, TmplFor, TmplWhile}
 import dev.tlang.tlang.ast.tmpl.primitive._
 import dev.tlang.tlang.generator.formatter.Formatter
-import dev.tlang.tlang.generator.langs.kotlin
 import dev.tlang.tlang.generator.{CodeGenerator, Seq}
 
 import scala.language.postfixOps
@@ -25,8 +24,8 @@ object KotlinGenerator {
   def genBlock(tmpl: TmplBlock): Seq = {
     val root = Seq()
     root += genPackage(tmpl.pkg)
-    root ++= genIncludes(tmpl.uses)
-    tmpl.content.foreach(root ++= genContents(_))
+    root -> genIncludes(tmpl.uses)
+    tmpl.content.foreach(root -> genContents(_))
     root
   }
 
@@ -58,6 +57,7 @@ object KotlinGenerator {
       case expr: TmplExpression[_] => genExpression(expr, addEndOfStatement)
       case impl: TmplImpl => genImpl(impl)
       case exprBlock: TmplExprBlock => genExprBlock(exprBlock, addEndOfStatement)
+      case tmplBlock: TmplBlock => genBlock(tmplBlock)
     }
   }
 
@@ -76,7 +76,7 @@ object KotlinGenerator {
       cur = cur += mkSeq(impl.fors.get.types.map(implFor => genType(implFor)), ",")
     }
     cur += "{"
-    if (impl.content.isDefined) cur ++= genContents(impl.content.get)
+    if (impl.content.isDefined) cur -> genContents(impl.content.get)
     cur += "}"
     str
   }
@@ -131,8 +131,10 @@ object KotlinGenerator {
 
   private def genAnnotValue(value: TmplAnnotationParam): Seq = {
     val seq = Seq()
-    seq += value.name.toString
-    seq += "="
+    if (value.name.isDefined) {
+      seq += value.name.get.toString
+      seq += "="
+    }
     seq += genValueType(value.value)
     seq
   }
@@ -287,7 +289,15 @@ object KotlinGenerator {
   def genTmplCallObj(callObj: TmplCallObj): Seq = {
     val str = Seq()
     callObj.props.foreach(prop => str += genProps(prop, addSpace = true))
-    str += mkSeqFromSeq(callObj.calls.map(genCallObjType), ".")
+    str += genCallObjType(callObj.firstCall)
+    callObj.calls.foreach(link => str += genCallLink(link))
+    str
+  }
+
+  def genCallLink(objLink: TmplCallObjectLink): Seq = {
+    val str = Seq()
+    str += objLink.link
+    str += genCallObjType(objLink.call)
     str
   }
 
@@ -400,6 +410,7 @@ object KotlinGenerator {
   def genPrimitive(primitive: TmplPrimitiveValue[_]): Seq = {
     primitive match {
       case string: TmplStringValue => genStringValue(string)
+      case string: TmplTextValue => genTextValue(string)
       case long: TmplLongValue => genLongValue(long)
       case double: TmplDoubleValue => genDoubleValue(double)
       case bool: TmplBoolValue => genBoolValue(bool)
@@ -438,24 +449,26 @@ object KotlinGenerator {
 
   def genArrayValue(array: TmplArrayValue): Seq = {
     val str = Seq()
-    str += " new "
     array.`type`.foreach(t => str += genType(t))
-    str += "[]"
+    str += "["
     str += genArrayValueParams(array.params.asInstanceOf[Option[List[TmplSetAttribute]]])
+    str += "]"
     str
   }
 
   def genArrayValueParams(params: Option[List[TmplSetAttribute]]): Seq = {
     val str = Seq()
     if (params.isDefined) {
-      str += "{"
+      //      str += "{"
       str += mkSeq(params.get.map(genSetAttribute), ",")
-      str += "}"
+      //      str += "}"
     }
     str
   }
 
   def genStringValue(string: TmplStringValue): Seq = Seq.build("\"", string.value.toString, "\"")
+
+  def genTextValue(string: TmplTextValue): Seq = Seq.build("\"", string.value.toString, "\"")
 
   def genLongValue(long: TmplLongValue): Seq = Seq(long.value.toString)
 

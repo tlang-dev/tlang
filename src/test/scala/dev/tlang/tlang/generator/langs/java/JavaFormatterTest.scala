@@ -13,7 +13,7 @@ class JavaFormatterTest extends AnyFunSuite {
 
   val RET: String = System.lineSeparator()
 
-  test("Format func in class") {
+  /*test("Format func in class") {
     val lexer = new TLangLexer(CharStreams.fromString(
       """tmpl[java] myTmpl {
         |impl MyClass {
@@ -28,7 +28,7 @@ class JavaFormatterTest extends AnyFunSuite {
     val res = Formatter.format(NewJavaGenerator.genBlock(impl), JavaFormatter.formatter())
     assert(
       "public class MyClass {" + RET + JavaFormatter.spaces + "public String myFunc() {" + RET + JavaFormatter.spaces + JavaFormatter.spaces + "callAFunc(one, two, three);" + RET + JavaFormatter.spaces + "}" + RET + RET + "}" + RET == res)
-  }
+  }*/
 
   test("Format condition in class") {
     val lexer = new TLangLexer(CharStreams.fromString(

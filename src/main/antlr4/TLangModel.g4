@@ -7,9 +7,9 @@ import TLangCommon, CommonLexer;
  * Set the data model and the entities to personalize the generated template
  */
 modelBlock:
-	'model' '{'
+	Model LBRACE
 	modelContents+=modelContent*
-	'}';
+	RBRACE;
 
 //MODEL: 'model';
 
@@ -20,9 +20,9 @@ modelContent: assignVar | modelSetEntity;
 */
 
 modelSetEntity:
-    'set' name=ID ('ext' ext=objType)? ('(' ((params+=modelSetAttribute) (',' params+=modelSetAttribute)*) ')')? '{'
+    Set name=ID (Ext ext=objType)? ('(' ((params+=modelSetAttribute) (',' params+=modelSetAttribute)*) ')')? LBRACE
     (attrs+=modelSetAttribute (',' attrs+=modelSetAttribute)*)?
-    '}'
+    RBRACE
 ;
 
 //SET: 'set';
@@ -44,6 +44,6 @@ modelSetRefCurrying:values+=modelSetRefValue (',' values+=modelSetRefValue)*;
 
 modelSetRefValue: modelSetRef | operation;
 
-modelSetImpl: 'impl' ('{' attrs+=modelSetAttribute (',' attrs+=modelSetAttribute)* '}')?;
+modelSetImpl: Impl (LBRACE attrs+=modelSetAttribute (',' attrs+=modelSetAttribute)* RBRACE)?;
 
-modelSetImplArray: 'impl' '[' ']';
+modelSetImplArray: Impl '[' ']';

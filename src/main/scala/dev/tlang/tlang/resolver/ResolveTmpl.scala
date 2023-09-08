@@ -2,12 +2,12 @@ package dev.tlang.tlang.resolver
 
 import dev.tlang.tlang.ast.DomainUse
 import dev.tlang.tlang.ast.common.call.{CallFuncObject, CallObject}
-import dev.tlang.tlang.ast.tmpl.call.{TmplCallArray, TmplCallFunc, TmplCallObj, TmplCallVar}
+import dev.tlang.tlang.ast.tmpl._
+import dev.tlang.tlang.ast.tmpl.call._
 import dev.tlang.tlang.ast.tmpl.condition.TmplOperation
 import dev.tlang.tlang.ast.tmpl.func.{TmplFunc, TmplFuncCurry}
 import dev.tlang.tlang.ast.tmpl.loop.{TmplDoWhile, TmplFor, TmplWhile}
-import dev.tlang.tlang.ast.tmpl.primitive.{TmplArrayValue, TmplEntityValue, TmplPrimitiveValue}
-import dev.tlang.tlang.ast.tmpl._
+import dev.tlang.tlang.ast.tmpl.primitive._
 import dev.tlang.tlang.interpreter.context.Scope
 import dev.tlang.tlang.libraries.builtin.BuiltIntLibs
 import dev.tlang.tlang.loader.{Module, Resource}
@@ -118,6 +118,7 @@ object ResolveTmpl {
       case include: TmplInclude => checkRet(errors, resolveInclude(include, module, uses, currentResource, scope))
       case tmplReturn: TmplReturn => checkRet(errors, resolveReturn(tmplReturn, module, uses, currentResource, scope))
       case tmplAffect: TmplAffect => checkRet(errors, resolveAffect(tmplAffect, module, uses, currentResource, scope))
+      case tmplAnonFunc: TmplAnonFunc => checkRet(errors, resolveAnonFunc(tmplAnonFunc, module, uses, currentResource, scope))
     }
     if (errors.nonEmpty) Left(errors.toList)
     else Right(())
@@ -148,7 +149,22 @@ object ResolveTmpl {
 
   def resolveCall(call: TmplCallObj, module: Module, uses: List[DomainUse], currentResource: Resource, scope: Scope): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
-    call.calls.foreach {
+    checkRet(errors, resolveCallType(call.firstCall, module, uses, currentResource, scope))
+    call.calls.foreach { link => checkRet(errors, resolveCallLink(link, module, uses, currentResource, scope)) }
+    if (errors.nonEmpty) Left(errors.toList)
+    else Right(())
+  }
+
+  def resolveCallLink(link: TmplCallObjectLink, module: Module, uses: List[DomainUse], currentResource: Resource, scope: Scope): Either[List[ResolverError], Unit] = {
+    val errors = ListBuffer.empty[ResolverError]
+    checkRet(errors, resolveCallType(link.call, module, uses, currentResource, scope))
+    if (errors.nonEmpty) Left(errors.toList)
+    else Right(())
+  }
+
+  def resolveCallType(objType: TmplCallObjType[_], module: Module, uses: List[DomainUse], currentResource: Resource, scope: Scope): Either[List[ResolverError], Unit] = {
+    val errors = ListBuffer.empty[ResolverError]
+    objType match {
       case array: TmplCallArray => {
         checkRet(errors, resolveOperation(array.elem, module, uses, currentResource, scope))
         checkRet(errors, resolveTmplId(array.name, module, uses, currentResource, scope))
@@ -296,7 +312,7 @@ object ResolveTmpl {
     annots.foreach(_.foreach(annot => {
       checkRet(errors, resolveTmplId(annot.name, module, uses, currentResource, scope))
       annot.values.foreach(_.foreach(param => {
-        checkRet(errors, resolveTmplId(param.name, module, uses, currentResource, scope))
+        if (param.name.isDefined) checkRet(errors, resolveTmplId(param.name.get, module, uses, currentResource, scope))
         checkRet(errors, resolveValueType(param.value, module, uses, currentResource, scope))
       }))
     }))
@@ -320,6 +336,9 @@ object ResolveTmpl {
     value match {
       case array: TmplArrayValue => checkRet(errors, resolveArray(array, module, uses, currentResource, scope))
       case entityValue: TmplEntityValue => checkRet(errors, resolveEntityValue(entityValue, module, uses, currentResource, scope))
+      case text: TmplTextValue => checkRet(errors, resolveTextValue(text, module, uses, currentResource, scope))
+      case _: TmplStringValue =>
+      case _: TmplLongValue =>
       case _ => println("Match not implemented for Type:" + value.getType + " in ResolveTmpl.resolvePrimitive")
     }
     if (errors.nonEmpty) Left(errors.toList)
@@ -354,6 +373,10 @@ object ResolveTmpl {
     })
     if (errors.nonEmpty) Left(errors.toList)
     else Right(())
+  }
+
+  def resolveTextValue(text: TmplTextValue, module: Module, uses: List[DomainUse], currentResource: Resource, scope: Scope): Either[List[ResolverError], Unit] = {
+    resolveTmplId(text.value, module, uses, currentResource, scope)
   }
 
   def resolveTmplId(tmplID: TmplID, module: Module, uses: List[DomainUse], currentResource: Resource, scope: Scope): Either[List[ResolverError], Unit] = {

@@ -37,8 +37,13 @@ object ValueMapper {
   }
 
   def mapUses(uses: Option[List[TmplUse]], context: Context): Option[List[TmplUse]] = {
-    uses.foreach(_.foreach(use => use.parts = use.parts.map(mapID(_, context))))
+    uses.foreach(_.foreach(use => mapUse(use, context)))
     uses
+  }
+
+  def mapUse(use: TmplUse, context: Context): TmplUse = {
+    use.parts = use.parts.map(mapID(_, context))
+    use
   }
 
   def mapContent(content: Option[List[TmplNode[_]]], context: Context): Option[List[TmplNode[_]]] = {
@@ -49,16 +54,19 @@ object ValueMapper {
         case func: TmplFunc => newContent += mapFunc(func, context)
         case expr: TmplExpression[_] => newContent += mapExpression(expr, context)
         case impl: TmplImpl => newContent += mapImpl(impl, context)
-        case block: TmplBlock => mapContent(block.content, context).foreach { blocks => newContent.addAll(blocks) }
+        //        case block: TmplBlock => mapContent(block.content, context).foreach { blocks => newContent.addAll(blocks) }
         // Specialized content
         case attr: TmplAttribute => newContent += mapAttribute(attr, context)
         case setAttr: TmplSetAttribute => newContent += mapSetAttribute(setAttr, context)
         case param: TmplParam => newContent += mapParam(param, context)
+        case use: TmplUse => newContent += mapUse(use, context)
+        case block: TmplBlock => newContent += mapBlock(block, context)
         //        newContent ++= mapNode(_, context)
       }
       Some(newContent.toList)
     } else None
   }
+
 
   def mapExpressions(exprs: Option[List[TmplExpression[_]]], context: Context): Option[List[TmplExpression[_]]] = {
     if (exprs.isDefined) {
@@ -69,7 +77,6 @@ object ValueMapper {
 
   def mapExpression(expr: TmplExpression[_], context: Context): TmplExpression[_] = {
     expr match {
-      case call: TmplCallObj => mapCallObj(call, context)
       case func: TmplFunc => mapFunc(func, context)
       case valueType: TmplValueType[_] => mapValueType(valueType, context)
       case variable: TmplVar => mapVar(variable, context)
@@ -78,6 +85,8 @@ object ValueMapper {
       case affect: TmplAffect => mapAffect(affect, context)
       case tmplFor: TmplFor => mapFor(tmplFor, context)
       case primitiveValue: TmplPrimitiveValue[_] => mapPrimitive(primitiveValue, context)
+      case call: TmplCallObj => mapCallObj(call, context)
+      case anonFunc: TmplAnonFunc => mapAnonFunc(anonFunc, context)
       case _ => expr
     }
   }
@@ -148,7 +157,7 @@ object ValueMapper {
   def mapAnnotParams(params: Option[List[TmplAnnotationParam]], context: Context): Option[List[TmplAnnotationParam]] = {
     if (params.isDefined) {
       params.get.foreach(param => {
-        param.name = mapID(param.name, context)
+        param.name = mapOptID(param.name, context)
         param.value = mapValueType(param.value, context)
       })
       params
@@ -232,12 +241,22 @@ object ValueMapper {
   }
 
   def mapCallObj(call: TmplCallObj, context: Context): TmplCallObj = {
-    call.calls = call.calls.map {
+    call.firstCall = mapCallObjType(call.firstCall, context)
+    call.calls = call.calls.map(link => mapCallObjLink(link, context))
+    call
+  }
+
+  def mapCallObjLink(call: TmplCallObjectLink, context: Context): TmplCallObjectLink = {
+    call.call = mapCallObjType(call.call, context)
+    call
+  }
+
+  def mapCallObjType(objType: TmplCallObjType[_], context: Context): TmplCallObjType[_] = {
+    objType match {
       case array: TmplCallArray => mapCallArray(array, context)
       case func: TmplCallFunc => mapCallFunc(func, context)
       case variable: TmplCallVar => mapCallVar(variable, context)
     }
-    call
   }
 
   def mapCallArray(array: TmplCallArray, context: Context): TmplCallArray = {
