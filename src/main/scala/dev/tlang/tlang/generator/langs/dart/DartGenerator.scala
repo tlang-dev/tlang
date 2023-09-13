@@ -11,7 +11,7 @@ import dev.tlang.tlang.ast.tmpl.primitive._
 import dev.tlang.tlang.generator.formatter.Formatter
 import dev.tlang.tlang.generator.langs.java.JavaGenerator.comma
 import dev.tlang.tlang.generator.langs.kotlin.KotlinGenerator.{mkSeq, mkSeqFromSeq}
-import dev.tlang.tlang.generator.{CodeGenerator, Seq}
+import dev.tlang.tlang.generator.{CodeGenerator, Seq, SeqBuilder}
 
 class DartGenerator extends CodeGenerator {
   override def generate(tmpl: TmplBlock): String = {
@@ -22,29 +22,31 @@ class DartGenerator extends CodeGenerator {
 object DartGenerator {
 
   def genBlock(tmpl: TmplBlock): Seq = {
-    val root = Seq()
+    val root = new SeqBuilder()
+    root.setBlockName("block")
     //    root += genPackage(tmpl.pkg)
-    root -> genIncludes(tmpl.uses)
-    tmpl.content.foreach(root -> genContents(_))
-    root
+    root ++= genIncludes(tmpl.uses)
+    tmpl.content.foreach(genContents(_).foreach(root ++= _))
+    root.build()
   }
 
 
   def genPackage(pkg: Option[TmplPkg]): Seq = Seq()
 
   def genIncludes(uses: Option[List[TmplUse]]): Seq = {
-    val str = Seq()
+    val str = new SeqBuilder()
+    str.setBlockName("includes")
     uses.foreach(_.foreach(use => {
       str += includeKeyword() += " '" += use.parts.mkString("/").replaceFirst("/", ":").replace("/dart", ".dart") += "'"
       if (use.alias.isDefined) str += " as " += use.alias.get.toString
       str += comma() += DartFormatter.RET
     }))
-    str
+    str.build()
   }
 
-  def genContents(impls: List[TmplNode[_]]): Iterable[Seq] = {
+  def genContents(impls: List[TmplNode[_]], addEndOfStatement: Boolean = false): Iterable[Seq] = {
     val str: Array[Seq] = Array.ofDim[Seq](impls.size)
-    impls.zipWithIndex.foreach(impl => str(impl._2) = genContent(impl._1))
+    impls.zipWithIndex.foreach(impl => str(impl._2) = genContent(impl._1, addEndOfStatement))
     str
   }
 
@@ -59,61 +61,74 @@ object DartGenerator {
   }
 
   def genImpl(impl: TmplImpl): Seq = {
-    val str = Seq(blockName = "class")
-    var cur = str
-    cur += genAnnotations(impl.annots, DartFormatter.RET)
-    cur = impl.props.fold(Seq.add(cur, "class"))(prop => cur += genProps(prop)) += " " += impl.name.toString
+    val str = new SeqBuilder()
+    str.setBlockName("class")
+    str.head(genAnnotations(impl.annots, DartFormatter.RET))
+    if (impl.props.isDefined) {
+      str.head(genProps(impl.props.get))
+    } else {
+      str.head(Seq("class"))
+    }
+    str.head(SeqBuilder.build(Seq(" "), Seq(impl.name.toString)))
     if (impl.fors.isDefined) {
-      cur += " " += impl.fors.get.props.fold(Seq("extends"))(genProps(_)) += " "
+      str.head(SeqBuilder.build(Seq(" "), impl.fors.get.props.fold(Seq("extends"))(genProps(_)), Seq(" ")))
       //      cur = cur += " " += impl.withs.get.props.fold(Seq("implements"))(genProps(_)) += " "
-      cur += mkSeq(impl.fors.get.types.map(implFor => genType(implFor)), ",")
+      str.head(mkSeq(impl.fors.get.types.map(implFor => genType(implFor)), ","))
     }
     if (impl.withs.isDefined) {
       val sep = if (impl.fors.isDefined) "" else " "
-      cur += " " += impl.withs.get.props.fold(Seq((sep + "implements")))(genProps(_)) += " "
-      cur += mkSeq(impl.withs.get.types.map(implFor => genType(implFor)), ",")
+      str.head(SeqBuilder.build(Seq(" "), impl.withs.get.props.fold(Seq((sep + "implements")))(genProps(_)), Seq(" ")))
+      str.head(mkSeq(impl.withs.get.types.map(implFor => genType(implFor)), ","))
     }
-    cur += "{"
-    if (impl.content.isDefined) cur -> genContents(impl.content.get)
-    cur += "}"
-    str
+    str.head(Seq("{"))
+    if (impl.content.isDefined) genContents(impl.content.get, addEndOfStatement = true).foreach(content => str += content)
+    str.bottom(Seq("}"))
+    str.build()
   }
 
   def genFunc(func: TmplFunc): Seq = {
-    val str = Seq()
-    str += genAnnotations(func.annots)
+    val str = new SeqBuilder()
+    str.setBlockName("func")
+    str ++= genAnnotations(func.annots)
     //    str += func.props.fold(Seq("public"))(prop => genProps(prop)) += " "
-    func.props.foreach(prop => str += genProps(prop, addSpace = true))
-    func.ret.foreach(ret => str += genType(ret.head) += " ")
-    str += func.name.toString
-    //    str += func.ret.fold(Seq("void"))(ret => genType(ret.head)) += " "
-    str += genCurrying(func.curries)
-    str += func.postPros.fold(Seq())(prop => genProps(prop) += " ")
-    //    if (func.ret.isDefined) str += ":"
+    func.props.foreach(prop => str ++= genProps(prop, addSpace = true))
 
-    if (func.content.isDefined) str += genContent(func.content.get, addEndOfStatement = true)
+    val header = new SeqBuilder()
+    func.ret.foreach(ret => header += SeqBuilder.build(genType(ret.head), Seq(" ")))
+    header += (Seq(func.name.toString))
+    //    str += func.ret.fold(Seq("void"))(ret => genType(ret.head)) += " "
+    header += (genCurrying(func.curries))
+    header += (func.postPros.fold(Seq())(prop => SeqBuilder.build(genProps(prop), Seq(" "))))
+    //    if (func.ret.isDefined) str += ":"
+    str ++= header.build()
+
+    if (func.content.isDefined) str ++= genContent(func.content.get, addEndOfStatement = true)
     else str += ";"
-    str
+    str.build()
   }
 
   def genCurrying(curries: Option[List[TmplFuncCurry]]): Seq = {
-    if (curries.isDefined) mkSeq(curries.get.map(genFuncCurry), "")
-    else Seq("()")
+    val str = new SeqBuilder()
+    if (curries.isDefined) curries.get.foreach(str += genFuncCurry(_))
+    else str += "()"
+    str.build()
   }
 
   def genFuncCurry(curry: TmplFuncCurry): Seq = {
-    val str = Seq()
+    val str = new SeqBuilder()
+    str.setBlockName("curry")
     str += "("
-    curry.params.foreach(params => str += mkSeq(params.map(genParam), ","))
+    curry.params.foreach(params => params.foreach(str += genParam(_)))
     str += ")"
-    str
+    str.build()
   }
 
   def genAnnotations(annots: Option[List[TmplAnnotation]], sep: String = ""): Seq = {
     if (annots.isDefined) {
-      val str = Seq()
+      val str = new SeqBuilder()
+      str.setBlockName("annot")
       annots.get.foreach(annot => {
-        str += "@" += annot.name.toString += DartFormatter.RET
+        str += "@" += annot.name.toString
         if (annot.values.isDefined) {
           str += "("
           str += mkSeqFromSeq(annot.values.get.map(value => genAnnotValue(value)), ",")
@@ -122,13 +137,13 @@ object DartGenerator {
         }
         str += sep
       })
-      str
+      str.build()
     }
     else Seq()
   }
 
   private def genAnnotValue(value: TmplAnnotationParam): Seq = {
-    val seq = Seq()
+    val seq = Seq(blockName = "annotValue")
     if (value.name.isDefined) {
       seq += value.name.get.toString
       seq += "="
@@ -143,42 +158,42 @@ object DartGenerator {
   }
 
   def genProps(props: TmplProp, addSpace: Boolean = false): Seq = {
-    val seq = Seq()
+    val seq = Seq(blockName = "props")
     seq += mkSeq(props.props, " ")
     if (addSpace) seq += " "
     seq
   }
 
-  def genParam(param: TmplParam): String = {
-    val str = Seq()
+  def genParam(param: TmplParam): Seq = {
+    val str = new SeqBuilder()
     str += genAnnotations(param.annots, sep = " ")
     if (param.`type`.isDefined) str += genType(param.`type`.get) += " "
     str += param.name.toString
-    str.toString()
+    str.build()
   }
 
   def genType(`type`: TmplType): Seq = {
-    val str = Seq()
+    val str = new SeqBuilder()
     str += `type`.name.toString
     str += genGeneric(`type`.generic)
     if (`type`.isArray) str += "[]"
     if (`type`.instance.isDefined) str += genTypeCurry(`type`.instance.get)
-    str
+    str.build()
   }
 
   def genTypeCurry(curry: TmplCurryParam): Seq = {
-    val str = Seq()
+    val str = new SeqBuilder()
     str += "("
     curry.params.foreach(params => str += mkSeq(params.map(param => genContent(param)), ","))
     str += ")"
-    str
+    str.build()
   }
 
   def genGeneric(gen: Option[TmplGeneric]): Seq = {
     if (gen.isDefined) {
-      val str = Seq()
+      val str = new SeqBuilder()
       str += "<" += mkSeqFromSeq(gen.get.types.map(genType), ",") += ">"
-      str
+      str.build()
     } else Seq()
   }
 
@@ -190,10 +205,12 @@ object DartGenerator {
   }
 
   def genExprBlock(block: TmplExprBlock, endOfStatement: Boolean = false): Seq = {
-    val str = Seq(blockName = "block")
-    str.open(Seq("{"))
-    str += mkSeqFromSeq(block.exprs.map(b => genContent(b, endOfStatement)), "") += "}"
-    str
+    val str = new SeqBuilder()
+    str.setBlockName("exprBlock")
+    str.head(Seq("{"))
+    block.exprs.foreach(b => str ++= genContent(b, endOfStatement))
+    str.bottom(Seq("}"))
+    str.build()
   }
 
   def genExpression(expr: TmplExpression[_], endOfStatement: Boolean = false): Seq = {
@@ -218,50 +235,56 @@ object DartGenerator {
   }
 
   def genEndOfStatement(statement: Seq, endOfStatement: Boolean): Seq = {
-    var ret = statement
-    if (endOfStatement) ret = ret += DartFormatter.END_OF_STATEMENT
-    statement
+    if (endOfStatement) SeqBuilder.build(statement, Seq(DartFormatter.END_OF_STATEMENT))
+    else statement
   }
 
   def genAffect(affect: TmplAffect): Seq = {
-    val str = Seq()
+    val str = new SeqBuilder()
     str += genTmplCallObj(affect.variable) += "=" += genOperation(affect.value)
-    str
+    str.build()
   }
 
   def genReturn(ret: TmplReturn): Seq = {
-    val str = Seq()
-    str += "return " += genOperation(ret.operation)
-    str
+    val str = new SeqBuilder()
+    str.setBlockName("return")
+    str += "return"
+    str += " "
+    str += genOperation(ret.operation)
+    str.build()
   }
 
   def genAnonFunc(anonFunc: TmplAnonFunc): Seq = {
-    val str = Seq()
-    str += genFuncCurry(anonFunc.currying)
-    str += genExprContent(anonFunc.content)
-    str
+    val str = new SeqBuilder()
+    str.setBlockName("anonFunc")
+    str ++= genFuncCurry(anonFunc.currying)
+    str ++= genExprContent(anonFunc.content)
+    str.build()
   }
 
   def genIf(ifStmt: TmplIf): Seq = {
-    val str = Seq(seq = "if", blockName = "if")
-    str.open(Seq.addToLine(Seq("("), genOperation(ifStmt.cond), Seq(")")))
-    str -> genExprContent(ifStmt.content, ifStmt.content.isInstanceOf[TmplExpression[_]])
+    val str = new SeqBuilder()
+    str.setBlockName("if")
+    str.head(SeqBuilder.build(Seq("if"), Seq("("), genOperation(ifStmt.cond), Seq(")")))
+    str += genExprContent(ifStmt.content, ifStmt.content.isInstanceOf[TmplExpression[_]])
     if (ifStmt.elseBlock.isDefined) ifStmt.elseBlock.get match {
       case Left(elseBlock) => str += " else " += genExprContent(elseBlock, elseBlock.isInstanceOf[TmplExpression[_]])
       case Right(ifBlock) => str += " else " += genIf(ifBlock)
     }
-    str
+    str.build()
   }
 
   def genFor(forLoop: TmplFor): Seq = {
-    val str = Seq()
-    str += "for("
+    val str = new SeqBuilder()
+    str.setBlockName("for")
+    str.setSeq("for")
+    str += "("
     str += forLoop.variable.toString
     str += " " += genForType(forLoop.forType) += " "
     str += genOperation(forLoop.cond)
     str += ")"
     str += genExprContent(forLoop.content)
-    str
+    str.build()
   }
 
   def genForType(forType: ForType): Seq = forType match {
@@ -285,18 +308,19 @@ object DartGenerator {
   }
 
   def genTmplCallObj(callObj: TmplCallObj): Seq = {
-    val str = Seq()
+    val str = new SeqBuilder()
+    str.setBlockName("callObject")
     callObj.props.foreach(prop => str += genProps(prop, addSpace = true))
     str += genCallObjType(callObj.firstCall)
     callObj.calls.foreach(link => str += genCallLink(link))
-    str
+    str.build()
   }
 
   def genCallLink(objLink: TmplCallObjectLink): Seq = {
-    val str = Seq()
+    val str = new SeqBuilder()
     str += objLink.link
     str += genCallObjType(objLink.call)
-    str
+    str.build()
   }
 
   def genCallObjType(objType: TmplCallObjType[_]): Seq = {
@@ -308,35 +332,38 @@ object DartGenerator {
   }
 
   def genCallArray(array: TmplCallArray): Seq = {
-    val str = Seq()
+    val str = new SeqBuilder()
     str += array.name.toString += "[" += genOperation(array.elem) += "]"
-    str
+    str.build()
   }
 
   def genCallFunc(func: TmplCallFunc): Seq = {
-    val str = Seq()
+    val str = new SeqBuilder()
+    str.setBlockName("callFunc")
     str += func.name.toString
     if (func.currying.isDefined) {
       func.currying.foreach(_.foreach(curry => {
-        str += "("
-        curry.params.foreach(param => str += mkSeq(param.map(attr => attr.asInstanceOf[TmplSetAttribute].name.fold(Seq())(Seq() -> _.toString += ":") += genOperation(attr.asInstanceOf[TmplSetAttribute].value)), ","))
-        str += ")"
+        str += Seq("(")
+        curry.params.foreach(param =>  str += mkSeq(param.map(attr => SeqBuilder.build(attr.asInstanceOf[TmplSetAttribute].name.fold(Seq())( p=>SeqBuilder.build(Seq(p.toString) ,Seq(":"))), genOperation(attr.asInstanceOf[TmplSetAttribute].value))), ","))
+        str += Seq(")")
       }))
     } else str += "()"
-    str
+    str.build()
   }
 
   def genCallVar(variable: TmplCallVar): Seq = Seq(variable.name.toString)
 
   def genVar(variable: TmplVar): Seq = {
-    val str = Seq()
+    val str = new SeqBuilder()
+    str.setBlockName("var")
     str += genAnnotations(variable.annots, DartFormatter.RET)
     variable.props.foreach(prop => str += genPropsForVar(prop, variable, addSpace = true))
     if (variable.props.isEmpty && variable.`type`.isEmpty) {
       str += "var "
     }
     if (variable.`type`.isDefined) {
-      str += genType(variable.`type`.get) += " "
+      str += genType(variable.`type`.get)
+      str += " "
     }
     str += variable.name.toString
     if (variable.isOptional) str += "?"
@@ -344,19 +371,19 @@ object DartGenerator {
       str += "="
       str += genOperation(variable.value.get)
     }
-    str += DartFormatter.END_OF_STATEMENT
-    str
+    //    str.bottom(Seq(DartFormatter.END_OF_STATEMENT))
+    str.build()
   }
 
   def genPropsForVar(props: TmplProp, variable: TmplVar, addSpace: Boolean = false): Seq = {
-    val seq = Seq()
+    val seq = new SeqBuilder()
     if (props.props.nonEmpty && props.props.head.toString.equals("lateinit")) {
       seq += "lateinit var"
     } else {
       seq += mkSeq(props.props, " ")
     }
     if (addSpace) seq += " "
-    seq
+    seq.build()
   }
 
   def genValueType(valueType: TmplValueType[_]): Seq = {
@@ -374,7 +401,8 @@ object DartGenerator {
   }
 
   def genOperation(block: TmplOperation): Seq = {
-    val str = Seq()
+    val str = new SeqBuilder()
+    str.setBlockName("operation")
     block.content match {
       case Left(block) => str += "(" += genOperation(block) += ")"
       case Right(cond) => str += genExpression(cond)
@@ -383,7 +411,7 @@ object DartGenerator {
       str += genOperator(block.next.get._1)
       str += genOperation(block.next.get._2)
     }
-    str
+    str.build()
   }
 
   def genOperator(op: Operator.operator): Seq = {
