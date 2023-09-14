@@ -10,6 +10,20 @@ object DartFormatter {
 
   def spaces: String = "  "
 
+  def rules: List[FormatRule] = List(
+    FormatRule("uses", "[END]", LineReturnAfter()),
+    FormatRule("use", ";", LineReturnAfter()),
+    FormatRule("var", ";", LineReturnAfter()),
+    FormatRule("var", "=", AddSpaceBefore(addSeq = false)),
+    FormatRule("var", "=", AddSpaceAfter()),
+    FormatRule("impl", "{", AddSpaceBefore(addSeq = false)),
+    FormatRule("impl", "{", LineReturnAfterAndIndent()),
+    FormatRule("impl", "}", LineReturnAndOutdent()),
+    FormatRule("exprBlock", "{", AddSpaceBefore(addSeq = false)),
+    FormatRule("exprBlock", "{", LineReturnAfterAndIndent()),
+    FormatRule("exprBlock", "}", LineReturnAndOutdent()),
+  )
+
   def formatter(): List[BlockSelector] = {
     List(
       classBlock(),

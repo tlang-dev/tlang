@@ -52,7 +52,7 @@ object Formatter {
       _ind = formatBlock(seq.child.get, blocks, newSelectors, currentBlock, str, _ind)
     }
 
-    //    _ind = formatChildren(seq, blocks, newSelectors, currentBlock, str, _ind)
+//        _ind = formatChildren(seq, blocks, newSelectors, currentBlock, str, _ind)
 
     _ind
   }

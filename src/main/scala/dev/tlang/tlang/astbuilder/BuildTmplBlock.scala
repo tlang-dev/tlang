@@ -37,7 +37,7 @@ object BuildTmplBlock {
   }
 
   def buildPkg(resource: ContextResource, pkg: TmplPkgContext): TmplPkg = {
-    new TmplPkg(pkg.parts.asScala.toList.map(part => buildId(resource, part)))
+    TmplPkg(addContext(resource, pkg), pkg.parts.asScala.toList.map(part => buildId(resource, part)))
   }
 
   def buildUses(resource: ContextResource, uses: List[TmplUseContext]): List[TmplUse] = {
