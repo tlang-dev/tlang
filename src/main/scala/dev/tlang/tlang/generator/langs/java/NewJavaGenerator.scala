@@ -83,7 +83,7 @@ object NewJavaGenerator {
     str += func.name.toString
     str += genCurrying(func.curries)
     str += func.postPros.fold(Seq())(prop => genProps(prop) += " ")
-    if (func.content.isDefined) str += genExprBlock(func.content.get)
+    if (func.content.isDefined) str += genExprContent(func.content.get)
     else str += ";"
     str
   }

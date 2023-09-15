@@ -74,7 +74,7 @@ class ValueMapperTest extends AnyFunSuite {
     val values: mutable.Map[String, Value[_]] = mutable.Map("name" -> new TLangString(None, "MyImpl"))
     val context = Context(List(Scope(values, mutable.Map(), mutable.Map())))
     val impl = Some(List(TmplImpl(None, None, None, TmplInterpretedID(None, call = CallObject(None, List(CallVarObject(None, "name")))), None, None, None)))
-    val res = ValueMapper.mapContent(impl, context).get.head.asInstanceOf[TmplImpl]
+    val res = ValueMapper.mapContents(impl, context).get.head.asInstanceOf[TmplImpl]
     assert("MyImpl" == res.name.toString)
   }
 
@@ -82,7 +82,7 @@ class ValueMapperTest extends AnyFunSuite {
     val values: mutable.Map[String, Value[_]] = mutable.Map("name" -> new TLangString(None, "MyFunc"))
     val context = Context(List(Scope(values, mutable.Map(), mutable.Map())))
     val func = Some(List(TmplFunc(None, None, None, TmplInterpretedID(None, call = CallObject(None, List(CallVarObject(None, "name")))), None, None)))
-    val res = ValueMapper.mapContent(func, context).get.head.asInstanceOf[TmplFunc]
+    val res = ValueMapper.mapContents(func, context).get.head.asInstanceOf[TmplFunc]
     assert("MyFunc" == res.name.toString)
   }
 
@@ -90,7 +90,7 @@ class ValueMapperTest extends AnyFunSuite {
     val values: mutable.Map[String, Value[_]] = mutable.Map("name" -> new TLangString(None, "MyVar"))
     val context = Context(List(Scope(values, mutable.Map(), mutable.Map())))
     val call = Some(List(TmplCallObj(None, None, List(TmplCallVar(None, TmplInterpretedID(None, call = CallObject(None, List(CallVarObject(None, "name")))))))))
-    val res = ValueMapper.mapContent(call, context).get.head
+    val res = ValueMapper.mapContents(call, context).get.head
     assert("MyVar" == res.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallVar].name.toString)
   }
 

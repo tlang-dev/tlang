@@ -20,14 +20,14 @@ object ValueMapper {
     val con = blockAsValue.context
     block.pkg = mapPkg(block.pkg, con)
     block.uses = mapUses(block.uses, con)
-    block.content = mapContent(block.content, con)
+    block.content = mapContents(block.content, con)
     blockAsValue
   }
 
   def mapBlock(block: TmplBlock, context: Context): TmplBlock = {
     block.pkg = mapPkg(block.pkg, context)
     block.uses = mapUses(block.uses, context)
-    block.content = mapContent(block.content, context)
+    block.content = mapContents(block.content, context)
     block
   }
 
@@ -46,7 +46,7 @@ object ValueMapper {
     use
   }
 
-  def mapContent(content: Option[List[TmplNode[_]]], context: Context): Option[List[TmplNode[_]]] = {
+  def mapContents(content: Option[List[TmplNode[_]]], context: Context): Option[List[TmplNode[_]]] = {
     if (content.isDefined) {
       val newContent = ListBuffer.empty[TmplNode[_]]
 
@@ -61,12 +61,12 @@ object ValueMapper {
         case param: TmplParam => newContent += mapParam(param, context)
         case use: TmplUse => newContent += mapUse(use, context)
         case block: TmplBlock => newContent += mapBlock(block, context)
+        case block: TmplSpecialBlock => newContent += mapSpecialBlock(block, context)
         //        newContent ++= mapNode(_, context)
       }
       Some(newContent.toList)
     } else None
   }
-
 
   def mapExpressions(exprs: Option[List[TmplExpression[_]]], context: Context): Option[List[TmplExpression[_]]] = {
     if (exprs.isDefined) {
@@ -87,6 +87,7 @@ object ValueMapper {
       case primitiveValue: TmplPrimitiveValue[_] => mapPrimitive(primitiveValue, context)
       case call: TmplCallObj => mapCallObj(call, context)
       case anonFunc: TmplAnonFunc => mapAnonFunc(anonFunc, context)
+      case block: TmplSpecialBlock => mapSpecialBlock(block, context)
       case _ => expr
     }
   }
@@ -109,7 +110,7 @@ object ValueMapper {
 
   def mapImpl(impl: TmplImpl, context: Context): TmplImpl = {
     impl.name = mapID(impl.name, context)
-    impl.content = mapContent(impl.content, context)
+    impl.content = mapContents(impl.content, context)
     impl.fors = mapFors(impl.fors, context)
     impl.withs = mapWiths(impl.withs, context)
     impl
@@ -138,7 +139,7 @@ object ValueMapper {
     func.props = mapProps(func.props, context)
     func.name = mapID(func.name, context)
     func.curries = mapCurries(func.curries, context)
-    func.content = func.content.map(mapExprBlock(_, context))
+    func.content = func.content.map(mapExprContent(_, context))
     func.ret = mapTypes(func.ret, context)
     func
   }
@@ -188,12 +189,19 @@ object ValueMapper {
     val exprs = ListBuffer.empty[TmplNode[_]]
     //    block.exprs.foreach(_.getType)
     block.exprs.foreach {
-      case block: TmplBlock => mapContent(block.content, context).foreach {
+      case block: TmplBlock => mapContents(block.content, context).foreach {
         _.foreach(exprs += _)
       }
       case expr: TmplExpression[_] => exprs += mapExpression(expr, context)
     }
     TmplExprBlock(block.context, exprs.toList)
+  }
+
+  def mapSpecialBlock(block: TmplSpecialBlock, context: Context): TmplSpecialBlock = {
+    block.curries = mapCurries(block.curries, context)
+    if (block.content.isDefined) block.content = Some(mapExprContent(block.content.get, context))
+
+    block
   }
 
   def mapCurries(curries: Option[List[TmplFuncCurry]], context: Context): Option[List[TmplFuncCurry]] = {

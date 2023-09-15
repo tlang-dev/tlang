@@ -187,6 +187,16 @@ object TemplateBuilder {
     }
   }
 
+  def buildExpContent(exprContent: TmplExprContent[_], context: Context): Either[ExecError, TmplExprContent[_]] = {
+    exprContent match {
+      case block: TmplExprBlock => buildExpBlock(block, context)
+      case expr: TmplExpression[_] => visitNode(expr, context) match {
+        case Left(error) => Left(error)
+        case Right(value) => Right(value.head.asInstanceOf[TmplExprContent[_]])
+      }
+    }
+  }
+
   /*def buildExpression(expr: TmplExpression[_], context: Context): Either[ExecError, List[TmplExpression[_]]] = {
     //    expr match {
     //      case callObject: TmplCallObj => toList[TmplExpression[_]](buildCallObject(callObject, context))

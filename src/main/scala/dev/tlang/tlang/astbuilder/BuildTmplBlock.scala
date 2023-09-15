@@ -59,8 +59,22 @@ object BuildTmplBlock {
     content match {
       case impl@_ if impl.tmplImpl() != null => buildImpl(resource, impl.tmplImpl())
       case func@_ if func.tmplFunc() != null => buildFunc(resource, func.tmplFunc())
+      case spec@_ if spec.tmplSpecialBlock() != null => buildSpecialBlock(resource, spec.tmplSpecialBlock())
       case expr@_ if expr.tmplExpression() != null => buildExpression(resource, expr.tmplExpression())
     }
+  }
+
+  def buildSpecialBlock(resource: ContextResource, block: TmplSpecialBlockContext): TmplSpecialBlock = {
+    val curries =
+      if (block.curries != null && !block.curries.isEmpty) Some(block.curries.asScala.map(curry => buildFuncCurry(resource, curry)).toList)
+      else None
+    val content = if (block.expr != null) Some(buildExprContent(resource, block.expr)) else None
+    TmplSpecialBlock(
+      addContext(resource, block),
+      block.`type`.getText,
+      curries = curries,
+      content = content
+    )
   }
 
   def buildSpecializedContent(resource: ContextResource, content: TmplSpecialisedContentContext): TmplNode[_] = {
@@ -95,7 +109,7 @@ object BuildTmplBlock {
       if (func.curries != null && !func.curries.isEmpty) Some(func.curries.asScala.map(curry => buildFuncCurry(resource, curry)).toList)
       else None
     TmplFunc(addContext(resource, func), buildAnnotations(resource, func.annots.asScala.toList), buildProps(resource, func.props), buildId(resource, func.name), curries,
-      if (func.content != null) Some(buildExprBlock(resource, func.content)) else None,
+      if (func.content != null) Some(buildExprContent(resource, func.content)) else None,
       if (func.types != null && !func.types.isEmpty) Some(func.types.asScala.toList.map(t => buildType(resource, t))) else None, buildProps(resource, func.postProps))
   }
 
@@ -170,6 +184,7 @@ object BuildTmplBlock {
       case tmplFor@_ if tmplFor.tmplFor() != null => buildTmplFor(resource, tmplFor.tmplFor())
       case anonFunc@_ if anonFunc.tmplAnonFunc() != null => buildTmplAnonFunc(resource, anonFunc.tmplAnonFunc())
       case primitive@_ if primitive.tmplPrimitiveValue() != null => buildPrimitive(resource, primitive.tmplPrimitiveValue())
+      case spec@_ if spec.tmplSpecialBlock() != null => buildSpecialBlock(resource, spec.tmplSpecialBlock())
     }
   }
 

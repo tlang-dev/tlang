@@ -71,7 +71,7 @@ abstract class CStyle {
     str ++= func.name.toString
     str ++= genCurrying(func.curries)
     str ++= func.postPros.fold("")(prop => genProps(prop) + " ")
-    if (func.content.isDefined) str ++= " " ++= genExprBlock(func.content.get) ++= "\n\n"
+    if (func.content.isDefined) str ++= " " ++= genExprContent(func.content.get) ++= "\n\n"
     else str ++= comma() ++= "\n\n"
     str.toString()
   }

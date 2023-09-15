@@ -23,7 +23,7 @@ tmplSpecialisedBlock: Spec LBRACE content=tmplSpecialisedContent RBRACE;
 
 tmplSpecialisedContent: tmplContent | tmplAttribute | 'setAttr' tmplSetAttribute | tmplParam;
 
-tmplContent: tmplImpl | tmplFunc | tmplExpression | tmplOperation;
+tmplContent: tmplImpl | tmplFunc | tmplSpecialBlock | tmplExpression | tmplOperation;
 
 tmplPkg: Pkg parts+=tmplID ('.' parts+=tmplID)*;
 
@@ -43,7 +43,7 @@ tmplImpl:
 
 tmplFunc:
     (annots+=tmplAnnot)*
-	Func props=tmplProps name=tmplID curries+=tmplCurrying* (':' types+=tmplType (',' types+=tmplType)*)? postProps=tmplProps content=tmplExprBlock?;
+	Func props=tmplProps name=tmplID curries+=tmplCurrying* (':' types+=tmplType (',' types+=tmplType)*)? postProps=tmplProps content=tmplExprContent?;
 
 tmplCurrying: LPARENT param=tmplCurryingParam RPARENT;
 
@@ -66,7 +66,7 @@ tmplExprBlock: LBRACE exprs+=tmplExpression* RBRACE;
 
 tmplExpression:	tmplVar | tmplCallObj | tmplValueType | tmplFunc
                 | tmplIf | tmplFor | tmplWhile | tmplDoWhile | tmplInclude | tmplReturn
-                | tmplAffect | tmplCast | tmplAnonFunc | tmplPrimitiveValue;
+                | tmplAffect | tmplCast | tmplAnonFunc | tmplPrimitiveValue | tmplSpecialBlock;
 
 tmplIf: If LPARENT cond=tmplOperation RPARENT content=tmplExprContent elseThen=tmplElse?;
 
@@ -156,3 +156,5 @@ tmplText: TEXT | tmplIntprText;
 tmplIntprText: 's"""' (pre=.)? INTEPRETED callObj RBRACE (pos=.)? '"""';
 
 tmplIdOrString: tmplID | tmplString;
+
+tmplSpecialBlock: type=( Sync | Init | Destroy |Future|Await|Try|Catch|Finally|Continue|Break|Const|Static|Getter|Setter|Factory|Constructor|Throw| Final) curries+=tmplCurrying* (expr=tmplExprContent)?;

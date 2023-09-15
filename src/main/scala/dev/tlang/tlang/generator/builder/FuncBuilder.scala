@@ -19,7 +19,7 @@ object FuncBuilder {
       func.annots = Some(newAnnots.toList)
     }
     if (func.content.isDefined) {
-      TemplateBuilder.buildExpBlock(func.content.get, context) match {
+      TemplateBuilder.buildExpContent(func.content.get, context) match {
         case Left(error) => Left(error)
         case Right(value) => func.content = Some(value)
           Right(func)

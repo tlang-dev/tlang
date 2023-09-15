@@ -119,7 +119,16 @@ object ResolveTmpl {
       case tmplReturn: TmplReturn => checkRet(errors, resolveReturn(tmplReturn, module, uses, currentResource, scope))
       case tmplAffect: TmplAffect => checkRet(errors, resolveAffect(tmplAffect, module, uses, currentResource, scope))
       case tmplAnonFunc: TmplAnonFunc => checkRet(errors, resolveAnonFunc(tmplAnonFunc, module, uses, currentResource, scope))
+      case specialBlock: TmplSpecialBlock => checkRet(errors, resolveSpecialBlock(specialBlock, module, uses, currentResource, scope))
     }
+    if (errors.nonEmpty) Left(errors.toList)
+    else Right(())
+  }
+
+  def resolveSpecialBlock(spec: TmplSpecialBlock, module: Module, uses: List[DomainUse], resource: Resource, scope: Scope): Either[List[ResolverError], Unit] = {
+    val errors = ListBuffer.empty[ResolverError]
+    checkRet(errors, resolveCurrying(spec.curries, module, uses, resource, scope))
+    if (spec.content.isDefined) checkRet(errors, resolveExprContent(spec.content.get, module, uses, resource, scope))
     if (errors.nonEmpty) Left(errors.toList)
     else Right(())
   }
@@ -268,7 +277,7 @@ object ResolveTmpl {
     checkRet(errors, resolveProps(func.props, module, uses, currentResource, scope))
     checkRet(errors, resolveTmplId(func.name, module, uses, currentResource, scope))
     checkRet(errors, resolveCurrying(func.curries, module, uses, currentResource, scope))
-    checkRet(errors, resolveExprBlock(func.content, module, uses, currentResource, scope))
+    if (func.content.isDefined) checkRet(errors, resolveExprContent(func.content.get, module, uses, currentResource, scope))
     func.ret.foreach(_.foreach(ret => checkRet(errors, resolveType(ret, module, uses, currentResource, scope))))
     if (errors.nonEmpty) Left(errors.toList)
     else Right(())

@@ -53,6 +53,34 @@ RSQUARE: ']';
 INTEPRETED: '${';
 As: 'as';
 
+Sync: 'sync';
+Init: 'init';
+Destroy: 'destroy';
+Future: 'future';
+Await: 'await';
+Try: 'try';
+Catch: 'catch';
+Finally: 'finally';
+Continue: 'continue';
+Break: 'break';
+Const: 'const';
+Static: 'static';
+Getter: 'getter';
+Setter: 'setter';
+Factory: 'factory';
+Constructor: 'constructor';
+Throw: 'throw';
+Final: 'final';
+
+Public: 'public';
+Private: 'private';
+Protected: 'protected';
+Sealed: 'sealed';
+Abstract: 'abstract';
+Trait: 'trait';
+Record: 'record';
+Singleton: 'singleton';
+
 ESCAPED_ID: '`'  ( ~('\n' | '\r' | '\t' | ' ') )*? '`';
 
 WHITE_SPACES: [\t\u000B\u000C\u0020\u00A0]+ -> channel(HIDDEN);
