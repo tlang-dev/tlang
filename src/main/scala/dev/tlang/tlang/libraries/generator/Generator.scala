@@ -6,14 +6,11 @@ import dev.tlang.tlang.ast.helper._
 import dev.tlang.tlang.ast.tmpl.TmplBlockAsValue
 import dev.tlang.tlang.generator.CodeGenerator
 import dev.tlang.tlang.generator.builder.TemplateBuilder
-import dev.tlang.tlang.generator.langs.dart.{DartGenerator, DartGeneratorGen3}
+import dev.tlang.tlang.generator.langs.dart.DartGeneratorGen3
 import dev.tlang.tlang.generator.langs.groovy.GroovyGenerator
-import dev.tlang.tlang.generator.langs.java.JavaGenerator
 import dev.tlang.tlang.generator.langs.json.JSONGenerator
 import dev.tlang.tlang.generator.langs.kotlin.KotlinGenerator
 import dev.tlang.tlang.generator.langs.rust.RustGenerator
-import dev.tlang.tlang.generator.langs.scalalang.ScalaGenerator
-import dev.tlang.tlang.generator.langs.typescript.TypeScriptGenerator
 import dev.tlang.tlang.generator.langs.xml.XMLGenerator
 import dev.tlang.tlang.generator.langs.yml.YMLGenerator
 import dev.tlang.tlang.interpreter._
@@ -22,9 +19,9 @@ import dev.tlang.tlang.interpreter.context.{Context, ContextUtils}
 object Generator {
 
   val generators: Map[String, CodeGenerator] = Map(
-    "scala" -> new ScalaGenerator(),
-    "java" -> new JavaGenerator(),
-    "typescript" -> new TypeScriptGenerator(),
+//    "scala" -> new ScalaGenerator(),
+//    "java" -> new JavaGenerator(),
+//    "typescript" -> new TypeScriptGenerator(),
     "dart" -> new DartGeneratorGen3(),
     "groovy" -> new GroovyGenerator(),
     "json" -> new JSONGenerator(),

@@ -4,12 +4,11 @@ import dev.tlang.tlang.ast.common.operation.Operator
 import dev.tlang.tlang.ast.tmpl._
 import dev.tlang.tlang.ast.tmpl.call._
 import dev.tlang.tlang.ast.tmpl.condition.TmplOperation
-import dev.tlang.tlang.ast.tmpl.func.{TmplFunc, TmplFuncCurry}
+import dev.tlang.tlang.ast.tmpl.func.TmplFunc
 import dev.tlang.tlang.ast.tmpl.loop.ForType.ForType
 import dev.tlang.tlang.ast.tmpl.loop.{TmplDoWhile, TmplFor, TmplWhile}
 import dev.tlang.tlang.ast.tmpl.primitive._
 import dev.tlang.tlang.generator.formatter.Formatter
-import dev.tlang.tlang.generator.langs.java.JavaGenerator.comma
 import dev.tlang.tlang.generator.langs.kotlin.KotlinGenerator.{mkSeq, mkSeqFromSeq}
 import dev.tlang.tlang.generator.{CodeGenerator, Seq, SeqBuilder}
 
@@ -39,7 +38,7 @@ object DartGenerator {
     uses.foreach(_.foreach(use => {
       str += includeKeyword() += " '" += use.parts.mkString("/").replaceFirst("/", ":").replace("/dart", ".dart") += "'"
       if (use.alias.isDefined) str += " as " += use.alias.get.toString
-      str += comma() += DartFormatter.RET
+//      str += comma() += DartFormatter.RET
     }))
     str.build()
   }
@@ -73,12 +72,12 @@ object DartGenerator {
     if (impl.fors.isDefined) {
       str.head(SeqBuilder.build(Seq(" "), impl.fors.get.props.fold(Seq("extends"))(genProps(_)), Seq(" ")))
       //      cur = cur += " " += impl.withs.get.props.fold(Seq("implements"))(genProps(_)) += " "
-      str.head(mkSeq(impl.fors.get.types.map(implFor => genType(implFor)), ","))
+//      str.head(mkSeq(impl.fors.get.types.map(implFor => genType(implFor)), ","))
     }
     if (impl.withs.isDefined) {
       val sep = if (impl.fors.isDefined) "" else " "
       str.head(SeqBuilder.build(Seq(" "), impl.withs.get.props.fold(Seq((sep + "implements")))(genProps(_)), Seq(" ")))
-      str.head(mkSeq(impl.withs.get.types.map(implFor => genType(implFor)), ","))
+//      str.head(mkSeq(impl.withs.get.types.map(implFor => genType(implFor)), ","))
     }
     str.head(Seq("{"))
     if (impl.content.isDefined) genContents(impl.content.get, addEndOfStatement = true).foreach(content => str += content)
@@ -94,10 +93,10 @@ object DartGenerator {
     func.props.foreach(prop => str ++= genProps(prop, addSpace = true))
 
     val header = new SeqBuilder()
-    func.ret.foreach(ret => header += SeqBuilder.build(genType(ret.head), Seq(" ")))
+//    func.ret.foreach(ret => header += SeqBuilder.build(genType(ret.head), Seq(" ")))
     header += (Seq(func.name.toString))
     //    str += func.ret.fold(Seq("void"))(ret => genType(ret.head)) += " "
-    header += (genCurrying(func.curries))
+//    header += (genCurrying(func.curries))
     header += (func.postPros.fold(Seq())(prop => SeqBuilder.build(genProps(prop), Seq(" "))))
     //    if (func.ret.isDefined) str += ":"
     str ++= header.build()
@@ -107,7 +106,7 @@ object DartGenerator {
     str.build()
   }
 
-  def genCurrying(curries: Option[List[TmplFuncCurry]]): Seq = {
+  /*def genCurrying(curries: Option[List[TmplFuncCurry]]): Seq = {
     val str = new SeqBuilder()
     if (curries.isDefined) curries.get.foreach(str += genFuncCurry(_))
     else str += "()"
@@ -121,7 +120,7 @@ object DartGenerator {
     curry.params.foreach(params => params.foreach(str += genParam(_)))
     str += ")"
     str.build()
-  }
+  }*/
 
   def genAnnotations(annots: Option[List[TmplAnnotation]], sep: String = ""): Seq = {
     if (annots.isDefined) {
@@ -167,12 +166,12 @@ object DartGenerator {
   def genParam(param: TmplParam): Seq = {
     val str = new SeqBuilder()
     str += genAnnotations(param.annots, sep = " ")
-    if (param.`type`.isDefined) str += genType(param.`type`.get) += " "
+//    if (param.`type`.isDefined) str += genType(param.`type`.get) += " "
     str += param.name.toString
     str.build()
   }
 
-  def genType(`type`: TmplType): Seq = {
+  /*def genType(`type`: TmplType): Seq = {
     val str = new SeqBuilder()
     str += `type`.name.toString
     str += genGeneric(`type`.generic)
@@ -184,7 +183,7 @@ object DartGenerator {
   def genTypeCurry(curry: TmplCurryParam): Seq = {
     val str = new SeqBuilder()
     str += "("
-    curry.params.foreach(params => str += mkSeq(params.map(param => genContent(param)), ","))
+//    curry.params.foreach(params => str += mkSeq(params.map(param => genContent(param)), ","))
     str += ")"
     str.build()
   }
@@ -195,7 +194,7 @@ object DartGenerator {
       str += "<" += mkSeqFromSeq(gen.get.types.map(genType), ",") += ">"
       str.build()
     } else Seq()
-  }
+  }*/
 
   def genExprContent(content: TmplExprContent[_], endOfStatement: Boolean = false, newLine: Boolean = false): Seq = {
     content match {
@@ -257,7 +256,7 @@ object DartGenerator {
   def genAnonFunc(anonFunc: TmplAnonFunc): Seq = {
     val str = new SeqBuilder()
     str.setBlockName("anonFunc")
-    str ++= genFuncCurry(anonFunc.currying)
+//    str ++= genFuncCurry(anonFunc.currying)
     str ++= genExprContent(anonFunc.content)
     str.build()
   }
@@ -344,7 +343,7 @@ object DartGenerator {
     if (func.currying.isDefined) {
       func.currying.foreach(_.foreach(curry => {
         str += Seq("(")
-        curry.params.foreach(param =>  str += mkSeq(param.map(attr => SeqBuilder.build(attr.asInstanceOf[TmplSetAttribute].name.fold(Seq())( p=>SeqBuilder.build(Seq(p.toString) ,Seq(":"))), genOperation(attr.asInstanceOf[TmplSetAttribute].value))), ","))
+//        curry.params.foreach(param =>  str += mkSeq(param.map(attr => SeqBuilder.build(attr.asInstanceOf[TmplSetAttribute].name.fold(Seq())( p=>SeqBuilder.build(Seq(p.toString) ,Seq(":"))), genOperation(attr.asInstanceOf[TmplSetAttribute].value))), ","))
         str += Seq(")")
       }))
     } else str += "()"
@@ -362,7 +361,7 @@ object DartGenerator {
       str += "var "
     }
     if (variable.`type`.isDefined) {
-      str += genType(variable.`type`.get)
+//      str += genType(variable.`type`.get)
       str += " "
     }
     str += variable.name.toString
@@ -474,7 +473,7 @@ object DartGenerator {
 
   def genArrayValue(array: TmplArrayValue): Seq = {
     val str = Seq()
-    array.`type`.foreach(t => str += genType(t))
+//    array.`type`.foreach(t => str += genType(t))
     str += "["
     str += genArrayValueParams(array.params.asInstanceOf[Option[List[TmplSetAttribute]]])
     str += "]"

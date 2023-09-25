@@ -1,10 +1,11 @@
 package dev.tlang.tlang.ast.tmpl.call
 
-import dev.tlang.tlang.ast.tmpl.TmplID
+import dev.tlang.tlang.ast.tmpl.func.TmplFuncParam
+import dev.tlang.tlang.ast.tmpl.{TmplID, TmplSetAttribute}
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
 
-case class TmplCallFunc(context: Option[ContextContent], var name: TmplID, var currying: Option[List[TmplCurryParam]]) extends TmplCallObjType[TmplCallFunc] {
+case class TmplCallFunc(context: Option[ContextContent], var name: TmplID, var currying: Option[List[TmplCallFuncParam]]) extends TmplCallObjType[TmplCallFunc] {
   override def deepCopy(): TmplCallFunc = TmplCallFunc(context, name.deepCopy().asInstanceOf[TmplID],
     if (currying.isDefined) Some(currying.get.map(_.deepCopy())) else None)
 

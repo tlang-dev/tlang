@@ -4,9 +4,9 @@ import dev.tlang.tlang.ast.common.value.TLangString
 import dev.tlang.tlang.ast.tmpl._
 import dev.tlang.tlang.ast.tmpl.call._
 import dev.tlang.tlang.ast.tmpl.condition.TmplOperation
-import dev.tlang.tlang.ast.tmpl.func.{TmplFunc, TmplFuncCurry}
+import dev.tlang.tlang.ast.tmpl.func.TmplFunc
 import dev.tlang.tlang.ast.tmpl.loop.TmplFor
-import dev.tlang.tlang.ast.tmpl.primitive.{TmplEntityValue, TmplPrimitiveValue, TmplStringValue, TmplTextValue}
+import dev.tlang.tlang.ast.tmpl.primitive._
 import dev.tlang.tlang.interpreter.ExecCallObject
 import dev.tlang.tlang.interpreter.context.Context
 import dev.tlang.tlang.libraries.generator.Generator
@@ -20,14 +20,14 @@ object ValueMapper {
     val con = blockAsValue.context
     block.pkg = mapPkg(block.pkg, con)
     block.uses = mapUses(block.uses, con)
-    block.content = mapContents(block.content, con)
+//    block.content = mapContents(block.content, con)
     blockAsValue
   }
 
   def mapBlock(block: TmplBlock, context: Context): TmplBlock = {
     block.pkg = mapPkg(block.pkg, context)
     block.uses = mapUses(block.uses, context)
-    block.content = mapContents(block.content, context)
+//    block.content = mapContents(block.content, context)
     block
   }
 
@@ -52,16 +52,16 @@ object ValueMapper {
 
       content.get.foreach {
         case func: TmplFunc => newContent += mapFunc(func, context)
+        case block: TmplSpecialBlock => newContent += mapSpecialBlock(block, context)
         case expr: TmplExpression[_] => newContent += mapExpression(expr, context)
-        case impl: TmplImpl => newContent += mapImpl(impl, context)
         //        case block: TmplBlock => mapContent(block.content, context).foreach { blocks => newContent.addAll(blocks) }
         // Specialized content
+        case impl: TmplImpl => newContent += mapImpl(impl, context)
         case attr: TmplAttribute => newContent += mapAttribute(attr, context)
         case setAttr: TmplSetAttribute => newContent += mapSetAttribute(setAttr, context)
         case param: TmplParam => newContent += mapParam(param, context)
         case use: TmplUse => newContent += mapUse(use, context)
         case block: TmplBlock => newContent += mapBlock(block, context)
-        case block: TmplSpecialBlock => newContent += mapSpecialBlock(block, context)
         //        newContent ++= mapNode(_, context)
       }
       Some(newContent.toList)
@@ -78,14 +78,14 @@ object ValueMapper {
   def mapExpression(expr: TmplExpression[_], context: Context): TmplExpression[_] = {
     expr match {
       case func: TmplFunc => mapFunc(func, context)
-      case valueType: TmplValueType[_] => mapValueType(valueType, context)
       case variable: TmplVar => mapVar(variable, context)
+      case call: TmplCallObj => mapCallObj(call, context)
       //      case incl: TmplInclude => mapInclude(incl, context)
+      case primitiveValue: TmplPrimitiveValue[_] => mapPrimitive(primitiveValue, context)
+      case valueType: TmplValueType[_] => mapValueType(valueType, context)
       case ret: TmplReturn => mapReturn(ret, context)
       case affect: TmplAffect => mapAffect(affect, context)
       case tmplFor: TmplFor => mapFor(tmplFor, context)
-      case primitiveValue: TmplPrimitiveValue[_] => mapPrimitive(primitiveValue, context)
-      case call: TmplCallObj => mapCallObj(call, context)
       case anonFunc: TmplAnonFunc => mapAnonFunc(anonFunc, context)
       case block: TmplSpecialBlock => mapSpecialBlock(block, context)
       case _ => expr
@@ -137,8 +137,9 @@ object ValueMapper {
   def mapFunc(func: TmplFunc, context: Context): TmplFunc = {
     func.annots = mapAnnots(func.annots, context)
     func.props = mapProps(func.props, context)
+    func.preNames = if (func.preNames.isDefined) Some(func.preNames.get.map(name => mapID(name, context))) else None
     func.name = mapID(func.name, context)
-    func.curries = mapCurries(func.curries, context)
+//    func.curries = mapCurries(func.curries, context)
     func.content = func.content.map(mapExprContent(_, context))
     func.ret = mapTypes(func.ret, context)
     func
@@ -198,13 +199,13 @@ object ValueMapper {
   }
 
   def mapSpecialBlock(block: TmplSpecialBlock, context: Context): TmplSpecialBlock = {
-    block.curries = mapCurries(block.curries, context)
+//    block.curries = mapCurries(block.curries, context)
     if (block.content.isDefined) block.content = Some(mapExprContent(block.content.get, context))
 
     block
   }
 
-  def mapCurries(curries: Option[List[TmplFuncCurry]], context: Context): Option[List[TmplFuncCurry]] = {
+/*  def mapCurries(curries: Option[List[TmplFuncCurry]], context: Context): Option[List[TmplFuncCurry]] = {
     if (curries.isDefined) Some(curries.get.map(c => mapFuncCurry(c, context)))
     else None
   }
@@ -214,7 +215,7 @@ object ValueMapper {
       curry.params = Some(curry.params.get.map(p => mapParam(p, context)))
     }
     curry
-  }
+  }*/
 
   def mapParam(param: TmplParam, context: Context): TmplParam = {
     param.annots = mapAnnots(param.annots, context)
@@ -224,7 +225,7 @@ object ValueMapper {
   }
 
   def mapAnonFunc(anonFunc: TmplAnonFunc, context: Context): TmplAnonFunc = {
-    anonFunc.currying = mapFuncCurry(anonFunc.currying, context)
+//    anonFunc.currying = mapFuncCurry(anonFunc.currying, context)
     anonFunc.content = mapExprContent(anonFunc.content, context)
     anonFunc
   }
@@ -264,6 +265,7 @@ object ValueMapper {
       case array: TmplCallArray => mapCallArray(array, context)
       case func: TmplCallFunc => mapCallFunc(func, context)
       case variable: TmplCallVar => mapCallVar(variable, context)
+      case primitive: TmplPrimitiveValue[_] => mapPrimitive(primitive, context)
     }
   }
 
@@ -275,16 +277,25 @@ object ValueMapper {
 
   def mapCallFunc(func: TmplCallFunc, context: Context): TmplCallFunc = {
     func.name = mapID(func.name, context)
-    func.currying = mapCallFuncCurryParams(func.currying, context)
+//    func.currying = mapCallFuncCurryParams(func.currying, context)
     func
   }
 
-  def mapCallFuncCurryParams(params: Option[List[TmplCurryParam]], context: Context): Option[List[TmplCurryParam]] = {
+  /*def mapCallFuncCurryParams(params: Option[List[TmplCurryParam]], context: Context): Option[List[TmplCurryParam]] = {
     if (params.isDefined) {
-      val curry: List[TmplCurryParam] = params.get.map(p => TmplCurryParam(p.context, mapSetAttributes(p.params.asInstanceOf[Option[List[TmplSetAttribute]]], context)))
+      val curry: List[TmplCurryParam] = params.get.map(p => TmplCurryParam(p.context, mapCallFuncCurryParamTypes(p.params, context)))
       Some(curry)
     } else None
   }
+
+  def mapCallFuncCurryParamTypes(params: List[TmplCallFuncParam], context: Context): List[TmplCallFuncParam] = {
+    params.map(param => mapCallFuncCurryParamType(param, context))
+  }
+
+  def mapCallFuncCurryParamType(params: TmplCallFuncParam, context: Context): TmplCallFuncParam = {
+    if (params.params.isDefined) params.params.get.map(attr => mapSetAttribute(attr.asInstanceOf[TmplSetAttribute], context))
+    params
+  }*/
 
   def mapSetAttributes(attrs: Option[List[TmplSetAttribute]], context: Context): Option[List[TmplSetAttribute]] = {
     if (attrs.isDefined) {
@@ -338,13 +349,21 @@ object ValueMapper {
       case str: TmplStringValue => TmplStringValue(str.context, mapID(str.value, context))
       case text: TmplTextValue => TmplTextValue(text.context, mapID(text.value, context))
       case entityValue: TmplEntityValue => mapEntityValue(entityValue, context)
-      case _ => primitive
+      case array: TmplArrayValue => mapArrayValue(array, context)
     }
   }
 
   def mapEntityValue(entity: TmplEntityValue, context: Context): TmplEntityValue = {
     entity.name = mapOptID(entity.name, context)
+    entity.params = mapSetAttributes(entity.params.asInstanceOf[Option[List[TmplSetAttribute]]], context)
+    entity.attrs = mapSetAttributes(entity.attrs.asInstanceOf[Option[List[TmplSetAttribute]]], context)
     entity
+  }
+
+  def mapArrayValue(array: TmplArrayValue, context: Context): TmplArrayValue = {
+    if (array.`type`.isDefined) array.`type` = Some(mapType(array.`type`.get, context))
+    array.params = mapSetAttributes(array.params.asInstanceOf[Option[List[TmplSetAttribute]]], context)
+    array
   }
 
   def mapVar(variable: TmplVar, context: Context): TmplVar = {

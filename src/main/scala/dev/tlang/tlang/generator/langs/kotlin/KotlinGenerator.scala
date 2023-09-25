@@ -4,7 +4,7 @@ import dev.tlang.tlang.ast.common.operation.Operator
 import dev.tlang.tlang.ast.tmpl._
 import dev.tlang.tlang.ast.tmpl.call._
 import dev.tlang.tlang.ast.tmpl.condition.TmplOperation
-import dev.tlang.tlang.ast.tmpl.func.{TmplFunc, TmplFuncCurry}
+import dev.tlang.tlang.ast.tmpl.func.TmplFunc
 import dev.tlang.tlang.ast.tmpl.loop.ForType.ForType
 import dev.tlang.tlang.ast.tmpl.loop.{TmplDoWhile, TmplFor, TmplWhile}
 import dev.tlang.tlang.ast.tmpl.primitive._
@@ -89,7 +89,7 @@ object KotlinGenerator {
     str += "fun "
     str += func.name.toString
     //    str += func.ret.fold(Seq("void"))(ret => genType(ret.head)) += " "
-    str += genCurrying(func.curries)
+    //str += genCurrying(func.curries)
     str += func.postPros.fold(Seq())(prop => genProps(prop) += " ")
     if (func.ret.isDefined) str += ":"
     func.ret.foreach(ret => str += genType(ret.head))
@@ -98,18 +98,18 @@ object KotlinGenerator {
     str
   }
 
-  def genCurrying(curries: Option[List[TmplFuncCurry]]): Seq = {
-    if (curries.isDefined) mkSeq(curries.get.map(genFuncCurry), "")
-    else Seq("()")
-  }
-
-  def genFuncCurry(curry: TmplFuncCurry): Seq = {
-    val str = Seq()
-    str += "("
-    curry.params.foreach(params => str += mkSeq(params.map(genParam), ","))
-    str += ")"
-    str
-  }
+//  def genCurrying(curries: Option[List[TmplFuncCurry]]): Seq = {
+//    if (curries.isDefined) mkSeq(curries.get.map(genFuncCurry), "")
+//    else Seq("()")
+//  }
+//
+//  def genFuncCurry(curry: TmplFuncCurry): Seq = {
+//    val str = Seq()
+//    str += "("
+//    curry.params.foreach(params => str += mkSeq(params.map(genParam), ","))
+//    str += ")"
+//    str
+//  }
 
   def genAnnotations(annots: Option[List[TmplAnnotation]], sep: String = ""): Seq = {
     if (annots.isDefined) {
@@ -165,17 +165,17 @@ object KotlinGenerator {
     str += `type`.name.toString
     str += genGeneric(`type`.generic)
     if (`type`.isArray) str += "[]"
-    if (`type`.instance.isDefined) str += genTypeCurry(`type`.instance.get)
+   // if (`type`.instance.isDefined) str += genTypeCurry(`type`.instance.get)
     str
   }
 
-  def genTypeCurry(curry: TmplCurryParam): Seq = {
-    val str = Seq()
-    str += "("
-    curry.params.foreach(params => str += mkSeq(params.map(param => genContent(param)), ","))
-    str += ")"
-    str
-  }
+//  def genTypeCurry(curry: TmplCurryParam): Seq = {
+//    val str = Seq()
+//    str += "("
+////    curry.params.foreach(params => str += mkSeq(params.map(param => genContent(param)), ","))
+//    str += ")"
+//    str
+//  }
 
   def genGeneric(gen: Option[TmplGeneric]): Seq = {
     if (gen.isDefined) {
@@ -239,7 +239,7 @@ object KotlinGenerator {
 
   def genAnonFunc(anonFunc: TmplAnonFunc): Seq = {
     val str = Seq()
-    str += genFuncCurry(anonFunc.currying)
+   // str += genFuncCurry(anonFunc.currying)
     str += genExprContent(anonFunc.content)
     str
   }
@@ -321,7 +321,7 @@ object KotlinGenerator {
     if (func.currying.isDefined) {
       func.currying.foreach(_.foreach(curry => {
         str += "("
-        curry.params.foreach(param => str += mkSeq(param.map(attr => attr.asInstanceOf[TmplSetAttribute].name.fold(Seq())(Seq() -> _.toString += ":") += genOperation(attr.asInstanceOf[TmplSetAttribute].value)), ","))
+//        curry.params.foreach(param => str += mkSeq(param.map(attr => attr.asInstanceOf[TmplSetAttribute].name.fold(Seq())(Seq() -> _.toString += ":") += genOperation(attr.asInstanceOf[TmplSetAttribute].value)), ","))
         str += ")"
       }))
     } else str += "()"

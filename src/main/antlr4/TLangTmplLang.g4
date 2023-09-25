@@ -1,15 +1,8 @@
-grammar TLangTmpl;
+grammar TLangTmplLang;
 
 import TLangCommon, TLangHelper, CommonLexer;
 
-	/*
- * Tmpl block (Template block)
- * The content of this block will be translated in the final language as it is
- */
-tmplBlock:
-	Tmpl LSQUARE lang=tmplID RSQUARE name=tmplID ('('params += helperParam (',' params += helperParam)*RPARENT)? block = tmplBlockContentType;
-
-tmplBlockContentType: tmplFullBlock | tmplSpecialisedBlock;
+tmplLang: 'lang' content = tmplFullBlock | tmplSpecialisedBlock;
 
 tmplFullBlock: LBRACE
 	(tmplPakage=tmplPkg)?
@@ -43,9 +36,15 @@ tmplImpl:
 
 tmplFunc:
     (annots+=tmplAnnot)*
-	Func props=tmplProps name=tmplID curries+=tmplCurrying* (':' types+=tmplType (',' types+=tmplType)*)? postProps=tmplProps content=tmplExprContent?;
+	Func props=tmplProps ((preNames+=tmplID)* '.')? name=tmplID curries+=tmplCurrying* (':' types+=tmplType (',' types+=tmplType)*)? postProps=tmplProps content=tmplExprContent?;
 
-tmplCurrying: LPARENT param=tmplCurryingParam RPARENT;
+tmplCurrying: LPARENT ((params+=tmplCurryingParamType) (',' params+=tmplCurryingParamType)*) RPARENT;
+
+tmplCurryingParamType: tmplCurryingParam | tmplMandatoryParams | tmplPositionParams;
+
+tmplMandatoryParams: LBRACE param=tmplCurryingParam RBRACE;
+
+tmplPositionParams: LSQUARE param=tmplCurryingParam RSQUARE;
 
 tmplCurryingParam:
 	((params+=tmplParam) (',' params+=tmplParam)*)?;
@@ -55,7 +54,7 @@ tmplParam:
 	accessor=tmplID? name=tmplID (':' type=tmplType)?;
 
 tmplType:
-	type=tmplID ('<' (generic=tmplGeneric) '>')? (instance=tmplCurryParams)? (array='[' ']')?;
+	type=tmplID ('<' (generic=tmplGeneric) '>')? (currying += tmplCurryParams)* (array='[' ']')?;
 
 tmplGeneric:
 	(types+=tmplType (',' types+=tmplType)*);
@@ -88,9 +87,9 @@ tmplOptionalValue: '?';
 
 tmplCallObj: props=tmplProps firstCall=tmplCallObjType objs+=tmplCallObjLink*;
 
-tmplCallObjLink: ((access= ('.' | '?.' | '!.' | '!!.' | '::')) obj=tmplCallObjType);
+tmplCallObjLink: ((access= ('.' | '?.' | '!.' | '!!.' | '::' | '??')) obj=tmplCallObjType) (postAccess='!')?;
 
-tmplCallObjType: tmplCallArray | tmplCallFunc | tmplCallVariable;
+tmplCallObjType: tmplCallArray | tmplCallFunc | tmplCallVariable | tmplPrimitiveValue;
 
 tmplCallFunc: ((name=tmplID) | '_') (currying += tmplCurryParams)+;
 
@@ -125,8 +124,8 @@ tmplAttribute: ((attr=tmplID)? (':' type=tmplType)? value=tmplOperation);
 tmplMultiValue: LPARENT (values+=tmplValueType) (',' values+=tmplValueType)* RPARENT;
 
 tmplEntityValue:
-	New (name=tmplID)? (LPARENT ((params+=tmplInclAttribute) (',' params+=tmplInclAttribute)*)? RPARENT)?
-	(LBRACE ((attrs+=tmplInclAttribute) (',' attrs+=tmplInclAttribute)*)? RBRACE)?;
+	New (name=tmplID)? (LPARENT ((params+=tmplInclSetAttribute) (',' params+=tmplInclSetAttribute)*)? RPARENT)?
+	(LBRACE ((attrs+=tmplInclSetAttribute) (',' attrs+=tmplInclSetAttribute)*)? RBRACE)?;
 
 tmplOperation:
      (content=tmplExpression (op=operator  next=tmplOperation)* |
@@ -157,4 +156,4 @@ tmplIntprText: 's"""' (pre=.)? INTEPRETED callObj RBRACE (pos=.)? '"""';
 
 tmplIdOrString: tmplID | tmplString;
 
-tmplSpecialBlock: type=( Sync | Init | Destroy |Future|Await|Try|Catch|Finally|Continue|Break|Const|Static|Getter|Setter|Factory|Constructor|Throw| Final) curries+=tmplCurrying* (expr=tmplExprContent)?;
+tmplSpecialBlock: type=( Sync | Init | Destroy |Future|Await|Try|Catch|Finally|Continue|Break|Const|Static|Getter|Setter|Factory|Constructor|Throw| Final ) curries+=tmplCurrying* (expr=tmplExprContent)?;

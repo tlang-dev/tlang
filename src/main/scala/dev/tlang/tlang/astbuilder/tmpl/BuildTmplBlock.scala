@@ -1,26 +1,39 @@
-package dev.tlang.tlang.astbuilder
+package dev.tlang.tlang.astbuilder.tmpl
 
 import dev.tlang.tlang.TLangParser._
+import dev.tlang.tlang.ast.common.value.EntityValue
 import dev.tlang.tlang.ast.tmpl._
-import dev.tlang.tlang.ast.tmpl.call._
 import dev.tlang.tlang.ast.tmpl.condition.TmplOperation
-import dev.tlang.tlang.ast.tmpl.func.{TmplFunc, TmplFuncCurry}
 import dev.tlang.tlang.ast.tmpl.loop.ForType.ForType
 import dev.tlang.tlang.ast.tmpl.loop.{ForType, TmplFor}
 import dev.tlang.tlang.ast.tmpl.primitive._
 import dev.tlang.tlang.astbuilder.BuildAst.addContext
+import dev.tlang.tlang.astbuilder._
 import dev.tlang.tlang.astbuilder.context.ContextResource
+import dev.tlang.tlang.astbuilder.tmpl.lang.BuildLang
 
 import scala.jdk.CollectionConverters._
 
 object BuildTmplBlock {
 
   def build(resource: ContextResource, tmpl: TmplBlockContext): TmplBlock = {
-    if (tmpl.block.tmplFullBlock() != null) buildFullBlock(resource, tmpl, tmpl.block.tmplFullBlock())
-    else buildSpecialisedBlock(resource, tmpl, tmpl.block.tmplSpecialisedBlock())
+
+    val content = tmpl.block match {
+      case lang@_ if lang.tmplLang() != null => BuildLang.buildLangBlock(resource, lang.tmplLang())
+      case doc@_ if doc.tmplDoc() != null => EntityValue(None, None)
+    }
+
+    TmplBlock(addContext(resource, tmpl), tmpl.name.getText, tmpl.lang.getText,
+      if (tmpl.params != null && !tmpl.params.isEmpty) Some(BuildHelperBlock.buildParams(resource, tmpl.params.asScala.toList)) else None,
+      None, None, specialised = false, Some(List(content)))
   }
 
-  def buildFullBlock(resource: ContextResource, tmpl: TmplBlockContext, full: TmplFullBlockContext): TmplBlock = {
+  /*def build(resource: ContextResource, tmpl: TmplBlockContext): TmplBlock = {
+    if (tmpl.block.tmplFullBlock() != null) buildFullBlock(resource, tmpl, tmpl.block.tmplFullBlock())
+    else buildSpecialisedBlock(resource, tmpl, tmpl.block.tmplSpecialisedBlock())
+  }*/
+
+  /*def buildFullBlock(resource: ContextResource, tmpl: TmplBlockContext, full: TmplFullBlockContext): TmplBlock = {
     val pkg = if (full.tmplPkg() != null && !full.tmplPkg().isEmpty) Some(buildPkg(resource, full.tmplPkg())) else None
     val uses: List[TmplUse] = buildUses(resource, full.tmplUses.asScala.toList)
     TmplBlock(addContext(resource, tmpl), tmpl.name.getText, tmpl.lang.getText,
@@ -34,7 +47,7 @@ object BuildTmplBlock {
       if (tmpl.params != null && !tmpl.params.isEmpty) Some(BuildHelperBlock.buildParams(resource, tmpl.params.asScala.toList)) else None,
       None, None, specialised = true,
       Some(List(buildSpecializedContent(resource, spec.content))))
-  }
+  } */
 
   def buildPkg(resource: ContextResource, pkg: TmplPkgContext): TmplPkg = {
     TmplPkg(addContext(resource, pkg), pkg.parts.asScala.toList.map(part => buildId(resource, part)))
@@ -58,7 +71,7 @@ object BuildTmplBlock {
   def buildContent(resource: ContextResource, content: TmplContentContext): TmplContent[_] = {
     content match {
       case impl@_ if impl.tmplImpl() != null => buildImpl(resource, impl.tmplImpl())
-      case func@_ if func.tmplFunc() != null => buildFunc(resource, func.tmplFunc())
+      case func@_ if func.tmplFunc() != null => BuildTmplFunc.buildFunc(resource, func.tmplFunc())
       case spec@_ if spec.tmplSpecialBlock() != null => buildSpecialBlock(resource, spec.tmplSpecialBlock())
       case expr@_ if expr.tmplExpression() != null => buildExpression(resource, expr.tmplExpression())
     }
@@ -66,7 +79,7 @@ object BuildTmplBlock {
 
   def buildSpecialBlock(resource: ContextResource, block: TmplSpecialBlockContext): TmplSpecialBlock = {
     val curries =
-      if (block.curries != null && !block.curries.isEmpty) Some(block.curries.asScala.map(curry => buildFuncCurry(resource, curry)).toList)
+      if (block.curries != null && !block.curries.isEmpty) Some(block.curries.asScala.map(curry => BuildTmplFunc.buildFuncParam(resource, curry)).toList)
       else None
     val content = if (block.expr != null) Some(buildExprContent(resource, block.expr)) else None
     TmplSpecialBlock(
@@ -104,14 +117,6 @@ object BuildTmplBlock {
     else None
   }
 
-  def buildFunc(resource: ContextResource, func: TmplFuncContext): TmplFunc = {
-    val curries =
-      if (func.curries != null && !func.curries.isEmpty) Some(func.curries.asScala.map(curry => buildFuncCurry(resource, curry)).toList)
-      else None
-    TmplFunc(addContext(resource, func), buildAnnotations(resource, func.annots.asScala.toList), buildProps(resource, func.props), buildId(resource, func.name), curries,
-      if (func.content != null) Some(buildExprContent(resource, func.content)) else None,
-      if (func.types != null && !func.types.isEmpty) Some(func.types.asScala.toList.map(t => buildType(resource, t))) else None, buildProps(resource, func.postProps))
-  }
 
   def buildAnnotations(resource: ContextResource, annots: List[TmplAnnotContext]): Option[List[TmplAnnotation]] = {
     if (annots.nonEmpty) Some(annots.map(annot => {
@@ -127,14 +132,14 @@ object BuildTmplBlock {
     else None
   }
 
-  def buildFuncCurry(resource: ContextResource, curry: TmplCurryingContext): TmplFuncCurry = {
-    TmplFuncCurry(addContext(resource, curry), Option(build(resource, curry.param)))
-  }
 
-  def build(resource: ContextResource, params: TmplCurryingParamContext): List[TmplParam] = {
-    if (params.params != null && !params.params.isEmpty) params.params.asScala.map(param => buildParam(resource, param)).toList
-    else List()
-  }
+
+  /*def buildCurryParam(resource: ContextResource, param: TmplCurryingParamTypeContext):TmplCurryParamType = {
+    TmplCurryParam(addContext(resource, param),
+      buildCurryParamType(resource, param)
+    )
+  }*/
+
 
   def buildParam(resource: ContextResource, param: TmplParamContext): TmplParam = {
     TmplParam(addContext(resource, param),
@@ -144,13 +149,8 @@ object BuildTmplBlock {
   }
 
   def buildType(resource: ContextResource, `type`: TmplTypeContext): TmplType = {
-    TmplType(addContext(resource, `type`), buildId(resource, `type`.`type`), buildGeneric(resource, `type`.generic), `type`.array != null, instance = buildInstance(resource, `type`.instance))
-  }
-
-  def buildInstance(resource: ContextResource, instance: TmplCurryParamsContext): Option[TmplCurryParam] = {
-    if (instance != null && !instance.params.isEmpty) Some(buildCallFuncParams(resource, instance))
-    else if (instance != null) Some(TmplCurryParam(addContext(resource, instance), None))
-    else None
+    TmplType(addContext(resource, `type`), buildId(resource, `type`.`type`), buildGeneric(resource, `type`.generic), `type`.array != null,
+      if (`type`.currying != null && !`type`.currying.isEmpty) Some(BuildTmplCall.buildCallFuncCurrying(resource, `type`.currying.asScala.toList)) else None)
   }
 
   def buildGeneric(resource: ContextResource, generic: TmplGenericContext): Option[TmplGeneric] = {
@@ -172,9 +172,9 @@ object BuildTmplBlock {
   def buildExpression(resource: ContextResource, expr: TmplExpressionContext): TmplExpression[_] = {
     expr match {
       case tmplVar@_ if tmplVar.tmplVar() != null => buildVar(resource, tmplVar.tmplVar())
-      case callObj@_ if callObj.tmplCallObj() != null => buildCallObject(resource, callObj.tmplCallObj())
+      case callObj@_ if callObj.tmplCallObj() != null => BuildTmplCall.buildCallObject(resource, callObj.tmplCallObj())
       case valueType@_ if valueType.tmplValueType() != null => buildValueType(resource, valueType.tmplValueType())
-      case func@_ if func.tmplFunc() != null => buildFunc(resource, func.tmplFunc())
+      case func@_ if func.tmplFunc() != null => BuildTmplFunc.buildFunc(resource, func.tmplFunc())
       case whileLoop@_ if whileLoop.tmplWhile() != null => BuildTmplLoop.buildWhile(resource, whileLoop.tmplWhile())
       case doWhile@_ if doWhile.tmplDoWhile() != null => BuildTmplLoop.buildDoWhile(resource, doWhile.tmplDoWhile())
       case ifStmt@_ if ifStmt.tmplIf() != null => buildIf(resource, ifStmt.tmplIf())
@@ -197,7 +197,7 @@ object BuildTmplBlock {
   }
 
   def buildTmplAnonFunc(resource: ContextResource, anonFunc: TmplAnonFuncContext): TmplAnonFunc = {
-    TmplAnonFunc(addContext(resource, anonFunc), buildFuncCurry(resource, anonFunc.params), buildExprContent(resource, anonFunc.content))
+    TmplAnonFunc(addContext(resource, anonFunc), Some(List(BuildTmplFunc.buildFuncParam(resource, anonFunc.params))), buildExprContent(resource, anonFunc.content))
   }
 
   def buildIf(resource: ContextResource, ifStmt: TmplIfContext): TmplIf = {
@@ -236,39 +236,7 @@ object BuildTmplBlock {
   }
 
   def buildAffect(resource: ContextResource, affect: TmplAffectContext): TmplAffect = {
-    TmplAffect(addContext(resource, affect), buildCallObject(resource, affect.variable), buildOperation(resource, affect.value))
-  }
-
-  def buildCallObject(resource: ContextResource, obj: TmplCallObjContext): TmplCallObj = {
-    TmplCallObj(addContext(resource, obj), buildProps(resource, obj.props), buildCallObjectType(resource, obj.firstCall), obj.objs.asScala.toList.map(obj => buildCallObjectLink(resource, obj)))
-  }
-
-  def buildCallObjectLink(resource: ContextResource, objLink: TmplCallObjLinkContext): TmplCallObjectLink = {
-    TmplCallObjectLink(addContext(resource, objLink), objLink.access.getText, buildCallObjectType(resource, objLink.obj))
-  }
-
-  def buildCallObjectType(resource: ContextResource, objType: TmplCallObjTypeContext): TmplCallObjType[_] = {
-    objType match {
-      case array@_ if array.tmplCallArray() != null => buildCallArray(resource, array.tmplCallArray())
-      case func@_ if func.tmplCallFunc() != null => buildCallFunc(resource, func.tmplCallFunc())
-      case variable@_ if variable.tmplCallVariable() != null => buildCallVar(resource, variable.tmplCallVariable())
-    }
-  }
-
-  def buildCallArray(resource: ContextResource, array: TmplCallArrayContext): TmplCallArray = {
-    TmplCallArray(addContext(resource, array), buildId(resource, array.name), buildOperation(resource, array.elem))
-  }
-
-  def buildCallFunc(resource: ContextResource, func: TmplCallFuncContext): TmplCallFunc = {
-    TmplCallFunc(addContext(resource, func), buildId(resource, func.name), if (func.currying != null && !func.currying.isEmpty) Some(buildCallFuncCurrying(resource, func.currying.asScala.toList)) else None)
-  }
-
-  def buildCallFuncCurrying(resource: ContextResource, currying: List[TmplCurryParamsContext]): List[TmplCurryParam] = {
-    currying.map(currying => buildCallFuncParams(resource, currying))
-  }
-
-  def buildCallFuncParams(resource: ContextResource, param: TmplCurryParamsContext): TmplCurryParam = {
-    TmplCurryParam(addContext(resource, param), if (param.params != null && !param.params.isEmpty) Some(param.params.asScala.toList.map(param => buildInclSetAttribute(resource, param))) else None)
+    TmplAffect(addContext(resource, affect), BuildTmplCall.buildCallObject(resource, affect.variable), buildOperation(resource, affect.value))
   }
 
   def buildSetAttribute(resource: ContextResource, param: TmplSetAttributeContext): TmplSetAttribute = {
@@ -284,13 +252,9 @@ object BuildTmplBlock {
     }
   }
 
-  def buildCallVar(resource: ContextResource, variable: TmplCallVariableContext): TmplCallVar = {
-    TmplCallVar(addContext(resource, variable), buildId(resource, variable.name))
-  }
-
   def buildValueType(resource: ContextResource, valueType: TmplValueTypeContext): TmplValueType[_] = {
     valueType match {
-      case callObj@_ if callObj.tmplCallObj() != null => buildCallObject(resource, callObj.tmplCallObj())
+      case callObj@_ if callObj.tmplCallObj() != null => BuildTmplCall.buildCallObject(resource, callObj.tmplCallObj())
       case primitive@_ if primitive.tmplPrimitiveValue() != null => buildPrimitive(resource, primitive.tmplPrimitiveValue())
       case multi@_ if multi.tmplMultiValue() != null => buildMultiValue(resource, multi.tmplMultiValue())
     }
@@ -327,8 +291,8 @@ object BuildTmplBlock {
   def buildEntity(resource: ContextResource, entity: TmplEntityValueContext): TmplEntityValue = TmplEntityValue(
     addContext(resource, entity),
     buildOptionId(resource, entity.name),
-    if (entity.params != null && !entity.params.isEmpty) Some(entity.params.asScala.toList.map(param => buildInclAttribute(resource, param))) else None,
-    if (entity.attrs != null && !entity.attrs.isEmpty) Some(entity.attrs.asScala.toList.map(attr => buildInclAttribute(resource, attr))) else None
+    if (entity.params != null && !entity.params.isEmpty) Some(entity.params.asScala.toList.map(param => buildInclSetAttribute(resource, param))) else None,
+    if (entity.attrs != null && !entity.attrs.isEmpty) Some(entity.attrs.asScala.toList.map(attr => buildInclSetAttribute(resource, attr))) else None
   )
 
   def buildArray(resource: ContextResource, `type`: Option[TmplType] = None, array: TmplArrayValueContext): TmplArrayValue = {

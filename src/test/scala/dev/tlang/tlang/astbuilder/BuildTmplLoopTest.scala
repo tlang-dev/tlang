@@ -6,6 +6,7 @@ import dev.tlang.tlang.ast.tmpl.call.{TmplCallFunc, TmplCallObj}
 import dev.tlang.tlang.ast.tmpl.loop.{TmplDoWhile, TmplWhile}
 import dev.tlang.tlang.ast.tmpl.primitive.TmplLongValue
 import dev.tlang.tlang.astbuilder.context.ContextResource
+import dev.tlang.tlang.astbuilder.tmpl.BuildTmplBlock
 import dev.tlang.tlang.{TLangLexer, TLangParser}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite

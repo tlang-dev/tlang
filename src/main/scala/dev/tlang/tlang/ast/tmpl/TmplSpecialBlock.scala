@@ -1,10 +1,10 @@
 package dev.tlang.tlang.ast.tmpl
 
-import dev.tlang.tlang.ast.tmpl.func.TmplFuncCurry
+import dev.tlang.tlang.ast.tmpl.func.TmplFuncParam
 import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
 import dev.tlang.tlang.interpreter.Value
 
-case class TmplSpecialBlock(context: Option[ContextContent], var `type`: String, var curries: Option[List[TmplFuncCurry]], var content: Option[TmplExprContent[_]]) extends TmplExpression[TmplSpecialBlock] with TmplContent[TmplSpecialBlock] with AstContext {
+case class TmplSpecialBlock(context: Option[ContextContent], var `type`: String, var curries: Option[List[TmplFuncParam]], var content: Option[TmplExprContent[_]]) extends TmplExpression[TmplSpecialBlock] with TmplContent[TmplSpecialBlock] with AstContext {
   override def getContext: Option[ContextContent] = context
 
   override def compareTo(value: Value[TmplSpecialBlock]): Int = 0

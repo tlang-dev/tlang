@@ -6,7 +6,7 @@ object DartFormatter {
 
   def RET: String = System.lineSeparator()
 
-  def END_OF_STATEMENT = ";"
+  def END_OF_STATEMENT: String = ";"
 
   def spaces: String = "  "
 

@@ -1,14 +1,14 @@
 package dev.tlang.tlang.ast.tmpl
 
-import dev.tlang.tlang.ast.tmpl.call.TmplCurryParam
+import dev.tlang.tlang.ast.tmpl.call.TmplCallFuncParam
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
 
-case class TmplType(context: Option[ContextContent], var name: TmplID, var generic: Option[TmplGeneric] = None, isArray: Boolean = false, instance: Option[TmplCurryParam] = None) extends TmplNode[TmplType] {
+case class TmplType(context: Option[ContextContent], var name: TmplID, var generic: Option[TmplGeneric] = None, isArray: Boolean = false, var currying: Option[List[TmplCallFuncParam]] = None) extends TmplNode[TmplType] {
   override def deepCopy(): TmplType = TmplType(context, name.deepCopy().asInstanceOf[TmplID],
     if (generic.isDefined) Some(generic.get.deepCopy()) else None,
     if (isArray) true else false,
-    if (instance.isDefined) Some(instance.get.deepCopy()) else None,
+    if (currying.isDefined) Some(currying.get.map(_.deepCopy())) else None,
   )
 
   override def getContext: Option[ContextContent] = context

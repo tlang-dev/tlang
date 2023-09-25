@@ -2,7 +2,7 @@ package dev.tlang.tlang.generator.builder
 
 import dev.tlang.tlang.ast.common.call.CallObject
 import dev.tlang.tlang.ast.tmpl._
-import dev.tlang.tlang.ast.tmpl.call.{TmplCallFunc, TmplCallObj, TmplCallObjectLink, TmplCurryParam}
+import dev.tlang.tlang.ast.tmpl.call._
 import dev.tlang.tlang.ast.tmpl.condition.TmplOperation
 import dev.tlang.tlang.ast.tmpl.func.TmplFunc
 import dev.tlang.tlang.ast.tmpl.primitive.{TmplArrayValue, TmplEntityValue, TmplStringValue, TmplTextValue}
@@ -31,7 +31,7 @@ object TemplateBuilder {
         block.pkg = value
         buildContents(block.content, context) match {
           case Left(error) => Left(error)
-          case Right(value) => block.content = value
+          case Right(value) => /*block.content = value*/
             Right(block)
         }
     }
@@ -82,7 +82,7 @@ object TemplateBuilder {
     }
   }
 
-  def buildCallFunc(callFunc: TmplCallFunc, context: Context): Either[ExecError, TmplCallFunc] = {
+ /* def buildCallFunc(callFunc: TmplCallFunc, context: Context): Either[ExecError, TmplCallFunc] = {
     if (callFunc.currying.isDefined) {
       buildCallCurryParams(callFunc.currying.get, context) match {
         case Left(error) => Left(error)
@@ -91,9 +91,9 @@ object TemplateBuilder {
           Right(callFunc)
       }
     } else Right(callFunc)
-  }
+  }*/
 
-  def buildCallCurryParams(curryParams: List[TmplCurryParam], context: Context): Either[ExecError, List[TmplCurryParam]] = {
+  /*def buildCallCurryParams(curryParams: List[TmplCurryParam], context: Context): Either[ExecError, List[TmplCurryParam]] = {
     forEach(curryParams, context) match {
       case Left(error) => Left(error)
       case Right(value) => Right(value.asInstanceOf[List[TmplCurryParam]])
@@ -101,14 +101,19 @@ object TemplateBuilder {
   }
 
   def buildCallCurry(curry: TmplCurryParam, context: Context): Either[ExecError, TmplCurryParam] = {
-    if (curry.params.isDefined) {
-      forEach(curry.params.get, context) match {
-        case Left(error) => Left(error)
-        case Right(params) =>
-          curry.params = Some(params.asInstanceOf[List[TmplSetAttribute]])
-          Right(curry)
-      }
-    } else Right(curry)
+    buildCallCurryParamType(curry.params, context) match {
+      case Left(error) => Left(error)
+      case Right(value) => curry.params = value
+        Right(curry)
+    }
+  }*/
+
+  def buildCallCurryParamType(params: List[TmplCallFuncParam], context: Context): Either[ExecError, List[TmplCallFuncParam]] = {
+    forEach(params, context) match {
+      case Left(error) => Left(error)
+      case Right(params) =>
+        Right(params.asInstanceOf[List[TmplCallFuncParam]])
+    }
   }
 
   def buildSetAttribute(setAttribute: TmplSetAttribute, context: Context): Either[ExecError, TmplSetAttribute] = {
@@ -396,8 +401,8 @@ object TemplateBuilder {
     node match {
       case entity: TmplEntityValue => toList(EntityBuilder.buildEntity(entity, context))
       case impl: TmplImpl => toList(ImplBuilder.buildImpl(impl, context))
-      case callFunc: TmplCallFunc => toList(buildCallFunc(callFunc, context))
-      case curry: TmplCurryParam => toList(buildCallCurry(curry, context))
+//      case callFunc: TmplCallFunc => toList(buildCallFunc(callFunc, context))
+//      case curry: TmplCurryParam => toList(buildCallCurry(curry, context))
       case setAttr: TmplSetAttribute => toList(buildSetAttribute(setAttr, context))
       case callObject: TmplCallObj => toList(buildCallObject(callObject, context))
       case tmplType: TmplType => toList(buildType(tmplType, context))

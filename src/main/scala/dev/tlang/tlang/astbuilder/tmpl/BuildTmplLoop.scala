@@ -1,4 +1,4 @@
-package dev.tlang.tlang.astbuilder
+package dev.tlang.tlang.astbuilder.tmpl
 
 import dev.tlang.tlang.TLangParser.{TmplDoWhileContext, TmplWhileContext}
 import dev.tlang.tlang.ast.tmpl.loop.{TmplDoWhile, TmplWhile}
