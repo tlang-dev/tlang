@@ -1,9 +1,13 @@
 package dev.tlang.tlang.libraries
 
 import dev.tlang.tlang.ast.helper.{HelperBlock, HelperFunc}
+import dev.tlang.tlang.ast.model.set.ModelSetEntity
+import dev.tlang.tlang.ast.model.{ModelBlock, ModelContent}
 import dev.tlang.tlang.ast.{DomainExpose, DomainHeader, DomainModel}
 import dev.tlang.tlang.loader.manifest.{Dependency, Manifest}
 import dev.tlang.tlang.loader.{Module, Resource}
+
+import scala.collection.mutable.ListBuffer
 
 abstract class ModulePattern {
 
@@ -20,21 +24,32 @@ abstract class ModulePattern {
   def getDependencies: Option[List[Dependency]] = None
 
 
-  def getMainResource: Resource = {
+  private def getMainResource: Resource = {
     Resource("", "", "", "Main", DomainModel(None, Some(DomainHeader(None, Some(exposeFunctions), None)), List(
-      HelperBlock(None, Some(getFunctions))
+      HelperBlock(None, Some(getFunctions)),
+      ModelBlock(None, getModelContent)
     )))
   }
 
-  def exposeFunctions: List[DomainExpose] = {
-    getFunctions.map(func => DomainExpose(None, func.name))
+  private def getModelContent: Option[List[ModelContent[_]]] = {
+    if (getModels.nonEmpty) Some(getModels)
+    else None
   }
 
-  def getResources: Map[String, Resource] = Map("Main" -> getMainResource)
+  def getModels: List[ModelContent[_]]
 
-  def getExternalResources: Option[Map[String, Module]] = None
+  private def exposeFunctions: List[DomainExpose] = {
+    val exposes = ListBuffer.empty[DomainExpose]
+    exposes ++= getFunctions.map(func => DomainExpose(None, func.name))
+    if (getModelContent.isDefined) exposes ++= getModelContent.get.filter(_.isInstanceOf[ModelSetEntity]).map(entity => DomainExpose(None, entity.asInstanceOf[ModelSetEntity].name))
+    exposes.toList
+  }
 
-  def getManifest: Manifest = {
+  private def getResources: Map[String, Resource] = Map("Main" -> getMainResource)
+
+  private def getExternalResources: Option[Map[String, Module]] = None
+
+  private def getManifest: Manifest = {
     Manifest(getName, getProject, Modules.organisation, Modules.version, Some(Modules.stability), Modules.releaseNumber, getDependencies)
   }
 

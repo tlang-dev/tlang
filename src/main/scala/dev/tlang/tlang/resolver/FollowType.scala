@@ -24,14 +24,15 @@ object FollowType {
     else Right(())
   }
 
-  def findInside(context: Option[ContextContent], preType: Option[String], name: String)(module: Module, uses: List[DomainUse], scope: Scope, currentResource: Resource): Either[List[ResolverError], Unit] = {
+  def findInside(context: Option[ContextContent], preType: Option[String], name: String, addPreType: Option[String] = None)(module: Module, uses: List[DomainUse], scope: Scope, currentResource: Resource): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
     if (preType.isEmpty) {
       browseModel(name, currentResource) match {
         case Left(err) => errors.addAll(err)
         case Right(value) => value match {
           case Some(value) =>
-            addModelInScope(name, value, List(), scope)
+            val newName = if (addPreType.isDefined) addPreType.get + "." + name else name
+            addModelInScope(newName, value, List(), scope)
           case None => errors.addOne(ResourceNotFound(context, name))
         }
       }
@@ -48,7 +49,7 @@ object FollowType {
           case None =>
             errors.addOne(ResourceNotFound(use.context, use.parts.mkString("/")))
           case Some(resource) =>
-            findInside(context, None, name)(module, uses, scope, resource)
+            findInside(context, None, name, Some(preType))(module, uses, scope, resource)
         }
       }
     })

@@ -1,6 +1,7 @@
 package dev.tlang.tlang.libraries.tio.file
 
 import dev.tlang.tlang.ast.helper.HelperFunc
+import dev.tlang.tlang.ast.model.ModelContent
 import dev.tlang.tlang.libraries.ModulePattern
 
 object IOFileModule extends ModulePattern {
@@ -12,4 +13,6 @@ object IOFileModule extends ModulePattern {
   override def getFunctions: List[HelperFunc] = List(
     IOFile.writeFunc
   )
+
+  override def getModels: List[ModelContent[_]] = List()
 }

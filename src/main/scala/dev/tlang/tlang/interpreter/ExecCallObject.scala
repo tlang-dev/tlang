@@ -1,7 +1,7 @@
 package dev.tlang.tlang.interpreter
 
 import dev.tlang.tlang.ast.common.ValueType
-import dev.tlang.tlang.ast.common.call.{CallFuncObject, CallObject, CallObjectType, CallVarObject, _}
+import dev.tlang.tlang.ast.common.call._
 import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value._
 import dev.tlang.tlang.ast.helper.{HelperFunc, HelperStatement}
@@ -13,12 +13,14 @@ import dev.tlang.tlang.interpreter.context.{Context, ContextUtils, Scope}
 
 import scala.annotation.tailrec
 import scala.collection.mutable
+import scala.collection.mutable.ListBuffer
 
 object ExecCallObject extends Executor {
 
   override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
     val arg1 = statement.asInstanceOf[CallObject]
     loopOverStatement(arg1.statements, context)
+   // runIfOperation(loopOverStatement(arg1.statements, context), context)
   }
 
   @tailrec
@@ -142,16 +144,21 @@ object ExecCallObject extends Executor {
 
   }
 
-  @tailrec
-  def resolveArrayInCallable(call: CallArrayObject, callable: Option[List[Value[_]]], context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+//  @tailrec
+  private def resolveArrayInCallable(call: CallArrayObject, callable: Option[List[Value[_]]], context: Context): Either[ExecError, Option[List[Value[_]]]] = {
     pickFirst(callable) match {
       case Left(error) => Left(error)
       case Right(value) => value match {
         case impl: EntityImpl => findInImpl(call.name, impl, context) match {
           case Left(err) => Left(err)
-          case Right(array) => resolveArrayInCallable(call, array, context)
+          case Right(array) => runIfOperation(resolveArrayInCallable(call, array, context),context)
         }
         case array: ArrayValue => resolveArray(call.position, array, context)
+        case entityValue: EntityValue =>
+          findInEntity(call.name, entityValue, context, call) match {
+            case Left(_) => Left(CallableNotFound(call.name, entityValue.getContext))
+            case Right(array) => runIfOperation(resolveArrayInCallable(call, array, context),context)
+          }
       }
     }
   }
@@ -251,19 +258,19 @@ object ExecCallObject extends Executor {
     }
   }
 
-  def execFuncWithCaller(newCaller: CallFuncObject, func: HelperFunc, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+  private def execFuncWithCaller(newCaller: CallFuncObject, func: HelperFunc, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
     val newScope = Scope(functions = mutable.Map(newCaller.name.get -> func))
     val newContext = Context(context.scopes :+ newScope)
     ExecCallFunc.run(newCaller, newContext)
   }
 
-  def execRefFuncWithCaller(newCaller: CallFuncObject, refFunc: CallRefFuncObject, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+  private def execRefFuncWithCaller(newCaller: CallFuncObject, refFunc: CallRefFuncObject, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
     val newScope = Scope(refFunctions = mutable.Map(newCaller.name.get -> refFunc))
     val newContext = Context(context.scopes :+ newScope)
     ExecCallFunc.run(newCaller, newContext)
   }
 
-  def execFuncInEntity(caller: CallFuncObject, entity: EntityValue, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+  private def execFuncInEntity(caller: CallFuncObject, entity: EntityValue, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
     findInEntity(caller.name.get, entity, Context(List(entity.scope)), caller) match {
       case Left(error) => Left(error)
       case Right(value) =>
@@ -277,9 +284,27 @@ object ExecCallObject extends Executor {
     }
   }
 
-  def pickFirst(callable: Option[List[Value[_]]]): Either[ExecError, Value[_]] = {
+  private def pickFirst(callable: Option[List[Value[_]]]): Either[ExecError, Value[_]] = {
     if (callable.isDefined && callable.get.nonEmpty) Right(callable.get.head)
     else Left(CallableNotFound("It's empty"))
+  }
+
+  private def runIfOperation(result: Either[ExecError, Option[List[Value[_]]]], context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+    var error: Option[ExecError] = None
+    val values = ListBuffer.empty[Value[_]]
+    result match {
+      case Left(err) => error = Some(err)
+      case Right(value) => value.map(instr => instr.map {
+        case operation: Operation => ExecOperation.run(operation, context) match {
+          case Left(err) => error = Some(err)
+          case Right(value) => if (value.isDefined) values.addAll(value.get)
+        }
+        case _ => values.addOne(_)
+      })
+    }
+    if (error.isDefined) Left(error.get)
+    else if (values.isEmpty) Right(None)
+    else Right(Some(values.toList))
   }
 
 }

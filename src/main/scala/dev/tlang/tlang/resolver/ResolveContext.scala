@@ -8,6 +8,7 @@ import dev.tlang.tlang.ast.model.ModelBlock
 import dev.tlang.tlang.ast.tmpl.{TmplBlock, TmplBlockAsValue}
 import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.interpreter.context.{Context, Scope}
+import dev.tlang.tlang.libraries.Modules
 import dev.tlang.tlang.loader.{BuildModuleTree, Module, Resource}
 import dev.tlang.tlang.resolver.checker.CheckExistingElement
 
@@ -17,25 +18,27 @@ object ResolveContext {
 
   def resolveContext(module: Module): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
-    module.extResources.foreach(_.foreach(module => resolveContext(module._2)))
-    module.resources.foreach(resource => {
-      val ast = resource._2.ast
-      val uses: List[DomainUse] = ast.header match {
-        case None => List()
-        case Some(header) => header.uses.getOrElse(List())
-      }
+    if (!module.manifest.organisation.equals(Modules.organisation)) {
+      module.extResources.foreach(_.foreach(module => resolveContext(module._2)))
+      module.resources.foreach(resource => {
+        val ast = resource._2.ast
+        val uses: List[DomainUse] = ast.header match {
+          case None => List()
+          case Some(header) => header.uses.getOrElse(List())
+        }
 
-      CheckExistingElement.checkExistingElement(resource._2) match {
-        case Left(errs) => errors.addAll(errs)
-        case Right(_) =>
-          ast.body.foreach {
-            case HelperBlock(_, funcs) => funcs.foreach(func => extractErrors(errors, BrowseFunc.resolveFuncs(func, module, uses, resource._2)))
-            case model: ModelBlock => extractErrors(errors, ResolveModel.resolveModel(model, module, uses, resource._2))
-            case block: TmplBlock => extractErrors(errors, ResolveTmpl.resolveTmpl(block, module, uses, resource._2))
-            case _ => Right(())
-          }
-      }
-    })
+        CheckExistingElement.checkExistingElement(resource._2) match {
+          case Left(errs) => errors.addAll(errs)
+          case Right(_) =>
+            ast.body.foreach {
+              case HelperBlock(_, funcs) => funcs.foreach(func => extractErrors(errors, BrowseFunc.resolveFuncs(func, module, uses, resource._2)))
+              case model: ModelBlock => extractErrors(errors, ResolveModel.resolveModel(model, module, uses, resource._2))
+              case block: TmplBlock => extractErrors(errors, ResolveTmpl.resolveTmpl(block, module, uses, resource._2))
+              case _ => Right(())
+            }
+        }
+      })
+    }
     if (errors.nonEmpty) Left(errors.toList)
     else Right(())
   }
@@ -106,7 +109,7 @@ object ResolveContext {
       case Left(error) => Left(error)
       case Right(value) => if (value.isDefined) {
         addValueInScope(lastName, value.get, previousNames, scope)
-      } else Left(List(ResourceNotFound(value.get.getContext, if (previousNames.nonEmpty) BuildModuleTree.createPkg(previousNames.mkString("/"), lastName) else lastName)))
+      } else Left(List(ResourceNotFound(None, if (previousNames.nonEmpty) BuildModuleTree.createPkg(previousNames.mkString("/"), lastName) else lastName)))
     }
   }
 

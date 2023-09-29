@@ -39,7 +39,7 @@ object BuildLang {
       Some(ObjType(context, None, TmplLangAst.langPkg.name)),
       Some(List(
         ComplexAttribute(context, Some("parts"),
-          None, Operation(context, None, Right(ArrayValue(context, Some(pkg.parts.asScala.toList.map(part => ComplexAttribute(context, None, None, Operation(context, None, Right(new TLangString(context, part.toString)))))))))
+          None, Operation(context, None, Right(ArrayValue(context, Some(pkg.parts.asScala.toList.map(part => ComplexAttribute(context, None, None, Operation(context, None, Right(new TLangString(context, part.getText)))))))))
         ))
       ))
   }

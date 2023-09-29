@@ -4,6 +4,7 @@ import dev.tlang.tlang.ast.DomainUse
 import dev.tlang.tlang.ast.common.call.{CallFuncParam, CallObject, ComplexValueStatement}
 import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value.{ArrayValue, AssignVar, EntityValue, MultiValue}
+import dev.tlang.tlang.ast.common.{ObjType, ValueType}
 import dev.tlang.tlang.ast.helper.{HelperFor, HelperFunc, HelperIf, HelperStatement}
 import dev.tlang.tlang.ast.tmpl.TmplBlockAsValue
 import dev.tlang.tlang.interpreter.context.Scope
@@ -40,7 +41,20 @@ object BrowseHelperStatement {
   }
 
   def browseAssignVar(assignVar: AssignVar, module: loader.Module, uses: List[DomainUse], scope: Scope, currentResource: Resource): Either[List[ResolverError], Unit] = {
-    browseStatement(assignVar.value, module, uses, scope, currentResource)
+    assignVar.value.content match {
+      case Left(_) => browseStatement(assignVar.value, module, uses, scope, currentResource)
+      case Right(value) => value match {
+        case entityValue: EntityValue => entityValue.`type` = assignVar.`type`
+          browseStatement(assignVar.value, module, uses, scope, currentResource)
+        case _ => browseStatement(assignVar.value, module, uses, scope, currentResource)
+      }
+    }
+  }
+
+  def cleanType(valType: Option[ObjType]): Option[ValueType] = {
+    if (valType.isDefined && valType.get.preType.isDefined)
+      Some(ObjType(valType.get.context, None, valType.get.name))
+    else valType
   }
 
   def browseIf(helperIf: HelperIf, module: loader.Module, uses: List[DomainUse], scope: Scope, currentResource: Resource): Either[List[ResolverError], Unit] = {
