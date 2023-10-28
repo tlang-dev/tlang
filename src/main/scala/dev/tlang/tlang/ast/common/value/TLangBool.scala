@@ -15,15 +15,15 @@ class TLangBool(context: Option[ContextContent], value: Boolean) extends Primiti
 
   override def getContext: Option[ContextContent] = context
 
-  override def add(value: PrimitiveValue[Boolean]): Either[ExecError, TLangBool] = Left(NotImplemented())
+  override def add(value: PrimitiveValue[Boolean]): Either[ExecError, TLangBool] = Left(NotImplemented(context = context))
 
-  override def subtract(value: PrimitiveValue[Boolean]): Either[ExecError, TLangBool] = Left(NotImplemented())
+  override def subtract(value: PrimitiveValue[Boolean]): Either[ExecError, TLangBool] = Left(NotImplemented(context = context))
 
-  override def multiply(value: PrimitiveValue[Boolean]): Either[ExecError, TLangBool] = Left(NotImplemented())
+  override def multiply(value: PrimitiveValue[Boolean]): Either[ExecError, TLangBool] = Left(NotImplemented(context = context))
 
-  override def divide(value: PrimitiveValue[Boolean]): Either[ExecError, TLangBool] = Left(NotImplemented())
+  override def divide(value: PrimitiveValue[Boolean]): Either[ExecError, TLangBool] = Left(NotImplemented(context = context))
 
-  override def modulo(value: PrimitiveValue[Boolean]): Either[ExecError, TLangBool] = Left(NotImplemented())
+  override def modulo(value: PrimitiveValue[Boolean]): Either[ExecError, TLangBool] = Left(NotImplemented(context = context))
 
   override def deepCopy(): TLangBool = new TLangBool(context, value.booleanValue())
 }

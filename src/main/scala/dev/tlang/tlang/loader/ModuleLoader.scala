@@ -22,7 +22,10 @@ object ModuleLoader {
       }
     }
 
-    searchLocalRepo(dependency) match {
+    if (dependency.dir.isDefined) {
+
+      BuildModuleTree.build(Paths.get(dependency.dir.get), cacheId)
+    } else searchLocalRepo(dependency) match {
       case Left(error) => Left(error)
       case Right(value) => value match {
         case Some(tBag) => callExtractTBag(tBag)
@@ -38,7 +41,7 @@ object ModuleLoader {
   }
 
   def loadModuleInCache(tBag: Path, cacheId: String)(implicit resourceLoader: ResourceLoader, remote: RemoteLoader, tBagManager: TBagManager): Either[LoaderError, Module] = {
-    BuildModuleTree.build(tBag, None, cacheId)
+    BuildModuleTree.build(tBag, cacheId)
   }
 
   def searchLocalRepo(dependency: Dependency)(implicit tBagManager: TBagManager): Either[LoaderError, Option[Path]] = {

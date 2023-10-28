@@ -50,7 +50,7 @@ abstract class ModulePattern {
   private def getExternalResources: Option[Map[String, Module]] = None
 
   private def getManifest: Manifest = {
-    Manifest(getName, getProject, Modules.organisation, Modules.version, Some(Modules.stability), Modules.releaseNumber, getDependencies)
+    Manifest(getName, getProject, Modules.organisation, Modules.version, Some(Modules.stability), Modules.releaseNumber, None, getDependencies)
   }
 
   def getModule: Module = Module("", getManifest, getResources, getExternalResources, "Main")

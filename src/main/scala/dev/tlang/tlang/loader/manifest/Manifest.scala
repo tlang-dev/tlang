@@ -7,5 +7,6 @@ case class Manifest(
                      version: String,
                      stability: Option[Stability.stability],
                      releaseNumber: Int,
+                     main: Option[String],
                      dependencies: Option[List[Dependency]],
                    )

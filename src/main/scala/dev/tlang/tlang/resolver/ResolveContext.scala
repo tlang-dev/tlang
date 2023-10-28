@@ -63,7 +63,9 @@ object ResolveContext {
                 case Some(expose) => addInScope(expose.name, findInResource(resource, statements(nextStatement)), previousNames, scope)
                 case None => Left(List(new ResolverError("Value is not exposed: " + objName)))
               }
-              case None => Right(None)
+              case None =>
+                println("Verify if you have exposed the element")
+                Right(None)
             }
             case None => Right(None)
           }

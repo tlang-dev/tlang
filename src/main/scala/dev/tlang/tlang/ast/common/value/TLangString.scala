@@ -17,13 +17,13 @@ class TLangString(context: Option[ContextContent], value: String) extends Primit
 
   override def add(value: PrimitiveValue[String]): Either[ExecError, TLangString] = Right(new TLangString(None, this.value + value.getElement))
 
-  override def subtract(value: PrimitiveValue[String]): Either[ExecError, TLangString] = Left(NotImplemented())
+  override def subtract(value: PrimitiveValue[String]): Either[ExecError, TLangString] = Left(NotImplemented(context = context))
 
-  override def multiply(value: PrimitiveValue[String]): Either[ExecError, TLangString] = Left(NotImplemented())
+  override def multiply(value: PrimitiveValue[String]): Either[ExecError, TLangString] = Left(NotImplemented(context = context))
 
-  override def divide(value: PrimitiveValue[String]): Either[ExecError, TLangString] = Left(NotImplemented())
+  override def divide(value: PrimitiveValue[String]): Either[ExecError, TLangString] = Left(NotImplemented(context = context))
 
-  override def modulo(value: PrimitiveValue[String]): Either[ExecError, TLangString] = Left(NotImplemented())
+  override def modulo(value: PrimitiveValue[String]): Either[ExecError, TLangString] = Left(NotImplemented(context = context))
 
   override def deepCopy(): TLangString = new TLangString(context, new String(value))
 }

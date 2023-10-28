@@ -20,7 +20,7 @@ object RunMain {
     //    val newName = name.split(File.separator).mkString("/")
     val uuid = randomUUID().toString
     //BuildModuleTree.build(Paths.get(parts.slice(0, parts.size - 1).mkString(File.separator)), Some(parts.last)) match {
-    BuildModuleTree.build(new File(name).toPath, None, uuid) match {
+    BuildModuleTree.build(new File(name).toPath, uuid) match {
       case Left(error) => println("Error while loading the program (" + error.code + "): " + error.message)
       case Right(module) => runMainFile(module)
     }

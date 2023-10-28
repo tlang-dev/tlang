@@ -1,9 +1,8 @@
 package dev.tlang.tlang.loader.manifest
 
-import java.util
-
 import org.snakeyaml.engine.v2.api.{Load, LoadSettings}
 
+import java.util
 import scala.jdk.CollectionConverters._
 
 object ManifestLoader {
@@ -27,6 +26,7 @@ object ManifestLoader {
       elems.getOrElse("version", "").asInstanceOf[String],
       extractStability(elems),
       elems.getOrElse("releaseNumber", 1).asInstanceOf[Int],
+      getMain(elems),
       getDependencies(elems),
     )
   }
@@ -45,6 +45,10 @@ object ManifestLoader {
     }
   }
 
+  def getMain(elems: Map[String, _]): Option[String] = {
+    if (elems.contains("main")) Some(elems("main").asInstanceOf[String]) else None
+  }
+
   def getDependencies(elems: Map[String, _]): Option[List[Dependency]] = {
     if (elems.contains("dependencies")) {
       val deps = elems("dependencies").asInstanceOf[util.ArrayList[String]].asScala.toList
@@ -57,6 +61,9 @@ object ManifestLoader {
     val names = parts(0).split("/")
     val versions = parts(1).split(":")
     val alias = parts(2)
+    val dir =
+      if (dependency.contains("[")) Some(dependency.substring(dependency.indexOf("[") + 1, dependency.indexOf("]")))
+      else None
     Dependency(
       names(0),
       names(1),
@@ -64,7 +71,8 @@ object ManifestLoader {
       versions(0),
       getStability(versions(1)).getOrElse(Stability.FINAL),
       versions(2).toInt,
-      Some(alias)
+      Some(alias),
+      dir
     )
   }
 

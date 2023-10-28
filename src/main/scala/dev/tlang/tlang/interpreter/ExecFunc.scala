@@ -6,8 +6,9 @@ import dev.tlang.tlang.interpreter.context.Context
 object ExecFunc extends Executor {
   override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
     val funcStatement = statement.asInstanceOf[HelperFunc]
+    val newContext = Context(context.scopes :+ funcStatement.scope)
     if (funcStatement.block.content.isDefined) {
-      ExecContent.run(funcStatement.block, context)
+      ExecContent.run(funcStatement.block, newContext)
     } else Right(None)
   }
 

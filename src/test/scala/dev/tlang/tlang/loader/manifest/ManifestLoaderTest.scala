@@ -75,4 +75,16 @@ class ManifestLoaderTest extends AnyFunSuite {
     assert("myProgram" == dependency.alias.get)
   }
 
+  test("Get dependency with dir") {
+    val dependency = ManifestLoader.getDependency("MyOrganisation/MyProject/MyProgram 1.33.7:alpha:2 myProgram [/home/Elvis/MyProject]")
+    assert("MyProgram" == dependency.name)
+    assert("MyProject" == dependency.project)
+    assert("MyOrganisation" == dependency.organisation)
+    assert("1.33.7" == dependency.version)
+    assert(Stability.ALPHA == dependency.stability)
+    assert(2 == dependency.releaseNumber)
+    assert("myProgram" == dependency.alias.get)
+    assert("/home/Elvis/MyProject" == dependency.dir.get)
+  }
+
 }

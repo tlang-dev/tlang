@@ -69,7 +69,7 @@ object ExecModelSetRef extends Executor {
           else Right(SetAttribute(setRef.context, None, Operation(setRef.context, None, Right(EmbeddedValue(setRef.context, value.get.head)))))
       }
       case operation: Operation => Right(SetAttribute(operation.context, None, operation))
-      case _ => Left(NotImplemented("Should be a ref or an operation"))
+      case _ => Left(NotImplemented("Should be a ref or an operation", None))
     }
   }
 }

@@ -10,11 +10,12 @@ object ExecAssignVar extends Executor {
     val varStatement = statement.asInstanceOf[AssignVar]
 
     ExecOperation.run(varStatement.value, context) match {
-      case Left(error) => Left(error)
+      case Left(error) =>
+        Left(error)
       case Right(value) => value match {
-        case None => Left(NoValue("Value to assign was empty"))
+        case None => Left(NoValue("Value to assign was empty", varStatement.context))
         case Some(value) =>
-          if (value.isEmpty) Left(NoValue("Value to assign was empty"))
+          if (value.isEmpty) Left(NoValue("Value to assign was empty", varStatement.context))
           else if (value.size == 1) {
             context.scopes.last.variables.addOne(varStatement.name -> value.head)
             Right(Some(List(value.head)))

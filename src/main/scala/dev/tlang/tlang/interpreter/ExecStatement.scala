@@ -15,7 +15,9 @@ object ExecStatement extends Executor {
       case stmt: HelperFor => ExecFor.run(stmt, context)
       case stmt: HelperFunc => ExecFunc.run(stmt, Context(List(stmt.scope)))
       case stmt: Operation => ExecOperation.run(stmt, context)
-      case stmt: HelperInternalFunc => ExecInternalFunc.run(stmt, context)
+      case stmt: HelperInternalFunc =>
+        val newContext = Context(context.scopes :+ stmt.scope)
+        ExecInternalFunc.run(stmt, newContext)
       case stmt: AssignVar => ExecAssignVar.run(stmt, context)
       case stmt: PrimitiveValue[_] => ExecPrimitiveValue.run(stmt, context)
       case stmt: MultiValue => ExecMultiValue.run(stmt, context)

@@ -2,23 +2,28 @@ package dev.tlang.tlang.interpreter
 
 import dev.tlang.tlang.astbuilder.context.ContextContent
 
-class ExecError(val code: String, val message: String = "", context: Option[ContextContent] = None) {
-  override def toString: String = "[" + code + "] " + message
+class ExecError(val code: String, val message: String = "", context: Option[ContextContent]) {
+  override def toString: String = {
+    var msg = ""
+    if (context.isDefined) msg += context.get.resource.toString + "[line:" + context.get.line + ", pos:" + context.get.charPos + "]\n"
+    msg += "[" + code + "] " + message
+    msg
+  }
 }
 
-case class CallableNotFound(name: String, context: Option[ContextContent] = None) extends ExecError(name, "Callable not found in context or inside another callable", context)
+case class CallableNotFound(name: String, context: Option[ContextContent]) extends ExecError(name, "Callable not found in context or inside another callable", context)
 
-case class NotImplemented(msg: String = "", context: Option[ContextContent] = None) extends ExecError("NotImplemented", msg, context)
+case class NotImplemented(msg: String = "", context: Option[ContextContent]) extends ExecError("NotImplemented", msg, context)
 
-case class NotACondition(context: Option[ContextContent] = None) extends ExecError("NotACondition", context = context)
+case class NotACondition(context: Option[ContextContent]) extends ExecError("NotACondition", context = context)
 
-case class WrongType(types: String, context: Option[ContextContent] = None) extends ExecError("WrongType", types, context)
+case class WrongType(types: String, context: Option[ContextContent]) extends ExecError("WrongType", types, context)
 
-case class WrongNumberOfArguments(error: String, context: Option[ContextContent] = None) extends ExecError("WrongNumberOfArguments", error, context)
+case class WrongNumberOfArguments(error: String, context: Option[ContextContent]) extends ExecError("WrongNumberOfArguments", error, context)
 
-case class NoValue(error: String, context: Option[ContextContent] = None) extends ExecError("NoValue", error, context)
+case class NoValue(error: String, context: Option[ContextContent]) extends ExecError("NoValue", error, context)
 
-case class ElementNotFound(error: String, context: Option[ContextContent] = None) extends ExecError("ElementNotFound", error, context)
+case class ElementNotFound(error: String, context: Option[ContextContent]) extends ExecError("ElementNotFound", error, context)
 
-case class WrongValueReturned(msg:String, context: Option[ContextContent] = None) extends ExecError("WrongValueReturned", msg, context)
+case class WrongValueReturned(msg: String, context: Option[ContextContent]) extends ExecError("WrongValueReturned", msg, context)
 

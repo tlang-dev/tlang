@@ -37,7 +37,8 @@ object Generator {
       HelperInternalFunc((context: Context) => {
         ContextUtils.findVar(context, "block") match {
           case Some(block) => generate(block.asInstanceOf[TmplBlockAsValue], context) match {
-            case Left(error) => Right(Some(List(new TLangString(None, error.toString))))
+            case Left(error) =>
+              Right(Some(List(new TLangString(None, error.toString))))
             case Right(value) => Right(Some(List(value)))
           }
           case None => Right(Some(List(new TLangString(None, ""))))
@@ -62,9 +63,9 @@ object Generator {
         case Right(results) =>
           if (results.isDefined && results.get.nonEmpty && results.get.head.isInstanceOf[TLangString])
             Right(results.get.head.asInstanceOf[TLangString])
-          else Left(NoValue("No value or wrong value returned when generating the language"))
+          else Left(NoValue("No value or wrong value returned when generating the language",block.block.context))
       }
-      case None => Left(ElementNotFound("Could not find a generator for this language: " + block.block.lang))
+      case None => Left(ElementNotFound("Could not find a generator for this language: " + block.block.lang, block.block.context))
     }
   }
 

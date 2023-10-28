@@ -31,12 +31,12 @@ object ExecMultiValue extends Executor {
     else Right(Some(values.toList))
   }
 
-  def convertValues(value: Option[List[Value[_]]]): Either[ExecError, Value[_]] = {
+  private def convertValues(value: Option[List[Value[_]]]): Either[ExecError, Value[_]] = {
     value match {
-      case Some(v) => if (v.isEmpty) Left(NoValue("No value found"))
+      case Some(v) => if (v.isEmpty) Left(NoValue("No value found", None))
       else if (v.size == 1) Right(v.head)
       else Right(MultiValue(None, v))
-      case None => Left(NoValue("No value found"))
+      case None => Left(NoValue("No value found", None))
     }
   }
 

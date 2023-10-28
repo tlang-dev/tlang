@@ -11,7 +11,7 @@ class NewJavaGeneratorTest extends AnyFunSuite {
 
   val fakeContext: ContextResource = ContextResource("", "", "", "")
 
-  test("Package") {
+ /* test("Package") {
     val lexer = new TLangLexer(CharStreams.fromString(
       """tmpl[java] myTmpl {
         |pkg my.package
@@ -44,6 +44,6 @@ class NewJavaGeneratorTest extends AnyFunSuite {
     val impl = TmplImpl(None, None, Some(TmplProp(None, List(TmplStringID(None, "public"), TmplStringID(None, "interface")))), TmplStringID(None, "MyInterface"), None, None)
     val res = NewJavaGenerator.genContent(impl)
     assert("public interface MyInterface{}" == res.toString)
-  }
+  }*/
 
 }

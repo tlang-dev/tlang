@@ -25,7 +25,7 @@ class ExecCallFuncTest extends AnyFunSuite {
   }
 
   test("Call template without parameters") {
-    val block = TmplBlock(None, "myBlock", "scala", None, Some(new TmplPkg(List(TmplStringID(None, "myPackage")))))
+    val block = TmplBlock(None, "myBlock", "scala", None, Some(TmplPkg(None, List(TmplStringID(None, "myPackage")))))
     val tmplCaller = CallFuncObject(None, Some("myTmpl"), None)
     val context = Context(List(Scope(templates = mutable.Map("myTmpl" -> block))))
     val res = ExecCallFunc.run(tmplCaller, context).toOption.get.get.head.asInstanceOf[TmplBlockAsValue]
@@ -33,7 +33,7 @@ class ExecCallFuncTest extends AnyFunSuite {
   }
 
   test("Call template with parameters") {
-    val block = TmplBlock(None, "myBlock", "scala", Some(List(HelperParam(None, Some("var1"), ObjType(None, None, "String")))), Some(new TmplPkg(List(TmplStringID(None, "myPackage")))))
+    val block = TmplBlock(None, "myBlock", "scala", Some(List(HelperParam(None, Some("var1"), ObjType(None, None, "String")))), Some(TmplPkg(None, List(TmplStringID(None, "myPackage")))))
     val caller = SetAttribute(None, value = Operation(None, None, Right(CallObject(None, List(CallVarObject(None, "var1"))))))
     val tmplCaller = CallFuncObject(None, Some("myTmpl"), Some(List(CallFuncParam(None, Some(List(caller))))))
     val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangString(None, "MyValue")), templates = mutable.Map("myTmpl" -> block))))

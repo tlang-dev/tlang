@@ -37,7 +37,7 @@ object ExecCallFunc extends Executor {
             //                          val newContext = manageTmplParameters(newCaller, tmpl, context)
             //                          Right(Some(List(TmplBlockAsValue(tmpl.copy(), newContext))))
             //                      }
-            case None => Left(CallableNotFound(caller.name.get))
+            case None => Left(CallableNotFound(caller.name.get, caller.context))
           }
       }
     }

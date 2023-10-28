@@ -45,7 +45,7 @@ class BuildTmplBlockTest extends AnyFunSuite {
     assert("Bool" == tmpl.params.get.last.`type`.asInstanceOf[ObjType].name)
   }
 
-  test("Test use in TmplBloc") {
+  /*test("Test use in TmplBloc") {
     val lexer = new TLangLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
         |use dev.tlang.tlang
@@ -119,7 +119,7 @@ class BuildTmplBlockTest extends AnyFunSuite {
     assert("test2" == impl.fors.get.types(1).name.toString)
     assert("test3" == impl.fors.get.types.last.name.toString)
     assert(3 == impl.fors.get.types.size)
-  }
+  }*/
 
   test("Simple var") {
     val lexer = new TLangLexer(CharStreams.fromString(

@@ -20,7 +20,6 @@ object ExecCallObject extends Executor {
   override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
     val arg1 = statement.asInstanceOf[CallObject]
     loopOverStatement(arg1.statements, context)
-   // runIfOperation(loopOverStatement(arg1.statements, context), context)
   }
 
   @tailrec
@@ -56,7 +55,7 @@ object ExecCallObject extends Executor {
               val tmplCopy = tmpl.deepCopy()
               val newContext = manageTmplParameters(func, tmplCopy, context)
               Right(Some(List(TmplBlockAsValue(tmplCopy.getContext, tmplCopy, Context(newContext.scopes :+ tmplCopy.scope)))))
-            case None => Left(CallableNotFound(name))
+            case None => Left(CallableNotFound(name, func.context))
           }
         }
       case variable: CallVarObject => findVar(callVar.name + "/" + variable.name, context)
@@ -66,14 +65,14 @@ object ExecCallObject extends Executor {
 
   private def findInContext(statement: CallObjectType, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
     statement match {
-      case CallArrayObject(None, name, position) => ContextUtils.findVar(context, name) match {
+      case CallArrayObject(contextContent, name, position) => ContextUtils.findVar(context, name) match {
         case Some(array) => resolveArray(position, array.asInstanceOf[ArrayValue], context)
-        case None => Left(CallableNotFound(name))
+        case None => Left(CallableNotFound(name, contextContent))
       }
       case caller: CallFuncObject => ExecCallFunc.run(caller, context)
       case refFunc: CallRefFuncObject => Right(Some(List(refFunc)))
       case CallVarObject(_, name) => findVar(name, context)
-      case _ => Left(NotImplemented())
+      case _ => Left(NotImplemented(context = None))
     }
   }
 
@@ -84,7 +83,7 @@ object ExecCallObject extends Executor {
           case operation: Operation => ExecOperation.run(operation, context)
           case _ => Right(Some(List(value)))
         }
-      case None => Left(CallableNotFound(name))
+      case None => Left(CallableNotFound(name, None))
     }
   }
 
@@ -94,7 +93,7 @@ object ExecCallObject extends Executor {
       case caller: CallFuncObject => resolveFunc(caller, callable, context)
       case refFunc: CallRefFuncObject => Right(Some(List(refFunc)))
       case CallVarObject(_, name) => resolveCallVar(name, callable, context, statement)
-      case _ => Left(NotImplemented())
+      case _ => Left(NotImplemented(context = None))
     }
   }
 
@@ -118,8 +117,8 @@ object ExecCallObject extends Executor {
           case str: TLangString =>
             val callRes = array.find(elem => elem.attr.isDefined && elem.attr.get.equals(str.getElement))
             if (callRes.isDefined) Right(Some(List(callRes.get.value)))
-            else Left(CallableNotFound(posValue.getElement.toString))
-          case _ => Left(WrongType("Should be Int or String instead of " + posValue.getType))
+            else Left(CallableNotFound(posValue.getElement.toString, posValue.getContext))
+          case _ => Left(WrongType("Should be Int or String instead of " + posValue.getType, posValue.getContext))
 
         }
         case None => Left(CallableNotFound("position", array.context))
@@ -165,7 +164,7 @@ object ExecCallObject extends Executor {
 
   def findInImpl(name: String, impl: EntityImpl, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
     if (impl.attrs.isDefined) findInAttrs(name, impl.attrs.get, context)
-    else Left(CallableNotFound(name))
+    else Left(CallableNotFound(name,impl.context))
   }
 
   def findInEntity(name: String, entity: EntityValue, context: Context, caller: CallObjectType): Either[ExecError, Option[List[Value[_]]]] = {
@@ -286,7 +285,7 @@ object ExecCallObject extends Executor {
 
   private def pickFirst(callable: Option[List[Value[_]]]): Either[ExecError, Value[_]] = {
     if (callable.isDefined && callable.get.nonEmpty) Right(callable.get.head)
-    else Left(CallableNotFound("It's empty"))
+    else Left(CallableNotFound("It's empty", None))
   }
 
   private def runIfOperation(result: Either[ExecError, Option[List[Value[_]]]], context: Context): Either[ExecError, Option[List[Value[_]]]] = {

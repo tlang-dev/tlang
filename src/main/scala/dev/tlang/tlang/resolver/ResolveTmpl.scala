@@ -1,7 +1,7 @@
 package dev.tlang.tlang.resolver
 
 import dev.tlang.tlang.ast.DomainUse
-import dev.tlang.tlang.ast.common.call.{CallFuncObject, CallObject, CallVarObject}
+import dev.tlang.tlang.ast.common.call.{CallFuncObject, CallFuncParam, CallObject, CallVarObject}
 import dev.tlang.tlang.ast.tmpl._
 import dev.tlang.tlang.ast.tmpl.call._
 import dev.tlang.tlang.ast.tmpl.condition.TmplOperation
@@ -18,7 +18,7 @@ object ResolveTmpl {
 
   def resolveTmpl(block: TmplBlock, module: Module, uses: List[DomainUse], currentResource: Resource): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
-    checkRet(errors, FollowCallObject.followCallObject(CallObject(block.context, List(CallVarObject(block.context, block.lang))), module, uses, block.scope, currentResource, None))
+    checkRet(errors, FollowCallObject.followCallObject(CallObject(block.context, List(CallVarObject(block.context, block.lang), CallFuncObject(block.context, Some("generate"), Some(List(CallFuncParam(block.context, Some(List()))))))), module, uses, block.scope, currentResource, None))
     checkRet(errors, resolvePkg(block.pkg, module, uses, currentResource, block.scope))
     checkRet(errors, resolveUses(block.uses, module, uses, currentResource, block.scope))
     block.content.foreach(_.foreach(content => {

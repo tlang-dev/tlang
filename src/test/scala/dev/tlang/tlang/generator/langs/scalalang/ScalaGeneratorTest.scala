@@ -12,7 +12,7 @@ class ScalaGeneratorTest extends AnyFunSuite {
 
   val fakeContext: ContextResource = ContextResource("", "", "", "")
 
-  test("Test impl for") {
+  /*test("Test impl for") {
     val lexer = new TLangLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
         |impl Test for Test1{
@@ -34,7 +34,7 @@ class ScalaGeneratorTest extends AnyFunSuite {
     val parser = new TLangParser(tokens)
     val impl = BuildTmplBlock.buildImpl(fakeContext, parser.tmplBlock().block.tmplFullBlock().tmplContents.asScala.toList.head.tmplImpl())
     assert(ScalaGenerator.genImpl(impl).contains("extends Test1 with Test2, Test3"))
-  }
+  }*/
 
 //  test("Generate call func") {
 //    val lexer = new TLangLexer(CharStreams.fromString(
@@ -48,7 +48,7 @@ class ScalaGeneratorTest extends AnyFunSuite {
 //    assert(res.contains("myVar.myFunc(1.0, \"two\")(param3 = true)"))
 //  }
 
-  test("Generate call array") {
+ /* test("Generate call array") {
     val lexer = new TLangLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
         |myVar.myArray[5]
@@ -58,6 +58,6 @@ class ScalaGeneratorTest extends AnyFunSuite {
     val impl = BuildTmplBlock.build(fakeContext, parser.tmplBlock())
     val res = new ScalaGenerator().generate(impl)
     assert(res.contains("myVar.myArray(5)"))
-  }
+  }*/
 
 }

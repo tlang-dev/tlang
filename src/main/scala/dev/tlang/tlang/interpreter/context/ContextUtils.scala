@@ -26,6 +26,12 @@ object ContextUtils {
     variable
   }
 
+  def findVarInScope(scope: Scope, name: String): Option[Value[_]] = {
+    var variable: Option[Value[_]] = None
+    scope.variables.get(name).foreach(value => variable = Some(value))
+    variable
+  }
+
   def findFunc(context: Context, name: String): Option[HelperFunc] = {
     var i = 0
     var func: Option[HelperFunc] = None

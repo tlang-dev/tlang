@@ -28,7 +28,7 @@ class ExecCallRefFuncTest extends AnyFunSuite {
   }
 
   test("Call tmpl") {
-    val calledTmpl = TmplBlock(None, "myTmpl", "scala", Some(List(HelperParam(None, Some("param1"), ObjType(None, None, TLangString.getType)))), Some(new TmplPkg(List(TmplStringID(None, "myPackage")))))
+    val calledTmpl = TmplBlock(None, "myTmpl", "scala", Some(List(HelperParam(None, Some("param1"), ObjType(None, None, TLangString.getType)))), Some(TmplPkg(None, List(TmplStringID(None, "myPackage")))))
     val call = CallRefFuncObject(None, None, Some(List(CallFuncParam(None, Some(List(SetAttribute(None, value = Operation(None, None, Right(new TLangString(None, "myValue"))))))))), Some(Right(calledTmpl)))
 
     val res = ExecCallRefFunc.run(call, Context()).toOption.get.get.head.asInstanceOf[TmplBlockAsValue]

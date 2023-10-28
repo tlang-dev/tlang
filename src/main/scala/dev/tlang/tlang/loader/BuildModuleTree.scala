@@ -3,6 +3,7 @@ package dev.tlang.tlang.loader
 import dev.tlang.tlang.astbuilder.BuildAst
 import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.libraries.Modules
+import dev.tlang.tlang.loader.BuildModuleTree.buildManifest
 import dev.tlang.tlang.loader.manifest.{Manifest, ManifestLoader}
 import dev.tlang.tlang.loader.remote.RemoteLoader
 import dev.tlang.tlang.{TLangLexer, TLangParser}
@@ -15,26 +16,26 @@ import scala.collection.mutable
 
 object BuildModuleTree {
 
-  def build(rootDir: Path, mainFile: Option[String], cacheId: String = randomUUID().toString)(implicit resourceLoader: ResourceLoader, remote: RemoteLoader, tBagManager: TBagManager): Either[LoaderError, Module] = {
+  def build(rootDir: Path, cacheId: String = randomUUID().toString)(implicit resourceLoader: ResourceLoader, remote: RemoteLoader, tBagManager: TBagManager): Either[LoaderError, Module] = {
     val resources = mutable.Map.empty[String, Resource]
-    val (fromRoot, pkg, name) = mainFile match {
-      case Some(value) =>
-        val parts: Array[String] = value.split("/")
-        val fromRoot = if (parts.length > 2) {
-          parts.slice(0, parts.length - 2).mkString("/")
-        } else ""
-        val pkg = parts(parts.length - 2)
-        val name = parts.last
-        (fromRoot, pkg, name)
-      case None => ("", "", "Main")
-    }
+    buildManifest(rootDir) match {
+      case Left(error) => Left(error)
+      case Right(manifest) =>
+        val (fromRoot, pkg, name) = manifest.main match {
+          case Some(value) =>
+            val parts: Array[String] = value.split("/")
+            val fromRoot = if (parts.length > 2) {
+              parts.slice(0, parts.length - 2).mkString("/")
+            } else ""
+            val pkg = if(parts.length >1) parts(parts.length - 1) else ""
+            val name = parts.last
+            (fromRoot, pkg, name)
+          case None => ("", "", "Main")
+        }
 
-    browseResources(rootDir.toString, fromRoot, pkg, name, resources) match {
-      case Some(error) => Left(error)
-      case None =>
-        buildManifest(rootDir) match {
-          case Left(error) => Left(error)
-          case Right(manifest) =>
+        browseResources(rootDir.toString, fromRoot, pkg, name, resources) match {
+          case Some(error) => Left(error)
+          case None =>
             browseExternalResources(manifest, cacheId) match {
               case Left(error) => Left(error)
               case Right(value) =>

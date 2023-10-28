@@ -18,13 +18,13 @@ case class ArrayValue(context: Option[ContextContent], tbl: Option[List[ComplexA
     else Right(ArrayValue(None, Some(tbl.getOrElse(List()) ++: value.getElement.tbl.getOrElse(List()))))
   }
 
-  override def subtract(value: PrimitiveValue[ArrayValue]): Either[ExecError, ArrayValue] = Left(NotImplemented())
+  override def subtract(value: PrimitiveValue[ArrayValue]): Either[ExecError, ArrayValue] = Left(NotImplemented(context = context))
 
-  override def multiply(value: PrimitiveValue[ArrayValue]): Either[ExecError, ArrayValue] = Left(NotImplemented())
+  override def multiply(value: PrimitiveValue[ArrayValue]): Either[ExecError, ArrayValue] = Left(NotImplemented(context = context))
 
-  override def divide(value: PrimitiveValue[ArrayValue]): Either[ExecError, ArrayValue] = Left(NotImplemented())
+  override def divide(value: PrimitiveValue[ArrayValue]): Either[ExecError, ArrayValue] = Left(NotImplemented(context = context))
 
-  override def modulo(value: PrimitiveValue[ArrayValue]): Either[ExecError, ArrayValue] = Left(NotImplemented())
+  override def modulo(value: PrimitiveValue[ArrayValue]): Either[ExecError, ArrayValue] = Left(NotImplemented(context = context))
 
   override def deepCopy(): ArrayValue = ArrayValue(context, tbl)
 }

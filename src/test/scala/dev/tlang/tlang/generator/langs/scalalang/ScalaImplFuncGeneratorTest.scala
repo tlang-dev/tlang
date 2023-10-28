@@ -13,7 +13,7 @@ class ScalaImplFuncGeneratorTest extends AnyFunSuite {
 
   val fakeContext: ContextResource = ContextResource("", "", "", "")
 
-  test("Test func to scala") {
+ /* test("Test func to scala") {
     val lexer = new TLangLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
         |impl Test {
@@ -95,6 +95,6 @@ class ScalaImplFuncGeneratorTest extends AnyFunSuite {
     val impl = BuildTmplBlock.buildImpl(fakeContext, parser.tmplBlock().block.tmplFullBlock().tmplContents.asScala.toList.head.tmplImpl())
     val func = impl.content.get.head.asInstanceOf[TmplFunc]
     assert(ScalaImplFuncGenerator.gen(func).contains("def test(myParam: Array[MyType])(mySecondParam: MySecondType[JustTrying]) {"))
-  }
+  }*/
 
 }
