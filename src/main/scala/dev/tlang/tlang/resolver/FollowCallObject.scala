@@ -45,7 +45,8 @@ object FollowCallObject {
       case Right(value) =>
         val stmt = call.statements(level)
         stmt match {
-          case funcObject: CallFuncObject => BrowseHelperStatement.browseCallFuncObjectParams(funcObject.currying, value.get, module, uses, scope, currentResource)
+          case funcObject: CallFuncObject =>
+            BrowseHelperStatement.browseCallFuncObjectParams(funcObject.currying, value.get, module, uses, scope, currentResource)
           case funcObject: CallRefFuncObject =>
             value.get match {
               case tmpl: TmplBlockAsValue => funcObject.func = Some(Right(tmpl.block))
@@ -72,14 +73,14 @@ object FollowCallObject {
         }
       }
     })
-    if(!outsideFound && call.statements.size >1)
+    if (!outsideFound && call.statements.size > 1)
       verifyParameters(call, varObj, module, uses, scope, currentResource)
     if (errors.nonEmpty) Left(errors.toList)
     else Right(())
   }
 
-  private def verifyParameters(call: CallObject, varObj: CallVarObject, module: Module, uses: List[DomainUse], scope: Scope, currentResource: Resource):Either[List[ResolverError], Unit] = {
-    if(call.statements.size >= 2 && call.statements.last.isInstanceOf[CallFuncObject]) {
+  private def verifyParameters(call: CallObject, varObj: CallVarObject, module: Module, uses: List[DomainUse], scope: Scope, currentResource: Resource): Either[List[ResolverError], Unit] = {
+    if (call.statements.size >= 2 && call.statements.last.isInstanceOf[CallFuncObject]) {
       val callFunc = call.statements.last.asInstanceOf[CallFuncObject]
       BrowseHelperStatement.browseCallFuncObjectParams(callFunc.currying, call.getElement, module, uses, scope, currentResource)
     }

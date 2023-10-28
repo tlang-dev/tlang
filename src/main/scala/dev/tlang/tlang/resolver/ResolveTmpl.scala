@@ -18,7 +18,8 @@ object ResolveTmpl {
 
   def resolveTmpl(block: TmplBlock, module: Module, uses: List[DomainUse], currentResource: Resource): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
-    checkRet(errors, FollowCallObject.followCallObject(CallObject(block.context, List(CallVarObject(block.context, block.lang), CallFuncObject(block.context, Some("generate"), Some(List(CallFuncParam(block.context, Some(List()))))))), module, uses, block.scope, currentResource, None))
+//    checkRet(errors, FollowCallObject.followCallObject(CallObject(block.context, List(CallVarObject(block.context, block.lang), CallFuncObject(block.context, Some("generate"), Some(List(CallFuncParam(block.context, Some(List()))))))), module, uses, block.scope, currentResource, None))
+    checkRet(errors, resolveLang(block, module, uses, currentResource))
     checkRet(errors, resolvePkg(block.pkg, module, uses, currentResource, block.scope))
     checkRet(errors, resolveUses(block.uses, module, uses, currentResource, block.scope))
     block.content.foreach(_.foreach(content => {
@@ -27,6 +28,24 @@ object ResolveTmpl {
     if (errors.nonEmpty) Left(errors.toList)
     else Right(())
   }
+
+  def resolveLang(block: TmplBlock, module: Module, uses: List[DomainUse], currentResource: Resource): Either[List[ResolverError], Unit] = {
+    uses.find(use => use.parts.last.equals(block.lang) || use.alias.getOrElse("").equals(block.lang)) match {
+      case None => Left(List(ResourceNotFound(block.context, block.lang)))
+      case Some(use) =>
+        ResolveUtils.findResource(use, module) match {
+          case None => Left(List(ResourceNotFound(block.context, block.lang)))
+          case Some(resource) =>
+            ResolveContext.findInResource(resource, CallFuncObject(block.context, Some("generate"), Some(List(CallFuncParam(block.context, Some(List())))))) match {
+              case Left(error) => Left(error)
+              case Right(value) =>
+                ResolveContext.addValueInScope(use.parts.last, value.get, List(), block.scope)
+                Right(())
+            }
+        }
+    }
+  }
+
 
   def resolvePkg(pkg: Option[TmplPkg], module: Module, uses: List[DomainUse], currentResource: Resource, scope: Scope): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]

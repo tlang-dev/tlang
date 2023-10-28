@@ -63,7 +63,7 @@ object Generator {
         case Right(results) =>
           if (results.isDefined && results.get.nonEmpty && results.get.head.isInstanceOf[TLangString])
             Right(results.get.head.asInstanceOf[TLangString])
-          else Left(NoValue("No value or wrong value returned when generating the language",block.block.context))
+          else Left(NoValue("No value or wrong value returned when generating the language", block.block.context))
       }
       case None => Left(ElementNotFound("Could not find a generator for this language: " + block.block.lang, block.block.context))
     }
