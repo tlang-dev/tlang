@@ -3,6 +3,7 @@ package dev.tlang.tlang.astbuilder.tmpl.lang
 import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.value.{TLangDouble, TLangString}
 import dev.tlang.tlang.ast.model.set.{ModelSetArray, ModelSetAttribute, ModelSetEntity, ModelSetType}
+import dev.tlang.tlang.astbuilder.tmpl.lang.TmplFuncAst.tmplFuncParam
 
 object TmplLangAst {
 
@@ -42,8 +43,44 @@ object TmplLangAst {
     ModelSetAttribute(None, Some("content"), langFullBlock)
   )))
 
-  val langImpl: ModelSetEntity = ModelSetEntity(None, "LangImpl", None, None, Some(List(
+  val tmplSpecialBlock: ModelSetEntity = ModelSetEntity(None, "TmplSpecialBlock", Some(ObjType(None, None, langNode.name)), None, Some(List(
+    ModelSetAttribute(None, Some("type"), ModelSetType(None, TLangString.getType)),
+    ModelSetAttribute(None, Some("curries"), ModelSetArray(None, tmplFuncParam.name))
+  )))
 
+  val tmplAnnot: ModelSetEntity = ModelSetEntity(None, "TmplAnnot", Some(ObjType(None, None, langNode.name)), None, Some(List(
+
+  )))
+
+  val tmplAnnotParam: ModelSetEntity = ModelSetEntity(None, "TmplAnnotParam", Some(ObjType(None, None, langNode.name)), None, Some(List(
+
+  )))
+
+  val tmplAffect: ModelSetEntity = ModelSetEntity(None, "TmplAffect", Some(ObjType(None, None, langNode.name)), None, Some(List(
+  )))
+
+  val tmplIf: ModelSetEntity = ModelSetEntity(None, "TmplIf", Some(ObjType(None, None, langNode.name)), None, Some(List(
+  )))
+
+  val tmplInclude: ModelSetEntity = ModelSetEntity(None, "TmplInclude", Some(ObjType(None, None, langNode.name)), None, Some(List(
+  )))
+
+  val tmplAttribute: ModelSetEntity = ModelSetEntity(None, "TmplAttribute", Some(ObjType(None, None, langNode.name)), None, Some(List(
+  )))
+
+  val tmplSetAttribute: ModelSetEntity = ModelSetEntity(None, "TmplSetAttribute", Some(ObjType(None, None, langNode.name)), None, Some(List(
+  )))
+
+  val tmplParam: ModelSetEntity = ModelSetEntity(None, "TmplParam", Some(ObjType(None, None, langNode.name)), None, Some(List(
+  )))
+
+  val tmplProp: ModelSetEntity = ModelSetEntity(None, "TmplProp", Some(ObjType(None, None, langNode.name)), None, Some(List(
+  )))
+
+  val tmplReturn: ModelSetEntity = ModelSetEntity(None, "TmplReturn", Some(ObjType(None, None, langNode.name)), None, Some(List(
+  )))
+
+  val tmplGeneric: ModelSetEntity = ModelSetEntity(None, "TmplGeneric", Some(ObjType(None, None, langNode.name)), None, Some(List(
   )))
 
 }
