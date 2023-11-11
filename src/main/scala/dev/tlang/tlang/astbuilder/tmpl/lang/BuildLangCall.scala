@@ -28,8 +28,8 @@ object BuildLangCall {
     )
   }
 
-  def buildCallFuncParam(resource: ContextResource, currying: List[TmplCurryParamsContext): EntityValue = {
-    val context = BuildAst.addContext(resource, func)
+  def buildCallFuncParam(resource: ContextResource, currying: List[TmplCurryParamsContext]): EntityValue = {
+    val context = BuildAst.addContext(resource, currying.head)
     EntityValue(context,
       Some(ObjType(context, None, TmplCallAst.tmplCallFuncParam.name)),
       Some(List(

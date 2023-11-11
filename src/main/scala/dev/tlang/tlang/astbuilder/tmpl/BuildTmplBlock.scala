@@ -21,6 +21,8 @@ object BuildTmplBlock {
     val content = tmpl.block match {
       case lang@_ if lang.tmplLang() != null => BuildLang.buildLangBlock(resource, lang.tmplLang())
       case doc@_ if doc.tmplDoc() != null => EntityValue(None, None)
+//      case data@_ if data.tmplData() != null => EntityValue(None, None)
+//      case cmd@_ if cmd.tmplCmd() != null => EntityValue(None, None)
     }
 
     TmplBlock(addContext(resource, tmpl), tmpl.name.getText, tmpl.lang.getText,

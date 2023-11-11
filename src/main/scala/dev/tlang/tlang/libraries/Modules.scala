@@ -25,4 +25,11 @@ object Modules {
     tLangModules.get(dependency.getModuleName)
   }
 
+  def isInternalModule(module: Module): Boolean = {
+    tLangModules.exists(intMod =>
+      intMod._2.manifest.organisation.equals(module.manifest.organisation)
+        && intMod._2.manifest.project.equals(module.manifest.project)
+        && intMod._2.manifest.name.equals(module.manifest.name))
+  }
+
 }

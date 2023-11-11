@@ -18,7 +18,7 @@ object ResolveContext {
 
   def resolveContext(module: Module): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
-    if (!module.manifest.organisation.equals(Modules.organisation)) {
+    if (!Modules.isInternalModule(module)) {
       module.extResources.foreach(_.foreach(module => resolveContext(module._2)))
       module.resources.foreach(resource => {
         val ast = resource._2.ast

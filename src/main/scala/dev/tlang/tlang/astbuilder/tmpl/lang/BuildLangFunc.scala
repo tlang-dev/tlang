@@ -20,7 +20,7 @@ object BuildLangFunc {
   }
 
   def buildTmplFuncCurries(resource: ContextResource, curries: List[TmplCurryingContext]): EntityValue = {
-    val context = BuildAst.addContext(resource, func)
+    val context = BuildAst.addContext(resource, curries.head)
     EntityValue(context,
       Some(ObjType(context, None, TmplFuncAst.tmplFunc.name)),
       Some(List(

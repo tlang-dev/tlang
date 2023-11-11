@@ -56,9 +56,6 @@ object TmplLangAst {
 
   )))
 
-  val tmplAffect: ModelSetEntity = ModelSetEntity(None, "TmplAffect", Some(ObjType(None, None, langNode.name)), None, Some(List(
-  )))
-
   val tmplIf: ModelSetEntity = ModelSetEntity(None, "TmplIf", Some(ObjType(None, None, langNode.name)), None, Some(List(
   )))
 

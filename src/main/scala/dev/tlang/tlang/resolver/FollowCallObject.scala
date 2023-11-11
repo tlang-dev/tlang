@@ -82,6 +82,8 @@ object FollowCallObject {
   private def verifyParameters(call: CallObject, varObj: CallVarObject, module: Module, uses: List[DomainUse], scope: Scope, currentResource: Resource): Either[List[ResolverError], Unit] = {
     if (call.statements.size >= 2 && call.statements.last.isInstanceOf[CallFuncObject]) {
       val callFunc = call.statements.last.asInstanceOf[CallFuncObject]
+//      callFunc.currying.foreach(params => params.foreach(param => param.))
+////
       BrowseHelperStatement.browseCallFuncObjectParams(callFunc.currying, call.getElement, module, uses, scope, currentResource)
     }
     Right(())

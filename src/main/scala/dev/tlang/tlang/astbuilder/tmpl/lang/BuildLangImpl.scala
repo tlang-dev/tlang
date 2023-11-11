@@ -14,7 +14,7 @@ object BuildLangImpl {
     EntityValue(context,
       Some(ObjType(context, None, TmplImplAst.tmplImpl.name)),
       Some(List(
-        BuildLang.buildLangStr(context, "name", impl.name.getText)
+        BuildLang.createAttrStr(context, "name", impl.name.getText)
       ))
     )
   }

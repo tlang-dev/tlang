@@ -5,16 +5,46 @@ import dev.tlang.tlang.ast.model.set.ModelSetEntity
 
 object TmplValueAst {
 
-  val tmplMultiValue: ModelSetEntity = ModelSetEntity(None, "TmplMultiValue", Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  val langMultiValue: ModelSetEntity = ModelSetEntity(None, "LangMultiValue", Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
   )))
 
-  val tmplValueType: ModelSetEntity = ModelSetEntity(None, "TmplValueType", Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  val langValueType: ModelSetEntity = ModelSetEntity(None, "LangValueType", Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
   )))
 
-  val tmplVal: ModelSetEntity = ModelSetEntity(None, "TmplVal", Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  val langVal: ModelSetEntity = ModelSetEntity(None, "LangVal", Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
   )))
 
-  val tmplVar: ModelSetEntity = ModelSetEntity(None, "TmplVar", Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  val langVar: ModelSetEntity = ModelSetEntity(None, "LangVar", Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  )))
+
+  val langAffect: ModelSetEntity = ModelSetEntity(None, "LangAffect", Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  )))
+
+  val langEntity: ModelSetEntity = ModelSetEntity(None, "LangEntity", Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  )))
+
+  val langString: ModelSetEntity = ModelSetEntity(None, "LangString", Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  )))
+
+  val langText: ModelSetEntity = ModelSetEntity(None, "LangText", Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  )))
+
+  val langBool: ModelSetEntity = ModelSetEntity(None, "LangBool", Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  )))
+
+  val langArray: ModelSetEntity = ModelSetEntity(None, "LangArray", Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  )))
+
+  val langLong: ModelSetEntity = ModelSetEntity(None, "LangLong", Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  )))
+
+  val langDouble: ModelSetEntity = ModelSetEntity(None, "LangDouble", Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  )))
+
+  val langStringId: ModelSetEntity = ModelSetEntity(None, "LangStringId", Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  )))
+
+  val langInterpretedId: ModelSetEntity = ModelSetEntity(None, "LangInterpretedId", Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
   )))
 
 }

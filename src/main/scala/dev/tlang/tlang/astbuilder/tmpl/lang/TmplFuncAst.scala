@@ -11,4 +11,7 @@ object TmplFuncAst {
 
   val tmplFuncParam: ModelSetEntity = ModelSetEntity(None, "TmplFuncParam", Some(ObjType(None, None, langNode.name)), None, Some(List(
   )))
+
+  val langAnonFunc: ModelSetEntity = ModelSetEntity(None, "LangAnonFunc", Some(ObjType(None, None, langNode.name)), None, Some(List(
+  )))
 }

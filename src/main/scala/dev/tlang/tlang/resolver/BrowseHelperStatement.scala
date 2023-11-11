@@ -107,10 +107,11 @@ object BrowseHelperStatement {
     val errors = ListBuffer.empty[ResolverError]
     currying.foreach(_.zipWithIndex.foreach(curry => curry._1.params.foreach(_.zipWithIndex.foreach(param => {
       val paramName = called match {
-        case func: HelperFunc => ExecCallFunc.findParamName(curry._2, param._2, func)
-        case tmpl: TmplBlockAsValue => ExecCallFunc.findTmplParamName(param._2, tmpl.block)
+        case func: HelperFunc => Some(ExecCallFunc.findParamName(curry._2, param._2, func))
+        case tmpl: TmplBlockAsValue => Some(ExecCallFunc.findTmplParamName(param._2, tmpl.block))
+        case _ => None // Can happen but we don't need to follow
       }
-      extractErrors(errors, browseStatement(param._1.value, module, uses, scope, currentResource, Some(paramName)))
+      if (paramName.isDefined) extractErrors(errors, browseStatement(param._1.value, module, uses, scope, currentResource, paramName))
     }))))
     if (errors.nonEmpty) Left(errors.toList)
     else Right(())
