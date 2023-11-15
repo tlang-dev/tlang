@@ -143,20 +143,20 @@ object ExecCallObject extends Executor {
 
   }
 
-//  @tailrec
+  //  @tailrec
   private def resolveArrayInCallable(call: CallArrayObject, callable: Option[List[Value[_]]], context: Context): Either[ExecError, Option[List[Value[_]]]] = {
     pickFirst(callable) match {
       case Left(error) => Left(error)
       case Right(value) => value match {
         case impl: EntityImpl => findInImpl(call.name, impl, context) match {
           case Left(err) => Left(err)
-          case Right(array) => runIfOperation(resolveArrayInCallable(call, array, context),context)
+          case Right(array) => runIfOperation(resolveArrayInCallable(call, array, context), context)
         }
         case array: ArrayValue => resolveArray(call.position, array, context)
         case entityValue: EntityValue =>
           findInEntity(call.name, entityValue, context, call) match {
             case Left(_) => Left(CallableNotFound(call.name, entityValue.getContext))
-            case Right(array) => runIfOperation(resolveArrayInCallable(call, array, context),context)
+            case Right(array) => runIfOperation(resolveArrayInCallable(call, array, context), context)
           }
       }
     }
@@ -164,7 +164,7 @@ object ExecCallObject extends Executor {
 
   def findInImpl(name: String, impl: EntityImpl, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
     if (impl.attrs.isDefined) findInAttrs(name, impl.attrs.get, context)
-    else Left(CallableNotFound(name,impl.context))
+    else Left(CallableNotFound(name, impl.context))
   }
 
   def findInEntity(name: String, entity: EntityValue, context: Context, caller: CallObjectType): Either[ExecError, Option[List[Value[_]]]] = {
@@ -172,9 +172,14 @@ object ExecCallObject extends Executor {
       case Left(error) => Left(error)
       case Right(value) => value match {
         case Some(value) => Right(Some(value))
-        case None => findModelInEntity(name, entity, context, caller)
+        case None =>
+          if (name == "type")
+            Right(Some(List(new TLangString(None, entity.getType))))
+          else findModelInEntity(name, entity, context, caller)
       }
     }
+    else if (name == "type")
+      Right(Some(List(new TLangString(None, entity.getType))))
     else findModelInEntity(name, entity, context, caller)
   }
 
@@ -248,10 +253,14 @@ object ExecCallObject extends Executor {
       case Right(value) => value match {
         case func: HelperFunc => execFunc(func)
         case entity: EntityValue => execFuncInEntity(caller, entity, Context(entity.scope :: context.scopes))
-        //        case ref:  =>
-        //          val newName = "_call_" + ref.func.name
-        //          val newCaller = HelperCallFuncObject(Some(newName), ref.currying)
-        //          execFuncWithCaller(newCaller, ref.func)
+        case ref: CallRefFuncObject =>
+          val newName = "_call_" + ref.name.get
+          val newCaller = CallFuncObject(ref.context, Some(newName), caller.currying)
+          ref.func.get match {
+            case Left(helperFunc) => execFuncWithCaller(newCaller, helperFunc, context)
+            case Right(tmplBlock) => Left(NotImplemented("The execution of TmplBloc is not yet implemented in a ref func in an array or entity", ref.context))
+          }
+
         case _ => Left(NotImplemented(value.getType, value.getContext))
       }
     }

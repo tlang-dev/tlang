@@ -4,7 +4,7 @@ import dev.tlang.tlang.ast.common.call.{CallFuncObject, CallFuncParam, CallRefFu
 import dev.tlang.tlang.ast.common.value.LazyValue
 import dev.tlang.tlang.ast.helper.{HelperFunc, HelperStatement}
 import dev.tlang.tlang.ast.tmpl.{TmplBlock, TmplBlockAsValue}
-import dev.tlang.tlang.interpreter.context.{Context, ContextUtils, Scope}
+import dev.tlang.tlang.interpreter.context.{Context, ContextUtils, MutableContext, Scope}
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
@@ -15,18 +15,18 @@ object ExecCallFunc extends Executor {
     val caller = statement.asInstanceOf[CallFuncObject]
     ContextUtils.findFunc(context, caller.name.get) match {
       case Some(func) =>
-        val newContext = manageParameters(caller, func, context)
+        val newContext = manageParameters(caller, func, MutableContext.toMutable(context).removeLocalScopes().toContext())
         ExecFunc.run(func, newContext)
       case None => ContextUtils.findTmpl(context, caller.name.get) match {
         case Some(tmpl) =>
           val tmplCopy = tmpl.deepCopy()
-          val newContext = manageTmplParameters(caller, tmplCopy, context)
+          val newContext = manageTmplParameters(caller, tmplCopy, MutableContext.toMutable(context).removeLocalScopes().toContext())
           Right(Some(List(TmplBlockAsValue(tmplCopy.getContext, tmplCopy, Context(newContext.scopes :+ tmplCopy.scope)))))
         case None => //Left(CallableNotFound(caller.name.get))
           ContextUtils.findRefFunc(context, caller.name.get) match {
             case Some(refFunc) =>
               val newCaller = mergeCallers(caller, refFunc)
-              ExecCallRefFunc.run(newCaller, Context(context.scopes :+ refFunc.scope))
+              ExecCallRefFunc.run(newCaller, MutableContext.toMutable(context).removeLocalScopes().addScope(refFunc.scope).toContext())
             //                      refFunc.func.get match {
             //                        case Left(func) =>
             //                          val newCaller = mergeCallers(caller, refFunc)
@@ -86,7 +86,7 @@ object ExecCallFunc extends Executor {
         }
       }
     }
-    Context(context.scopes :+ Scope(vars, funcs) :+ tmpl.scope)
+    Context(context.scopes :+ Scope(variables = vars, functions = funcs) :+ tmpl.scope)
   }
 
   def findTmplParamName(paramPos: Int, tmplBlock: TmplBlock): String = {

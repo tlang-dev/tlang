@@ -2,7 +2,7 @@ package dev.tlang.tlang.interpreter
 
 import dev.tlang.tlang.ast.common.value.{ArrayValue, TLangLong}
 import dev.tlang.tlang.ast.helper.{ForType, HelperFor, HelperStatement}
-import dev.tlang.tlang.interpreter.context.{Context, Scope}
+import dev.tlang.tlang.interpreter.context.{Context, MutableContext, Scope}
 
 object ExecFor extends Executor {
 
@@ -22,15 +22,16 @@ object ExecFor extends Executor {
   def runForIn(forStatement: HelperFor, context: Context): Either[ExecError, Unit] = {
     val array = ExecOperation.run(forStatement.array, context).toOption.get.get.head.asInstanceOf[ArrayValue].tbl.get
     val end = array.size
+    val newLocalScope = Scope(local = true)
     val newScope = Scope()
-    val newContext = Context(context.scopes :+ newScope)
+    val newContext = MutableContext.toMutable(context).removeLocalScopes().addScope(newScope).addScope(newLocalScope).toContext()
     var error: Option[ExecError] = None
     var i = 0
     while (i < end && error.isEmpty) {
       ExecOperation.run(array(i).value, context) match {
         case Left(err) => error = Some(err)
         case Right(elem) =>
-          newScope.variables.update("_i", new TLangLong(None, i))
+          newLocalScope.variables.update("_i", new TLangLong(None, i))
           newScope.variables.update(forStatement.variable, elem.get.head)
           ExecContent.run(forStatement.body, newContext)
       }

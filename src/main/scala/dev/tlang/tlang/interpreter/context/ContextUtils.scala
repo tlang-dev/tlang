@@ -76,4 +76,12 @@ object ContextUtils {
     model
   }
 
+  def removeScopeByName(context: Context, name: String): Context = {
+    Context(context.scopes.filter(scope => scope.name != name))
+  }
+
+  def removeLocalScopes(context: Context): Context = {
+    Context(context.scopes.filter(_.local))
+  }
+
 }

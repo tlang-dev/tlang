@@ -5,11 +5,9 @@ import dev.tlang.tlang.TLangParser._
 import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value.{ArrayValue, ComplexAttribute, EntityValue, TLangString}
-import dev.tlang.tlang.ast.tmpl.condition.TmplOperation
-import dev.tlang.tlang.astbuilder.{BuildAst, BuildCommon}
+import dev.tlang.tlang.astbuilder.BuildAst
 import dev.tlang.tlang.astbuilder.BuildAst.addContext
 import dev.tlang.tlang.astbuilder.context.{ContextContent, ContextResource}
-import dev.tlang.tlang.astbuilder.tmpl.BuildTmplBlock.buildExpression
 
 import scala.collection.mutable.ListBuffer
 import scala.jdk.CollectionConverters.CollectionHasAsScala
@@ -31,6 +29,8 @@ object BuildLang {
     if (full.tmplPkg() != null && !full.tmplPkg().isEmpty) elems += ComplexAttribute(context, Some("package"),
       Some(ObjType(context, None, TmplLangAst.langFullBlock.name)), Operation(context, None, Right(buildPkg(resource, full.tmplPkg()))))
 
+    elems += createArray(addContext(resource, full), "uses", buildUses(resource, full.tmplUses.asScala.toList))
+    elems += createArray(addContext(resource, full), "contents", buildContents(resource, full.tmplContents.asScala.toList))
 
     EntityValue(context,
       Some(ObjType(context, None, TmplLangAst.langFullBlock.name)),
@@ -48,6 +48,23 @@ object BuildLang {
       ))
   }
 
+  def buildUses(resource: ContextResource, uses: List[TmplUseContext]): List[EntityValue] = {
+    if (uses != null && uses.nonEmpty) uses.map(use => buildUse(resource, use))
+    else List()
+  }
+
+  def buildUse(resource: ContextResource, use: TmplUseContext): EntityValue = {
+    //    TmplUse(addContext(resource, use), use.parts.asScala.toList.map(part => buildId(resource, part)),
+    //      if (use.alias != null && !use.alias.isEmpty) Some(buildId(resource, use.alias)) else None)
+    val context = addContext(resource, use)
+    EntityValue(context,
+      Some(ObjType(context, None, TmplLangAst.langUse.name)),
+      Some(List(
+        createArray(context, "parts", use.parts.asScala.toList.map(part => BuildLangValue.buildId(resource, part)))
+      )
+      ))
+  }
+
   def createAttrStr(context: Option[ContextContent], name: String, value: String): ComplexAttribute = {
     ComplexAttribute(context, Some(name), None, Operation(
       context, None, Right(new TLangString(context, value))
@@ -58,6 +75,12 @@ object BuildLang {
     ComplexAttribute(context, Some(name), None, Operation(
       context, None, Right(value)
     ))
+  }
+
+  def createArray(context: Option[ContextContent], name: String, values: List[EntityValue]): ComplexAttribute = {
+    ComplexAttribute(context, Some(name),
+      None, Operation(context, None, Right(ArrayValue(context, Some(values.map(value => ComplexAttribute(context, None, None, Operation(context, None, Right(value))))))))
+    )
   }
 
   def buildContents(resource: ContextResource, content: List[TmplContentContext]): List[EntityValue] = {

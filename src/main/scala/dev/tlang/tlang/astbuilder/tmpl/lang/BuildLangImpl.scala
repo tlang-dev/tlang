@@ -12,9 +12,9 @@ object BuildLangImpl {
   def buildImpl(resource: ContextResource, impl: TmplImplContext): EntityValue = {
     val context = BuildAst.addContext(resource, impl)
     EntityValue(context,
-      Some(ObjType(context, None, TmplImplAst.tmplImpl.name)),
+      Some(ObjType(context, None, TmplImplAst.langImpl.name)),
       Some(List(
-        BuildLang.createAttrStr(context, "name", impl.name.getText)
+        BuildLang.createAttrEntity(context, "name", BuildLangValue.buildId(resource, impl.name))
       ))
     )
   }

@@ -13,7 +13,7 @@ object TmplImplAst {
   )))
 
 
-  val tmplImpl: ModelSetEntity = ModelSetEntity(None, "TmplImpl", None, None, Some(List(
+  val langImpl: ModelSetEntity = ModelSetEntity(None, "LangImpl", None, None, Some(List(
     ModelSetAttribute(None, Some("annots"), ModelSetType(None, langPkg.name)),
     ModelSetAttribute(None, Some("props"), ModelSetType(None, langPkg.name)),
     ModelSetAttribute(None, Some("name"), ModelSetType(None, langPkg.name)),

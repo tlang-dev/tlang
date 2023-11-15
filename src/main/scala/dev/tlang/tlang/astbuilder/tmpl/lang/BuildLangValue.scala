@@ -6,6 +6,7 @@ import dev.tlang.tlang.ast.common.call.CallObject
 import dev.tlang.tlang.ast.common.value.EntityValue
 import dev.tlang.tlang.ast.tmpl.TmplType
 import dev.tlang.tlang.astbuilder.context.{ContextContent, ContextResource}
+import dev.tlang.tlang.astbuilder.tmpl.lang.BuildLang.createAttrStr
 import dev.tlang.tlang.astbuilder.{AstBuilderUtils, BuildAst, BuildHelperStatement}
 
 object BuildLangValue {
@@ -96,7 +97,7 @@ object BuildLangValue {
     EntityValue(context,
       Some(ObjType(context, None, TmplValueAst.langStringId.name)),
       Some(List(
-
+        createAttrStr(context, "value", text)
       ))
     )
   }
