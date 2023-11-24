@@ -1,31 +1,32 @@
 package dev.tlang.tlang.generator.langs.dart
 
 import dev.tlang.tlang.ast.common.operation.Operator
-import dev.tlang.tlang.ast.tmpl._
-import dev.tlang.tlang.ast.tmpl.call._
-import dev.tlang.tlang.ast.tmpl.condition.TmplOperation
-import dev.tlang.tlang.ast.tmpl.func.TmplFunc
-import dev.tlang.tlang.ast.tmpl.loop.ForType.ForType
-import dev.tlang.tlang.ast.tmpl.loop.{TmplDoWhile, TmplFor, TmplWhile}
-import dev.tlang.tlang.ast.tmpl.primitive._
+import dev.tlang.tlang.tmpl._
+import dev.tlang.tlang.tmpl.lang.ast.call._
+import dev.tlang.tlang.tmpl.lang.ast.condition.TmplOperation
+import dev.tlang.tlang.tmpl.lang.ast.func.{TmplAnnotationParam, TmplAnonFunc, TmplFunc}
+import dev.tlang.tlang.tmpl.lang.ast.loop.ForType.ForType
+import dev.tlang.tlang.tmpl.lang.ast.loop.{TmplDoWhile, TmplFor, TmplWhile}
+import dev.tlang.tlang.tmpl.lang.ast.primitive._
 import dev.tlang.tlang.generator.formatter.Formatter
 import dev.tlang.tlang.generator.langs.kotlin.KotlinGenerator.{mkSeq, mkSeqFromSeq}
 import dev.tlang.tlang.generator.{CodeGenerator, Seq, SeqBuilder}
+import dev.tlang.tlang.tmpl.lang.ast.{TmplAffect, TmplAnnotation, TmplAttribute, LangBlock, TmplExprBlock, TmplExprContent, TmplExpression, TmplID, TmplIf, TmplImpl, TmplInclude, TmplNode, TmplParam, TmplPkg, TmplProp, TmplReturn, TmplSetAttribute, TmplSimpleValueType, TmplStringID, TmplUse, TmplValueType, TmplVar}
 
 class DartGenerator extends CodeGenerator {
-  override def generate(tmpl: TmplBlock): String = {
+  override def generate(tmpl: LangBlock): String = {
     Formatter.format(DartGenerator.genBlock(tmpl), DartFormatter.formatter())
   }
 }
 
 object DartGenerator {
 
-  def genBlock(tmpl: TmplBlock): Seq = {
+  def genBlock(tmpl: LangBlock): Seq = {
     val root = new SeqBuilder()
     root.setBlockName("block")
     //    root += genPackage(tmpl.pkg)
-    root ++= genIncludes(tmpl.uses)
-    tmpl.content.foreach(genContents(_).foreach(root ++= _))
+//    root ++= genIncludes(tmpl.uses)
+//    tmpl.content.foreach(genContents(_).foreach(root ++= _))
     root.build()
   }
 
@@ -55,7 +56,7 @@ object DartGenerator {
       case expr: TmplExpression[_] => genExpression(expr, addEndOfStatement)
       case impl: TmplImpl => genImpl(impl)
       case exprBlock: TmplExprBlock => genExprBlock(exprBlock, addEndOfStatement)
-      case tmplBlock: TmplBlock => genBlock(tmplBlock)
+      case tmplBlock: LangBlock => genBlock(tmplBlock)
     }
   }
 
@@ -279,18 +280,18 @@ object DartGenerator {
     str.setSeq("for")
     str += "("
     str += forLoop.variable.toString
-    str += " " += genForType(forLoop.forType) += " "
+//    str += " " += genForType(forLoop.forType) += " "
     str += genOperation(forLoop.cond)
     str += ")"
     str += genExprContent(forLoop.content)
     str.build()
   }
 
-  def genForType(forType: ForType): Seq = forType match {
-    case dev.tlang.tlang.ast.tmpl.loop.ForType.IN => Seq("in")
-    case dev.tlang.tlang.ast.tmpl.loop.ForType.TO => Seq("to")
-    case dev.tlang.tlang.ast.tmpl.loop.ForType.UNTIL => Seq("until")
-  }
+//  def genForType(forType: ForType): Seq = forType match {
+//    case dev.tlang.tlang.tmpl.loop.ForType.IN => Seq("in")
+//    case dev.tlang.tlang.tmpl.loop.ForType.TO => Seq("to")
+//    case dev.tlang.tlang.tmpl.loop.ForType.UNTIL => Seq("until")
+//  }
 
   def genWhile(whileLoop: TmplWhile): Seq = {
     val str = Seq()

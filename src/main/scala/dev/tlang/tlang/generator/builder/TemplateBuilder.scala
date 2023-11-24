@@ -1,14 +1,15 @@
 package dev.tlang.tlang.generator.builder
 
 import dev.tlang.tlang.ast.common.call.CallObject
-import dev.tlang.tlang.ast.tmpl._
-import dev.tlang.tlang.ast.tmpl.call._
-import dev.tlang.tlang.ast.tmpl.condition.TmplOperation
-import dev.tlang.tlang.ast.tmpl.func.TmplFunc
-import dev.tlang.tlang.ast.tmpl.primitive.{TmplArrayValue, TmplEntityValue, TmplStringValue, TmplTextValue}
+import dev.tlang.tlang.tmpl._
+import dev.tlang.tlang.tmpl.lang.ast.call._
+import dev.tlang.tlang.tmpl.lang.ast.condition.TmplOperation
+import dev.tlang.tlang.tmpl.lang.ast.func.TmplFunc
+import dev.tlang.tlang.tmpl.lang.ast.primitive.{TmplArrayValue, TmplEntityValue, TmplStringValue, TmplTextValue}
 import dev.tlang.tlang.generator.mapper.ValueMapper
 import dev.tlang.tlang.interpreter.context.Context
 import dev.tlang.tlang.interpreter.{ExecCallObject, ExecError, NoValue, Value}
+import dev.tlang.tlang.tmpl.lang.ast.{LangFullBlock, TmplAnnotation, LangBlock, TmplBlockAsValue, TmplBlockID, TmplExprBlock, TmplExprContent, TmplExpression, TmplGeneric, TmplID, TmplImpl, TmplInclude, TmplInterpretedID, TmplNode, TmplPkg, TmplReplacedId, TmplReturn, TmplSetAttribute, TmplType, TmplValueType, TmplVar}
 
 import scala.collection.mutable.ListBuffer
 
@@ -24,14 +25,23 @@ object TemplateBuilder {
     }
   }
 
-  def buildBlock(block: TmplBlock, context: Context): Either[ExecError, TmplBlock] = {
+  def buildBlock(block: LangBlock, context: Context): Either[ExecError, LangBlock] = {
+    buildFullBlock(block.content, context) match {
+      case Left(error) => Left(error)
+      case Right(value) =>
+        block.content = value
+        Right(block)
+    }
+  }
+
+  def buildFullBlock(block: LangFullBlock, context: Context): Either[ExecError, LangFullBlock] = {
     buildPkg(block.pkg, context) match {
       case Left(error) => Left(error)
       case Right(value) =>
         block.pkg = value
         buildContents(block.content, context) match {
           case Left(error) => Left(error)
-          case Right(value) => /*block.content = value*/
+          case Right(value) => block.content = value
             Right(block)
         }
     }
@@ -303,8 +313,6 @@ object TemplateBuilder {
     value match {
       case valueBlock: TmplBlockAsValue =>
         buildBlockAsValue(valueBlock)
-        if (valueBlock.block.specialised) Right(valueBlock.block.content.get.head)
-        else Right(valueBlock.block)
       case value: Value[_] => Right(value.asInstanceOf[TmplNode[_]])
     }
   }

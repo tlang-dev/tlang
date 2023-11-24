@@ -3,10 +3,10 @@ package dev.tlang.tlang.resolver
 import dev.tlang.tlang.ast.DomainUse
 import dev.tlang.tlang.ast.common.call.{CallFuncObject, CallObject, CallRefFuncObject, CallVarObject}
 import dev.tlang.tlang.ast.helper.HelperFunc
-import dev.tlang.tlang.ast.tmpl.TmplBlockAsValue
 import dev.tlang.tlang.interpreter.context.Scope
 import dev.tlang.tlang.loader.{Module, Resource}
 import dev.tlang.tlang.resolver.ResolveContext.{addValueInScope, extractErrors, findInResource, followCall}
+import dev.tlang.tlang.tmpl.lang.ast.TmplBlockAsValue
 
 import scala.collection.mutable.ListBuffer
 

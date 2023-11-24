@@ -1,9 +1,9 @@
 package dev.tlang.tlang.generator.langs.dart
 
-import dev.tlang.tlang.ast.tmpl.{TmplImpl, TmplNode}
 import dev.tlang.tlang.generator.formatter.{FormatManager, FormatRule, Formatter, Indent}
 import dev.tlang.tlang.generator.langs.BlockGenerator
 import dev.tlang.tlang.generator.langs.common.GenParameter
+import dev.tlang.tlang.tmpl.lang.ast.{TmplImpl, TmplNode}
 
 import scala.collection.mutable.{Map => MMap}
 

@@ -5,12 +5,13 @@ import dev.tlang.tlang.ast.common.call._
 import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.helper._
 import dev.tlang.tlang.ast.model.ModelBlock
-import dev.tlang.tlang.ast.tmpl.{TmplBlock, TmplBlockAsValue}
 import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.interpreter.context.{Context, Scope}
 import dev.tlang.tlang.libraries.Modules
 import dev.tlang.tlang.loader.{BuildModuleTree, Module, Resource}
 import dev.tlang.tlang.resolver.checker.CheckExistingElement
+import dev.tlang.tlang.tmpl.lang.ast
+import dev.tlang.tlang.tmpl.lang.ast.{LangBlock, TmplBlockAsValue}
 
 import scala.collection.mutable.ListBuffer
 
@@ -33,7 +34,7 @@ object ResolveContext {
             ast.body.foreach {
               case HelperBlock(_, funcs) => funcs.foreach(func => extractErrors(errors, BrowseFunc.resolveFuncs(func, module, uses, resource._2)))
               case model: ModelBlock => extractErrors(errors, ResolveModel.resolveModel(model, module, uses, resource._2))
-              case block: TmplBlock => extractErrors(errors, ResolveTmpl.resolveTmpl(block, module, uses, resource._2))
+              case block: LangBlock => extractErrors(errors, ResolveTmpl.resolveTmpl(block, module, uses, resource._2))
               case _ => Right(())
             }
         }
@@ -100,7 +101,7 @@ object ResolveContext {
           case None =>
         }
       }
-      case tmpl: TmplBlock => if (tmpl.name == name) elem = Some(TmplBlockAsValue(tmpl.context, tmpl, Context()))
+      case tmpl: LangBlock => if (tmpl.name == name) elem = Some(ast.TmplBlockAsValue(tmpl.context, tmpl, Context()))
     }
     if (errors.nonEmpty) Left(errors.toList)
     else Right(elem)

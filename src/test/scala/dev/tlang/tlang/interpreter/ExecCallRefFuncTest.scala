@@ -5,8 +5,8 @@ import dev.tlang.tlang.ast.common.call.{CallFuncParam, CallRefFuncObject, SetAtt
 import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value.TLangString
 import dev.tlang.tlang.ast.helper._
-import dev.tlang.tlang.ast.tmpl.{TmplBlock, TmplBlockAsValue, TmplPkg, TmplStringID}
 import dev.tlang.tlang.interpreter.context.Context
+import dev.tlang.tlang.tmpl.lang.ast.{LangBlock, TmplBlockAsValue, TmplPkg, TmplStringID}
 import org.scalatest.funsuite.AnyFunSuite
 
 class ExecCallRefFuncTest extends AnyFunSuite {

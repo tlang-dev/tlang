@@ -1,15 +1,16 @@
 package dev.tlang.tlang.generator.langs.dart
 
 import dev.tlang.tlang.ast.common.operation.Operator
-import dev.tlang.tlang.ast.tmpl._
-import dev.tlang.tlang.ast.tmpl.call._
-import dev.tlang.tlang.ast.tmpl.condition.TmplOperation
-import dev.tlang.tlang.ast.tmpl.primitive._
 import dev.tlang.tlang.generator.formatter.{FormatManager, FormatRule, Formatter, Indent}
 import dev.tlang.tlang.generator.langs.BlockGenerator
 import dev.tlang.tlang.generator.langs.common.GenParameter
 import dev.tlang.tlang.generator.langs.dart.DartFormatter.END_OF_STATEMENT
 import dev.tlang.tlang.generator.langs.dart.DartGenerator.includeKeyword
+import dev.tlang.tlang.tmpl.lang.ast.call._
+import dev.tlang.tlang.tmpl.lang.ast.condition.TmplOperation
+import dev.tlang.tlang.tmpl.lang.ast.func.TmplAnnotationParam
+import dev.tlang.tlang.tmpl.lang.ast.primitive._
+import dev.tlang.tlang.tmpl.lang.ast._
 
 object GenericGenerator {
 

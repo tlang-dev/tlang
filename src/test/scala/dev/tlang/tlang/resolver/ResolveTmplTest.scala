@@ -2,11 +2,11 @@ package dev.tlang.tlang.resolver
 
 import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value.{ArrayValue, TLangLong, TLangString}
-import dev.tlang.tlang.ast.tmpl.TmplBlock
 import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.interpreter.context.{Context, ContextUtils}
 import dev.tlang.tlang.loader.remote.RemoteLoader
 import dev.tlang.tlang.loader.{BuildModuleTree, FileResourceLoader, ResourceLoader, TBagManager}
+import dev.tlang.tlang.tmpl.lang.ast.LangBlock
 import org.scalatest.funsuite.AnyFunSuite
 
 import java.nio.file.Paths
@@ -52,7 +52,7 @@ class ResolveTmplTest extends AnyFunSuite {
       }
     }
     val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
-    val block = module.resources("Main").ast.body.head.asInstanceOf[TmplBlock]
+    val block = module.resources("Main").ast.body.head.asInstanceOf[LangBlock]
     val resource = module.resources("Main")
     ResolveTmpl.resolveTmpl(block, module, resource.ast.header.get.uses.get, resource)
     assert("myPackage" == ContextUtils.findVar(Context(List(block.scope)), "MyFile/myPkg").get.asInstanceOf[Operation].content.toOption.get.asInstanceOf[TLangString].getElement)
@@ -83,7 +83,7 @@ class ResolveTmplTest extends AnyFunSuite {
       }
     }
     val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
-    val block = module.resources("Main").ast.body.head.asInstanceOf[TmplBlock]
+    val block = module.resources("Main").ast.body.head.asInstanceOf[LangBlock]
     val resource = module.resources("Main")
     ResolveTmpl.resolveTmpl(block, module, resource.ast.header.get.uses.get, resource)
     assert("Use1" == ContextUtils.findVar(Context(List(block.scope)), "MyFile/use1").get.asInstanceOf[Operation].content.toOption.get.asInstanceOf[TLangString].getElement)
@@ -115,7 +115,7 @@ class ResolveTmplTest extends AnyFunSuite {
       }
     }
     val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
-    val block = module.resources("Main").ast.body.head.asInstanceOf[TmplBlock]
+    val block = module.resources("Main").ast.body.head.asInstanceOf[LangBlock]
     val resource = module.resources("Main")
     ResolveTmpl.resolveTmpl(block, module, resource.ast.header.get.uses.get, resource)
     assert("Annot" == ContextUtils.findVar(Context(List(block.scope)), "MyFile/annot").get.asInstanceOf[Operation].content.toOption.get.asInstanceOf[TLangString].getElement)
@@ -146,7 +146,7 @@ class ResolveTmplTest extends AnyFunSuite {
       }
     }
     val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
-    val block = module.resources("Main").ast.body.head.asInstanceOf[TmplBlock]
+    val block = module.resources("Main").ast.body.head.asInstanceOf[LangBlock]
     val resource = module.resources("Main")
     ResolveTmpl.resolveTmpl(block, module, resource.ast.header.get.uses.get, resource)
     assert("Prop1" == ContextUtils.findVar(Context(List(block.scope)), "MyFile/prop1").get.asInstanceOf[Operation].content.toOption.get.asInstanceOf[TLangString].getElement)
@@ -179,7 +179,7 @@ class ResolveTmplTest extends AnyFunSuite {
       }
     }
     val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
-    val block = module.resources("Main").ast.body.head.asInstanceOf[TmplBlock]
+    val block = module.resources("Main").ast.body.head.asInstanceOf[LangBlock]
     val resource = module.resources("Main")
     ResolveTmpl.resolveTmpl(block, module, resource.ast.header.get.uses.get, resource)
     assert("Param" == ContextUtils.findVar(Context(List(block.scope)), "MyFile/param").get.asInstanceOf[Operation].content.toOption.get.asInstanceOf[TLangString].getElement)
@@ -212,7 +212,7 @@ class ResolveTmplTest extends AnyFunSuite {
       }
     }
     val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
-    val block = module.resources("Main").ast.body.head.asInstanceOf[TmplBlock]
+    val block = module.resources("Main").ast.body.head.asInstanceOf[LangBlock]
     val resource = module.resources("Main")
     ResolveTmpl.resolveTmpl(block, module, resource.ast.header.get.uses.get, resource)
     assert("Prop" == ContextUtils.findVar(Context(List(block.scope)), "MyFile/prop").get.asInstanceOf[Operation].content.toOption.get.asInstanceOf[TLangString].getElement)
@@ -246,7 +246,7 @@ class ResolveTmplTest extends AnyFunSuite {
       }
     }
     val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
-    val block = module.resources("Main").ast.body.head.asInstanceOf[TmplBlock]
+    val block = module.resources("Main").ast.body.head.asInstanceOf[LangBlock]
     val resource = module.resources("Main")
     ResolveTmpl.resolveTmpl(block, module, resource.ast.header.get.uses.get, resource)
     assert("Prop" == ContextUtils.findVar(Context(List(block.scope)), "MyFile/prop").get.asInstanceOf[Operation].content.toOption.get.asInstanceOf[TLangString].getElement)
@@ -283,7 +283,7 @@ class ResolveTmplTest extends AnyFunSuite {
       }
     }
     val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
-    val block = module.resources("Main").ast.body.head.asInstanceOf[TmplBlock]
+    val block = module.resources("Main").ast.body.head.asInstanceOf[LangBlock]
     val resource = module.resources("Main")
     ResolveTmpl.resolveTmpl(block, module, resource.ast.header.get.uses.get, resource)
     assert("One" == ContextUtils.findVar(Context(List(block.scope)), "MyFile/array").get.asInstanceOf[Operation].content.toOption.get.asInstanceOf[ArrayValue].tbl.get.head.value.content.toOption.get.asInstanceOf[TLangString].getElement)
@@ -321,7 +321,7 @@ class ResolveTmplTest extends AnyFunSuite {
       }
     }
     val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
-    val block = module.resources("Main").ast.body.head.asInstanceOf[TmplBlock]
+    val block = module.resources("Main").ast.body.head.asInstanceOf[LangBlock]
     val resource = module.resources("Main")
     ResolveTmpl.resolveTmpl(block, module, resource.ast.header.get.uses.get, resource)
     assert(1 == ContextUtils.findVar(Context(List(block.scope)), "MyFile/cond1").get.asInstanceOf[Operation].content.toOption.get.asInstanceOf[TLangLong].getElement)
@@ -359,7 +359,7 @@ class ResolveTmplTest extends AnyFunSuite {
       }
     }
     val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
-    val block = module.resources("Main").ast.body.head.asInstanceOf[TmplBlock]
+    val block = module.resources("Main").ast.body.head.asInstanceOf[LangBlock]
     val resource = module.resources("Main")
     ResolveTmpl.resolveTmpl(block, module, resource.ast.header.get.uses.get, resource)
     assert(1 == ContextUtils.findVar(Context(List(block.scope)), "MyFile/cond1").get.asInstanceOf[Operation].content.toOption.get.asInstanceOf[TLangLong].getElement)
@@ -403,7 +403,7 @@ class ResolveTmplTest extends AnyFunSuite {
       }
     }
     val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
-    val block = module.resources("Main").ast.body.head.asInstanceOf[TmplBlock]
+    val block = module.resources("Main").ast.body.head.asInstanceOf[LangBlock]
     val resource = module.resources("Main")
     ResolveTmpl.resolveTmpl(block, module, resource.ast.header.get.uses.get, resource)
     assert(1 == ContextUtils.findVar(Context(List(block.scope)), "MyFile/cond1").get.asInstanceOf[Operation].content.toOption.get.asInstanceOf[TLangLong].getElement)

@@ -6,10 +6,10 @@ import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value._
 import dev.tlang.tlang.ast.helper.{HelperFunc, HelperStatement}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetRef}
-import dev.tlang.tlang.ast.tmpl.TmplBlockAsValue
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.ExecCallFunc.manageTmplParameters
 import dev.tlang.tlang.interpreter.context.{Context, ContextUtils, Scope}
+import dev.tlang.tlang.tmpl.lang.ast.TmplBlockAsValue
 
 import scala.annotation.tailrec
 import scala.collection.mutable

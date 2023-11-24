@@ -1,10 +1,10 @@
 package dev.tlang.tlang.generator.langs.dart
 
-import dev.tlang.tlang.ast.tmpl.TmplNode
-import dev.tlang.tlang.ast.tmpl.func.TmplFunc
+import dev.tlang.tlang.tmpl.lang.ast.func.TmplFunc
 import dev.tlang.tlang.generator.formatter.{FormatRule, Formatter, Indent}
 import dev.tlang.tlang.generator.langs.BlockGenerator
 import dev.tlang.tlang.generator.langs.common.GenParameter
+import dev.tlang.tlang.tmpl.lang.ast.TmplNode
 
 object GenericFunc extends BlockGenerator {
 

@@ -1,35 +1,42 @@
 package dev.tlang.tlang.resolver
 
 import dev.tlang.tlang.ast.DomainUse
-import dev.tlang.tlang.ast.common.call.{CallFuncObject, CallFuncParam, CallObject, CallVarObject}
-import dev.tlang.tlang.ast.tmpl._
-import dev.tlang.tlang.ast.tmpl.call._
-import dev.tlang.tlang.ast.tmpl.condition.TmplOperation
-import dev.tlang.tlang.ast.tmpl.func.TmplFunc
-import dev.tlang.tlang.ast.tmpl.loop.{TmplDoWhile, TmplFor, TmplWhile}
-import dev.tlang.tlang.ast.tmpl.primitive._
+import dev.tlang.tlang.ast.common.call.{CallFuncObject, CallFuncParam, CallObject}
+import dev.tlang.tlang.tmpl._
+import dev.tlang.tlang.tmpl.lang.ast.call._
+import dev.tlang.tlang.tmpl.lang.ast.condition.TmplOperation
+import dev.tlang.tlang.tmpl.lang.ast.func.{TmplAnonFunc, TmplFunc}
+import dev.tlang.tlang.tmpl.lang.ast.loop.{TmplDoWhile, TmplFor, TmplWhile}
+import dev.tlang.tlang.tmpl.lang.ast.primitive._
 import dev.tlang.tlang.interpreter.context.Scope
 import dev.tlang.tlang.libraries.builtin.BuiltIntLibs
 import dev.tlang.tlang.loader.{Module, Resource}
+import dev.tlang.tlang.tmpl.lang.ast.{LangFullBlock, TmplAffect, TmplAnnotation, TmplAttribute, LangBlock, TmplBlockID, TmplExprBlock, TmplExprContent, TmplExpression, TmplGeneric, TmplID, TmplIf, TmplImpl, TmplInclude, TmplInterpretedID, TmplNode, TmplParam, TmplPkg, TmplProp, TmplReturn, TmplSetAttribute, TmplSpecialBlock, TmplType, TmplUse, TmplValueType, TmplVar}
 
 import scala.collection.mutable.ListBuffer
 
 object ResolveTmpl {
 
-  def resolveTmpl(block: TmplBlock, module: Module, uses: List[DomainUse], currentResource: Resource): Either[List[ResolverError], Unit] = {
+  def resolveTmpl(block: LangBlock, module: Module, uses: List[DomainUse], currentResource: Resource): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
-//    checkRet(errors, FollowCallObject.followCallObject(CallObject(block.context, List(CallVarObject(block.context, block.lang), CallFuncObject(block.context, Some("generate"), Some(List(CallFuncParam(block.context, Some(List()))))))), module, uses, block.scope, currentResource, None))
-    checkRet(errors, resolveLang(block, module, uses, currentResource))
-    checkRet(errors, resolvePkg(block.pkg, module, uses, currentResource, block.scope))
-    checkRet(errors, resolveUses(block.uses, module, uses, currentResource, block.scope))
-    block.content.foreach(_.foreach(content => {
-      checkRet(errors, resolveContent(content, module, uses, currentResource, block.scope))
+    //    checkRet(errors, FollowCallObject.followCallObject(CallObject(block.context, List(CallVarObject(block.context, block.lang), CallFuncObject(block.context, Some("generate"), Some(List(CallFuncParam(block.context, Some(List()))))))), module, uses, block.scope, currentResource, None))
+    checkRet(errors, resolveLangFullBlock(block.content, module, uses, currentResource))
+    if (errors.nonEmpty) Left(errors.toList)
+    else Right(())
+  }
+
+  def resolveLangFullBlock(fullBlock: LangFullBlock, module: Module, uses: List[DomainUse], currentResource: Resource): Either[List[ResolverError], Unit] = {
+    val errors = ListBuffer.empty[ResolverError]
+    checkRet(errors, resolvePkg(fullBlock.pkg, module, uses, currentResource, fullBlock.scope))
+    checkRet(errors, resolveUses(fullBlock.uses, module, uses, currentResource, fullBlock.scope))
+    fullBlock.content.foreach(_.foreach(content => {
+      checkRet(errors, resolveContent(content, module, uses, currentResource, fullBlock.scope))
     }))
     if (errors.nonEmpty) Left(errors.toList)
     else Right(())
   }
 
-  def resolveLang(block: TmplBlock, module: Module, uses: List[DomainUse], currentResource: Resource): Either[List[ResolverError], Unit] = {
+  def resolveLang(block: LangBlock, module: Module, uses: List[DomainUse], currentResource: Resource): Either[List[ResolverError], Unit] = {
     uses.find(use => use.parts.last.equals(block.lang) || use.alias.getOrElse("").equals(block.lang)) match {
       case None => Left(List(ResourceNotFound(block.context, block.lang)))
       case Some(use) =>

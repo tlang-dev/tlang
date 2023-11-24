@@ -1,31 +1,32 @@
 package dev.tlang.tlang.generator.langs.kotlin
 
 import dev.tlang.tlang.ast.common.operation.Operator
-import dev.tlang.tlang.ast.tmpl._
-import dev.tlang.tlang.ast.tmpl.call._
-import dev.tlang.tlang.ast.tmpl.condition.TmplOperation
-import dev.tlang.tlang.ast.tmpl.func.TmplFunc
-import dev.tlang.tlang.ast.tmpl.loop.ForType.ForType
-import dev.tlang.tlang.ast.tmpl.loop.{TmplDoWhile, TmplFor, TmplWhile}
-import dev.tlang.tlang.ast.tmpl.primitive._
+import dev.tlang.tlang.tmpl._
+import dev.tlang.tlang.tmpl.lang.ast.call._
+import dev.tlang.tlang.tmpl.lang.ast.condition.TmplOperation
+import dev.tlang.tlang.tmpl.lang.ast.func.{TmplAnnotationParam, TmplAnonFunc, TmplFunc}
+import dev.tlang.tlang.tmpl.lang.ast.loop.ForType.ForType
+import dev.tlang.tlang.tmpl.lang.ast.loop.{TmplDoWhile, TmplFor, TmplWhile}
+import dev.tlang.tlang.tmpl.lang.ast.primitive._
 import dev.tlang.tlang.generator.formatter.Formatter
 import dev.tlang.tlang.generator.{CodeGenerator, Seq}
+import dev.tlang.tlang.tmpl.lang.ast.{TmplAffect, TmplAnnotation, TmplAttribute, LangBlock, TmplExprBlock, TmplExprContent, TmplExpression, TmplGeneric, TmplID, TmplIf, TmplImpl, TmplInclude, TmplNode, TmplParam, TmplPkg, TmplProp, TmplReturn, TmplSetAttribute, TmplSimpleValueType, TmplStringID, TmplType, TmplUse, TmplValueType, TmplVar}
 
 import scala.language.postfixOps
 
 class KotlinGenerator extends CodeGenerator {
-  override def generate(tmpl: TmplBlock): String = {
+  override def generate(tmpl: LangBlock): String = {
     Formatter.format(KotlinGenerator.genBlock(tmpl), KotlinFormatter.formatter())
   }
 }
 
 object KotlinGenerator {
 
-  def genBlock(tmpl: TmplBlock): Seq = {
+  def genBlock(tmpl: LangBlock): Seq = {
     val root = Seq()
-    root += genPackage(tmpl.pkg)
-    root -> genIncludes(tmpl.uses)
-    tmpl.content.foreach(root -> genContents(_))
+//    root += genPackage(tmpl.pkg)
+//    root -> genIncludes(tmpl.uses)
+//    tmpl.content.foreach(root -> genContents(_))
     root
   }
 
@@ -57,7 +58,7 @@ object KotlinGenerator {
       case expr: TmplExpression[_] => genExpression(expr, addEndOfStatement)
       case impl: TmplImpl => genImpl(impl)
       case exprBlock: TmplExprBlock => genExprBlock(exprBlock, addEndOfStatement)
-      case tmplBlock: TmplBlock => genBlock(tmplBlock)
+      case tmplBlock: LangBlock => genBlock(tmplBlock)
     }
   }
 
@@ -259,18 +260,18 @@ object KotlinGenerator {
     val str = Seq()
     str += "for("
     str += forLoop.variable.toString
-    str += " " += genForType(forLoop.forType) += " "
+//    str += " " += genForType(forLoop.forType) += " "
     str += genOperation(forLoop.cond)
     str += ")"
     str += genExprContent(forLoop.content)
     str
   }
 
-  def genForType(forType: ForType): Seq = forType match {
-    case dev.tlang.tlang.ast.tmpl.loop.ForType.IN => Seq("in")
-    case dev.tlang.tlang.ast.tmpl.loop.ForType.TO => Seq("to")
-    case dev.tlang.tlang.ast.tmpl.loop.ForType.UNTIL => Seq("until")
-  }
+//  def genForType(forType: ForType): Seq = forType match {
+//    case dev.tlang.tlang.ast.tmpl.loop.ForType.IN => Seq("in")
+//    case dev.tlang.tlang.ast.tmpl.loop.ForType.TO => Seq("to")
+//    case dev.tlang.tlang.ast.tmpl.loop.ForType.UNTIL => Seq("until")
+//  }
 
   def genWhile(whileLoop: TmplWhile): Seq = {
     val str = Seq()

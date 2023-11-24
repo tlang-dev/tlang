@@ -3,13 +3,14 @@ package dev.tlang.tlang.generator
 import dev.tlang.tlang.ast.common.call.{CallObject, CallVarObject}
 import dev.tlang.tlang.ast.common.value.TLangString
 import dev.tlang.tlang.ast.tmpl._
-import dev.tlang.tlang.ast.tmpl.call.{TmplCallArray, TmplCallFunc, TmplCallObj, TmplCallVar}
-import dev.tlang.tlang.ast.tmpl.condition.TmplOperation
-import dev.tlang.tlang.ast.tmpl.func.TmplFunc
-import dev.tlang.tlang.ast.tmpl.primitive.{TmplStringValue, TmplTextValue}
+import dev.tlang.tlang.tmpl.lang.ast.call.{TmplCallArray, TmplCallFunc, TmplCallObj, TmplCallVar}
+import dev.tlang.tlang.tmpl.lang.ast.condition.TmplOperation
+import dev.tlang.tlang.tmpl.lang.ast.func.TmplFunc
+import dev.tlang.tlang.tmpl.lang.ast.primitive.{TmplStringValue, TmplTextValue}
 import dev.tlang.tlang.generator.mapper.ValueMapper
 import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.interpreter.context.{Context, Scope}
+import dev.tlang.tlang.tmpl.lang.ast.{TmplGeneric, TmplImpl, TmplImplFor, TmplInterpretedID, TmplMultiValue, TmplPkg, TmplSetAttribute, TmplStringID, TmplType, TmplUse, TmplVar}
 import org.scalatest.funsuite.AnyFunSuite
 
 import scala.collection.mutable

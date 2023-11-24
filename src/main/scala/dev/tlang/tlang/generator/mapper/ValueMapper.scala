@@ -2,14 +2,15 @@ package dev.tlang.tlang.generator.mapper
 
 import dev.tlang.tlang.ast.common.value.TLangString
 import dev.tlang.tlang.ast.tmpl._
-import dev.tlang.tlang.ast.tmpl.call._
-import dev.tlang.tlang.ast.tmpl.condition.TmplOperation
-import dev.tlang.tlang.ast.tmpl.func.TmplFunc
-import dev.tlang.tlang.ast.tmpl.loop.TmplFor
-import dev.tlang.tlang.ast.tmpl.primitive._
+import dev.tlang.tlang.tmpl.lang.ast.call._
+import dev.tlang.tlang.tmpl.lang.ast.condition.TmplOperation
+import dev.tlang.tlang.tmpl.lang.ast.func.{TmplAnnotationParam, TmplAnonFunc, TmplFunc}
+import dev.tlang.tlang.tmpl.lang.ast.loop.TmplFor
+import dev.tlang.tlang.tmpl.lang.ast.primitive._
 import dev.tlang.tlang.interpreter.ExecCallObject
 import dev.tlang.tlang.interpreter.context.Context
 import dev.tlang.tlang.libraries.generator.Generator
+import dev.tlang.tlang.tmpl.lang.ast.{LangFullBlock, TmplAffect, TmplAnnotation, TmplAttribute, LangBlock, TmplBlockAsValue, TmplBlockID, TmplExprBlock, TmplExprContent, TmplExpression, TmplGeneric, TmplID, TmplImpl, TmplImplFor, TmplImplWith, TmplInterpretedID, TmplMultiValue, TmplNode, TmplParam, TmplPkg, TmplProp, TmplReplacedId, TmplReturn, TmplSetAttribute, TmplSpecialBlock, TmplStringID, TmplType, TmplUse, TmplValueType, TmplVar}
 
 import scala.collection.mutable.ListBuffer
 
@@ -18,16 +19,18 @@ object ValueMapper {
   def mapBlockAsValue(blockAsValue: TmplBlockAsValue): TmplBlockAsValue = {
     val block = blockAsValue.block
     val con = blockAsValue.context
-    block.pkg = mapPkg(block.pkg, con)
-    block.uses = mapUses(block.uses, con)
-//    block.content = mapContents(block.content, con)
+    block.content = mapFullBlock(block.content, con)
     blockAsValue
   }
 
-  def mapBlock(block: TmplBlock, context: Context): TmplBlock = {
+  def mapBlock(block: LangBlock, context: Context): LangBlock = {
+    block.content = mapFullBlock(block.content, context)
+    block
+  }
+
+  def mapFullBlock(block: LangFullBlock, context: Context): LangFullBlock = {
     block.pkg = mapPkg(block.pkg, context)
     block.uses = mapUses(block.uses, context)
-//    block.content = mapContents(block.content, context)
     block
   }
 
@@ -61,7 +64,7 @@ object ValueMapper {
         case setAttr: TmplSetAttribute => newContent += mapSetAttribute(setAttr, context)
         case param: TmplParam => newContent += mapParam(param, context)
         case use: TmplUse => newContent += mapUse(use, context)
-        case block: TmplBlock => newContent += mapBlock(block, context)
+        case block: LangBlock => newContent += mapBlock(block, context)
         //        newContent ++= mapNode(_, context)
       }
       Some(newContent.toList)
@@ -139,7 +142,7 @@ object ValueMapper {
     func.props = mapProps(func.props, context)
     func.preNames = if (func.preNames.isDefined) Some(func.preNames.get.map(name => mapID(name, context))) else None
     func.name = mapID(func.name, context)
-//    func.curries = mapCurries(func.curries, context)
+    //    func.curries = mapCurries(func.curries, context)
     func.content = func.content.map(mapExprContent(_, context))
     func.ret = mapTypes(func.ret, context)
     func
@@ -190,32 +193,30 @@ object ValueMapper {
     val exprs = ListBuffer.empty[TmplNode[_]]
     //    block.exprs.foreach(_.getType)
     block.exprs.foreach {
-      case block: TmplBlock => mapContents(block.content, context).foreach {
-        _.foreach(exprs += _)
-      }
+      case block: LangBlock => exprs += mapFullBlock(block.content, context)
       case expr: TmplExpression[_] => exprs += mapExpression(expr, context)
     }
     TmplExprBlock(block.context, exprs.toList)
   }
 
   def mapSpecialBlock(block: TmplSpecialBlock, context: Context): TmplSpecialBlock = {
-//    block.curries = mapCurries(block.curries, context)
+    //    block.curries = mapCurries(block.curries, context)
     if (block.content.isDefined) block.content = Some(mapExprContent(block.content.get, context))
 
     block
   }
 
-/*  def mapCurries(curries: Option[List[TmplFuncCurry]], context: Context): Option[List[TmplFuncCurry]] = {
-    if (curries.isDefined) Some(curries.get.map(c => mapFuncCurry(c, context)))
-    else None
-  }
-
-  def mapFuncCurry(curry: TmplFuncCurry, context: Context): TmplFuncCurry = {
-    if (curry.params.isDefined) {
-      curry.params = Some(curry.params.get.map(p => mapParam(p, context)))
+  /*  def mapCurries(curries: Option[List[TmplFuncCurry]], context: Context): Option[List[TmplFuncCurry]] = {
+      if (curries.isDefined) Some(curries.get.map(c => mapFuncCurry(c, context)))
+      else None
     }
-    curry
-  }*/
+
+    def mapFuncCurry(curry: TmplFuncCurry, context: Context): TmplFuncCurry = {
+      if (curry.params.isDefined) {
+        curry.params = Some(curry.params.get.map(p => mapParam(p, context)))
+      }
+      curry
+    }*/
 
   def mapParam(param: TmplParam, context: Context): TmplParam = {
     param.annots = mapAnnots(param.annots, context)
@@ -225,7 +226,7 @@ object ValueMapper {
   }
 
   def mapAnonFunc(anonFunc: TmplAnonFunc, context: Context): TmplAnonFunc = {
-//    anonFunc.currying = mapFuncCurry(anonFunc.currying, context)
+    //    anonFunc.currying = mapFuncCurry(anonFunc.currying, context)
     anonFunc.content = mapExprContent(anonFunc.content, context)
     anonFunc
   }
@@ -277,7 +278,7 @@ object ValueMapper {
 
   def mapCallFunc(func: TmplCallFunc, context: Context): TmplCallFunc = {
     func.name = mapID(func.name, context)
-//    func.currying = mapCallFuncCurryParams(func.currying, context)
+    //    func.currying = mapCallFuncCurryParams(func.currying, context)
     func
   }
 

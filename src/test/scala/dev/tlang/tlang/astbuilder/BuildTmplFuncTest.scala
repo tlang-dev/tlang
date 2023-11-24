@@ -1,9 +1,9 @@
 package dev.tlang.tlang.astbuilder
 
-import dev.tlang.tlang.ast.tmpl.TmplStringID
-import dev.tlang.tlang.ast.tmpl.func.TmplFunc
+import dev.tlang.tlang.tmpl.lang.ast.func.TmplFunc
 import dev.tlang.tlang.astbuilder.context.ContextResource
-import dev.tlang.tlang.astbuilder.tmpl.BuildTmplBlock
+import dev.tlang.tlang.tmpl.lang.ast.TmplStringID
+import dev.tlang.tlang.tmpl.lang.astbuilder.BuildTmplBlock
 import dev.tlang.tlang.{TLangLexer, TLangParser}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite

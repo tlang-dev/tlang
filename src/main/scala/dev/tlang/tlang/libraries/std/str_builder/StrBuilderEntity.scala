@@ -5,9 +5,9 @@ import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value.{EntityValue, LazyValue, TLangString}
 import dev.tlang.tlang.ast.helper._
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetRef, ModelSetRefCurrying}
-import dev.tlang.tlang.astbuilder.tmpl.LangEntityUtils
-import dev.tlang.tlang.astbuilder.tmpl.lang.TmplValueAst
+import dev.tlang.tlang.generator.LangEntityUtils
 import dev.tlang.tlang.interpreter.context.{Context, ContextUtils}
+import dev.tlang.tlang.tmpl.lang.ast.TmplValueAst
 
 class StrBuilderEntity(strBuilder: StringBuilder) {
 

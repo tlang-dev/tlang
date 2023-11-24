@@ -1,12 +1,12 @@
 package dev.tlang.tlang.astbuilder
 
 import dev.tlang.tlang.ast.common.operation.Operator
-import dev.tlang.tlang.ast.tmpl.TmplExprBlock
-import dev.tlang.tlang.ast.tmpl.call.{TmplCallFunc, TmplCallObj}
-import dev.tlang.tlang.ast.tmpl.loop.{TmplDoWhile, TmplWhile}
-import dev.tlang.tlang.ast.tmpl.primitive.TmplLongValue
+import dev.tlang.tlang.tmpl.lang.ast.call.{TmplCallFunc, TmplCallObj}
+import dev.tlang.tlang.tmpl.lang.ast.loop.{TmplDoWhile, TmplWhile}
+import dev.tlang.tlang.tmpl.lang.ast.primitive.TmplLongValue
 import dev.tlang.tlang.astbuilder.context.ContextResource
-import dev.tlang.tlang.astbuilder.tmpl.BuildTmplBlock
+import dev.tlang.tlang.tmpl.lang.ast.TmplExprBlock
+import dev.tlang.tlang.tmpl.lang.astbuilder.BuildTmplBlock
 import dev.tlang.tlang.{TLangLexer, TLangParser}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite

@@ -1,9 +1,9 @@
 package dev.tlang.tlang.generator.builder
 
-import dev.tlang.tlang.ast.tmpl.TmplAnnotation
-import dev.tlang.tlang.ast.tmpl.func.TmplFunc
+import dev.tlang.tlang.tmpl.lang.ast.func.TmplFunc
 import dev.tlang.tlang.interpreter.ExecError
 import dev.tlang.tlang.interpreter.context.Context
+import dev.tlang.tlang.tmpl.lang.ast.TmplAnnotation
 
 import scala.collection.mutable.ListBuffer
 

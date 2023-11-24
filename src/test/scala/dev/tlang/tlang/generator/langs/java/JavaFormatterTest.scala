@@ -1,8 +1,8 @@
 package dev.tlang.tlang.generator.langs.java
 
 import dev.tlang.tlang.astbuilder.context.ContextResource
-import dev.tlang.tlang.astbuilder.tmpl.BuildTmplBlock
 import dev.tlang.tlang.generator.formatter.Formatter
+import dev.tlang.tlang.tmpl.lang.astbuilder.BuildTmplBlock
 import dev.tlang.tlang.{TLangLexer, TLangParser}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite

@@ -3,7 +3,7 @@ package dev.tlang.tlang.astbuilder
 import dev.tlang.tlang.TLangParser._
 import dev.tlang.tlang.ast._
 import dev.tlang.tlang.astbuilder.context.{ContextContent, ContextResource}
-import dev.tlang.tlang.astbuilder.tmpl.BuildTmplBlock
+import dev.tlang.tlang.tmpl.lang.astbuilder.BuildTmplBlock
 import org.antlr.v4.runtime.ParserRuleContext
 
 import scala.jdk.CollectionConverters._

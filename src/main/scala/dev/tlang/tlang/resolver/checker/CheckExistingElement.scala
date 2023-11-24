@@ -4,10 +4,10 @@ import dev.tlang.tlang.ast.common.value.AssignVar
 import dev.tlang.tlang.ast.helper.{HelperBlock, HelperFunc}
 import dev.tlang.tlang.ast.model.ModelBlock
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
-import dev.tlang.tlang.ast.tmpl.TmplBlock
 import dev.tlang.tlang.astbuilder.context.AstContext
 import dev.tlang.tlang.loader.Resource
 import dev.tlang.tlang.resolver.{NameAlreadyUsed, ResolverError}
+import dev.tlang.tlang.tmpl.lang.ast.LangBlock
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
@@ -50,7 +50,7 @@ object CheckExistingElement {
         case Left(value) => errors.addAll(value)
         case Right(_) =>
       }
-      case tmpl: TmplBlock => checkInTmpl(tmpl, usedNames) match {
+      case tmpl: LangBlock => checkInTmpl(tmpl, usedNames) match {
         case Left(value) => errors.addAll(value)
         case Right(_) =>
       }
@@ -94,7 +94,7 @@ object CheckExistingElement {
     else Left(errors.toList)
   }
 
-  def checkInTmpl(tmpl: TmplBlock, usedNames: mutable.Map[String, AstContext]): Either[List[ResolverError], Unit] = {
+  def checkInTmpl(tmpl: LangBlock, usedNames: mutable.Map[String, AstContext]): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
     checkExisting(tmpl.name, tmpl, usedNames, errors)
     if (errors.isEmpty) Right(())

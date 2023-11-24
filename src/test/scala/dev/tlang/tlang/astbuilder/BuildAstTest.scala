@@ -2,8 +2,8 @@ package dev.tlang.tlang.astbuilder
 
 import dev.tlang.tlang.ast.helper.HelperBlock
 import dev.tlang.tlang.ast.model.ModelBlock
-import dev.tlang.tlang.ast.tmpl.TmplBlock
 import dev.tlang.tlang.astbuilder.context.ContextResource
+import dev.tlang.tlang.tmpl.lang.ast.LangBlock
 import dev.tlang.tlang.{TLangLexer, TLangParser}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
@@ -144,6 +144,6 @@ class BuildAstTest extends AnyFunSuite {
     assert(3 == blocks.body.size)
     assert(blocks.body.head.isInstanceOf[ModelBlock])
     assert(blocks.body(1).isInstanceOf[HelperBlock])
-    assert(blocks.body.last.isInstanceOf[TmplBlock])
+    assert(blocks.body.last.isInstanceOf[LangBlock])
   }
 }

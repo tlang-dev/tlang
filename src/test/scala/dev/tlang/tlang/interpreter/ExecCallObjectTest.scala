@@ -3,11 +3,11 @@ package dev.tlang.tlang.interpreter
 import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.call._
 import dev.tlang.tlang.ast.common.operation.{Operation, Operator}
-import dev.tlang.tlang.ast.common.value.{EntityValue, TLangString, _}
+import dev.tlang.tlang.ast.common.value._
 import dev.tlang.tlang.ast.helper._
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetRef, ModelSetRefCurrying}
-import dev.tlang.tlang.ast.tmpl.{TmplBlock, TmplBlockAsValue, TmplPkg, TmplStringID}
 import dev.tlang.tlang.interpreter.context.{Context, Scope}
+import dev.tlang.tlang.tmpl.lang.ast.{LangBlock, TmplBlockAsValue, TmplPkg, TmplStringID}
 import org.scalatest.funsuite.AnyFunSuite
 
 import scala.collection.mutable

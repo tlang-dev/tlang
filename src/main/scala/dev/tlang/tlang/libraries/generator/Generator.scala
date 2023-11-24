@@ -3,7 +3,6 @@ package dev.tlang.tlang.libraries.generator
 import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.value.TLangString
 import dev.tlang.tlang.ast.helper._
-import dev.tlang.tlang.ast.tmpl.TmplBlockAsValue
 import dev.tlang.tlang.generator.CodeGenerator
 import dev.tlang.tlang.generator.langs.dart.DartGeneratorGen3
 import dev.tlang.tlang.generator.langs.groovy.GroovyGenerator
@@ -14,6 +13,7 @@ import dev.tlang.tlang.generator.langs.xml.XMLGenerator
 import dev.tlang.tlang.generator.langs.yml.YMLGenerator
 import dev.tlang.tlang.interpreter._
 import dev.tlang.tlang.interpreter.context.{Context, ContextUtils, Scope}
+import dev.tlang.tlang.tmpl.lang.ast.TmplBlockAsValue
 
 import scala.collection.mutable
 
@@ -55,7 +55,7 @@ object Generator {
     //          case Right(newBlock) => Right(new TLangString(None, generator.generate(newBlock.block)))
     //        }
     //    }
-    val newScope = Scope(variables = mutable.Map("code" -> block.block.content.get.head))
+    val newScope = Scope(variables = mutable.Map("code" -> block.block.content.toEntity))
     val newContext = Context(context.scopes :+ newScope)
     ContextUtils.findFunc(block.context, block.block.lang) match {
       case Some(func) => ExecFunc.run(func, newContext) match {

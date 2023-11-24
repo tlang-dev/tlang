@@ -1,6 +1,6 @@
 package dev.tlang.tlang.astbuilder.context
 
-import dev.tlang.tlang.ast.tmpl.DeepCopy
+import dev.tlang.tlang.tmpl.lang.ast.DeepCopy
 
 case class ContextContent(resource: ContextResource, line: Int, charPos: Int) extends DeepCopy {
   override def deepCopy(): ContextContent = ContextContent(

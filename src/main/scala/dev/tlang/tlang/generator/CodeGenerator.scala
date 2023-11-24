@@ -1,9 +1,9 @@
 package dev.tlang.tlang.generator
 
-import dev.tlang.tlang.ast.tmpl.TmplBlock
+import dev.tlang.tlang.tmpl.lang.ast.LangBlock
 
 trait CodeGenerator {
 
-  def generate(tmpl: TmplBlock): String
+  def generate(tmpl: LangBlock): String
 
 }

@@ -6,11 +6,12 @@ import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value.{ArrayValue, ComplexAttribute, LazyValue, TLangString}
 import dev.tlang.tlang.ast.helper.HelperParam
 import dev.tlang.tlang.ast.tmpl._
-import dev.tlang.tlang.ast.tmpl.condition.TmplOperation
-import dev.tlang.tlang.ast.tmpl.primitive.{TmplArrayValue, TmplEntityValue, TmplStringValue}
+import dev.tlang.tlang.tmpl.lang.ast.condition.TmplOperation
+import dev.tlang.tlang.tmpl.lang.ast.primitive.{TmplArrayValue, TmplEntityValue, TmplStringValue}
 import dev.tlang.tlang.generator.builder.{EntityBuilder, TemplateBuilder}
 import dev.tlang.tlang.interpreter.context.{Context, Scope}
 import dev.tlang.tlang.libraries.builtin.BuiltIntLibs
+import dev.tlang.tlang.tmpl.lang.ast.{TmplInterpretedID, TmplPkg, TmplSetAttribute, TmplStringID}
 import org.scalatest.funsuite.AnyFunSuite
 
 import scala.collection.mutable

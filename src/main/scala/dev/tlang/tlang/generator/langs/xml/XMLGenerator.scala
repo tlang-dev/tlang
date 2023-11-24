@@ -1,22 +1,23 @@
 package dev.tlang.tlang.generator.langs.xml
 
-import dev.tlang.tlang.ast.tmpl._
-import dev.tlang.tlang.ast.tmpl.condition.TmplOperation
-import dev.tlang.tlang.ast.tmpl.primitive._
+import dev.tlang.tlang.tmpl._
+import dev.tlang.tlang.tmpl.lang.ast.condition.TmplOperation
+import dev.tlang.tlang.tmpl.lang.ast.primitive._
 import dev.tlang.tlang.generator.formatter.Formatter
 import dev.tlang.tlang.generator.{CodeGenerator, Seq}
+import dev.tlang.tlang.tmpl.lang.ast.{TmplAttribute, LangBlock, TmplExpression, TmplID, TmplNode}
 
 class XMLGenerator extends CodeGenerator {
-  override def generate(tmpl: TmplBlock): String = {
+  override def generate(tmpl: LangBlock): String = {
     Formatter.format(XMLGenerator.genBlock(tmpl), XMLFormatter.formatter())
   }
 }
 
 object XMLGenerator {
 
-  def genBlock(tmpl: TmplBlock): Seq = {
+  def genBlock(tmpl: LangBlock): Seq = {
     val root = Seq()
-    tmpl.content.foreach(root -> genContents(_))
+    //tmpl.content.foreach(root -> genContents(_))
     root
   }
 

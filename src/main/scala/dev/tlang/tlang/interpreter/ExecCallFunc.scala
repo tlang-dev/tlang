@@ -3,8 +3,8 @@ package dev.tlang.tlang.interpreter
 import dev.tlang.tlang.ast.common.call.{CallFuncObject, CallFuncParam, CallRefFuncObject, SetAttribute}
 import dev.tlang.tlang.ast.common.value.LazyValue
 import dev.tlang.tlang.ast.helper.{HelperFunc, HelperStatement}
-import dev.tlang.tlang.ast.tmpl.{TmplBlock, TmplBlockAsValue}
 import dev.tlang.tlang.interpreter.context.{Context, ContextUtils, MutableContext, Scope}
+import dev.tlang.tlang.tmpl.lang.ast.{LangBlock, TmplBlockAsValue}
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
@@ -72,7 +72,7 @@ object ExecCallFunc extends Executor {
     helperFunc.currying.get(curryPos).params(paramPos).param.getOrElse(paramPos.toString)
   }
 
-  def manageTmplParameters(caller: CallFuncObject, tmpl: TmplBlock, context: Context): Context = {
+  def manageTmplParameters(caller: CallFuncObject, tmpl: LangBlock, context: Context): Context = {
     val vars: mutable.Map[String, Value[_]] = mutable.Map()
     val funcs: mutable.Map[String, HelperFunc] = mutable.Map()
     if (tmpl.params.isDefined) {
@@ -89,7 +89,7 @@ object ExecCallFunc extends Executor {
     Context(context.scopes :+ Scope(variables = vars, functions = funcs) :+ tmpl.scope)
   }
 
-  def findTmplParamName(paramPos: Int, tmplBlock: TmplBlock): String = {
+  def findTmplParamName(paramPos: Int, tmplBlock: LangBlock): String = {
     tmplBlock.params.get(paramPos).param.getOrElse(paramPos.toString)
   }
 

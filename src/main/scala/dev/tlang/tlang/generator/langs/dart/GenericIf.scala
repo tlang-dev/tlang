@@ -1,9 +1,9 @@
 package dev.tlang.tlang.generator.langs.dart
 
-import dev.tlang.tlang.ast.tmpl.{TmplIf, TmplNode}
 import dev.tlang.tlang.generator.formatter.{FormatRule, Formatter, Indent}
 import dev.tlang.tlang.generator.langs.BlockGenerator
 import dev.tlang.tlang.generator.langs.common.GenParameter
+import dev.tlang.tlang.tmpl.lang.ast.{TmplIf, TmplNode}
 
 object GenericIf extends BlockGenerator {
   override def generate(node: TmplNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (TmplNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent): Indent = {

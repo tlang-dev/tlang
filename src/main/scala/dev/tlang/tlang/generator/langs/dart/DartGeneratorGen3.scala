@@ -1,17 +1,18 @@
 package dev.tlang.tlang.generator.langs.dart
 
-import dev.tlang.tlang.ast.tmpl._
-import dev.tlang.tlang.ast.tmpl.call._
-import dev.tlang.tlang.ast.tmpl.condition.TmplOperation
-import dev.tlang.tlang.ast.tmpl.func.TmplFunc
-import dev.tlang.tlang.ast.tmpl.primitive._
+import dev.tlang.tlang.tmpl._
+import dev.tlang.tlang.tmpl.lang.ast.call._
+import dev.tlang.tlang.tmpl.lang.ast.condition.TmplOperation
+import dev.tlang.tlang.tmpl.lang.ast.func.{TmplAnnotationParam, TmplFunc}
+import dev.tlang.tlang.tmpl.lang.ast.primitive._
 import dev.tlang.tlang.generator.CodeGenerator
 import dev.tlang.tlang.generator.formatter.{FormatRule, Indent}
 import dev.tlang.tlang.generator.langs.BlockGenerator
 import dev.tlang.tlang.generator.langs.common.GenParameter
+import dev.tlang.tlang.tmpl.lang.ast.{TmplAffect, TmplAnnotation, TmplAttribute, LangBlock, TmplExprBlock, TmplGeneric, TmplIf, TmplImpl, TmplNode, TmplParam, TmplPkg, TmplProp, TmplReturn, TmplSetAttribute, TmplSpecialBlock, TmplUse, TmplVar}
 
 class DartGeneratorGen3 extends CodeGenerator {
-  override def generate(tmpl: TmplBlock): String = {
+  override def generate(tmpl: LangBlock): String = {
     DartGeneratorGen3.generateBlock(tmpl)
   }
 }
@@ -19,7 +20,7 @@ class DartGeneratorGen3 extends CodeGenerator {
 object DartGeneratorGen3 {
 
   private val blocks: Map[String, BlockGenerator] = Map(
-    clean(TmplBlock.getClass.getName) -> GenericBlock,
+    clean(LangBlock.getClass.getName) -> GenericBlock,
     clean(TmplImpl.getClass.getName) -> GenericImpl,
     clean(TmplFunc.getClass.getName) -> GenericFunc,
     clean(TmplIf.getClass.getName) -> GenericIf,
@@ -55,10 +56,10 @@ object DartGeneratorGen3 {
     clean(TmplLongValue.getClass.getName) -> GenericGenerator.genLongValue,
     clean(TmplDoubleValue.getClass.getName) -> GenericGenerator.genDoubleValue,
     clean(TmplBoolValue.getClass.getName) -> GenericGenerator.genBoolValue,
-    //    "dev.tlang.tlang.ast.tmpl.TmplID" -> GenericGenerator.genTmplID,
+    //    "dev.tlang.tlang.tmpl.lang.ast.TmplID" -> GenericGenerator.genTmplID,
   )
 
-  private def generateBlock(tmpl: TmplBlock): String = {
+  private def generateBlock(tmpl: LangBlock): String = {
     val str = new StringBuilder()
     generate(tmpl, str, Indent(), DartFormatter.rules, GenParameter.default())
     str.toString()

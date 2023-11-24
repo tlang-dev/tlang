@@ -1,9 +1,9 @@
 package dev.tlang.tlang.generator.builder
 
-import dev.tlang.tlang.ast.tmpl.{TmplAnnotation, TmplID, TmplImpl}
 import dev.tlang.tlang.generator.builder.TemplateBuilder.includeTmplId
 import dev.tlang.tlang.interpreter.ExecError
 import dev.tlang.tlang.interpreter.context.Context
+import dev.tlang.tlang.tmpl.lang.ast.{TmplAnnotation, TmplID, TmplImpl}
 
 import scala.collection.mutable.ListBuffer
 
