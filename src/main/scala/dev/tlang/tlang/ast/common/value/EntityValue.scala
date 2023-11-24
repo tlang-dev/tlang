@@ -1,10 +1,11 @@
 package dev.tlang.tlang.ast.common.value
 
-import dev.tlang.tlang.ast.common.ValueType
+import dev.tlang.tlang.ast.common.{ObjType, ValueType}
 import dev.tlang.tlang.ast.model.set.ModelSetRefValue
 import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
 import dev.tlang.tlang.interpreter.context.Scope
 import dev.tlang.tlang.interpreter.{ExecError, NotImplemented, Value}
+import dev.tlang.tlang.tmpl.lang.ast.TmplValueAst
 
 case class EntityValue(context: Option[ContextContent],
                        var `type`: Option[ValueType],
@@ -31,4 +32,9 @@ case class EntityValue(context: Option[ContextContent],
   override def getContext: Option[ContextContent] = context
 
   override def deepCopy(): EntityValue = EntityValue(context, `type`, attrs, scope)
+
+  override def toEntity: EntityValue = EntityValue(context,
+    Some(ObjType(context, None, TmplValueAst.langEntity.name)),
+    Some(List())
+  )
 }

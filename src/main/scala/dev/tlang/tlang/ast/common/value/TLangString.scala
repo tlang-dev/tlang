@@ -3,6 +3,8 @@ package dev.tlang.tlang.ast.common.value
 import dev.tlang.tlang.ast.common.{ObjType, ValueType}
 import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
 import dev.tlang.tlang.interpreter.{ExecError, NotImplemented, Value}
+import dev.tlang.tlang.tmpl.lang.ast.TmplValueAst
+import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLangValue
 
 class TLangString(context: Option[ContextContent], value: String) extends PrimitiveValue[String] with AstContext {
   override def getElement: String = value
@@ -26,6 +28,11 @@ class TLangString(context: Option[ContextContent], value: String) extends Primit
   override def modulo(value: PrimitiveValue[String]): Either[ExecError, TLangString] = Left(NotImplemented(context = context))
 
   override def deepCopy(): TLangString = new TLangString(context, new String(value))
+
+  override def toEntity: EntityValue = EntityValue(context,
+    Some(ObjType(context, None, TmplValueAst.langString.name)),
+    Some(List())
+  )
 }
 
 object TLangString extends TLangType {

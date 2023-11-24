@@ -1,7 +1,7 @@
 package dev.tlang.tlang.generator.mapper
 
 import dev.tlang.tlang.ast.common.value.TLangString
-import dev.tlang.tlang.ast.tmpl._
+import dev.tlang.tlang.tmpl._
 import dev.tlang.tlang.tmpl.lang.ast.call._
 import dev.tlang.tlang.tmpl.lang.ast.condition.TmplOperation
 import dev.tlang.tlang.tmpl.lang.ast.func.{TmplAnnotationParam, TmplAnonFunc, TmplFunc}

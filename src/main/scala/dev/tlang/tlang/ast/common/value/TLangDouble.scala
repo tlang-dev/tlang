@@ -3,6 +3,7 @@ package dev.tlang.tlang.ast.common.value
 import dev.tlang.tlang.ast.common.{ObjType, ValueType}
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.{ExecError, Value}
+import dev.tlang.tlang.tmpl.lang.ast.TmplValueAst
 
 class TLangDouble(context: Option[ContextContent], value: Double) extends PrimitiveValue[Double] {
   override def getElement: Double = value
@@ -26,6 +27,11 @@ class TLangDouble(context: Option[ContextContent], value: Double) extends Primit
   override def modulo(value: PrimitiveValue[Double]): Either[ExecError, TLangDouble] = Right(new TLangDouble(None, this.value % value.getElement))
 
   override def deepCopy(): TLangDouble = new TLangDouble(context, value)
+
+  override def toEntity: EntityValue = EntityValue(context,
+    Some(ObjType(context, None, TmplValueAst.langDouble.name)),
+    Some(List())
+  )
 }
 
 object TLangDouble extends TLangType {
