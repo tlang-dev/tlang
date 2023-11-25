@@ -15,7 +15,7 @@ object TmplCallAst {
   val tmplCallFuncParam: ModelSetEntity = ModelSetEntity(None, "TmplCallFuncParam", Some(ObjType(None, None, langNode.name)), None, Some(List(
   )))
 
-  val tmplCallObj: ModelSetEntity = ModelSetEntity(None, "TmplCallObj", Some(ObjType(None, None, langNode.name)), None, Some(List(
+  val langCallObj: ModelSetEntity = ModelSetEntity(None, "LangCallObj", Some(ObjType(None, None, langNode.name)), None, Some(List(
   )))
 
   val tmplCallObjLink: ModelSetEntity = ModelSetEntity(None, "TmplCallObjLink", Some(ObjType(None, None, langNode.name)), None, Some(List(

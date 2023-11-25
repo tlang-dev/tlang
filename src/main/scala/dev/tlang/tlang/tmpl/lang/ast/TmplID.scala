@@ -1,9 +1,11 @@
 package dev.tlang.tlang.tmpl.lang.ast
 
+import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.call.CallObject
 import dev.tlang.tlang.ast.common.value.EntityValue
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
+import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 
 sealed trait TmplID extends TmplNode[TmplID] {
 
@@ -31,7 +33,10 @@ case class TmplInterpretedID(context: Option[ContextContent], pre: Option[String
 
   override def getType: String = getClass.getName
 
-  override def toEntity: EntityValue = ???
+  override def toEntity: EntityValue = EntityValue(context,
+    Some(ObjType(context, None, TmplValueAst.langInterpretedId.name)),
+    Some(List())
+  )
 }
 
 /**
@@ -53,7 +58,10 @@ case class TmplReplacedId(context: Option[ContextContent], pre: Option[String] =
 
   override def getType: String = getClass.getName
 
-  override def toEntity: EntityValue = ???
+  override def toEntity: EntityValue = EntityValue(context,
+    Some(ObjType(context, None, TmplValueAst.langReplacedId.name)),
+    Some(List(BuildLang.createAttrStr(context, "value", pre.getOrElse("") + node.toString + post.getOrElse(""))))
+  )
 }
 
 case class TmplStringID(context: Option[ContextContent], id: String) extends TmplID {
@@ -67,7 +75,12 @@ case class TmplStringID(context: Option[ContextContent], id: String) extends Tmp
 
   override def getType: String = getClass.getName
 
-  override def toEntity: EntityValue = ???
+  override def toEntity: EntityValue = EntityValue(context,
+    Some(ObjType(context, None, TmplValueAst.langStringId.name)),
+    Some(List(
+      BuildLang.createAttrStr(context, "value", id)
+    ))
+  )
 }
 
 case class TmplBlockID(context: Option[ContextContent], block: LangBlock) extends TmplID {
@@ -81,5 +94,8 @@ case class TmplBlockID(context: Option[ContextContent], block: LangBlock) extend
 
   override def getType: String = getClass.getName
 
-  override def toEntity: EntityValue = ???
+  override def toEntity: EntityValue = EntityValue(context,
+    Some(ObjType(context, None, TmplValueAst.langBlockId.name)),
+    Some(List())
+  )
 }

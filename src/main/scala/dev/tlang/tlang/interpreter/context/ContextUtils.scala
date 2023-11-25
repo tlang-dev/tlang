@@ -17,11 +17,11 @@ object ContextUtils {
   )
 
   def findVar(context: Context, name: String): Option[Value[_]] = {
-    var i = 0
+    var i = context.scopes.length - 1
     var variable: Option[Value[_]] = None
-    while (variable.isEmpty && i < context.scopes.length) {
+    while (variable.isEmpty && i >= 0) {
       context.scopes(i).variables.get(name).foreach(value => variable = Some(value))
-      i += 1
+      i -= 1
     }
     variable
   }
@@ -33,44 +33,44 @@ object ContextUtils {
   }
 
   def findFunc(context: Context, name: String): Option[HelperFunc] = {
-    var i = 0
+    var i = context.scopes.length - 1
     var func: Option[HelperFunc] = None
-    while (func.isEmpty && i < context.scopes.length) {
+    while (func.isEmpty && i >= 0) {
       context.scopes(i).functions.get(name).foreach(value => func = Some(value))
-      i += 1
+      i -= 1
     }
     func
   }
 
   def findTmpl(context: Context, name: String): Option[LangBlock] = {
-    var i = 0
+    var i = context.scopes.length - 1
     var tmpl: Option[LangBlock] = None
-    while (tmpl.isEmpty && i < context.scopes.length) {
+    while (tmpl.isEmpty && i >= 0) {
       context.scopes(i).templates.get(name).foreach(value => tmpl = Some(value))
-      i += 1
+      i -= 1
     }
     tmpl
   }
 
   def findRefFunc(context: Context, name: String): Option[CallRefFuncObject] = {
-    var i = 0
+    var i = context.scopes.length - 1
     var ref: Option[CallRefFuncObject] = None
-    while (ref.isEmpty && i < context.scopes.length) {
+    while (ref.isEmpty && i >= 0) {
       context.scopes(i).refFunctions.get(name).foreach(value => ref = Some(value))
-      i += 1
+      i -= 1
     }
     ref
   }
 
   def findModel(context: Context, name: String): Option[ModelSetValueType[_]] = {
-    var i = 0
+    var i = context.scopes.length - 1
     var model: Option[ModelSetValueType[_]] = None
     nativeModels.get(name) match {
       case Some(value) => model = Some(value)
       case None =>
-        while (model.isEmpty && i < context.scopes.length) {
+        while (model.isEmpty && i >= 0) {
           context.scopes(i).models.get(name).foreach(value => model = Some(value))
-          i += 1
+          i -= 1
         }
     }
     model

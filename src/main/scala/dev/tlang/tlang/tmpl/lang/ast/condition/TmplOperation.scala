@@ -6,6 +6,7 @@ import dev.tlang.tlang.ast.common.value.EntityValue
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.tmpl.lang.ast.{DeepCopy, TmplExprAst, TmplExpression, TmplNode}
+import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 
 case class TmplOperation(context: Option[ContextContent], var content: Either[TmplOperation, TmplExpression[_]], var next: Option[(Operator.operator, TmplOperation)] = None) extends DeepCopy with TmplNode[TmplOperation] {
   override def deepCopy(): TmplOperation = TmplOperation(context,
@@ -24,7 +25,12 @@ case class TmplOperation(context: Option[ContextContent], var content: Either[Tm
   override def getType: String = getClass.getName
 
   override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, TmplExprAst.tmplOperation.name)),
-    Some(List())
+    Some(ObjType(context, None, TmplExprAst.langOperation.name)),
+    Some(List(
+      BuildLang.createAttrEntity(context, "content", content match {
+        case Left(value) => value.toEntity
+        case Right(value) => value.toEntity
+      }),
+    ))
   )
 }

@@ -1,25 +1,35 @@
 package dev.tlang.tlang.resolver
 
 import dev.tlang.tlang.ast.DomainUse
-import dev.tlang.tlang.ast.common.call.{CallFuncObject, CallFuncParam, CallObject}
+import dev.tlang.tlang.ast.common.call.{CallFuncObject, CallFuncParam, CallObject, CallVarObject}
+import dev.tlang.tlang.interpreter.context.Scope
+import dev.tlang.tlang.libraries.builtin.BuiltIntLibs
+import dev.tlang.tlang.loader.{Module, Resource}
 import dev.tlang.tlang.tmpl._
+import dev.tlang.tlang.tmpl.lang.ast._
 import dev.tlang.tlang.tmpl.lang.ast.call._
 import dev.tlang.tlang.tmpl.lang.ast.condition.TmplOperation
 import dev.tlang.tlang.tmpl.lang.ast.func.{TmplAnonFunc, TmplFunc}
 import dev.tlang.tlang.tmpl.lang.ast.loop.{TmplDoWhile, TmplFor, TmplWhile}
 import dev.tlang.tlang.tmpl.lang.ast.primitive._
-import dev.tlang.tlang.interpreter.context.Scope
-import dev.tlang.tlang.libraries.builtin.BuiltIntLibs
-import dev.tlang.tlang.loader.{Module, Resource}
-import dev.tlang.tlang.tmpl.lang.ast.{LangFullBlock, TmplAffect, TmplAnnotation, TmplAttribute, LangBlock, TmplBlockID, TmplExprBlock, TmplExprContent, TmplExpression, TmplGeneric, TmplID, TmplIf, TmplImpl, TmplInclude, TmplInterpretedID, TmplNode, TmplParam, TmplPkg, TmplProp, TmplReturn, TmplSetAttribute, TmplSpecialBlock, TmplType, TmplUse, TmplValueType, TmplVar}
 
 import scala.collection.mutable.ListBuffer
 
 object ResolveTmpl {
 
-  def resolveTmpl(block: LangBlock, module: Module, uses: List[DomainUse], currentResource: Resource): Either[List[ResolverError], Unit] = {
+  def resolveTmpl(block: TmplBlock[_], module: Module, uses: List[DomainUse], currentResource: Resource): Either[List[ResolverError], Unit] = {
+    block match {
+      case block: LangBlock => resolveLangBlock(block, module, uses, currentResource)
+      case _ =>
+        println("No resolver for TmplBlock in ResolveTmpl")
+        Right(())
+    }
+  }
+
+  def resolveLangBlock(block: LangBlock, module: Module, uses: List[DomainUse], currentResource: Resource): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
     //    checkRet(errors, FollowCallObject.followCallObject(CallObject(block.context, List(CallVarObject(block.context, block.lang), CallFuncObject(block.context, Some("generate"), Some(List(CallFuncParam(block.context, Some(List()))))))), module, uses, block.scope, currentResource, None))
+    checkRet(errors, resolveLang(block, module, uses, currentResource))
     checkRet(errors, resolveLangFullBlock(block.content, module, uses, currentResource))
     if (errors.nonEmpty) Left(errors.toList)
     else Right(())

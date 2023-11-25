@@ -13,7 +13,7 @@ object BuildLangFunc {
   def buildFunc(resource: ContextResource, func: TmplFuncContext): EntityValue = {
     val context = BuildAst.addContext(resource, func)
     EntityValue(context,
-      Some(ObjType(context, None, TmplFuncAst.tmplFunc.name)),
+      Some(ObjType(context, None, TmplFuncAst.langFunc.name)),
       Some(List(
         BuildLang.createAttrEntity(context, "name", BuildLangValue.buildId(resource, func.name))
       ))
@@ -23,7 +23,7 @@ object BuildLangFunc {
   def buildTmplFuncCurries(resource: ContextResource, curries: List[TmplCurryingContext]): EntityValue = {
     val context = BuildAst.addContext(resource, curries.head)
     EntityValue(context,
-      Some(ObjType(context, None, TmplFuncAst.tmplFunc.name)),
+      Some(ObjType(context, None, TmplFuncAst.langFunc.name)),
       Some(List(
 
       ))
@@ -33,7 +33,7 @@ object BuildLangFunc {
   def buildTmplFuncParam(resource: ContextResource, param: TLangParser.TmplCurryingParamContext): EntityValue = {
     val context = BuildAst.addContext(resource, param)
     EntityValue(context,
-      Some(ObjType(context, None, TmplFuncAst.tmplFunc.name)),
+      Some(ObjType(context, None, TmplFuncAst.langFunc.name)),
       Some(List(
 
       ))

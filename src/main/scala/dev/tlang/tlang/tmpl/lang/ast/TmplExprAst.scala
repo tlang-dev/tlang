@@ -9,7 +9,7 @@ object TmplExprAst {
   val tmplExprBlock: ModelSetEntity = ModelSetEntity(None, "TmplExprBlock", Some(ObjType(None, None, langNode.name)), None, Some(List(
   )))
 
-  val tmplOperation: ModelSetEntity = ModelSetEntity(None, "TmplOperation", Some(ObjType(None, None, langNode.name)), None, Some(List(
+  val langOperation: ModelSetEntity = ModelSetEntity(None, "LangOperation", Some(ObjType(None, None, langNode.name)), None, Some(List(
   )))
 
 }

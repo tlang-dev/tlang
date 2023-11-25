@@ -25,6 +25,10 @@ object TmplLangAst {
     ModelSetAttribute(None, Some("context"), langContext)
   )))
 
+  val langExprBlock: ModelSetEntity = ModelSetEntity(None, "LangExprBlock", None, None, Some(List(
+    ModelSetAttribute(None, Some("context"), langContext)
+  )))
+
   val langPkg: ModelSetEntity = ModelSetEntity(None, "LangPkg", None, None, Some(List(
     ModelSetAttribute(None, Some("parts"), ModelSetArray(None, TLangString.getType))
   )))
@@ -74,7 +78,7 @@ object TmplLangAst {
   val tmplProp: ModelSetEntity = ModelSetEntity(None, "TmplProp", Some(ObjType(None, None, langNode.name)), None, Some(List(
   )))
 
-  val tmplReturn: ModelSetEntity = ModelSetEntity(None, "TmplReturn", Some(ObjType(None, None, langNode.name)), None, Some(List(
+  val langReturn: ModelSetEntity = ModelSetEntity(None, "LangReturn", Some(ObjType(None, None, langNode.name)), None, Some(List(
   )))
 
   val tmplGeneric: ModelSetEntity = ModelSetEntity(None, "TmplGeneric", Some(ObjType(None, None, langNode.name)), None, Some(List(

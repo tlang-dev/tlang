@@ -257,7 +257,8 @@ object ExecCallObject extends Executor {
           val newName = "_call_" + ref.name.get
           val newCaller = CallFuncObject(ref.context, Some(newName), caller.currying)
           ref.func.get match {
-            case Left(helperFunc) => execFuncWithCaller(newCaller, helperFunc, context)
+            case Left(helperFunc) =>
+              execFuncWithCaller(newCaller, helperFunc, context)
             case Right(tmplBlock) => Left(NotImplemented("The execution of TmplBloc is not yet implemented in a ref func in an array or entity", ref.context))
           }
 

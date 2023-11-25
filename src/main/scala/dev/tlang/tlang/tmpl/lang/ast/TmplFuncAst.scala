@@ -6,7 +6,7 @@ import TmplLangAst.langNode
 
 object TmplFuncAst {
 
-  val tmplFunc: ModelSetEntity = ModelSetEntity(None, "TmplFunc", Some(ObjType(None, None, langNode.name)), None, Some(List(
+  val langFunc: ModelSetEntity = ModelSetEntity(None, "LangFunc", Some(ObjType(None, None, langNode.name)), None, Some(List(
   )))
 
   val tmplFuncParam: ModelSetEntity = ModelSetEntity(None, "TmplFuncParam", Some(ObjType(None, None, langNode.name)), None, Some(List(

@@ -5,6 +5,7 @@ import dev.tlang.tlang.ast.common.value.EntityValue
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.tmpl.lang.ast.{TmplCallAst, TmplExpression, TmplProp, TmplSimpleValueType}
+import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 
 case class TmplCallObj(context: Option[ContextContent], var props: Option[TmplProp] = None, var firstCall: TmplCallObjType[_], var calls: List[TmplCallObjectLink]) extends TmplSimpleValueType[TmplCallObj] with TmplExpression[TmplCallObj] {
   override def deepCopy(): TmplCallObj = TmplCallObj(context,
@@ -21,7 +22,9 @@ case class TmplCallObj(context: Option[ContextContent], var props: Option[TmplPr
   override def getType: String = getClass.getName
 
   override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, TmplCallAst.tmplCallObj.name)),
-    Some(List())
+    Some(ObjType(context, None, TmplCallAst.langCallObj.name)),
+    Some(List(
+      BuildLang.createAttrEntity(context, "firstCall", firstCall.toEntity),
+    ))
   )
 }

@@ -5,6 +5,7 @@ import dev.tlang.tlang.ast.common.value.EntityValue
 import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
 import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.tmpl.lang.ast.condition.TmplOperation
+import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 
 case class TmplReturn(context: Option[ContextContent], var operation: TmplOperation) extends TmplExpression[TmplReturn] with AstContext {
   override def deepCopy(): TmplReturn = TmplReturn(context, operation.deepCopy())
@@ -18,9 +19,9 @@ case class TmplReturn(context: Option[ContextContent], var operation: TmplOperat
   override def getType: String = getClass.getName
 
   override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, TmplLangAst.tmplReturn.name)),
+    Some(ObjType(context, None, TmplLangAst.langReturn.name)),
     Some(List(
-
+      BuildLang.createAttrEntity(context, "operation", operation.toEntity),
     ))
   )
 }

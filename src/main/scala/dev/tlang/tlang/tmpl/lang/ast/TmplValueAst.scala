@@ -47,4 +47,10 @@ object TmplValueAst {
   val langInterpretedId: ModelSetEntity = ModelSetEntity(None, "LangInterpretedId", Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
   )))
 
+  val langReplacedId: ModelSetEntity = ModelSetEntity(None, "LangReplacedId", Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  )))
+
+  val langBlockId: ModelSetEntity = ModelSetEntity(None, "LangBlockId", Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  )))
+
 }

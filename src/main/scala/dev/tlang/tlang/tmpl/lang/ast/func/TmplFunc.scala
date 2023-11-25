@@ -2,10 +2,10 @@ package dev.tlang.tlang.tmpl.lang.ast.func
 
 import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.value.EntityValue
-import dev.tlang.tlang.tmpl._
 import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
 import dev.tlang.tlang.interpreter.Value
-import dev.tlang.tlang.tmpl.lang.ast.{TmplAnnotation, TmplContent, TmplExprContent, TmplExpression, TmplFuncAst, TmplID, TmplProp, TmplType}
+import dev.tlang.tlang.tmpl.lang.ast._
+import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 
 case class TmplFunc(context: Option[ContextContent], var annots: Option[List[TmplAnnotation]] = None, var props: Option[TmplProp] = None, var preNames: Option[List[TmplID]] = None, var name: TmplID, var curries: Option[List[TmplFuncParam]], var content: Option[TmplExprContent[_]],
                     var ret: Option[List[TmplType]] = None, postPros: Option[TmplProp] = None) extends TmplExpression[TmplFunc] with TmplContent[TmplFunc] with AstContext {
@@ -28,7 +28,10 @@ case class TmplFunc(context: Option[ContextContent], var annots: Option[List[Tmp
   override def getType: String = getClass.getName
 
   override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, TmplFuncAst.tmplFunc.name)),
-    Some(List())
+    Some(ObjType(context, None, TmplFuncAst.langFunc.name)),
+    Some(List(
+      BuildLang.createAttrEntity(context, "name", name.toEntity),
+      BuildLang.createAttrEntity(context, "content", content.map(_.toEntity).getOrElse(EntityValue(context, None, None))),
+    ))
   )
 }

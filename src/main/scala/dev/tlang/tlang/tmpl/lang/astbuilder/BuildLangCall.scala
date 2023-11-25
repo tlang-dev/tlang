@@ -42,7 +42,7 @@ object BuildLangCall {
   def buildCallObj(resource: ContextResource, func: TmplCallObjContext): EntityValue = {
     val context = BuildAst.addContext(resource, func)
     EntityValue(context,
-      Some(ObjType(context, None, TmplCallAst.tmplCallObj.name)),
+      Some(ObjType(context, None, TmplCallAst.langCallObj.name)),
       Some(List(
 
       ))

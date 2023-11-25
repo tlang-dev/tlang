@@ -4,6 +4,7 @@ import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.value.EntityValue
 import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
 import dev.tlang.tlang.interpreter.Value
+import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 
 case class TmplImpl(context: Option[ContextContent], var annots: Option[List[TmplAnnotation]] = None, var props: Option[TmplProp] = None, var name: TmplID, var fors: Option[TmplImplFor], var withs: Option[TmplImplWith], var content: Option[List[TmplNode[_]]] = None) extends TmplContent[TmplImpl] with AstContext {
   override def deepCopy(): TmplImpl = TmplImpl(context,
@@ -25,6 +26,10 @@ case class TmplImpl(context: Option[ContextContent], var annots: Option[List[Tmp
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, TmplImplAst.langImpl.name)),
-    Some(List())
+    Some(List(
+      BuildLang.createAttrEntity(context, "name", name.toEntity),
+      //      BuildLang.createAttrEntity(context, "fors", fors.t),
+      BuildLang.createArray(context, "contents", content.map(_.map(_.toEntity)).getOrElse(List())),
+    ))
   )
 }

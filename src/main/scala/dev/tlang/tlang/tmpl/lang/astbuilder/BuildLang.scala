@@ -152,7 +152,7 @@ object BuildLang {
   def buildReturn(resource: ContextResource, func: TmplReturnContext): EntityValue = {
     val context = BuildAst.addContext(resource, func)
     EntityValue(context,
-      Some(ObjType(context, None, TmplLangAst.tmplReturn.name)),
+      Some(ObjType(context, None, TmplLangAst.langReturn.name)),
       Some(List(
 
       ))
@@ -172,7 +172,7 @@ object BuildLang {
   def buildOperation(resource: ContextResource, op: TmplOperationContext): EntityValue = {
     val context = BuildAst.addContext(resource, op)
     EntityValue(context,
-      Some(ObjType(context, None, TmplExprAst.tmplOperation.name)),
+      Some(ObjType(context, None, TmplExprAst.langOperation.name)),
       Some(List(
 
       ))

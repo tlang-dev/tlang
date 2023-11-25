@@ -4,6 +4,7 @@ import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.value.TLangString
 import dev.tlang.tlang.ast.helper._
 import dev.tlang.tlang.generator.CodeGenerator
+import dev.tlang.tlang.generator.builder.TemplateBuilder
 import dev.tlang.tlang.generator.langs.dart.DartGeneratorGen3
 import dev.tlang.tlang.generator.langs.groovy.GroovyGenerator
 import dev.tlang.tlang.generator.langs.json.JSONGenerator
@@ -47,6 +48,13 @@ object Generator {
     ))))
 
   def generate(block: TmplBlockAsValue, context: Context): Either[ExecError, TLangString] = {
+    TemplateBuilder.buildBlockAsValue(block) match {
+      case Left(error) => Left(error)
+      case Right(newBlock) => generateAfterMapping(newBlock, context)
+    }
+  }
+
+  private def generateAfterMapping(block: TmplBlockAsValue, context: Context): Either[ExecError, TLangString] = {
     //    generators.get(block.block.lang) match {
     //      case None => Left(ElementNotFound("This language does not exist: " + block.block.lang))
     //      case Some(generator) =>
@@ -55,8 +63,9 @@ object Generator {
     //          case Right(newBlock) => Right(new TLangString(None, generator.generate(newBlock.block)))
     //        }
     //    }
-    val newScope = Scope(variables = mutable.Map("code" -> block.block.content.toEntity))
+    val newScope = Scope(variables = mutable.Map("code" -> block.block.toEntity))
     val newContext = Context(context.scopes :+ newScope)
+
     ContextUtils.findFunc(block.context, block.block.lang) match {
       case Some(func) => ExecFunc.run(func, newContext) match {
         case Left(error) => Left(error)

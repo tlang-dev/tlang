@@ -55,6 +55,7 @@ class StrBuilderEntity(strBuilder: StringBuilder) {
   private def primitiveEntityToString(entity: EntityValue): String = {
     entity.getType match {
       case TmplValueAst.langStringId.name => LangEntityUtils.findStrValue(entity)
+      case TmplValueAst.langReplacedId.name => LangEntityUtils.findStrValue(entity)
     }
   }
 

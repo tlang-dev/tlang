@@ -10,6 +10,7 @@ import dev.tlang.tlang.interpreter.context.{Context, Scope}
 import dev.tlang.tlang.libraries.Modules
 import dev.tlang.tlang.loader.{BuildModuleTree, Module, Resource}
 import dev.tlang.tlang.resolver.checker.CheckExistingElement
+import dev.tlang.tlang.tmpl.TmplBlock
 import dev.tlang.tlang.tmpl.lang.ast
 import dev.tlang.tlang.tmpl.lang.ast.{LangBlock, TmplBlockAsValue}
 
@@ -34,8 +35,7 @@ object ResolveContext {
             ast.body.foreach {
               case HelperBlock(_, funcs) => funcs.foreach(func => extractErrors(errors, BrowseFunc.resolveFuncs(func, module, uses, resource._2)))
               case model: ModelBlock => extractErrors(errors, ResolveModel.resolveModel(model, module, uses, resource._2))
-              case block: LangBlock => extractErrors(errors, ResolveTmpl.resolveTmpl(block, module, uses, resource._2))
-              case _ => Right(())
+              case tmpl: TmplBlock[_] => extractErrors(errors, ResolveTmpl.resolveTmpl(tmpl, module, uses, resource._2))
             }
         }
       })
