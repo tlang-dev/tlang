@@ -5,6 +5,7 @@ import dev.tlang.tlang.astbuilder.BuildAst.addContext
 import dev.tlang.tlang.astbuilder._
 import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.tmpl.TmplBlock
+import dev.tlang.tlang.tmpl.doc.astbuilder.BuildDoc
 import dev.tlang.tlang.tmpl.lang.ast
 import dev.tlang.tlang.tmpl.lang.ast._
 import dev.tlang.tlang.tmpl.lang.ast.condition.TmplOperation
@@ -21,7 +22,7 @@ object BuildTmplBlock {
 
     tmpl.block match {
       case lang@_ if lang.tmplLang() != null => buildLangBlock(resource, tmpl)
-      //      case doc@_ if doc.tmplDoc() != null => EntityValue(None, None)
+      case doc@_ if doc.tmplDoc() != null => BuildDoc.buildTmplDoc(resource, tmpl)
       //      case data@_ if data.tmplData() != null => EntityValue(None, None)
       //      case cmd@_ if cmd.tmplCmd() != null => EntityValue(None, None)
     }

@@ -1,9 +1,10 @@
 package dev.tlang.tlang.ast.common.value
 
 import dev.tlang.tlang.ast.common.{ObjType, ValueType}
+import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.{ExecError, Value}
-import dev.tlang.tlang.tmpl.lang.ast.TmplValueAst
+import dev.tlang.tlang.tmpl.lang.ast.{TmplLangAst, TmplValueAst}
 
 class TLangDouble(context: Option[ContextContent], value: Double) extends PrimitiveValue[Double] {
   override def getElement: Double = value
@@ -32,6 +33,9 @@ class TLangDouble(context: Option[ContextContent], value: Double) extends Primit
     Some(ObjType(context, None, TmplValueAst.langDouble.name)),
     Some(List())
   )
+
+  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  )))
 }
 
 object TLangDouble extends TLangType {

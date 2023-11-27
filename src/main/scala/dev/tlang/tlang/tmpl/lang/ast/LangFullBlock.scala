@@ -5,6 +5,7 @@ import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value.{ComplexAttribute, EntityValue}
 import dev.tlang.tlang.ast.helper.HelperParam
+import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.interpreter.context.Scope
@@ -49,4 +50,7 @@ case class LangFullBlock(context: Option[ContextContent], name: String, lang: St
       Some(ObjType(context, None, TmplLangAst.langFullBlock.name)),
       Some(elems.toList))
   }
+
+  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  )))
 }

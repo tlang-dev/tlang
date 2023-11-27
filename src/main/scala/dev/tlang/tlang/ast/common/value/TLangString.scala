@@ -1,9 +1,10 @@
 package dev.tlang.tlang.ast.common.value
 
 import dev.tlang.tlang.ast.common.{ObjType, ValueType}
+import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
 import dev.tlang.tlang.interpreter.{ExecError, NotImplemented, Value}
-import dev.tlang.tlang.tmpl.lang.ast.TmplValueAst
+import dev.tlang.tlang.tmpl.lang.ast.{TmplLangAst, TmplValueAst}
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLangValue
 
 class TLangString(context: Option[ContextContent], value: String) extends PrimitiveValue[String] with AstContext {
@@ -33,6 +34,9 @@ class TLangString(context: Option[ContextContent], value: String) extends Primit
     Some(ObjType(context, None, TmplValueAst.langString.name)),
     Some(List())
   )
+
+  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  )))
 }
 
 object TLangString extends TLangType {

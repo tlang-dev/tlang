@@ -1,11 +1,11 @@
 package dev.tlang.tlang.ast.common.value
 
 import dev.tlang.tlang.ast.common.{ObjType, ValueType}
-import dev.tlang.tlang.ast.model.set.ModelSetRefValue
+import dev.tlang.tlang.ast.model.set.{ModelSetEntity, ModelSetRefValue}
 import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
 import dev.tlang.tlang.interpreter.context.Scope
 import dev.tlang.tlang.interpreter.{ExecError, NotImplemented, Value}
-import dev.tlang.tlang.tmpl.lang.ast.TmplValueAst
+import dev.tlang.tlang.tmpl.lang.ast.{TmplLangAst, TmplValueAst}
 
 case class EntityValue(context: Option[ContextContent],
                        var `type`: Option[ValueType],
@@ -37,4 +37,7 @@ case class EntityValue(context: Option[ContextContent],
     Some(ObjType(context, None, TmplValueAst.langEntity.name)),
     Some(List())
   )
+
+  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  )))
 }

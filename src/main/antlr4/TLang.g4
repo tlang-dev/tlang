@@ -1,6 +1,7 @@
 grammar TLang;
 
-import TLangModel, TLangHelper, TLangTmplLang, TLangTmplDoc, CommonLexer;
+import TLangModel, TLangHelper, TLangTmplLang, TLangTmplDoc,
+TLangTmplData, TLangTmplCmd, TLangTmplStyle,CommonLexer;
 
 
 /*
@@ -30,4 +31,4 @@ domainBlock: helperBlock | tmplBlock | modelBlock;
 tmplBlock:
 	Tmpl LSQUARE lang=tmplID RSQUARE name=tmplID ('('params += helperParam (',' params += helperParam)*RPARENT)? block = tmplBlockType;
 
-tmplBlockType: tmplLang | tmplDoc;
+tmplBlockType: tmplLang | tmplDoc | tmplData | tmplCmd | tmplStyle;

@@ -2,9 +2,10 @@ package dev.tlang.tlang.tmpl.lang.ast.call
 
 import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.value.EntityValue
+import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
-import dev.tlang.tlang.tmpl.lang.ast.{DeepCopy, TmplCallAst, TmplNode}
+import dev.tlang.tlang.tmpl.lang.ast.{DeepCopy, TmplCallAst, TmplLangAst, TmplNode}
 
 case class TmplCallObjectLink(context: Option[ContextContent], var link: String = ".", var call: TmplCallObjType[_]) extends DeepCopy with TmplNode[TmplCallObjectLink] {
   override def deepCopy(): TmplCallObjectLink = TmplCallObjectLink(context, link, call.deepCopy().asInstanceOf[TmplCallObjType[_]])
@@ -21,4 +22,7 @@ case class TmplCallObjectLink(context: Option[ContextContent], var link: String 
     Some(ObjType(context, None, TmplCallAst.tmplCallObjLink.name)),
     Some(List())
   )
+
+  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  )))
 }

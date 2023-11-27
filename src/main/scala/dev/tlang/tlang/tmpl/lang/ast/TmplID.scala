@@ -3,6 +3,7 @@ package dev.tlang.tlang.tmpl.lang.ast
 import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.call.CallObject
 import dev.tlang.tlang.ast.common.value.EntityValue
+import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
@@ -37,6 +38,9 @@ case class TmplInterpretedID(context: Option[ContextContent], pre: Option[String
     Some(ObjType(context, None, TmplValueAst.langInterpretedId.name)),
     Some(List())
   )
+
+  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  )))
 }
 
 /**
@@ -62,6 +66,9 @@ case class TmplReplacedId(context: Option[ContextContent], pre: Option[String] =
     Some(ObjType(context, None, TmplValueAst.langReplacedId.name)),
     Some(List(BuildLang.createAttrStr(context, "value", pre.getOrElse("") + node.toString + post.getOrElse(""))))
   )
+
+  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  )))
 }
 
 case class TmplStringID(context: Option[ContextContent], id: String) extends TmplID {
@@ -81,6 +88,9 @@ case class TmplStringID(context: Option[ContextContent], id: String) extends Tmp
       BuildLang.createAttrStr(context, "value", id)
     ))
   )
+
+  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  )))
 }
 
 case class TmplBlockID(context: Option[ContextContent], block: LangBlock) extends TmplID {
@@ -98,4 +108,7 @@ case class TmplBlockID(context: Option[ContextContent], block: LangBlock) extend
     Some(ObjType(context, None, TmplValueAst.langBlockId.name)),
     Some(List())
   )
+
+  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  )))
 }

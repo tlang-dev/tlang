@@ -2,9 +2,10 @@ package dev.tlang.tlang.tmpl.lang.ast.primitive
 
 import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.value.EntityValue
+import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
-import dev.tlang.tlang.tmpl.lang.ast.{TmplID, TmplNode, TmplStringID, TmplValueAst}
+import dev.tlang.tlang.tmpl.lang.ast.{TmplID, TmplLangAst, TmplNode, TmplStringID, TmplValueAst}
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 
 case class TmplEntityValue(context: Option[ContextContent], var name: Option[TmplID], var params: Option[List[TmplNode[_]]], var attrs: Option[List[TmplNode[_]]]) extends TmplPrimitiveValue[TmplEntityValue] {
@@ -26,6 +27,11 @@ case class TmplEntityValue(context: Option[ContextContent], var name: Option[Tmp
     Some(ObjType(context, None, TmplValueAst.langEntity.name)),
     Some(List(
       BuildLang.createAttrEntity(context, "name", if (name.isDefined) name.get.toEntity else TmplStringID(context, "").toEntity),
+      BuildLang.createArray(context, "params", params.map(_.map(_.toEntity)).getOrElse(List())),
+      BuildLang.createArray(context, "attrs", attrs.map(_.map(_.toEntity)).getOrElse(List())),
     ))
   )
+
+  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  )))
 }

@@ -1,9 +1,10 @@
 package dev.tlang.tlang.ast.common.value
 
 import dev.tlang.tlang.ast.common.{ObjType, ValueType}
+import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
 import dev.tlang.tlang.interpreter.{ExecError, NotImplemented, Value}
-import dev.tlang.tlang.tmpl.lang.ast.TmplValueAst
+import dev.tlang.tlang.tmpl.lang.ast.{TmplLangAst, TmplValueAst}
 
 class TLangBool(context: Option[ContextContent], value: Boolean) extends PrimitiveValue[Boolean]() with AstContext {
   override def getElement: Boolean = value
@@ -32,6 +33,9 @@ class TLangBool(context: Option[ContextContent], value: Boolean) extends Primiti
     Some(ObjType(context, None, TmplValueAst.langBool.name)),
     Some(List())
   )
+
+  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  )))
 }
 
 object TLangBool extends TLangType {

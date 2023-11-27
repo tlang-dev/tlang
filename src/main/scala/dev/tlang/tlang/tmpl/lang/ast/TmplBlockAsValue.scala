@@ -2,6 +2,7 @@ package dev.tlang.tlang.tmpl.lang.ast
 
 import dev.tlang.tlang.ast.common.value.{EntityValue, TLangType}
 import dev.tlang.tlang.ast.common.{ObjType, ValueType}
+import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.interpreter.context.Context
@@ -18,6 +19,9 @@ case class TmplBlockAsValue(astContext: Option[ContextContent], var block: LangB
   override def getContext: Option[ContextContent] = astContext
 
   override def toEntity: EntityValue = EntityValue(astContext, None, Some(List()))
+
+  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  )))
 }
 
 object TmplBlockAsValue extends TLangType {
