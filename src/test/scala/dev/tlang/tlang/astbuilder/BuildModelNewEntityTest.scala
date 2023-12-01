@@ -2,7 +2,7 @@ package dev.tlang.tlang.astbuilder
 
 import dev.tlang.tlang.ast.common.value.{ArrayValue, AssignVar, EntityValue, TLangString}
 import dev.tlang.tlang.astbuilder.context.ContextResource
-import dev.tlang.tlang.{TLangLexer, TLangParser}
+import dev.tlang.tlang.{TLangLexer, TLang}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -17,7 +17,7 @@ class BuildModelNewEntityTest extends AnyFunSuite {
         |}
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val newEntity = BuildModelBlock.build(fakeContext, parser.modelBlock()).content.get.head.asInstanceOf[AssignVar]
     assert("firstEntity".equals(newEntity.name))
   }
@@ -29,7 +29,7 @@ class BuildModelNewEntityTest extends AnyFunSuite {
         |}
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val newEntity = BuildModelBlock.build(fakeContext, parser.modelBlock()).content.get.head.asInstanceOf[AssignVar]
     assert("firstEntity".equals(newEntity.name))
     assert("AnyEntity".equals(newEntity.`type`.get.getType))
@@ -46,7 +46,7 @@ class BuildModelNewEntityTest extends AnyFunSuite {
         |}
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val newEntity = BuildModelBlock.build(fakeContext, parser.modelBlock()).content.get.head.asInstanceOf[AssignVar]
     val params = newEntity.value.getElement.content.toOption.get.asInstanceOf[EntityValue].attrs
     assert("firstEntity".equals(newEntity.name))

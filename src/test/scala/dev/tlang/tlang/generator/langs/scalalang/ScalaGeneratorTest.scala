@@ -2,7 +2,7 @@ package dev.tlang.tlang.generator.langs.scalalang
 
 import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildTmplBlock
-import dev.tlang.tlang.{TLangLexer, TLangParser}
+import dev.tlang.tlang.{TLangLexer, TLang}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -19,7 +19,7 @@ class ScalaGeneratorTest extends AnyFunSuite {
         |}
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val impl = BuildTmplBlock.buildImpl(fakeContext, parser.tmplBlock().block.tmplFullBlock().tmplContents.asScala.toList.head.tmplImpl())
     assert(ScalaGenerator.genImpl(impl).contains("extends Test1"))
   }
@@ -31,7 +31,7 @@ class ScalaGeneratorTest extends AnyFunSuite {
         |}
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val impl = BuildTmplBlock.buildImpl(fakeContext, parser.tmplBlock().block.tmplFullBlock().tmplContents.asScala.toList.head.tmplImpl())
     assert(ScalaGenerator.genImpl(impl).contains("extends Test1 with Test2, Test3"))
   }*/
@@ -42,7 +42,7 @@ class ScalaGeneratorTest extends AnyFunSuite {
 //        |myVar.myFunc(1.0, "two")(param3=true)
 //        |}""".stripMargin))
 //    val tokens = new CommonTokenStream(lexer)
-//    val parser = new TLangParser(tokens)
+//    val parser = new TLang(tokens)
 //    val impl = BuildTmplBlock.build(fakeContext, parser.tmplBlock())
 //    val res = new ScalaGenerator().generate(impl)
 //    assert(res.contains("myVar.myFunc(1.0, \"two\")(param3 = true)"))
@@ -54,7 +54,7 @@ class ScalaGeneratorTest extends AnyFunSuite {
         |myVar.myArray[5]
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val impl = BuildTmplBlock.build(fakeContext, parser.tmplBlock())
     val res = new ScalaGenerator().generate(impl)
     assert(res.contains("myVar.myArray(5)"))

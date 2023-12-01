@@ -7,7 +7,7 @@ import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.tmpl.lang.ast.{TmplLangAst, TmplNode}
 
-case class DocImg(context: Option[ContextContent]) extends TmplNode[DocImg] {
+case class DocImg(context: Option[ContextContent]) extends DocTextType[DocImg] {
   override def deepCopy(): DocImg = DocImg(context)
 
   override def getContext: Option[ContextContent] = context

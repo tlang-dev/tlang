@@ -18,6 +18,49 @@ LINE_COMMENT
     : '//' ~[\r\n]* -> channel(HIDDEN)
 ;
 
+COLON : ':';
+EQUALS : '=';
+PERIOD: '.';
+UNDERSCORE: '_';
+COMMA: ',';
+PLUS: '+';
+MINUS: '-';
+MULTIPLY: '*';
+AND: '&';
+ANDAND: '&&';
+OROR: '||';
+SLASH: '/';
+PERCENT: '%';
+EQUALQUAL: '==';
+NOTEQUAL: '!=';
+LESS: '<';
+IS_MORE: '>';
+LESSEQUAL: '<=';
+MOREEQUAL: '>=';
+EQUAL_MORE: '=>';
+AT: '@';
+COLON_EQUAL: ':=';
+INTERROGATION: '?';
+INTERROGATION_INTERROGATION: '??';
+INTERROGATION_DOT: '?.';
+EXCLAMATION: '!';
+EXCLAMATION_DOT: '!.';
+EXCLA_EXCLA_DOT: '!!.';
+START_INCLUDE: '<[';
+END_INCLUDE: ']>';
+QUOTE: '"';
+TEXT_QUOTE: '"""';
+INTER_TEXT_QUOTE: 's"""';
+INTER_QUOTE: 's"';
+COLON_COLON: '::';
+SET_ATTR: 'setAttr';
+
+DOC: 'doc';
+LANG: 'lang';
+DATA: 'data';
+CMD: 'cmd';
+STYLE: 'style';
+
 Helper : 'helper';
 Tmpl : 'tmpl';
 Model: 'model';
@@ -92,3 +135,40 @@ WHITE_SPACES: [\t\u000B\u000C\u0020\u00A0]+ -> channel(HIDDEN);
 
 ID:
 	'^'? ('a'..'z' | 'A'..'Z' | '_') ('a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '-')*;
+
+
+
+//START_DOC: 'START_DOC';
+//END_DOC: 'END_DOC';
+START_DOC: '--->' -> pushMode(DOC_MODE);
+
+mode DOC_MODE;
+
+
+//DOC_SPACES : ( ' ' | '\t' | '\r' | '\n' )+;
+WHITESPACE : [ \t\r\n]+ -> channel(HIDDEN);
+
+DOC_STRING :   '"' ( ESCAPED_QUOTE | ~('\n'|'\r') )*? '"';
+
+fragment PLAIN_TEXT: ~('{' | '}' | '[' | ']' | ',' | '*' | '|' | '#' | '(' | ')' | '=' | ' ' | '\t' | '\n' | '\r')*;
+//PLAIN_TEXT: .+?;
+
+DOC_RSQUARE: '/]';
+
+IMG: '[img';
+TABLE: '[table';
+LINK: '[link';
+CODE: '[code';
+LIST: '[list';
+INCLUDE: '[include';
+SPAN: '[span';
+TYPE: 'type';
+BULLET_LIST: 'bullet';
+NUMBER_LIST: 'number';
+LEVEL1: '#';
+LEVEL2: '##';
+LEVEL3: '###';
+PIPE: '|';
+
+END_DOC: '<---' -> popMode;
+

@@ -1,6 +1,6 @@
 package dev.tlang.tlang.tmpl.lang.astbuilder
 
-import dev.tlang.tlang.TLangParser.{TmplDoWhileContext, TmplWhileContext}
+import dev.tlang.tlang.TLang.{TmplDoWhileContext, TmplWhileContext}
 import dev.tlang.tlang.astbuilder.BuildAst.addContext
 import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.tmpl.lang.ast.loop.{TmplDoWhile, TmplWhile}

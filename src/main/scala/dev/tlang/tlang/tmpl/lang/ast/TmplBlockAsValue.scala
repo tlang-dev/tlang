@@ -6,15 +6,16 @@ import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.interpreter.context.Context
+import dev.tlang.tlang.tmpl.TmplBlock
 
-case class TmplBlockAsValue(astContext: Option[ContextContent], var block: LangBlock, context: Context) extends TmplNode[LangBlock] {
-  override def getElement: LangBlock = this.block
+case class TmplBlockAsValue(astContext: Option[ContextContent], var block: TmplBlock[_], context: Context) extends TmplNode[TmplBlock[_]] {
+  override def getElement: TmplBlock[_] = this.block
 
   override def getType: String = TmplBlockAsValue.getType
 
-  override def compareTo(value: Value[LangBlock]): Int = 0
+  override def compareTo(value: Value[TmplBlock[_]]): Int = 0
 
-  override def deepCopy(): TmplBlockAsValue = new TmplBlockAsValue(astContext, block.deepCopy(), context)
+  override def deepCopy(): TmplBlockAsValue = new TmplBlockAsValue(astContext, block.deepCopy().asInstanceOf[TmplBlock[_]], context)
 
   override def getContext: Option[ContextContent] = astContext
 

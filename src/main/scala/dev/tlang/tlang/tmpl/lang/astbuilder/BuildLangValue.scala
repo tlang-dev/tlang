@@ -1,6 +1,6 @@
 package dev.tlang.tlang.tmpl.lang.astbuilder
 
-import dev.tlang.tlang.TLangParser._
+import dev.tlang.tlang.TLang._
 import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.call.CallObject
 import dev.tlang.tlang.ast.common.value.EntityValue

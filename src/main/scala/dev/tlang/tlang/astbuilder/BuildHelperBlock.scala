@@ -1,6 +1,6 @@
 package dev.tlang.tlang.astbuilder
 
-import dev.tlang.tlang.TLangParser._
+import dev.tlang.tlang.TLang._
 import dev.tlang.tlang.ast.common.ValueType
 import dev.tlang.tlang.ast.helper.{HelperBlock, _}
 import dev.tlang.tlang.astbuilder.BuildAst.addContext

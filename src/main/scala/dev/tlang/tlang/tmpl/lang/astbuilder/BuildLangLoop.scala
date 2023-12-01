@@ -1,6 +1,6 @@
 package dev.tlang.tlang.tmpl.lang.astbuilder
 
-import dev.tlang.tlang.TLangParser.{TmplDoWhileContext, TmplForContext, TmplWhileContext}
+import dev.tlang.tlang.TLang.{TmplDoWhileContext, TmplForContext, TmplWhileContext}
 import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.value.EntityValue
 import dev.tlang.tlang.astbuilder.BuildAst

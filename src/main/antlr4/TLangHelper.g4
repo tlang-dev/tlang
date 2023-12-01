@@ -1,6 +1,10 @@
-grammar TLangHelper;
+parser grammar TLangHelper;
 
-import TLangCommon, CommonLexer;
+import TLangCommon;
+
+options {
+  tokenVocab = CommonLexer;
+}
 
 /*
  * Helper block

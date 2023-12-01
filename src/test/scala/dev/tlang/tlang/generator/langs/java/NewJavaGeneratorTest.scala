@@ -3,7 +3,7 @@ package dev.tlang.tlang.generator.langs.java
 import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.tmpl.lang.ast.{TmplImpl, TmplProp, TmplStringID}
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildTmplBlock
-import dev.tlang.tlang.{TLangLexer, TLangParser}
+import dev.tlang.tlang.{TLangLexer, TLang}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -17,7 +17,7 @@ class NewJavaGeneratorTest extends AnyFunSuite {
         |pkg my.package
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val impl = BuildTmplBlock.build(fakeContext, parser.tmplBlock())
     assert("package my.package;" == NewJavaGenerator.genBlock(impl).toString)
   }
@@ -29,7 +29,7 @@ class NewJavaGeneratorTest extends AnyFunSuite {
         |use my.package2
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val impl = BuildTmplBlock.build(fakeContext, parser.tmplBlock())
     assert("import my.package1;import my.package2;" == NewJavaGenerator.genBlock(impl).toString)
   }

@@ -1,6 +1,10 @@
-grammar TLangTmplLang;
+parser grammar TLangTmplLang;
 
-import TLangCommon, TLangHelper, CommonLexer;
+import TLangCommon, TLangHelper;
+
+options {
+  tokenVocab = CommonLexer;
+}
 
 tmplLang: 'lang' content = tmplFullBlock | tmplSpecialisedBlock;
 

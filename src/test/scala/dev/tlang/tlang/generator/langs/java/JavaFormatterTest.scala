@@ -3,7 +3,7 @@ package dev.tlang.tlang.generator.langs.java
 import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.generator.formatter.Formatter
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildTmplBlock
-import dev.tlang.tlang.{TLangLexer, TLangParser}
+import dev.tlang.tlang.{TLangLexer, TLang}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -23,7 +23,7 @@ class JavaFormatterTest extends AnyFunSuite {
         |}
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val impl = BuildTmplBlock.build(fakeContext, parser.tmplBlock())
     val res = Formatter.format(NewJavaGenerator.genBlock(impl), JavaFormatter.formatter())
     assert(
@@ -41,7 +41,7 @@ class JavaFormatterTest extends AnyFunSuite {
         |}
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val impl = BuildTmplBlock.build(fakeContext, parser.tmplBlock())
     val res = Formatter.format(NewJavaGenerator.genBlock(impl), JavaFormatter.formatter())
     assert(

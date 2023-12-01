@@ -4,11 +4,13 @@ import dev.tlang.tlang.ast.common.call.CallObject
 import dev.tlang.tlang.generator.mapper.ValueMapper
 import dev.tlang.tlang.interpreter.context.Context
 import dev.tlang.tlang.interpreter.{ExecCallObject, ExecError, NoValue, Value}
+import dev.tlang.tlang.tmpl.TmplBlock
+import dev.tlang.tlang.tmpl.doc.ast.DocBlock
+import dev.tlang.tlang.tmpl.lang.ast._
 import dev.tlang.tlang.tmpl.lang.ast.call._
 import dev.tlang.tlang.tmpl.lang.ast.condition.TmplOperation
 import dev.tlang.tlang.tmpl.lang.ast.func.TmplFunc
 import dev.tlang.tlang.tmpl.lang.ast.primitive.{TmplArrayValue, TmplEntityValue, TmplStringValue, TmplTextValue}
-import dev.tlang.tlang.tmpl.lang.ast._
 
 import scala.collection.mutable.ListBuffer
 
@@ -24,13 +26,26 @@ object TemplateBuilder {
     }
   }
 
-  def buildBlock(block: LangBlock, context: Context): Either[ExecError, LangBlock] = {
+  def buildBlock(block: TmplBlock[_], context: Context): Either[ExecError, TmplBlock[_]] = {
+    block match {
+      case doc: DocBlock => buildDocBlock(doc, context)
+      case lang: LangBlock => buildLangBlock(lang, context)
+      case _ => println("TemplateBuilder: TmplBlock type not implemented")
+        Right(block)
+    }
+  }
+
+  def buildLangBlock(block: LangBlock, context: Context): Either[ExecError, LangBlock] = {
     buildFullBlock(block.content, context) match {
       case Left(error) => Left(error)
       case Right(value) =>
         block.content = value
         Right(block)
     }
+  }
+
+  def buildDocBlock(block: DocBlock, context: Context): Either[ExecError, DocBlock] = {
+    Right(block)
   }
 
   def buildFullBlock(block: LangFullBlock, context: Context): Either[ExecError, LangFullBlock] = {
@@ -91,16 +106,16 @@ object TemplateBuilder {
     }
   }
 
- /* def buildCallFunc(callFunc: TmplCallFunc, context: Context): Either[ExecError, TmplCallFunc] = {
-    if (callFunc.currying.isDefined) {
-      buildCallCurryParams(callFunc.currying.get, context) match {
-        case Left(error) => Left(error)
-        case Right(value) =>
-          callFunc.currying = Some(value)
-          Right(callFunc)
-      }
-    } else Right(callFunc)
-  }*/
+  /* def buildCallFunc(callFunc: TmplCallFunc, context: Context): Either[ExecError, TmplCallFunc] = {
+     if (callFunc.currying.isDefined) {
+       buildCallCurryParams(callFunc.currying.get, context) match {
+         case Left(error) => Left(error)
+         case Right(value) =>
+           callFunc.currying = Some(value)
+           Right(callFunc)
+       }
+     } else Right(callFunc)
+   }*/
 
   /*def buildCallCurryParams(curryParams: List[TmplCurryParam], context: Context): Either[ExecError, List[TmplCurryParam]] = {
     forEach(curryParams, context) match {
@@ -408,8 +423,8 @@ object TemplateBuilder {
     node match {
       case entity: TmplEntityValue => toList(EntityBuilder.buildEntity(entity, context))
       case impl: TmplImpl => toList(ImplBuilder.buildImpl(impl, context))
-//      case callFunc: TmplCallFunc => toList(buildCallFunc(callFunc, context))
-//      case curry: TmplCurryParam => toList(buildCallCurry(curry, context))
+      //      case callFunc: TmplCallFunc => toList(buildCallFunc(callFunc, context))
+      //      case curry: TmplCurryParam => toList(buildCallCurry(curry, context))
       case setAttr: TmplSetAttribute => toList(buildSetAttribute(setAttr, context))
       case callObject: TmplCallObj => toList(buildCallObject(callObject, context))
       case tmplType: TmplType => toList(buildType(tmplType, context))

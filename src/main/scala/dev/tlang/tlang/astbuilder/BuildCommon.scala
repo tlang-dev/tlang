@@ -1,6 +1,6 @@
 package dev.tlang.tlang.astbuilder
 
-import dev.tlang.tlang.TLangParser._
+import dev.tlang.tlang.TLang._
 import dev.tlang.tlang.ast.common.call.ComplexValueStatement
 import dev.tlang.tlang.ast.common.operation.{Operation, Operator}
 import dev.tlang.tlang.ast.common.value._

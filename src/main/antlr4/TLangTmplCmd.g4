@@ -1,6 +1,10 @@
-grammar TLangTmplCmd;
+parser grammar TLangTmplCmd;
 
-import TLangCommon, TLangHelper, CommonLexer;
+import TLangCommon, TLangHelper;
+
+options {
+  tokenVocab = CommonLexer;
+}
 
 
 tmplCmd: 'cmd' content = tmplCmdBloc;

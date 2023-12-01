@@ -7,7 +7,7 @@ import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.tmpl.lang.ast.{TmplLangAst, TmplNode}
 
-case class DocSpan(context: Option[ContextContent]) extends TmplNode[DocSpan] {
+case class DocSpan(context: Option[ContextContent]) extends DocTextType[DocSpan] {
   override def deepCopy(): DocSpan = DocSpan(context)
 
   override def getContext: Option[ContextContent] = context

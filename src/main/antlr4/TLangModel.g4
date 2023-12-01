@@ -1,6 +1,10 @@
-grammar TLangModel;
+parser grammar TLangModel;
 
-import TLangCommon, CommonLexer;
+import TLangCommon;
+
+options {
+  tokenVocab = CommonLexer;
+}
 
 	/*
  * Model Block
@@ -34,7 +38,7 @@ modelSetValueType: modelSetType | modelSetArray | modelSetFuncDef | modelSetRef 
 
 modelSetType: type=ID;
 
-modelSetArray: array=ID '[' ']';
+modelSetArray: array=ID '[' RSQUARE;
 
 modelSetFuncDef: '(' (paramTypes+=modelSetValueType (',' paramTypes+=modelSetValueType)*)? ')' (':'  '(' retTypes+=modelSetValueType (',' retTypes+=modelSetValueType)* ')' )?;
 
@@ -46,4 +50,4 @@ modelSetRefValue: modelSetRef | operation;
 
 modelSetImpl: Impl (LBRACE attrs+=modelSetAttribute (',' attrs+=modelSetAttribute)* RBRACE)?;
 
-modelSetImplArray: Impl '[' ']';
+modelSetImplArray: Impl '[' RSQUARE;

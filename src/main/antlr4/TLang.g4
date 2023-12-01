@@ -1,8 +1,11 @@
-grammar TLang;
+parser grammar TLang;
 
 import TLangModel, TLangHelper, TLangTmplLang, TLangTmplDoc,
-TLangTmplData, TLangTmplCmd, TLangTmplStyle,CommonLexer;
+TLangTmplData, TLangTmplCmd, TLangTmplStyle;
 
+options {
+  tokenVocab = CommonLexer;
+}
 
 /*
  * Domain Model
@@ -18,7 +21,7 @@ domainHeader:
     (uses += domainUse)*
 ;
 
-domainUse: Use uses+=ID ('.' uses+=ID)? (As alias=ID)?;
+domainUse: Use uses+=ID (PERIOD uses+=ID)? (As alias=ID)?;
 
 domainExpose: Expose expose=ID;
 
@@ -29,6 +32,6 @@ domainBlock: helperBlock | tmplBlock | modelBlock;
  * The content of this block will be translated in the final language as it is
  */
 tmplBlock:
-	Tmpl LSQUARE lang=tmplID RSQUARE name=tmplID ('('params += helperParam (',' params += helperParam)*RPARENT)? block = tmplBlockType;
+	Tmpl LSQUARE lang=tmplID RSQUARE name=tmplID '(' (params += helperParam (',' params += helperParam)*)?RPARENT block = tmplBlockType;
 
 tmplBlockType: tmplLang | tmplDoc | tmplData | tmplCmd | tmplStyle;

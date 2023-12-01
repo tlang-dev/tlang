@@ -9,7 +9,7 @@ import dev.tlang.tlang.tmpl.lang.ast.loop.{TmplDoWhile, TmplFor, TmplWhile}
 import dev.tlang.tlang.tmpl.lang.ast.primitive.{TmplLongValue, TmplStringValue}
 import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildTmplBlock
-import dev.tlang.tlang.{TLangLexer, TLangParser}
+import dev.tlang.tlang.{TLangLexer, TLang}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -23,7 +23,7 @@ class JavaGeneratorTest extends AnyFunSuite {
         |pkg my.package
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val impl = BuildTmplBlock.build(fakeContext, parser.tmplBlock())
     assert(new JavaGenerator().generate(impl).contains("package my.package;"))
   }
@@ -35,7 +35,7 @@ class JavaGeneratorTest extends AnyFunSuite {
         |use my.package2
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val impl = BuildTmplBlock.build(fakeContext, parser.tmplBlock())
     assert(new JavaGenerator().generate(impl).contains("import my.package1;"))
     assert(new JavaGenerator().generate(impl).contains("import my.package2;"))

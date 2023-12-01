@@ -1,32 +1,38 @@
-grammar TLangTmplDoc;
+parser grammar TLangTmplDoc;
 
-import TLangCommon, TLangHelper, CommonLexer;
+import TLangCommon, TLangHelper;
+
+options {
+  tokenVocab = CommonLexer;
+}
 
 
-tmplDoc: 'doc' content = tmplDocBlock;
+tmplDoc: 'doc' (content = tmplDocBlock);
 
-tmplDocBlock: LBRACE tmplDocContent RBRACE;
+tmplDocBlock: LBRACE START_DOC tmplDocContent END_DOC RBRACE;
 
-tmplDocContent: (tmplDocSec | tmplDocStruct | tmplDocText)*;
+tmplDocContent: contents+=tmplDocContentType+;
+
+tmplDocContentType: (tmplDocText);
 
 tmplDocSec: tmplDocSecName = ID LBRACE tmplDocContent RBRACE;
 
-tmplDocStruct: (level = '#' | '##' | '###' | tmplDocAnyLevel) title = ID content = TmplDocContent;
+tmplDocStruct: (level = LEVEL1 | LEVEL2 | LEVEL3 | tmplDocAnyLevel) title = ID content = TmplDocContent;
 
-tmplDocText: STRING | tmplDocImg | tmplDocLink | tmplDocCodeBlock | tmplDocSpan | tmplDocList | tmplDocTable | tmplDocInclude;
+tmplDocText: tmplDocImg | tmplDocLink | tmplDocCodeBlock | tmplDocSpan | tmplDocList | tmplDocTable | tmplDocInclude | PLAIN_TEXT;
 
-tmplDocAnyLevel: '#' '(' level = NUMBER ')';
+tmplDocAnyLevel: LEVEL1 '(' level = NUMBER ')';
 
-tmplDocImg: '[img' src = STRING (',' alt = STRING)? ']';
+tmplDocImg: '[img' src = DOC_STRING (',' alt = STRING)? DOC_RSQUARE;
 
-tmplDocLink: '[link' src = STRING (',' alt = STRING)? ']';
+tmplDocLink: '[link' src = STRING (',' alt = STRING)? RSQUARE;
 
-tmplDocCodeBlock: '[code' lang = STRING LBRACE code = STRING RBRACE ']';
+tmplDocCodeBlock: '[code' lang = STRING LBRACE code = STRING RBRACE RSQUARE;
 
-tmplDocSpan: '[span' content = STRING ']';
+tmplDocSpan: '[span' content = STRING RSQUARE;
 
-tmplDocList: '[list'  ('type' type = 'bullet' | ' number' ) (content = '*' STRING)* ']';
+tmplDocList: '[list'  ('type' type = 'bullet' | 'number' ) (content = '*' STRING)* RSQUARE;
 
-tmplDocTable: '[table' (headers += STRING  ('|' headers += STRING)*) ']';
+tmplDocTable: '[table' (headers += STRING  ('|' headers += STRING)*) RSQUARE;
 
-tmplDocInclude: '[include' src = STRING ']';
+tmplDocInclude: '[include' src = STRING RSQUARE;

@@ -1,16 +1,16 @@
 package dev.tlang.tlang.generator.mapper
 
 import dev.tlang.tlang.ast.common.value.TLangString
-import dev.tlang.tlang.tmpl._
+import dev.tlang.tlang.interpreter.ExecCallObject
+import dev.tlang.tlang.interpreter.context.Context
+import dev.tlang.tlang.libraries.generator.Generator
+import dev.tlang.tlang.tmpl.doc.ast.DocBlock
 import dev.tlang.tlang.tmpl.lang.ast.call._
 import dev.tlang.tlang.tmpl.lang.ast.condition.TmplOperation
 import dev.tlang.tlang.tmpl.lang.ast.func.{TmplAnnotationParam, TmplAnonFunc, TmplFunc}
 import dev.tlang.tlang.tmpl.lang.ast.loop.TmplFor
 import dev.tlang.tlang.tmpl.lang.ast.primitive._
-import dev.tlang.tlang.interpreter.ExecCallObject
-import dev.tlang.tlang.interpreter.context.Context
-import dev.tlang.tlang.libraries.generator.Generator
-import dev.tlang.tlang.tmpl.lang.ast.{LangFullBlock, TmplAffect, TmplAnnotation, TmplAttribute, LangBlock, TmplBlockAsValue, TmplBlockID, TmplExprBlock, TmplExprContent, TmplExpression, TmplGeneric, TmplID, TmplImpl, TmplImplFor, TmplImplWith, TmplInterpretedID, TmplMultiValue, TmplNode, TmplParam, TmplPkg, TmplProp, TmplReplacedId, TmplReturn, TmplSetAttribute, TmplSpecialBlock, TmplStringID, TmplType, TmplUse, TmplValueType, TmplVar}
+import dev.tlang.tlang.tmpl.lang.ast._
 
 import scala.collection.mutable.ListBuffer
 
@@ -19,9 +19,14 @@ object ValueMapper {
   def mapBlockAsValue(blockAsValue: TmplBlockAsValue): TmplBlockAsValue = {
     val block = blockAsValue.block
     val con = blockAsValue.context
-    block.content = mapFullBlock(block.content, con)
+    block match {
+      case doc: DocBlock =>
+      case lang: LangBlock => mapBlock(lang, con)
+      case _ => println("ValueMapper TmplBlock type not implemented: " + block.getClass.getName)
+    }
     blockAsValue
   }
+
 
   def mapBlock(block: LangBlock, context: Context): LangBlock = {
     block.content = mapFullBlock(block.content, context)

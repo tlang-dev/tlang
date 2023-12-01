@@ -2,7 +2,7 @@ package dev.tlang.tlang.astbuilder
 
 import dev.tlang.tlang.ast.common.value._
 import dev.tlang.tlang.astbuilder.context.ContextResource
-import dev.tlang.tlang.{TLangLexer, TLangParser}
+import dev.tlang.tlang.{TLangLexer, TLang}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -23,7 +23,7 @@ class BuildCommonTest extends AnyFunSuite {
         |}
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val newEntity = BuildModelBlock.build(fakeContext, parser.modelBlock()).content.get.head.asInstanceOf[AssignVar]
     val impl = newEntity.value.getElement.content.toOption.get.asInstanceOf[EntityValue].attrs.get.head.value.content.toOption.get.asInstanceOf[EntityImpl]
     assert("firstEntity" == newEntity.name)

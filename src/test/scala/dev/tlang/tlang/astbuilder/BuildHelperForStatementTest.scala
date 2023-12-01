@@ -5,7 +5,7 @@ import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value.{TLangLong, TLangString}
 import dev.tlang.tlang.ast.helper.{ForType, HelperFor}
 import dev.tlang.tlang.astbuilder.context.ContextResource
-import dev.tlang.tlang.{TLangLexer, TLangParser}
+import dev.tlang.tlang.{TLangLexer, TLang}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -24,7 +24,7 @@ class BuildHelperForStatementTest extends AnyFunSuite {
         |}
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val func = BuildHelperBlock.build(fakeContext, parser.helperBlock()).funcs.get.head
     val forStmt = func.block.content.get.head.asInstanceOf[HelperFor]
     assert("i" == forStmt.variable)
@@ -44,7 +44,7 @@ class BuildHelperForStatementTest extends AnyFunSuite {
         |}
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val func = BuildHelperBlock.build(fakeContext, parser.helperBlock()).funcs.get.head
     val forStmt = func.block.content.get.head.asInstanceOf[HelperFor]
     assert("i" == forStmt.variable)
@@ -64,7 +64,7 @@ class BuildHelperForStatementTest extends AnyFunSuite {
         |}
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val func = BuildHelperBlock.build(fakeContext, parser.helperBlock()).funcs.get.head
     val forStmt = func.block.content.get.head.asInstanceOf[HelperFor]
     assert("i" == forStmt.variable)

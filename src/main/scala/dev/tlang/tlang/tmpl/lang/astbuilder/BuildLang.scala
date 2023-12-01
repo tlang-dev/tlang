@@ -1,7 +1,7 @@
 package dev.tlang.tlang.tmpl.lang.astbuilder
 
-import dev.tlang.tlang.TLangParser
-import dev.tlang.tlang.TLangParser._
+import dev.tlang.tlang.TLang
+import dev.tlang.tlang.TLang._
 import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value.{ArrayValue, ComplexAttribute, EntityValue, TLangString}
@@ -38,7 +38,7 @@ object BuildLang {
       Some(elems.toList))
   }*/
 
-  def buildPkg(resource: ContextResource, pkg: TLangParser.TmplPkgContext): EntityValue = {
+  def buildPkg(resource: ContextResource, pkg: TLang.TmplPkgContext): EntityValue = {
     val context = addContext(resource, pkg)
     EntityValue(context,
       Some(ObjType(context, None, TmplLangAst.langPkg.name)),

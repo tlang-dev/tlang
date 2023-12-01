@@ -4,6 +4,7 @@ import dev.tlang.tlang.ast.common.call.{CallFuncObject, CallFuncParam, CallRefFu
 import dev.tlang.tlang.ast.common.value.LazyValue
 import dev.tlang.tlang.ast.helper.{HelperFunc, HelperStatement}
 import dev.tlang.tlang.interpreter.context.{Context, ContextUtils, MutableContext, Scope}
+import dev.tlang.tlang.tmpl.TmplBlock
 import dev.tlang.tlang.tmpl.lang.ast.{LangBlock, TmplBlockAsValue}
 
 import scala.collection.mutable
@@ -19,9 +20,9 @@ object ExecCallFunc extends Executor {
         ExecFunc.run(func, newContext)
       case None => ContextUtils.findTmpl(context, caller.name.get) match {
         case Some(tmpl) =>
-          val tmplCopy = tmpl.deepCopy()
+          val tmplCopy = tmpl.deepCopy().asInstanceOf[TmplBlock[_]]
           val newContext = manageTmplParameters(caller, tmplCopy, MutableContext.toMutable(context).removeLocalScopes().toContext())
-          Right(Some(List(TmplBlockAsValue(tmplCopy.getContext, tmplCopy, Context(newContext.scopes :+ tmplCopy.scope)))))
+          Right(Some(List(TmplBlockAsValue(tmplCopy.getContext, tmplCopy, Context(newContext.scopes :+ tmplCopy.getScope)))))
         case None => //Left(CallableNotFound(caller.name.get))
           ContextUtils.findRefFunc(context, caller.name.get) match {
             case Some(refFunc) =>
@@ -72,11 +73,11 @@ object ExecCallFunc extends Executor {
     helperFunc.currying.get(curryPos).params(paramPos).param.getOrElse(paramPos.toString)
   }
 
-  def manageTmplParameters(caller: CallFuncObject, tmpl: LangBlock, context: Context): Context = {
+  def manageTmplParameters(caller: CallFuncObject, tmpl: TmplBlock[_], context: Context): Context = {
     val vars: mutable.Map[String, Value[_]] = mutable.Map()
     val funcs: mutable.Map[String, HelperFunc] = mutable.Map()
-    if (tmpl.params.isDefined) {
-      for (param <- tmpl.params.get.zipWithIndex) {
+    if (tmpl.getParams.isDefined) {
+      for (param <- tmpl.getParams.get.zipWithIndex) {
         ExecStatement.run(caller.currying.get.head.params.get(param._2).value, context) match {
           case Left(_) =>
           case Right(optionVal) => optionVal match {
@@ -86,11 +87,11 @@ object ExecCallFunc extends Executor {
         }
       }
     }
-    Context(context.scopes :+ Scope(variables = vars, functions = funcs) :+ tmpl.scope)
+    Context(context.scopes :+ Scope(variables = vars, functions = funcs) :+ tmpl.getScope)
   }
 
-  def findTmplParamName(paramPos: Int, tmplBlock: LangBlock): String = {
-    tmplBlock.params.get(paramPos).param.getOrElse(paramPos.toString)
+  def findTmplParamName(paramPos: Int, tmplBlock: TmplBlock[_]): String = {
+    tmplBlock.getParams.get(paramPos).param.getOrElse(paramPos.toString)
   }
 
   def mergeCallers(funCaller: CallFuncObject, refFuncCaller: CallRefFuncObject): CallRefFuncObject = {

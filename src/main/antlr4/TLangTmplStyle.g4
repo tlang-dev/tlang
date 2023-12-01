@@ -1,5 +1,11 @@
-grammar TLangTmplStyle;
+parser grammar TLangTmplStyle;
 
-import TLangCommon, TLangHelper, CommonLexer;
+import TLangCommon, TLangHelper;
 
-tmplStyle: 'style' content=STRING;
+options {
+  tokenVocab = CommonLexer;
+}
+
+tmplStyle: 'style' content=tmplStyleBloc;
+
+tmplStyleBloc: ID;

@@ -66,15 +66,15 @@ object Generator {
     val newScope = Scope(variables = mutable.Map("code" -> block.block.toEntity))
     val newContext = Context(context.scopes :+ newScope)
 
-    ContextUtils.findFunc(block.context, block.block.lang) match {
+    ContextUtils.findFunc(block.context, block.block.getLang) match {
       case Some(func) => ExecFunc.run(func, newContext) match {
         case Left(error) => Left(error)
         case Right(results) =>
           if (results.isDefined && results.get.nonEmpty && results.get.head.isInstanceOf[TLangString])
             Right(results.get.head.asInstanceOf[TLangString])
-          else Left(NoValue("No value or wrong value returned when generating the language", block.block.context))
+          else Left(NoValue("No value or wrong value returned when generating the language", block.block.getContext))
       }
-      case None => Left(ElementNotFound("Could not find a generator for this language: " + block.block.lang, block.block.context))
+      case None => Left(ElementNotFound("Could not find a generator for this language: " + block.block.getLang, block.block.getContext))
     }
   }
 

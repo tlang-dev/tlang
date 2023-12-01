@@ -4,7 +4,7 @@ import dev.tlang.tlang.astbuilder.BuildAst
 import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.loader.Resource
 import dev.tlang.tlang.resolver.NameAlreadyUsed
-import dev.tlang.tlang.{TLangLexer, TLangParser}
+import dev.tlang.tlang.{TLangLexer, TLang}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -22,7 +22,7 @@ class CheckExistingElementTest extends AnyFunSuite {
         | }
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val impl = BuildAst.build(fakeContext, parser.domainModel())
     val res = CheckExistingElement.checkExistingElement(Resource("", "", "", "", impl)).swap.toOption.get
     assert("NameAlreadyUsed" == res.head.code)
@@ -38,7 +38,7 @@ class CheckExistingElementTest extends AnyFunSuite {
         |}
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val impl = BuildAst.build(fakeContext, parser.domainModel())
     val res = CheckExistingElement.checkExistingElement(Resource("", "", "", "", impl)).swap.toOption.get
     assert("NameAlreadyUsed" == res.head.code)
@@ -53,7 +53,7 @@ class CheckExistingElementTest extends AnyFunSuite {
         |}
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val impl = BuildAst.build(fakeContext, parser.domainModel())
     val res = CheckExistingElement.checkExistingElement(Resource("", "", "", "", impl)).swap.toOption.get
     assert("NameAlreadyUsed" == res.head.code)
@@ -66,7 +66,7 @@ class CheckExistingElementTest extends AnyFunSuite {
         |use some.thing as mySomething
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val impl = BuildAst.build(fakeContext, parser.domainModel())
     val res = CheckExistingElement.checkExistingElement(Resource("", "", "", "", impl)).swap.toOption.get
     assert("NameAlreadyUsed" == res.head.code)
@@ -82,7 +82,7 @@ class CheckExistingElementTest extends AnyFunSuite {
         | }
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val impl = BuildAst.build(fakeContext, parser.domainModel())
     val res = CheckExistingElement.checkExistingElement(Resource("", "", "", "", impl)).swap.toOption.get
     assert("NameAlreadyUsed" == res.head.code)
@@ -97,7 +97,7 @@ class CheckExistingElementTest extends AnyFunSuite {
         | }
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val impl = BuildAst.build(fakeContext, parser.domainModel())
     val res = CheckExistingElement.checkExistingElement(Resource("", "", "", "", impl)).swap.toOption.get
     assert("NameAlreadyUsed" == res.head.code)
@@ -114,7 +114,7 @@ class CheckExistingElementTest extends AnyFunSuite {
         |tmpl[scala] mySomething {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val impl = BuildAst.build(fakeContext, parser.domainModel())
     val res = CheckExistingElement.checkExistingElement(Resource("", "", "", "", impl)).swap.toOption.get
     assert("NameAlreadyUsed" == res.head.code)

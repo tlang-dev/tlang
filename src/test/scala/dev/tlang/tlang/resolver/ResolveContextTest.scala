@@ -12,7 +12,7 @@ import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.interpreter.context.Scope
 import dev.tlang.tlang.loader._
 import dev.tlang.tlang.loader.remote.RemoteLoader
-import dev.tlang.tlang.{TLangLexer, TLangParser}
+import dev.tlang.tlang.{TLangLexer, TLang}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -225,7 +225,7 @@ class ResolveContextTest extends AnyFunSuite {
         |}
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val block = BuildAst.build(fakeContext, parser.domainModel())
     val resource = Resource("", "", "", "Main", block)
     val calls = List(CallVarObject(None, "first"), CallVarObject(None, "second"), CallFuncObject(None, Some("myFunc"), None))
@@ -245,7 +245,7 @@ class ResolveContextTest extends AnyFunSuite {
         |}
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val block = BuildAst.build(fakeContext, parser.domainModel())
     val resource = Resource("", "", "", "Main", block)
     val calls = List(CallVarObject(None, "first"), CallVarObject(None, "second"), CallVarObject(None, "myEntity"))
@@ -265,7 +265,7 @@ class ResolveContextTest extends AnyFunSuite {
         |}
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val block = BuildAst.build(fakeContext, parser.domainModel())
     val resource = Resource("", "", "", "Main", block)
 
@@ -282,7 +282,7 @@ class ResolveContextTest extends AnyFunSuite {
         |}
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val block = BuildAst.build(fakeContext, parser.domainModel())
     val resource = Resource("", "", "", "Main", block)
 

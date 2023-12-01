@@ -1,7 +1,7 @@
 package dev.tlang.tlang.tmpl.lang.astbuilder
 
-import dev.tlang.tlang.TLangParser
-import dev.tlang.tlang.TLangParser.{TmplCurryingContext, TmplFuncContext}
+import dev.tlang.tlang.TLang
+import dev.tlang.tlang.TLang.{TmplCurryingContext, TmplFuncContext}
 import dev.tlang.tlang.astbuilder.BuildAst.addContext
 import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.tmpl.lang.ast.TmplParam
@@ -64,7 +64,7 @@ object BuildTmplFunc {
     TmplFuncParam(addContext(resource, params), if (paramList.nonEmpty) Some(paramList) else None, strType)
   }
 
-  def buildCurryingParam(resource: ContextResource, param: TLangParser.TmplCurryingParamContext): List[TmplParam] = {
+  def buildCurryingParam(resource: ContextResource, param: TLang.TmplCurryingParamContext): List[TmplParam] = {
     param.params.asScala.toList.map(buildParam(resource, _))
   }
 

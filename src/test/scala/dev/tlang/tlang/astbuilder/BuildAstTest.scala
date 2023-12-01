@@ -4,7 +4,7 @@ import dev.tlang.tlang.ast.helper.HelperBlock
 import dev.tlang.tlang.ast.model.ModelBlock
 import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.tmpl.lang.ast.LangBlock
-import dev.tlang.tlang.{TLangLexer, TLangParser}
+import dev.tlang.tlang.{TLangLexer, TLang}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -20,7 +20,7 @@ class BuildAstTest extends AnyFunSuite {
         |}
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val header = BuildAst.build(fakeContext, parser.domainModel()).header.get
     assert("myFunc".equals(header.exposes.get.head.name))
     assert(header.uses.isEmpty)
@@ -36,7 +36,7 @@ class BuildAstTest extends AnyFunSuite {
         |}
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val header = BuildAst.build(fakeContext, parser.domainModel()).header.get
     assert(3 == header.exposes.get.size)
     assert("myFunc1".equals(header.exposes.get.head.name))
@@ -53,7 +53,7 @@ class BuildAstTest extends AnyFunSuite {
         |}
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val header = BuildAst.build(fakeContext, parser.domainModel()).header.get
     assert("MyPackage".equals(header.uses.get.head.parts.head))
     assert(1 == header.uses.get.head.parts.size)
@@ -68,7 +68,7 @@ class BuildAstTest extends AnyFunSuite {
         |}
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val header = BuildAst.build(fakeContext, parser.domainModel()).header.get
     assert("MyPackage".equals(header.uses.get.head.parts.head))
     assert("myFunc".equals(header.uses.get.head.parts.last))
@@ -86,7 +86,7 @@ class BuildAstTest extends AnyFunSuite {
         |}
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val header = BuildAst.build(fakeContext, parser.domainModel()).header.get
     assert(3 == header.uses.get.size)
     assert("MyPackage".equals(header.uses.get.head.parts.head))
@@ -112,7 +112,7 @@ class BuildAstTest extends AnyFunSuite {
         |}
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val header = BuildAst.build(fakeContext, parser.domainModel()).header.get
     assert(3 == header.exposes.get.size)
     assert("myFunc1".equals(header.exposes.get.head.name))
@@ -139,7 +139,7 @@ class BuildAstTest extends AnyFunSuite {
         |}
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val blocks = BuildAst.build(fakeContext, parser.domainModel())
     assert(3 == blocks.body.size)
     assert(blocks.body.head.isInstanceOf[ModelBlock])

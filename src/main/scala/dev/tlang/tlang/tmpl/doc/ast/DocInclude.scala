@@ -7,7 +7,7 @@ import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.tmpl.lang.ast.{TmplLangAst, TmplNode}
 
-case class DocInclude(context: Option[ContextContent]) extends TmplNode[DocInclude] {
+case class DocInclude(context: Option[ContextContent]) extends DocTextType[DocInclude] {
   override def deepCopy(): DocInclude = DocInclude(context)
 
   override def getContext: Option[ContextContent] = context

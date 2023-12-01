@@ -6,15 +6,18 @@ import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.tmpl.lang.ast.{TmplLangAst, TmplNode}
+import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 
-case class DocContent(context: Option[ContextContent], content: DocContentType[_]) extends TmplNode[DocContent] {
-  override def deepCopy(): DocContent = DocContent(context, content.deepCopy().asInstanceOf[DocContentType[_]])
+case class DocContent(context: Option[ContextContent], contents: List[DocContentType[_]]) extends TmplNode[DocContent] {
+  override def deepCopy(): DocContent = DocContent(context, contents.map(_.deepCopy().asInstanceOf[DocContentType[_]]))
 
   override def getContext: Option[ContextContent] = context
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, toModel.name)),
-    Some(List())
+    Some(List(
+      BuildLang.createArray(context, "contents", contents.map(_.toEntity))
+    ))
   )
 
   override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(

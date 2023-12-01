@@ -7,7 +7,7 @@ import dev.tlang.tlang.tmpl.lang.ast.primitive.TmplLongValue
 import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.tmpl.lang.ast.TmplExprBlock
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildTmplBlock
-import dev.tlang.tlang.{TLangLexer, TLangParser}
+import dev.tlang.tlang.{TLangLexer, TLang}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -21,7 +21,7 @@ class BuildTmplLoopTest extends AnyFunSuite {
         |while(1==1) callMyFunc()
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val loop = BuildTmplBlock.build(fakeContext, parser.tmplBlock()).content.get.head.asInstanceOf[TmplWhile]
     val cond = loop.cond
     assert(Operator.EQUAL == cond.next.get._1)
@@ -39,7 +39,7 @@ class BuildTmplLoopTest extends AnyFunSuite {
         |}
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val loop = BuildTmplBlock.build(fakeContext, parser.tmplBlock()).content.get.head.asInstanceOf[TmplWhile]
     val cond = loop.cond
     val block = loop.content.asInstanceOf[TmplExprBlock]
@@ -57,7 +57,7 @@ class BuildTmplLoopTest extends AnyFunSuite {
         |while(1==1)
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val loop = BuildTmplBlock.build(fakeContext, parser.tmplBlock()).content.get.head.asInstanceOf[TmplDoWhile]
     val cond = loop.cond
     assert(Operator.EQUAL == cond.next.get._1)
@@ -75,7 +75,7 @@ class BuildTmplLoopTest extends AnyFunSuite {
         |} while(1==1)
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val loop = BuildTmplBlock.build(fakeContext, parser.tmplBlock()).content.get.head.asInstanceOf[TmplDoWhile]
     val cond = loop.cond
     val block = loop.content.asInstanceOf[TmplExprBlock]

@@ -7,7 +7,7 @@ import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.tmpl.lang.ast.{TmplLangAst, TmplNode}
 
-case class DocLink(context: Option[ContextContent]) extends TmplNode[DocLink] {
+case class DocLink(context: Option[ContextContent]) extends DocTextType[DocLink] {
   override def deepCopy(): DocLink = DocLink(context)
 
   override def getContext: Option[ContextContent] = context

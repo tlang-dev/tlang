@@ -3,10 +3,9 @@ package dev.tlang.tlang.loader
 import dev.tlang.tlang.astbuilder.BuildAst
 import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.libraries.Modules
-import dev.tlang.tlang.loader.BuildModuleTree.buildManifest
 import dev.tlang.tlang.loader.manifest.{Manifest, ManifestLoader}
 import dev.tlang.tlang.loader.remote.RemoteLoader
-import dev.tlang.tlang.{TLangLexer, TLangParser}
+import dev.tlang.tlang.{CommonLexer, TLang}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 
 import java.nio.file.Path
@@ -85,7 +84,7 @@ object BuildModuleTree {
   }
 
   def buildResourceAST(root: String, fromRoot: String, pkg: String, name: String, content: String): Resource = {
-    val parser = new TLangParser(new CommonTokenStream(new TLangLexer(CharStreams.fromString(content))))
+    val parser = new TLang(new CommonTokenStream(new CommonLexer(CharStreams.fromString(content))))
     Resource(root, fromRoot, pkg, name, BuildAst.build(ContextResource(root, fromRoot, pkg, name), parser.domainModel()))
   }
 

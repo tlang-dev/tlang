@@ -3,7 +3,7 @@ package dev.tlang.tlang.astbuilder
 import dev.tlang.tlang.ast.common.{ArrayType, ObjType}
 import dev.tlang.tlang.ast.helper.HelperFuncType
 import dev.tlang.tlang.astbuilder.context.ContextResource
-import dev.tlang.tlang.{TLangLexer, TLangParser}
+import dev.tlang.tlang.{TLangLexer, TLang}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -19,7 +19,7 @@ class BuildHelperBlockTest extends AnyFunSuite {
         |}
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val func = BuildHelperBlock.build(fakeContext, parser.helperBlock()).funcs.get.head
     assert("myFunc".equals(func.name))
     assert(func.currying.isEmpty)
@@ -34,7 +34,7 @@ class BuildHelperBlockTest extends AnyFunSuite {
         |}
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val func = BuildHelperBlock.build(fakeContext, parser.helperBlock()).funcs.get.head
     assert("myFunc".equals(func.name))
     assert(func.currying.isEmpty)
@@ -49,7 +49,7 @@ class BuildHelperBlockTest extends AnyFunSuite {
         |}
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val func = BuildHelperBlock.build(fakeContext, parser.helperBlock()).funcs.get.head
     val curry = func.currying.get.head
     val funcType = curry.params.last.`type`.asInstanceOf[HelperFuncType]
@@ -71,7 +71,7 @@ class BuildHelperBlockTest extends AnyFunSuite {
         |}
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val returns = BuildHelperBlock.build(fakeContext, parser.helperBlock()).funcs.get.head.returns.get
     assert("String".equals(returns.head.asInstanceOf[ObjType].name))
     assert("Int".equals(returns.last.asInstanceOf[ArrayType].name))
@@ -85,7 +85,7 @@ class BuildHelperBlockTest extends AnyFunSuite {
         |}
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val func = BuildHelperBlock.build(fakeContext, parser.helperBlock()).funcs.get.head
     val curry = func.currying.get.head
     val funcType = curry.params.last.`type`.asInstanceOf[HelperFuncType]
@@ -115,7 +115,7 @@ class BuildHelperBlockTest extends AnyFunSuite {
         |}
         |""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
-    val parser = new TLangParser(tokens)
+    val parser = new TLang(tokens)
     val func = BuildHelperBlock.build(fakeContext, parser.helperBlock()).funcs.get.head
     val firstCurry = func.currying.get.head
     val secondCurry = func.currying.get.last

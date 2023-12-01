@@ -1,6 +1,9 @@
-grammar TLangCommon;
+parser grammar TLangCommon;
 
-import CommonLexer;
+options {
+  tokenVocab = CommonLexer;
+}
+
 
 /* Common elements */
 
@@ -10,7 +13,7 @@ valueType: objType | arrayType;
 
 objType: (exTpye=ID '.')? type=ID;
 
-arrayType: (exTpye=ID '.')? type=ID '['']';
+arrayType: (exTpye=ID '.')? type=ID '['RSQUARE;
 
 operation: (content=complexValueType (op=operator  next=operation)* |
                '(' content=complexValueType ')' (op=operator  next=operation)* |
@@ -33,13 +36,13 @@ textValue: value=TEXT;
 
 boolValue: True | False;
 
-arrayValue: '[' (params+=complexAttribute)? (',' params+=complexAttribute)* ']';
+arrayValue: '[' (params+=complexAttribute)? (',' params+=complexAttribute)* RSQUARE;
 
 callObj: objs+=callObjType ('.' objs+=callObjType)*;
 
 callObjType: callArray | (ref='&')? callFunc | callVariable;
 
-callArray: name=ID '[' elem=operation ']';
+callArray: name=ID '[' elem=operation RSQUARE;
 
 callFunc: ((name=ID) | '_') (currying += curryParams)+;
 

@@ -1,6 +1,6 @@
 package dev.tlang.tlang.astbuilder
 
-import dev.tlang.tlang.TLangParser._
+import dev.tlang.tlang.TLang._
 import dev.tlang.tlang.ast.common.call
 import dev.tlang.tlang.ast.common.call.{SetAttribute, _}
 import dev.tlang.tlang.ast.common.value.{ArrayValue, TLangBool, TLangLong}

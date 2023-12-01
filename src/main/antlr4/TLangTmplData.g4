@@ -1,8 +1,12 @@
-grammar TLangTmplData;
+parser grammar TLangTmplData;
 
-import TLangCommon, TLangHelper, CommonLexer;
+import TLangCommon, TLangHelper;
 
+
+options {
+  tokenVocab = CommonLexer;
+}
 
 tmplData: 'data' content = tmplDataBloc;
 
-tmplDataBloc: ID;
+tmplDataBloc: content= ID ;
