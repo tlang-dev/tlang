@@ -23,7 +23,7 @@ case class Operation(context: Option[ContextContent], expectedType: Option[Value
 }
 
 object Operation extends TLangType {
-  override def getType: String = getClass.getName
+  override def getType: String = getClass.getSimpleName
 
   override def getValueType: ValueType = ObjType(None, Some("TLang"), getType)
 }

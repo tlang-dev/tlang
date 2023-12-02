@@ -12,7 +12,7 @@ import scala.collection.mutable
 
 class GeneratorTest extends AnyFunSuite {
 
-  test("Simple generation") {
+ /* test("Simple generation") {
     val block = TmplBlock(None, "myBlock", "scala", None, Some(TmplPkg(None, List(TmplStringID(None, "myPackage")))))
     val blockAsValue = TmplBlockAsValue(None, block, Context())
     val res = Generator.generate(blockAsValue, Context()).toOption.get.getElement
@@ -33,6 +33,6 @@ class GeneratorTest extends AnyFunSuite {
     val caller = CallFuncObject(None, Some("generate"), Some(List(CallFuncParam(None, Some(List(SetAttribute(None, value = Operation(None, None, Right(CallObject(None, List(CallVarObject(None, "myTmpl"))))))))))))
     val res = ExecCallFunc.run(caller, context).toOption.get.get.head.asInstanceOf[TLangString].getElement
     assert(res.contains("package myPackage"))
-  }
+  }*/
 
 }

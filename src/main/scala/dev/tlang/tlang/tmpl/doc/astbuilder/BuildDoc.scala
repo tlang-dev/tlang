@@ -1,9 +1,11 @@
 package dev.tlang.tlang.tmpl.doc.astbuilder
 
 import dev.tlang.tlang.TLang._
+import dev.tlang.tlang.astbuilder.AstBuilderUtils
 import dev.tlang.tlang.astbuilder.BuildAst.addContext
 import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.tmpl.doc.ast._
+import dev.tlang.tlang.tmpl.lang.astbuilder.BuildTmplBlock
 
 import scala.jdk.CollectionConverters._
 
@@ -11,11 +13,11 @@ object BuildDoc {
 
   def buildTmplDoc(resource: ContextResource, block: TmplBlockContext): DocBlock = {
     val content = block.block.tmplDoc().content.tmplDocContent()
-    DocBlock(addContext(resource, block), block.name.getText, block.lang.getText, None,buildDocContent(resource, content))
+    DocBlock(addContext(resource, block), block.name.getText, block.lang.getText, None, buildDocContent(resource, content))
   }
 
   def buildCodeBlock(resource: ContextResource, block: TmplDocCodeBlockContext): DocCodeBlock = {
-    DocCodeBlock(None)
+    DocCodeBlock(None, AstBuilderUtils.extraString(block.lang.getText), AstBuilderUtils.extraText(block.code.getText))
   }
 
   def buildAnyLevel(resource: ContextResource, anyLevel: TmplDocAnyLevelContext): DocAnyLevel = {
@@ -24,15 +26,15 @@ object BuildDoc {
 
   private def buildDocContent(resource: ContextResource, content: TmplDocContentContext): DocContent = {
     val contentTypes: List[DocContentType[_]] = content.contents.asScala.toList.map {
-      //      case sec@_ if sec.tmplDocSec() != null => buildDocSec(resource, sec.tmplDocSec())
+      case sec@_ if sec.tmplDocSec() != null => buildDocSec(resource, sec.tmplDocSec())
       case text@_ if text.tmplDocText() != null => buildDocText(resource, text.tmplDocText())
-      //      case struct@_ if struct.tmplDocStruct() != null => buildDocStruct(resource, struct.tmplDocStruct())
+      case struct@_ if struct.tmplDocStruct() != null => buildDocStruct(resource, struct.tmplDocStruct())
     }
     DocContent(addContext(resource, content), contentTypes)
   }
 
   def buildDocImg(resource: ContextResource, img: TmplDocImgContext): DocImg = {
-    DocImg(None)
+    DocImg(None, AstBuilderUtils.extraString(img.src.getText), if (img.alt != null) Some(AstBuilderUtils.extraString(img.alt.getText)) else None)
   }
 
   def buildDocInclude(resource: ContextResource, include: TmplDocIncludeContext): DocInclude = {
@@ -40,7 +42,7 @@ object BuildDoc {
   }
 
   def buildDocLink(resource: ContextResource, link: TmplDocLinkContext): DocLink = {
-    DocLink(None)
+    DocLink(None, AstBuilderUtils.extraString(link.src.getText), AstBuilderUtils.extraString(link.name.getText))
   }
 
   def buildDocList(resource: ContextResource, list: TmplDocListContext): DocList = {
@@ -48,7 +50,7 @@ object BuildDoc {
   }
 
   def buildDocSec(resource: ContextResource, section: TmplDocSecContext): DocSec = {
-    DocSec(None)
+    DocSec(None, AstBuilderUtils.extraString(section.name.getText), buildDocContent(resource, section.content))
   }
 
   def buildDocSpan(resource: ContextResource, span: TmplDocSpanContext): DocSpan = {
@@ -56,12 +58,17 @@ object BuildDoc {
   }
 
   def buildDocStruct(resource: ContextResource, struct: TmplDocStructContext): DocStruct = {
-    DocStruct(None, null, null, null)
+    val level = struct match {
+      case _ if struct.LEVEL1() != null => 1
+      case _ if struct.LEVEL2() != null => 2
+      case _ if struct.LEVEL3() != null => 3
+    }
+    DocStruct(None, level, AstBuilderUtils.extraString(struct.title.getText).trim, Some(buildDocContent(resource, struct.content)))
   }
 
   def buildDocText(resource: ContextResource, text: TmplDocTextContext): DocText = {
     val content: DocTextType[_] = text match {
-      case txt@_ if txt.PLAIN_TEXT() != null => buildDocPlainText(resource, txt.PLAIN_TEXT().getText)
+      case txt@_ if txt.tmplDocPlainText() != null => buildDocPlainText(resource, txt.tmplDocPlainText())
       case img@_ if img.tmplDocImg() != null => buildDocImg(resource, img.tmplDocImg())
       case link@_ if link.tmplDocLink() != null => buildDocLink(resource, link.tmplDocLink())
       case span@_ if span.tmplDocSpan() != null => buildDocSpan(resource, span.tmplDocSpan())
@@ -77,8 +84,8 @@ object BuildDoc {
     DocTable(None)
   }
 
-  def buildDocPlainText(resource: ContextResource, text: String): DocPlainText = {
-    DocPlainText(None, text)
+  def buildDocPlainText(resource: ContextResource, text: TmplDocPlainTextContext): DocPlainText = {
+    DocPlainText(None, text.PLAIN_TEXT().getText)
   }
 
 }

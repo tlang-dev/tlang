@@ -5,10 +5,10 @@ import dev.tlang.tlang.ast.common.value.EntityValue
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
-import dev.tlang.tlang.tmpl.lang.ast.{TmplLangAst, TmplNode}
+import dev.tlang.tlang.tmpl.lang.ast.{TmplID, TmplLangAst}
 
-case class DocSec(context: Option[ContextContent]) extends DocContentType[DocSec] {
-  override def deepCopy(): DocSec = DocSec(context)
+case class DocSec(context: Option[ContextContent], title: String, content: DocContent) extends DocContentType[DocSec] {
+  override def deepCopy(): DocSec = DocSec(context, new String(title), content.deepCopy())
 
   override def getContext: Option[ContextContent] = context
 
@@ -16,7 +16,7 @@ case class DocSec(context: Option[ContextContent]) extends DocContentType[DocSec
 
   override def getElement: DocSec = this
 
-  override def getType: String = getClass.getName
+  override def getType: String = getClass.getSimpleName
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, toModel.name)),

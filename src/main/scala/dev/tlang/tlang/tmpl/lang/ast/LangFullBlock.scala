@@ -35,7 +35,7 @@ case class LangFullBlock(context: Option[ContextContent], name: String, lang: St
 
   override def getElement: LangFullBlock = this
 
-  override def getType: String = getClass.getName
+  override def getType: String = getClass.getSimpleName
 
   override def toEntity: EntityValue = {
     val elems = ListBuffer.empty[ComplexAttribute]

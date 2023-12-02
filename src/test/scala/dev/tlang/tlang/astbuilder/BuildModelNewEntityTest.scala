@@ -2,7 +2,7 @@ package dev.tlang.tlang.astbuilder
 
 import dev.tlang.tlang.ast.common.value.{ArrayValue, AssignVar, EntityValue, TLangString}
 import dev.tlang.tlang.astbuilder.context.ContextResource
-import dev.tlang.tlang.{TLangLexer, TLang}
+import dev.tlang.tlang.{CommonLexer, TLang}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -11,7 +11,7 @@ class BuildModelNewEntityTest extends AnyFunSuite {
   val fakeContext: ContextResource = ContextResource("", "", "", "")
 
   test("Test new entity without type") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """model {
         |let firstEntity = {
         |}
@@ -23,7 +23,7 @@ class BuildModelNewEntityTest extends AnyFunSuite {
   }
 
   test("Test new entity with type") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """model {
         |let firstEntity :AnyEntity = {
         |}
@@ -36,7 +36,7 @@ class BuildModelNewEntityTest extends AnyFunSuite {
   }
 
   test("Test new entity with parameters") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """model {
         |let firstEntity :AnyEntity = {
         |"myString"

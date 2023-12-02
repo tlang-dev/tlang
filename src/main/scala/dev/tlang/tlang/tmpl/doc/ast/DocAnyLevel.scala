@@ -21,7 +21,7 @@ case class DocAnyLevel(context: Option[ContextContent]) extends TmplNode[DocAnyL
 
   override def getElement: DocAnyLevel = this
 
-  override def getType: String = getClass.getName
+  override def getType: String = getClass.getSimpleName
 
   override val toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
   )))

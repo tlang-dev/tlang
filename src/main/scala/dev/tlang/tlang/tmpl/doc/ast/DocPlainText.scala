@@ -17,7 +17,7 @@ case class DocPlainText(context: Option[ContextContent], text: String) extends D
 
   override def getElement: DocPlainText = this
 
-  override def getType: String = getClass.getName
+  override def getType: String = getClass.getSimpleName
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, toModel.name)),

@@ -1,13 +1,13 @@
 package dev.tlang.tlang.astbuilder
 
 import dev.tlang.tlang.ast.common.operation.Operator
+import dev.tlang.tlang.astbuilder.context.ContextResource
+import dev.tlang.tlang.tmpl.lang.ast.TmplExprBlock
 import dev.tlang.tlang.tmpl.lang.ast.call.{TmplCallFunc, TmplCallObj}
 import dev.tlang.tlang.tmpl.lang.ast.loop.{TmplDoWhile, TmplWhile}
 import dev.tlang.tlang.tmpl.lang.ast.primitive.TmplLongValue
-import dev.tlang.tlang.astbuilder.context.ContextResource
-import dev.tlang.tlang.tmpl.lang.ast.TmplExprBlock
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildTmplBlock
-import dev.tlang.tlang.{TLangLexer, TLang}
+import dev.tlang.tlang.{CommonLexer, TLang}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -16,13 +16,13 @@ class BuildTmplLoopTest extends AnyFunSuite {
   val fakeContext: ContextResource = ContextResource("", "", "", "")
 
   test("While with expression") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
         |while(1==1) callMyFunc()
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val loop = BuildTmplBlock.build(fakeContext, parser.tmplBlock()).content.get.head.asInstanceOf[TmplWhile]
+    val loop = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock()).content.content.get.head.asInstanceOf[TmplWhile]
     val cond = loop.cond
     assert(Operator.EQUAL == cond.next.get._1)
     assert(1 == cond.content.toOption.get.asInstanceOf[TmplLongValue].value)
@@ -31,7 +31,7 @@ class BuildTmplLoopTest extends AnyFunSuite {
   }
 
   test("While with expression block") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
         |while(1==1) {
         | callMyFunc1()
@@ -40,7 +40,7 @@ class BuildTmplLoopTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val loop = BuildTmplBlock.build(fakeContext, parser.tmplBlock()).content.get.head.asInstanceOf[TmplWhile]
+    val loop = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock()).content.content.get.head.asInstanceOf[TmplWhile]
     val cond = loop.cond
     val block = loop.content.asInstanceOf[TmplExprBlock]
     assert(Operator.EQUAL == cond.next.get._1)
@@ -51,14 +51,14 @@ class BuildTmplLoopTest extends AnyFunSuite {
   }
 
   test("Do while with expression") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
         |do callMyFunc()
         |while(1==1)
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val loop = BuildTmplBlock.build(fakeContext, parser.tmplBlock()).content.get.head.asInstanceOf[TmplDoWhile]
+    val loop = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock()).content.content.get.head.asInstanceOf[TmplDoWhile]
     val cond = loop.cond
     assert(Operator.EQUAL == cond.next.get._1)
     assert(1 == cond.content.toOption.get.asInstanceOf[TmplLongValue].value)
@@ -67,7 +67,7 @@ class BuildTmplLoopTest extends AnyFunSuite {
   }
 
   test("Do while with expression block") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
         |do {
         | callMyFunc1()
@@ -76,7 +76,7 @@ class BuildTmplLoopTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val loop = BuildTmplBlock.build(fakeContext, parser.tmplBlock()).content.get.head.asInstanceOf[TmplDoWhile]
+    val loop = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock()).content.content.get.head.asInstanceOf[TmplDoWhile]
     val cond = loop.cond
     val block = loop.content.asInstanceOf[TmplExprBlock]
     assert(Operator.EQUAL == cond.next.get._1)

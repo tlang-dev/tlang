@@ -18,7 +18,7 @@ case class TmplArrayValue(context: Option[ContextContent], var `type`: Option[Tm
 
   override def getElement: TmplArrayValue = this
 
-  override def getType: String = getClass.getName
+  override def getType: String = getClass.getSimpleName
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, TmplValueAst.langArray.name)),

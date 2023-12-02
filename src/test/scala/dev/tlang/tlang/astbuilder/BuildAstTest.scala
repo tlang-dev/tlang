@@ -4,7 +4,7 @@ import dev.tlang.tlang.ast.helper.HelperBlock
 import dev.tlang.tlang.ast.model.ModelBlock
 import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.tmpl.lang.ast.LangBlock
-import dev.tlang.tlang.{TLangLexer, TLang}
+import dev.tlang.tlang.{CommonLexer, TLang}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -13,7 +13,7 @@ class BuildAstTest extends AnyFunSuite {
   val fakeContext: ContextResource = ContextResource("", "", "", "")
 
   test("Test one expose") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """
         |expose myFunc
         |helper {
@@ -27,7 +27,7 @@ class BuildAstTest extends AnyFunSuite {
   }
 
   test("Test multiple exposes") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """
         |expose myFunc1
         |expose myFunc2
@@ -46,7 +46,7 @@ class BuildAstTest extends AnyFunSuite {
   }
 
   test("Test one use") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """
         |use MyPackage
         |helper {
@@ -61,7 +61,7 @@ class BuildAstTest extends AnyFunSuite {
   }
 
   test("Test one use with two parts") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """
         |use MyPackage.myFunc
         |helper {
@@ -77,7 +77,7 @@ class BuildAstTest extends AnyFunSuite {
   }
 
   test("Test multiple uses") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """
         |use MyPackage.myFunc1
         |use MyPackage.myFunc2
@@ -99,7 +99,7 @@ class BuildAstTest extends AnyFunSuite {
   }
 
   test("Test multiple exposes and uses") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """
         |expose myFunc1
         |expose myFunc2
@@ -129,7 +129,7 @@ class BuildAstTest extends AnyFunSuite {
   }
 
   test("Test domain blocks") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """
         |model {
         |}

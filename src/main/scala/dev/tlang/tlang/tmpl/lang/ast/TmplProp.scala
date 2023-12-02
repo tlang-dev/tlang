@@ -15,7 +15,7 @@ case class TmplProp(context: Option[ContextContent], var props: List[TmplID]) ex
 
   override def getElement: TmplProp = this
 
-  override def getType: String = getClass.getName
+  override def getType: String = getClass.getSimpleName
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, TmplLangAst.tmplProp.name)),

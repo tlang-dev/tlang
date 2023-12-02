@@ -12,7 +12,8 @@ import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.interpreter.context.Scope
 import dev.tlang.tlang.loader._
 import dev.tlang.tlang.loader.remote.RemoteLoader
-import dev.tlang.tlang.{TLangLexer, TLang}
+import dev.tlang.tlang.tmpl.lang.ast.LangBlock
+import dev.tlang.tlang.{CommonLexer, TLang}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -59,7 +60,7 @@ class ResolveContextTest extends AnyFunSuite {
       }
     }
 
-    val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
+    val module = BuildModuleTree.build(Paths.get("Root"), "").toOption.get
     ResolveContext.resolveContext(module)
 
     val scope = module.resources(module.mainFile).ast.body.head.asInstanceOf[HelperBlock].funcs.get.head.scope
@@ -84,18 +85,18 @@ class ResolveContextTest extends AnyFunSuite {
         Right(
           """
             |expose myTmpl
-            |tmpl[scala] myTmpl {
+            |tmpl[scala] myTmpl lang {
             |
             |}""".stripMargin)
       }
     }
 
-    val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
+    val module = BuildModuleTree.build(Paths.get("Root"), "").toOption.get
     ResolveContext.resolveContext(module)
 
     val scope = module.resources(module.mainFile).ast.body.head.asInstanceOf[HelperBlock].funcs.get.head.scope
     assert("MyFile/myTmpl" == scope.templates.head._1)
-    assert("myTmpl" == scope.templates.head._2.name)
+    assert("myTmpl" == scope.templates.head._2.asInstanceOf[LangBlock].name)
   }
 
   test("Resolve funcs") {
@@ -118,7 +119,7 @@ class ResolveContextTest extends AnyFunSuite {
             |}""".stripMargin)
       }
     }
-    val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
+    val module = BuildModuleTree.build(Paths.get("Root"), "").toOption.get
     val uses = List(DomainUse(None, List("MyPackage", "MyFile")))
     val caller = CallObject(None, List(CallVarObject(None, "MyFile"), CallVarObject(None, "myEntity")))
     val scope = Scope()
@@ -148,7 +149,7 @@ class ResolveContextTest extends AnyFunSuite {
             |}""".stripMargin)
       }
     }
-    val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
+    val module = BuildModuleTree.build(Paths.get("Root"), "").toOption.get
     val uses = List(DomainUse(None, List("MyPackage", "MyFile")))
     val caller = CallObject(None, List(CallVarObject(None, "MyFile"), CallVarObject(None, "myEntity")))
     val scope = Scope()
@@ -177,7 +178,7 @@ class ResolveContextTest extends AnyFunSuite {
             |}""".stripMargin)
       }
     }
-    val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
+    val module = BuildModuleTree.build(Paths.get("Root"), "").toOption.get
     val uses = List(DomainUse(None, List("MyPackage", "MyFile")))
     val caller = CallObject(None, List(CallVarObject(None, "MyFile"), CallVarObject(None, "myEntity")))
     val scope = Scope()
@@ -207,7 +208,7 @@ class ResolveContextTest extends AnyFunSuite {
             |}""".stripMargin)
       }
     }
-    val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
+    val module = BuildModuleTree.build(Paths.get("Root"), "").toOption.get
     val uses = List(DomainUse(None, List("MyFile")))
     val caller = CallObject(None, List(CallVarObject(None, "MyFile"), CallVarObject(None, "myFunc")))
     val scope = Scope()
@@ -217,7 +218,7 @@ class ResolveContextTest extends AnyFunSuite {
   }
 
   test("Follow func call") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """
         |expose myFunc
         |helper {
@@ -237,7 +238,7 @@ class ResolveContextTest extends AnyFunSuite {
   }
 
   test("Follow var call") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """
         |expose myEntity
         |model {
@@ -257,7 +258,7 @@ class ResolveContextTest extends AnyFunSuite {
   }
 
   test("Find func in resource") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """helper {
         |func myFunc {}
         |func MyFunc2 {}
@@ -274,7 +275,7 @@ class ResolveContextTest extends AnyFunSuite {
   }
 
   test("Find var in resource") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """model {
         |let myEntity :AnyEntity = {}
         |let myEntity2 :AnyEntity2 = {}

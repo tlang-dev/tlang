@@ -15,7 +15,7 @@ case class TmplUse(context: Option[ContextContent], var parts: List[TmplID], var
 
   override def getElement: TmplUse = this
 
-  override def getType: String = getClass.getName
+  override def getType: String = getClass.getSimpleName
 
   override def getContext: Option[ContextContent] = context
 

@@ -23,7 +23,7 @@ case class TmplImpl(context: Option[ContextContent], var annots: Option[List[Tmp
 
   override def getElement: TmplImpl = this
 
-  override def getType: String = getClass.getName
+  override def getType: String = getClass.getSimpleName
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, TmplImplAst.langImpl.name)),

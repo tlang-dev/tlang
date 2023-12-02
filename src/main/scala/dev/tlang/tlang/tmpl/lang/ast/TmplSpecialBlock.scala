@@ -20,7 +20,7 @@ case class TmplSpecialBlock(context: Option[ContextContent], var `type`: String,
 
   override def getElement: TmplSpecialBlock = this
 
-  override def getType: String = getClass.getName
+  override def getType: String = getClass.getSimpleName
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, TmplLangAst.tmplSpecialBlock.name)),

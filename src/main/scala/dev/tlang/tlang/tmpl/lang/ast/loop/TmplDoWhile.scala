@@ -18,7 +18,7 @@ case class TmplDoWhile(context: Option[ContextContent], content: TmplExprContent
 
   override def getElement: TmplDoWhile = this
 
-  override def getType: String = getClass.getName
+  override def getType: String = getClass.getSimpleName
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, TmplLoopAst.tmplDoWhile.name)),

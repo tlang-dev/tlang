@@ -5,7 +5,7 @@ import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value.{TLangLong, TLangString}
 import dev.tlang.tlang.ast.helper.{ForType, HelperFor}
 import dev.tlang.tlang.astbuilder.context.ContextResource
-import dev.tlang.tlang.{TLangLexer, TLang}
+import dev.tlang.tlang.{CommonLexer, TLang}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -14,7 +14,7 @@ class BuildHelperForStatementTest extends AnyFunSuite {
   val fakeContext: ContextResource = ContextResource("", "", "", "")
 
   test("For 1 to 10") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """helper {
         |func myFunc {
         |for(i 1 to 10) {
@@ -35,7 +35,7 @@ class BuildHelperForStatementTest extends AnyFunSuite {
   }
 
   test("For 0 until 10") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """helper {
         |func myFunc {
         |for(i 0 until 10) {
@@ -55,7 +55,7 @@ class BuildHelperForStatementTest extends AnyFunSuite {
   }
 
   test("For in var") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """helper {
         |func myFunc {
         |for(i in myVar) {

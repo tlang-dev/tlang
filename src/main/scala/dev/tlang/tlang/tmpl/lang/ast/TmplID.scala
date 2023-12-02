@@ -32,7 +32,7 @@ case class TmplInterpretedID(context: Option[ContextContent], pre: Option[String
 
   override def getElement: TmplID = this
 
-  override def getType: String = getClass.getName
+  override def getType: String = getClass.getSimpleName
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, TmplValueAst.langInterpretedId.name)),
@@ -60,7 +60,7 @@ case class TmplReplacedId(context: Option[ContextContent], pre: Option[String] =
 
   override def getElement: TmplID = this
 
-  override def getType: String = getClass.getName
+  override def getType: String = getClass.getSimpleName
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, TmplValueAst.langReplacedId.name)),
@@ -80,7 +80,7 @@ case class TmplStringID(context: Option[ContextContent], id: String) extends Tmp
 
   override def getElement: TmplID = this
 
-  override def getType: String = getClass.getName
+  override def getType: String = getClass.getSimpleName
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, TmplValueAst.langStringId.name)),
@@ -102,7 +102,7 @@ case class TmplBlockID(context: Option[ContextContent], block: LangBlock) extend
 
   override def getElement: TmplID = this
 
-  override def getType: String = getClass.getName
+  override def getType: String = getClass.getSimpleName
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, TmplValueAst.langBlockId.name)),

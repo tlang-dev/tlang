@@ -16,7 +16,7 @@ case class TmplBoolValue(context: Option[ContextContent], value: Boolean) extend
 
   override def getElement: TmplBoolValue = this
 
-  override def getType: String = getClass.getName
+  override def getType: String = getClass.getSimpleName
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, TmplValueAst.langBool.name)),

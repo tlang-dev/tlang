@@ -55,7 +55,7 @@ INTER_QUOTE: 's"';
 COLON_COLON: '::';
 SET_ATTR: 'setAttr';
 
-DOC: 'doc';
+DOC: 'doc' -> pushMode(DOC_MODE);
 LANG: 'lang';
 DATA: 'data';
 CMD: 'cmd';
@@ -140,7 +140,7 @@ ID:
 
 //START_DOC: 'START_DOC';
 //END_DOC: 'END_DOC';
-START_DOC: '--->' -> pushMode(DOC_MODE);
+//START_DOC: '--->' -> pushMode(DOC_MODE);
 
 mode DOC_MODE;
 
@@ -149,11 +149,14 @@ mode DOC_MODE;
 WHITESPACE : [ \t\r\n]+ -> channel(HIDDEN);
 
 DOC_STRING :   '"' ( ESCAPED_QUOTE | ~('\n'|'\r') )*? '"';
+DOC_TEXT: '"""' .+? '"""';
 
-fragment PLAIN_TEXT: ~('{' | '}' | '[' | ']' | ',' | '*' | '|' | '#' | '(' | ')' | '=' | ' ' | '\t' | '\n' | '\r')*;
+PLAIN_TEXT: ~('{' | '}' | '[' | ']' | '#' | '(' | ')' | '<' | '>' | '"' | '\t' | '\n' | '\r')+;
 //PLAIN_TEXT: .+?;
 
-DOC_RSQUARE: '/]';
+DOC_RSQUARE: ']';
+DOC_LBRACE : '{' ;
+DOC_RBRACE : '}' -> popMode;
 
 IMG: '[img';
 TABLE: '[table';
@@ -162,6 +165,7 @@ CODE: '[code';
 LIST: '[list';
 INCLUDE: '[include';
 SPAN: '[span';
+SECTION: '[section';
 TYPE: 'type';
 BULLET_LIST: 'bullet';
 NUMBER_LIST: 'number';
@@ -170,5 +174,5 @@ LEVEL2: '##';
 LEVEL3: '###';
 PIPE: '|';
 
-END_DOC: '<---' -> popMode;
+//END_DOC: '<---' -> popMode;
 

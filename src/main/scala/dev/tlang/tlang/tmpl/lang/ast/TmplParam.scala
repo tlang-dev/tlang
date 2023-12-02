@@ -18,7 +18,7 @@ case class TmplParam(context: Option[ContextContent], var annots: Option[List[Tm
 
   override def getElement: TmplParam = this
 
-  override def getType: String = getClass.getName
+  override def getType: String = getClass.getSimpleName
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, TmplLangAst.tmplParam.name)),

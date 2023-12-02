@@ -17,7 +17,7 @@ case class TmplSetAttribute(context: Option[ContextContent], var name: Option[Tm
 
   override def getElement: TmplSetAttribute = this
 
-  override def getType: String = getClass.getName
+  override def getType: String = getClass.getSimpleName
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, TmplLangAst.tmplSetAttribute.name)),

@@ -16,7 +16,7 @@ case class TmplExprBlock(context: Option[ContextContent], var exprs: List[TmplNo
 
   override def getElement: TmplExprBlock = this
 
-  override def getType: String = getClass.getName
+  override def getType: String = getClass.getSimpleName
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, TmplLangAst.langExprBlock.name)),

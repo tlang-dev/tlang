@@ -1,10 +1,7 @@
 package dev.tlang.tlang.generator.formatter
 
 import dev.tlang.tlang.astbuilder.context.ContextResource
-import dev.tlang.tlang.tmpl.lang.astbuilder.BuildTmplBlock
 //import dev.tlang.tlang.generator.langs.java.{JavaFormatter, NewJavaGenerator}
-import dev.tlang.tlang.{TLangLexer, TLang}
-import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
 
 class FormatterTest extends AnyFunSuite {
@@ -14,7 +11,7 @@ class FormatterTest extends AnyFunSuite {
   val RET: String = System.lineSeparator()
 
  /* test("Simple formatting") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[java] myTmpl {
         |pkg my.package
         |use my.package1
@@ -33,7 +30,7 @@ class FormatterTest extends AnyFunSuite {
   }
 
   test("Format class") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[java] myTmpl {
         |impl MyClass {
         |
@@ -47,7 +44,7 @@ class FormatterTest extends AnyFunSuite {
   }
 
   test("Format func in class") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[java] myTmpl {
         |impl MyClass {
         | func myFunc(): String {

@@ -10,12 +10,17 @@ import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.interpreter.context.Scope
 import dev.tlang.tlang.tmpl.TmplBlock
 import dev.tlang.tlang.tmpl.lang.ast.TmplLangAst
+import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 
 case class DocBlock(context: Option[ContextContent], name: String, lang: String,
-                    var params: Option[List[HelperParam]], content: DocContent,scope: Scope = Scope()) extends DomainBlock with TmplBlock[DocBlock] {
+                    var params: Option[List[HelperParam]], content: DocContent, scope: Scope = Scope()) extends DomainBlock with TmplBlock[DocBlock] {
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, toModel.name)),
-    Some(List())
+    Some(List(
+      BuildLang.createAttrStr(context, "name", name),
+      BuildLang.createAttrStr(context, "lang", lang),
+      BuildLang.createAttrEntity(context, "content", content.toEntity)
+    ))
   )
 
   override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
@@ -25,7 +30,7 @@ case class DocBlock(context: Option[ContextContent], name: String, lang: String,
 
   override def getElement: DocBlock = this
 
-  override def getType: String = getClass.getName
+  override def getType: String = getClass.getSimpleName
 
   override def getContext: Option[ContextContent] = context
 

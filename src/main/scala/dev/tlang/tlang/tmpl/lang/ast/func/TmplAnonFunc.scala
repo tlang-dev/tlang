@@ -10,7 +10,7 @@ import dev.tlang.tlang.tmpl.lang.ast.{TmplExprContent, TmplExpression, TmplFuncA
 case class TmplAnonFunc(context: Option[ContextContent], var curries: Option[List[TmplFuncParam]], var content: TmplExprContent[_]) extends TmplExpression[TmplAnonFunc] {
   override def getElement: TmplAnonFunc = this
 
-  override def getType: String = getClass.getName
+  override def getType: String = getClass.getSimpleName
 
   override def getContext: Option[ContextContent] = context
 

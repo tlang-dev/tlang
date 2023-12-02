@@ -5,16 +5,20 @@ import dev.tlang.tlang.ast.common.value.EntityValue
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
-import dev.tlang.tlang.tmpl.lang.ast.{TmplLangAst, TmplNode}
+import dev.tlang.tlang.tmpl.lang.ast.TmplLangAst
+import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 
-case class DocImg(context: Option[ContextContent]) extends DocTextType[DocImg] {
-  override def deepCopy(): DocImg = DocImg(context)
+case class DocImg(context: Option[ContextContent], src: String, alt: Option[String]) extends DocTextType[DocImg] {
+  override def deepCopy(): DocImg = DocImg(context, new String(src), if (alt.isDefined) Some(new String(alt.get)) else None)
 
   override def getContext: Option[ContextContent] = context
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, toModel.name)),
-    Some(List())
+    Some(List(
+      BuildLang.createAttrStr(context, "src", src),
+      BuildLang.createAttrStr(context, "alt", alt.get),
+    ))
   )
 
   override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
@@ -24,5 +28,5 @@ case class DocImg(context: Option[ContextContent]) extends DocTextType[DocImg] {
 
   override def getElement: DocImg = this
 
-  override def getType: String = getClass.getName
+  override def getType: String = getClass.getSimpleName
 }

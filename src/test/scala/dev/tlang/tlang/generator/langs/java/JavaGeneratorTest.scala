@@ -1,16 +1,6 @@
 package dev.tlang.tlang.generator.langs.java
 
-import dev.tlang.tlang.ast.common.operation.Operator
-import dev.tlang.tlang.ast.tmpl._
-import dev.tlang.tlang.tmpl.lang.ast.call.{TmplCallFunc, TmplCallObj, TmplCallVar}
-import dev.tlang.tlang.tmpl.lang.ast.condition.TmplOperation
-import dev.tlang.tlang.tmpl.lang.ast.func.TmplFunc
-import dev.tlang.tlang.tmpl.lang.ast.loop.{TmplDoWhile, TmplFor, TmplWhile}
-import dev.tlang.tlang.tmpl.lang.ast.primitive.{TmplLongValue, TmplStringValue}
 import dev.tlang.tlang.astbuilder.context.ContextResource
-import dev.tlang.tlang.tmpl.lang.astbuilder.BuildTmplBlock
-import dev.tlang.tlang.{TLangLexer, TLang}
-import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
 
 class JavaGeneratorTest extends AnyFunSuite {
@@ -18,7 +8,7 @@ class JavaGeneratorTest extends AnyFunSuite {
   val fakeContext: ContextResource = ContextResource("", "", "", "")
 
  /* test("Package") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[java] myTmpl {
         |pkg my.package
         |}""".stripMargin))
@@ -29,7 +19,7 @@ class JavaGeneratorTest extends AnyFunSuite {
   }
 
   test("Uses") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[java] myTmpl {
         |use my.package1
         |use my.package2

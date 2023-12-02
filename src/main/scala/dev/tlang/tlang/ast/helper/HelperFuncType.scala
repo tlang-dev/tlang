@@ -6,7 +6,7 @@ import dev.tlang.tlang.astbuilder.context.ContextContent
 case class HelperFuncType(context: Option[ContextContent], params: Option[List[HelperCurrying]], returns: Option[List[ValueType]]) extends ValueType {
   override def getContextType: String = getType
 
-  override def getType: String = getClass.getName
+  override def getType: String = getClass.getSimpleName
 
   override def getContext: Option[ContextContent] = context
 }

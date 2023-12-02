@@ -20,7 +20,7 @@ case class TmplAttribute(context: Option[ContextContent], var attr: Option[TmplI
 
   override def getElement: TmplAttribute = this
 
-  override def getType: String = getClass.getName
+  override def getType: String = getClass.getSimpleName
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, TmplLangAst.tmplAttribute.name)),

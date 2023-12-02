@@ -16,7 +16,7 @@ case class TmplDoubleValue(context: Option[ContextContent], value: Double) exten
 
   override def getElement: TmplDoubleValue = this
 
-  override def getType: String = getClass.getName
+  override def getType: String = getClass.getSimpleName
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, TmplValueAst.langDouble.name)),

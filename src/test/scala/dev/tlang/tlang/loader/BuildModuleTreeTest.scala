@@ -1,15 +1,11 @@
 package dev.tlang.tlang.loader
 
 import dev.tlang.tlang.ast.model.ModelBlock
-import dev.tlang.tlang.loader.manifest.Stability
-import dev.tlang.tlang.loader.remote.RemoteLoader
-
-import java.nio.file.Paths
-import dev.tlang.tlang.ast.model.ModelBlock
 import dev.tlang.tlang.loader.manifest.{Dependency, Manifest, Stability}
 import dev.tlang.tlang.loader.remote.RemoteLoader
 import org.scalatest.funsuite.AnyFunSuite
 
+import java.nio.file.Paths
 import java.util.UUID.randomUUID
 import scala.collection.mutable
 
@@ -129,7 +125,7 @@ class BuildModuleTreeTest extends AnyFunSuite {
       }
     }
 
-    val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
+    val module = BuildModuleTree.build(Paths.get("Root"), "").toOption.get
     assert("Main" == module.mainFile)
     assert(module.extResources.isEmpty)
     assert("Root" == module.rootDir)
@@ -165,7 +161,7 @@ class BuildModuleTreeTest extends AnyFunSuite {
       }
     }
 
-    val module = BuildModuleTree.build(Paths.get("Root"), Some("MainPackage/MainFile")).toOption.get
+    val module = BuildModuleTree.build(Paths.get("Root", "MainPackage/MainFile"), "").toOption.get
     assert("MainPackage/MainFile" == module.mainFile)
     assert(module.extResources.isEmpty)
     assert("Root" == module.rootDir)
@@ -210,7 +206,7 @@ class BuildModuleTreeTest extends AnyFunSuite {
   }
 
   test("Browse external resources with TLang modules") {
-    val manifest = Manifest("MyName", "MyProject", "MyOrg", "1.0.0", None, 1, Some(List(
+    val manifest = Manifest("MyName", "MyProject", "MyOrg", "1.0.0", None, 1, None, Some(List(
       Dependency("TLang", "IO", "Terminal", "1.0.0", Stability.ALPHA, 1, Some("terminal")),
       Dependency("TLang", "Generator", "Generator", "1.0.0", Stability.ALPHA, 1, Some("generator")),
     )))

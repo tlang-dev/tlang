@@ -16,7 +16,7 @@ case class TmplInclude(context: Option[ContextContent], calls: List[CallObject])
 
   override def getElement: TmplInclude = this
 
-  override def getType: String = getClass.getName
+  override def getType: String = getClass.getSimpleName
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, TmplLangAst.tmplInclude.name)),

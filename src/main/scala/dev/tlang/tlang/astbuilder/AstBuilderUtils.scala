@@ -6,10 +6,10 @@ object AstBuilderUtils {
 
   def extraString(withQuotes: String): String = {
     if (withQuotes != null && withQuotes.length >= 2) {
-      if (withQuotes.startsWith("\"") && withQuotes.endsWith("\"")) withQuotes.substring(1, withQuotes.length - 1)
-      else withQuotes
+      if (withQuotes.startsWith("\"") && withQuotes.endsWith("\"")) removeEscapedQuotes(withQuotes.substring(1, withQuotes.length - 1))
+      else removeEscapedQuotes(withQuotes)
     } else if (withQuotes != null) {
-      withQuotes
+      removeEscapedQuotes(withQuotes)
     } else {
       ""
     }
@@ -28,6 +28,10 @@ object AstBuilderUtils {
 
   def getText(token: Token): Option[String] = {
     if (token != null) Some(token.getText) else None
+  }
+
+  private def removeEscapedQuotes(str: String): String = {
+    str.replaceAll("\\\\\"", "\"")
   }
 
 }

@@ -14,7 +14,7 @@ case class TmplCallObjectLink(context: Option[ContextContent], var link: String 
 
   override def getElement: TmplCallObjectLink = this
 
-  override def getType: String = getClass.getName
+  override def getType: String = getClass.getSimpleName
 
   override def getContext: Option[ContextContent] = context
 

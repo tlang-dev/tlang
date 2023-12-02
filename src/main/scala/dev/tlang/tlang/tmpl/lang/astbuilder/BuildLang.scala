@@ -4,39 +4,38 @@ import dev.tlang.tlang.TLang
 import dev.tlang.tlang.TLang._
 import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.operation.Operation
-import dev.tlang.tlang.ast.common.value.{ArrayValue, ComplexAttribute, EntityValue, TLangString}
+import dev.tlang.tlang.ast.common.value._
 import dev.tlang.tlang.astbuilder.BuildAst
 import dev.tlang.tlang.astbuilder.BuildAst.addContext
 import dev.tlang.tlang.astbuilder.context.{ContextContent, ContextResource}
 import dev.tlang.tlang.tmpl.lang.ast.{TmplExprAst, TmplFuncAst, TmplLangAst}
 
-import scala.collection.mutable.ListBuffer
 import scala.jdk.CollectionConverters.CollectionHasAsScala
 
 object BuildLang {
 
- /* def buildLangBlock(resource: ContextResource, block: TmplLangContext): EntityValue = {
-    val context = addContext(resource, block)
-    EntityValue(context, Some(ObjType(context, None, TmplLangAst.tmplLang.name)), Some(List(
-      ComplexAttribute(context, Some("content"),
-        Some(ObjType(context, None, TmplLangAst.langFullBlock.name)), Operation(context, None, Right(buildFullBlock(resource, block.tmplFullBlock()))))
-    )))
-  }
+  /* def buildLangBlock(resource: ContextResource, block: TmplLangContext): EntityValue = {
+     val context = addContext(resource, block)
+     EntityValue(context, Some(ObjType(context, None, TmplLangAst.tmplLang.name)), Some(List(
+       ComplexAttribute(context, Some("content"),
+         Some(ObjType(context, None, TmplLangAst.langFullBlock.name)), Operation(context, None, Right(buildFullBlock(resource, block.tmplFullBlock()))))
+     )))
+   }
 
-  def buildFullBlock(resource: ContextResource, full: TmplFullBlockContext): EntityValue = {
-    val elems = ListBuffer.empty[ComplexAttribute]
-    val context = addContext(resource, full)
+   def buildFullBlock(resource: ContextResource, full: TmplFullBlockContext): EntityValue = {
+     val elems = ListBuffer.empty[ComplexAttribute]
+     val context = addContext(resource, full)
 
-    if (full.tmplPkg() != null && !full.tmplPkg().isEmpty) elems += ComplexAttribute(context, Some("package"),
-      Some(ObjType(context, None, TmplLangAst.langFullBlock.name)), Operation(context, None, Right(buildPkg(resource, full.tmplPkg()))))
+     if (full.tmplPkg() != null && !full.tmplPkg().isEmpty) elems += ComplexAttribute(context, Some("package"),
+       Some(ObjType(context, None, TmplLangAst.langFullBlock.name)), Operation(context, None, Right(buildPkg(resource, full.tmplPkg()))))
 
-    elems += createArray(addContext(resource, full), "uses", buildUses(resource, full.tmplUses.asScala.toList))
-    elems += createArray(addContext(resource, full), "contents", buildContents(resource, full.tmplContents.asScala.toList))
+     elems += createArray(addContext(resource, full), "uses", buildUses(resource, full.tmplUses.asScala.toList))
+     elems += createArray(addContext(resource, full), "contents", buildContents(resource, full.tmplContents.asScala.toList))
 
-    EntityValue(context,
-      Some(ObjType(context, None, TmplLangAst.langFullBlock.name)),
-      Some(elems.toList))
-  }*/
+     EntityValue(context,
+       Some(ObjType(context, None, TmplLangAst.langFullBlock.name)),
+       Some(elems.toList))
+   }*/
 
   def buildPkg(resource: ContextResource, pkg: TLang.TmplPkgContext): EntityValue = {
     val context = addContext(resource, pkg)
@@ -69,6 +68,12 @@ object BuildLang {
   def createAttrStr(context: Option[ContextContent], name: String, value: String): ComplexAttribute = {
     ComplexAttribute(context, Some(name), None, Operation(
       context, None, Right(new TLangString(context, value))
+    ))
+  }
+
+  def createAttrInt(context: Option[ContextContent], name: String, value: Int): ComplexAttribute = {
+    ComplexAttribute(context, Some(name), None, Operation(
+      context, None, Right(new TLangLong(context, value))
     ))
   }
 

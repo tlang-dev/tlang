@@ -18,7 +18,7 @@ case class TmplFor(context: Option[ContextContent], var variable: TmplID, var st
 
   override def getElement: TmplFor = this
 
-  override def getType: String = getClass.getName
+  override def getType: String = getClass.getSimpleName
 
   override def getContext: Option[ContextContent] = context
 

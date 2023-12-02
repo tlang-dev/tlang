@@ -51,7 +51,7 @@ class ResolveTmplTest extends AnyFunSuite {
             |}""".stripMargin)
       }
     }
-    val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
+    val module = BuildModuleTree.build(Paths.get("Root"), "").toOption.get
     val block = module.resources("Main").ast.body.head.asInstanceOf[LangBlock]
     val resource = module.resources("Main")
     ResolveTmpl.resolveTmpl(block, module, resource.ast.header.get.uses.get, resource)
@@ -82,7 +82,7 @@ class ResolveTmplTest extends AnyFunSuite {
             |}""".stripMargin)
       }
     }
-    val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
+    val module = BuildModuleTree.build(Paths.get("Root"), "").toOption.get
     val block = module.resources("Main").ast.body.head.asInstanceOf[LangBlock]
     val resource = module.resources("Main")
     ResolveTmpl.resolveTmpl(block, module, resource.ast.header.get.uses.get, resource)
@@ -114,7 +114,7 @@ class ResolveTmplTest extends AnyFunSuite {
             |}""".stripMargin)
       }
     }
-    val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
+    val module = BuildModuleTree.build(Paths.get("Root"), "").toOption.get
     val block = module.resources("Main").ast.body.head.asInstanceOf[LangBlock]
     val resource = module.resources("Main")
     ResolveTmpl.resolveTmpl(block, module, resource.ast.header.get.uses.get, resource)
@@ -145,7 +145,7 @@ class ResolveTmplTest extends AnyFunSuite {
             |}""".stripMargin)
       }
     }
-    val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
+    val module = BuildModuleTree.build(Paths.get("Root"), "").toOption.get
     val block = module.resources("Main").ast.body.head.asInstanceOf[LangBlock]
     val resource = module.resources("Main")
     ResolveTmpl.resolveTmpl(block, module, resource.ast.header.get.uses.get, resource)
@@ -178,7 +178,7 @@ class ResolveTmplTest extends AnyFunSuite {
             |}""".stripMargin)
       }
     }
-    val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
+    val module = BuildModuleTree.build(Paths.get("Root"), "").toOption.get
     val block = module.resources("Main").ast.body.head.asInstanceOf[LangBlock]
     val resource = module.resources("Main")
     ResolveTmpl.resolveTmpl(block, module, resource.ast.header.get.uses.get, resource)
@@ -211,7 +211,7 @@ class ResolveTmplTest extends AnyFunSuite {
             |}""".stripMargin)
       }
     }
-    val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
+    val module = BuildModuleTree.build(Paths.get("Root"), "").toOption.get
     val block = module.resources("Main").ast.body.head.asInstanceOf[LangBlock]
     val resource = module.resources("Main")
     ResolveTmpl.resolveTmpl(block, module, resource.ast.header.get.uses.get, resource)
@@ -245,7 +245,7 @@ class ResolveTmplTest extends AnyFunSuite {
             |}""".stripMargin)
       }
     }
-    val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
+    val module = BuildModuleTree.build(Paths.get("Root"), "").toOption.get
     val block = module.resources("Main").ast.body.head.asInstanceOf[LangBlock]
     val resource = module.resources("Main")
     ResolveTmpl.resolveTmpl(block, module, resource.ast.header.get.uses.get, resource)
@@ -282,7 +282,7 @@ class ResolveTmplTest extends AnyFunSuite {
             |""".stripMargin)
       }
     }
-    val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
+    val module = BuildModuleTree.build(Paths.get("Root"), "").toOption.get
     val block = module.resources("Main").ast.body.head.asInstanceOf[LangBlock]
     val resource = module.resources("Main")
     ResolveTmpl.resolveTmpl(block, module, resource.ast.header.get.uses.get, resource)
@@ -320,7 +320,7 @@ class ResolveTmplTest extends AnyFunSuite {
             |}""".stripMargin)
       }
     }
-    val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
+    val module = BuildModuleTree.build(Paths.get("Root"), "").toOption.get
     val block = module.resources("Main").ast.body.head.asInstanceOf[LangBlock]
     val resource = module.resources("Main")
     ResolveTmpl.resolveTmpl(block, module, resource.ast.header.get.uses.get, resource)
@@ -358,7 +358,7 @@ class ResolveTmplTest extends AnyFunSuite {
             |}""".stripMargin)
       }
     }
-    val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
+    val module = BuildModuleTree.build(Paths.get("Root"), "").toOption.get
     val block = module.resources("Main").ast.body.head.asInstanceOf[LangBlock]
     val resource = module.resources("Main")
     ResolveTmpl.resolveTmpl(block, module, resource.ast.header.get.uses.get, resource)
@@ -402,7 +402,7 @@ class ResolveTmplTest extends AnyFunSuite {
             |}""".stripMargin)
       }
     }
-    val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
+    val module = BuildModuleTree.build(Paths.get("Root"), "").toOption.get
     val block = module.resources("Main").ast.body.head.asInstanceOf[LangBlock]
     val resource = module.resources("Main")
     ResolveTmpl.resolveTmpl(block, module, resource.ast.header.get.uses.get, resource)

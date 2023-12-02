@@ -1,19 +1,14 @@
 package dev.tlang.tlang.generator.langs.scalalang
 
 import dev.tlang.tlang.astbuilder.context.ContextResource
-import dev.tlang.tlang.tmpl.lang.astbuilder.BuildTmplBlock
-import dev.tlang.tlang.{TLangLexer, TLang}
-import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
-
-import scala.jdk.CollectionConverters._
 
 class ScalaGeneratorTest extends AnyFunSuite {
 
   val fakeContext: ContextResource = ContextResource("", "", "", "")
 
   /*test("Test impl for") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
         |impl Test for Test1{
         |}
@@ -25,7 +20,7 @@ class ScalaGeneratorTest extends AnyFunSuite {
   }
 
   test("Test impl fors") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
         |impl Test for Test1, Test2, Test3{
         |}
@@ -37,7 +32,7 @@ class ScalaGeneratorTest extends AnyFunSuite {
   }*/
 
 //  test("Generate call func") {
-//    val lexer = new TLangLexer(CharStreams.fromString(
+//    val lexer = new CommonLexer(CharStreams.fromString(
 //      """tmpl[scala] myTmpl {
 //        |myVar.myFunc(1.0, "two")(param3=true)
 //        |}""".stripMargin))
@@ -49,7 +44,7 @@ class ScalaGeneratorTest extends AnyFunSuite {
 //  }
 
  /* test("Generate call array") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
         |myVar.myArray[5]
         |}""".stripMargin))

@@ -7,27 +7,27 @@ options {
 }
 
 
-tmplDoc: 'doc' (content = tmplDocBlock);
+tmplDoc: DOC (content = tmplDocBlock);
 
-tmplDocBlock: LBRACE START_DOC tmplDocContent END_DOC RBRACE;
+tmplDocBlock: DOC_LBRACE tmplDocContent DOC_RBRACE;
 
 tmplDocContent: contents+=tmplDocContentType+;
 
-tmplDocContentType: (tmplDocText);
+tmplDocContentType: tmplDocText | tmplDocStruct | tmplDocSec;
 
-tmplDocSec: tmplDocSecName = ID LBRACE tmplDocContent RBRACE;
+tmplDocSec: SECTION name = DOC_STRING content = tmplDocContent DOC_RSQUARE;
 
-tmplDocStruct: (level = LEVEL1 | LEVEL2 | LEVEL3 | tmplDocAnyLevel) title = ID content = TmplDocContent;
+tmplDocStruct: (level = LEVEL1 | LEVEL2 | LEVEL3 | tmplDocAnyLevel) title = PLAIN_TEXT content = tmplDocContent;
 
-tmplDocText: tmplDocImg | tmplDocLink | tmplDocCodeBlock | tmplDocSpan | tmplDocList | tmplDocTable | tmplDocInclude | PLAIN_TEXT;
+tmplDocText: tmplDocImg | tmplDocLink | tmplDocCodeBlock | tmplDocSpan | tmplDocList | tmplDocTable | tmplDocInclude | tmplDocPlainText;
 
 tmplDocAnyLevel: LEVEL1 '(' level = NUMBER ')';
 
-tmplDocImg: '[img' src = DOC_STRING (',' alt = STRING)? DOC_RSQUARE;
+tmplDocImg: '[img' src = DOC_STRING (alt = DOC_STRING)? DOC_RSQUARE;
 
-tmplDocLink: '[link' src = STRING (',' alt = STRING)? RSQUARE;
+tmplDocLink: '[link' src = DOC_STRING name=DOC_STRING DOC_RSQUARE;
 
-tmplDocCodeBlock: '[code' lang = STRING LBRACE code = STRING RBRACE RSQUARE;
+tmplDocCodeBlock: '[code' lang = DOC_STRING code = DOC_TEXT DOC_RSQUARE;
 
 tmplDocSpan: '[span' content = STRING RSQUARE;
 
@@ -36,3 +36,5 @@ tmplDocList: '[list'  ('type' type = 'bullet' | 'number' ) (content = '*' STRING
 tmplDocTable: '[table' (headers += STRING  ('|' headers += STRING)*) RSQUARE;
 
 tmplDocInclude: '[include' src = STRING RSQUARE;
+
+tmplDocPlainText: PLAIN_TEXT;

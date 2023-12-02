@@ -17,7 +17,7 @@ case class TmplReturn(context: Option[ContextContent], var operation: TmplOperat
 
   override def getElement: TmplReturn = this
 
-  override def getType: String = getClass.getName
+  override def getType: String = getClass.getSimpleName
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, TmplLangAst.langReturn.name)),

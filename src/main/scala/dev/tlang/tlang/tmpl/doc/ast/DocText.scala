@@ -27,5 +27,5 @@ case class DocText(context: Option[ContextContent], text: DocTextType[_]) extend
 
   override def getElement: DocText = this
 
-  override def getType: String = getClass.getName
+  override def getType: String = getClass.getSimpleName
 }

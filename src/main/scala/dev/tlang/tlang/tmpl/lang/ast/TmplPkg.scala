@@ -16,7 +16,7 @@ case class TmplPkg(context: Option[ContextContent], var parts: List[TmplID]) ext
 
   override def getElement: TmplPkg = this
 
-  override def getType: String = getClass.getName
+  override def getType: String = getClass.getSimpleName
 
   override def getContext: Option[ContextContent] = context
 

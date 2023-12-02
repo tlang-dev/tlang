@@ -16,7 +16,7 @@ case class TmplCallVar(context: Option[ContextContent], var name: TmplID) extend
 
   override def getElement: TmplCallVar = this
 
-  override def getType: String = getClass.getName
+  override def getType: String = getClass.getSimpleName
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, TmplCallAst.tmplCallObjVar.name)),

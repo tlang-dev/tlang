@@ -12,7 +12,7 @@ case class TmplFuncParam(context: Option[ContextContent], params: Option[List[Tm
 
   override def getElement: TmplFuncParam = this
 
-  override def getType: String = getClass.getName
+  override def getType: String = getClass.getSimpleName
 
   override def getContext: Option[ContextContent] = context
 

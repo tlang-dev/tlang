@@ -4,7 +4,7 @@ import dev.tlang.tlang.ast.common.call.{CallArrayObject, CallObject, CallVarObje
 import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value.{TLangLong, TLangString}
 import dev.tlang.tlang.astbuilder.context.ContextResource
-import dev.tlang.tlang.{TLangLexer, TLang}
+import dev.tlang.tlang.{CommonLexer, TLang}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -13,7 +13,7 @@ class BuildHelperStatementTest extends AnyFunSuite {
   val fakeContext: ContextResource = ContextResource("", "", "", "")
 
   test("Call simple var") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """helper {
         |func myFunc {
         |myVar
@@ -27,7 +27,7 @@ class BuildHelperStatementTest extends AnyFunSuite {
   }
 
   test("Call simple array") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """helper {
         |func myFunc {
         |myArray[1]
@@ -51,7 +51,7 @@ class BuildHelperStatementTest extends AnyFunSuite {
   }
 
   test("Call string") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """helper {
         |func myFunc {
         |"myValue"
@@ -65,7 +65,7 @@ class BuildHelperStatementTest extends AnyFunSuite {
   }
 
   test("Call int") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """helper {
         |func myFunc {
         |1337

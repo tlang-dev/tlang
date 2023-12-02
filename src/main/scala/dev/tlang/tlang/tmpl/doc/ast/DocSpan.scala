@@ -16,7 +16,7 @@ case class DocSpan(context: Option[ContextContent]) extends DocTextType[DocSpan]
 
   override def getElement: DocSpan = this
 
-  override def getType: String = getClass.getName
+  override def getType: String = getClass.getSimpleName
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, toModel.name)),

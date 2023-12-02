@@ -23,7 +23,7 @@ case class TmplOperation(context: Option[ContextContent], var content: Either[Tm
 
   override def getElement: TmplOperation = this
 
-  override def getType: String = getClass.getName
+  override def getType: String = getClass.getSimpleName
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, TmplExprAst.langOperation.name)),

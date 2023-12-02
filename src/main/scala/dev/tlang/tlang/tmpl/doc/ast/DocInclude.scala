@@ -24,5 +24,5 @@ case class DocInclude(context: Option[ContextContent]) extends DocTextType[DocIn
 
   override def getElement: DocInclude = this
 
-  override def getType: String = getClass.getName
+  override def getType: String = getClass.getSimpleName
 }

@@ -50,7 +50,7 @@ class BrowseNewEntityTest extends AnyFunSuite {
       }
     }
 
-    val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
+    val module = BuildModuleTree.build(Paths.get("Root"), "").toOption.get
     val entity = module.resources("Main").ast.body.head.asInstanceOf[ModelBlock].content.get.head.asInstanceOf[AssignVar].value.content.toOption.get.asInstanceOf[EntityValue]
     val resource = module.resources("Main")
     BrowseNewEntity.browseEntity(entity, module, resource.ast.header.get.uses.get, resource)
@@ -83,7 +83,7 @@ class BrowseNewEntityTest extends AnyFunSuite {
       }
     }
 
-    val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
+    val module = BuildModuleTree.build(Paths.get("Root"), "").toOption.get
     val entity = module.resources("Main").ast.body.head.asInstanceOf[ModelBlock].content.get.head.asInstanceOf[AssignVar].value.content.toOption.get.asInstanceOf[EntityValue]
     val resource = module.resources("Main")
     BrowseNewEntity.browseEntity(entity, module, resource.ast.header.get.uses.get, resource)

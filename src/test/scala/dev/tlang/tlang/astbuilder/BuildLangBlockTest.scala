@@ -2,43 +2,40 @@ package dev.tlang.tlang.astbuilder
 
 import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.operation.Operator
+import dev.tlang.tlang.astbuilder.context.ContextResource
+import dev.tlang.tlang.tmpl.lang.ast._
 import dev.tlang.tlang.tmpl.lang.ast.call.{TmplCallArray, TmplCallFunc, TmplCallObj, TmplCallVar}
 import dev.tlang.tlang.tmpl.lang.ast.primitive._
-import dev.tlang.tlang.ast.tmpl._
-import dev.tlang.tlang.astbuilder.context.ContextResource
-import dev.tlang.tlang.tmpl.lang.ast.{TmplAttribute, TmplExprBlock, TmplIf, TmplMultiValue, TmplSetAttribute, TmplVar}
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildTmplBlock
-import dev.tlang.tlang.{TLangLexer, TLang}
+import dev.tlang.tlang.{CommonLexer, TLang}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
-
-import scala.jdk.CollectionConverters._
 
 class BuildLangBlockTest extends AnyFunSuite {
 
   val fakeContext: ContextResource = ContextResource("", "", "", "")
 
   test("Template name") {
-    val lexer = new TLangLexer(CharStreams.fromString(
-      """tmpl[scala] myTmpl {
+    val lexer = new CommonLexer(CharStreams.fromString(
+      """tmpl[scala] myTmpl lang {
         |use dev.tlang.tlang
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val tmpl = BuildTmplBlock.build(fakeContext, parser.tmplBlock())
+    val tmpl = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock())
     assert("myTmpl" == tmpl.name)
     assert("scala" == tmpl.lang)
     assert(tmpl.params.isEmpty)
   }
 
   test("Template parameters") {
-    val lexer = new TLangLexer(CharStreams.fromString(
-      """tmpl[scala] myTmpl (param1: String, param2: Bool) {
+    val lexer = new CommonLexer(CharStreams.fromString(
+      """tmpl[scala] myTmpl (param1: String, param2: Bool) lang{
         |use dev.tlang.tlang
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val tmpl = BuildTmplBlock.build(fakeContext, parser.tmplBlock())
+    val tmpl = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock())
     assert("myTmpl" == tmpl.name)
     assert("param1" == tmpl.params.get.head.param.get)
     assert("String" == tmpl.params.get.head.`type`.asInstanceOf[ObjType].name)
@@ -47,7 +44,7 @@ class BuildLangBlockTest extends AnyFunSuite {
   }
 
   /*test("Test use in TmplBloc") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
         |use dev.tlang.tlang
         |}""".stripMargin))
@@ -57,7 +54,7 @@ class BuildLangBlockTest extends AnyFunSuite {
   }
 
   test("Test uses in TmplBloc") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
         |use dev.tlang.tlang1
         |use dev.tlang.tlang2
@@ -72,7 +69,7 @@ class BuildLangBlockTest extends AnyFunSuite {
   }
 
   test("Test uses in TmplBloc with empty list") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
@@ -82,7 +79,7 @@ class BuildLangBlockTest extends AnyFunSuite {
   }
 
   test("Test impl name") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
         |impl test {
         |}
@@ -95,7 +92,7 @@ class BuildLangBlockTest extends AnyFunSuite {
   }
 
   test("Test impl with for") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
         |impl test for test1{
         |}
@@ -108,7 +105,7 @@ class BuildLangBlockTest extends AnyFunSuite {
   }
 
   test("Test impl with fors") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
         |impl test for test1, test2, test3 {
         |}
@@ -123,49 +120,49 @@ class BuildLangBlockTest extends AnyFunSuite {
   }*/
 
   test("Simple var") {
-    val lexer = new TLangLexer(CharStreams.fromString(
-      """tmpl[scala] myTmpl {
+    val lexer = new CommonLexer(CharStreams.fromString(
+      """tmpl[scala] myTmpl lang {
         |var myVar :String = "myValue"
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val res = BuildTmplBlock.build(fakeContext, parser.tmplBlock()).content.get.head.asInstanceOf[TmplVar]
+    val res = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock()).content.content.get.head.asInstanceOf[TmplVar]
     assert("myVar" == res.name.toString)
     assert("String" == res.`type`.get.name.toString)
     assert("myValue" == res.value.get.content.toOption.get.asInstanceOf[TmplStringValue].value.toString)
   }
 
   test("Call var") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
         |myVar
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val res = BuildTmplBlock.build(fakeContext, parser.tmplBlock()).content.get.head.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallVar]
+    val res = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock()).content.content.get.head.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallVar]
     assert("myVar" == res.name.toString)
   }
 
   test("Call array") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
         |myArray[1]
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val res = BuildTmplBlock.build(fakeContext, parser.tmplBlock()).content.get.head.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallArray]
+    val res = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock()).content.content.get.head.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallArray]
     assert("myArray" == res.name.toString)
     assert(1 == res.elem.content.toOption.get.asInstanceOf[TmplLongValue].value)
   }
 
   test("Call func") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
         |myFunc(1)("param2", hasName : true)
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val res = BuildTmplBlock.build(fakeContext, parser.tmplBlock()).content.get.head.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallFunc]
+    val res = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock()).content.content.get.head.asInstanceOf[TmplCallObj].calls.head.asInstanceOf[TmplCallFunc]
     assert("myFunc" == res.name.toString)
     assert(1 == res.currying.get.head.params.get.head.asInstanceOf[TmplSetAttribute].value.content.toOption.get.asInstanceOf[TmplLongValue].value)
     assert("param2" == res.currying.get.last.params.get.head.asInstanceOf[TmplSetAttribute].value.content.toOption.get.asInstanceOf[TmplStringValue].value.toString)
@@ -174,14 +171,14 @@ class BuildLangBlockTest extends AnyFunSuite {
   }
 
   test("Condition block") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
         |if(((true && myVar==myVar2) || myVar3 < myVar4)) {
         |}
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val res = BuildTmplBlock.build(fakeContext, parser.tmplBlock()).content.get.head.asInstanceOf[TmplIf].cond
+    val res = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock()).content.content.get.head.asInstanceOf[TmplIf].cond
     val trueVal = res.content.left.toOption.get.content.left.toOption.get
     val andMyVar = res.content.left.toOption.get.content.left.toOption.get.next.get
     val eqMyVar2 = res.content.left.toOption.get.content.left.toOption.get.next.get._2.next.get
@@ -198,13 +195,13 @@ class BuildLangBlockTest extends AnyFunSuite {
   }
 
   test("Multi value") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
         |(1, "value2", [1,2,3])
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val res = BuildTmplBlock.build(fakeContext, parser.tmplBlock()).content.get.head.asInstanceOf[TmplMultiValue]
+    val res = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock()).content.content.get.head.asInstanceOf[TmplMultiValue]
     val array = res.values.last.asInstanceOf[TmplArrayValue]
     assert(1 == res.values.head.asInstanceOf[TmplLongValue].value)
     assert("value2" == res.values(1).asInstanceOf[TmplStringValue].value.toString)
@@ -214,7 +211,7 @@ class BuildLangBlockTest extends AnyFunSuite {
   }
 
   test("Entity") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
         |new (1, param2 "value2") {
         |attr1 :Int[] [1,2,3]
@@ -222,7 +219,7 @@ class BuildLangBlockTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val res = BuildTmplBlock.build(fakeContext, parser.tmplBlock()).content.get.head.asInstanceOf[TmplEntityValue]
+    val res = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock()).content.content.get.head.asInstanceOf[TmplEntityValue]
     val attr1 = res.attrs.get.head
     assert(1 == res.params.get.head.asInstanceOf[TmplAttribute].value.content.toOption.get.asInstanceOf[TmplLongValue].value)
     assert("param2" == res.params.get.last.asInstanceOf[TmplAttribute].attr.get.toString)
@@ -236,13 +233,13 @@ class BuildLangBlockTest extends AnyFunSuite {
   }
 
   test("If") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
         |if(1==1) callMyFunc()
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val ifStmt = BuildTmplBlock.build(fakeContext, parser.tmplBlock()).content.get.head.asInstanceOf[TmplIf]
+    val ifStmt = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock()).content.content.get.head.asInstanceOf[TmplIf]
     val cond = ifStmt.cond
     assert(Operator.EQUAL == cond.next.get._1)
     assert(1 == cond.content.toOption.get.asInstanceOf[TmplLongValue].value)
@@ -251,7 +248,7 @@ class BuildLangBlockTest extends AnyFunSuite {
   }
 
   test("If with expression block") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
         |if(1==1) {
         |callMyFunc1()
@@ -260,7 +257,7 @@ class BuildLangBlockTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val ifStmt = BuildTmplBlock.build(fakeContext, parser.tmplBlock()).content.get.head.asInstanceOf[TmplIf]
+    val ifStmt = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock()).content.content.get.head.asInstanceOf[TmplIf]
     val cond = ifStmt.cond
     val block = ifStmt.content.asInstanceOf[TmplExprBlock]
     assert(Operator.EQUAL == cond.next.get._1)
@@ -271,13 +268,13 @@ class BuildLangBlockTest extends AnyFunSuite {
   }
 
   test("If else") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
         |if(1==1) callMyFunc1() else callMyFunc2()
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val ifStmt = BuildTmplBlock.build(fakeContext, parser.tmplBlock()).content.get.head.asInstanceOf[TmplIf]
+    val ifStmt = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock()).content.content.get.head.asInstanceOf[TmplIf]
     val cond = ifStmt.cond
     val elseBlock = ifStmt.elseBlock.get.left.toOption.get
     assert(Operator.EQUAL == cond.next.get._1)
@@ -288,13 +285,13 @@ class BuildLangBlockTest extends AnyFunSuite {
   }
 
   test("If else if") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
         |if(1==1) callMyFunc1() else if(2==2) callMyFunc2()
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val ifStmt = BuildTmplBlock.build(fakeContext, parser.tmplBlock()).content.get.head.asInstanceOf[TmplIf]
+    val ifStmt = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock()).content.content.get.head.asInstanceOf[TmplIf]
     val cond = ifStmt.cond
     val elseIf = ifStmt.elseBlock.get.toOption.get
     val cond2 = elseIf.cond

@@ -16,7 +16,7 @@ case class TmplTextValue(context: Option[ContextContent], var value: TmplID) ext
 
   override def getElement: TmplTextValue = this
 
-  override def getType: String = getClass.getName
+  override def getType: String = getClass.getSimpleName
 
   override def toString: String = value.toString
 

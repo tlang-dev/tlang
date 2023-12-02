@@ -4,7 +4,7 @@ import dev.tlang.tlang.ast.common.call.{CallObject, CallVarObject}
 import dev.tlang.tlang.ast.common.operation.{Operation, Operator}
 import dev.tlang.tlang.ast.helper.HelperIf
 import dev.tlang.tlang.astbuilder.context.ContextResource
-import dev.tlang.tlang.{TLangLexer, TLang}
+import dev.tlang.tlang.{CommonLexer, TLang}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -13,7 +13,7 @@ class BuildHelperIfStatementTest extends AnyFunSuite {
   val fakeContext: ContextResource = ContextResource("", "", "", "")
 
   test("Simple if with one var") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """helper {
         |func myFunc {
         |if(myVar) {
@@ -37,7 +37,7 @@ class BuildHelperIfStatementTest extends AnyFunSuite {
   }
 
   test("Equal statement") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """helper {
         |func myFunc {
         |if(myVar == myVar2) {
@@ -57,7 +57,7 @@ class BuildHelperIfStatementTest extends AnyFunSuite {
   }
 
   test("Not equal statement") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """helper {
         |func myFunc {
         |if(myVar != myVar2) {
@@ -75,7 +75,7 @@ class BuildHelperIfStatementTest extends AnyFunSuite {
   }
 
   test("Greater statement") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """helper {
         |func myFunc {
         |if(myVar > myVar2) {
@@ -93,7 +93,7 @@ class BuildHelperIfStatementTest extends AnyFunSuite {
   }
 
   test("Lesser statement") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """helper {
         |func myFunc {
         |if(myVar < myVar2) {
@@ -111,7 +111,7 @@ class BuildHelperIfStatementTest extends AnyFunSuite {
   }
 
   test("Greater or equal statement") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """helper {
         |func myFunc {
         |if(myVar >= myVar2) {
@@ -129,7 +129,7 @@ class BuildHelperIfStatementTest extends AnyFunSuite {
   }
 
   test("Lesser or equal statement") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """helper {
         |func myFunc {
         |if(myVar <= myVar2) {
@@ -147,7 +147,7 @@ class BuildHelperIfStatementTest extends AnyFunSuite {
   }
 
   test("AND and OR links") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """helper {
         |func myFunc {
         |if(myVar && myVar2 || myVar3) {
@@ -170,7 +170,7 @@ class BuildHelperIfStatementTest extends AnyFunSuite {
   }
 
   test("AND and OR plus conditions") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """helper {
         |func myFunc {
         |if(myVar == myVar2 && myVar3 != myVar4 || myVar5 >= myVar6) {
@@ -202,7 +202,7 @@ class BuildHelperIfStatementTest extends AnyFunSuite {
   }
 
   test("Two conditions with parentheses") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """helper {
         |func myFunc {
         |if((myVar == myVar2) && (myVar3 != myVar4)) {
@@ -230,7 +230,7 @@ class BuildHelperIfStatementTest extends AnyFunSuite {
   }
 
   test("One condition plus two variables with parentheses") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """helper {
         |func myFunc {
         |if((myVar == myVar2 && myVar3) || myVar4) {
@@ -256,7 +256,7 @@ class BuildHelperIfStatementTest extends AnyFunSuite {
   }
 
   test("Sub block with parentheses") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """helper {
         |func myFunc {
         |if(((myVar == myVar2 && myVar3) || myVar4) && myVar5) {

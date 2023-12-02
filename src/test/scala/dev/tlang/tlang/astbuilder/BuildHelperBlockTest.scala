@@ -3,7 +3,7 @@ package dev.tlang.tlang.astbuilder
 import dev.tlang.tlang.ast.common.{ArrayType, ObjType}
 import dev.tlang.tlang.ast.helper.HelperFuncType
 import dev.tlang.tlang.astbuilder.context.ContextResource
-import dev.tlang.tlang.{TLangLexer, TLang}
+import dev.tlang.tlang.{CommonLexer, TLang}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -12,7 +12,7 @@ class BuildHelperBlockTest extends AnyFunSuite {
   val fakeContext: ContextResource = ContextResource("", "", "", "")
 
   test("Simple empty func") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """helper {
         |func myFunc {
         |}
@@ -27,7 +27,7 @@ class BuildHelperBlockTest extends AnyFunSuite {
   }
 
   test("Simple empty func with ()") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """helper {
         |func myFunc() {
         |}
@@ -42,7 +42,7 @@ class BuildHelperBlockTest extends AnyFunSuite {
   }
 
   test("One set of parameters") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """helper {
         |func myFunc(param1: String, param2: Int[], param3: () => Bool) {
         |}
@@ -64,7 +64,7 @@ class BuildHelperBlockTest extends AnyFunSuite {
   }
 
   test("With returned values declared") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """helper {
         |func myFunc : String, Int[] {
         |}
@@ -78,7 +78,7 @@ class BuildHelperBlockTest extends AnyFunSuite {
   }
 
   test("With params and returned values") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """helper {
         |func myFunc(param1: String, param2: Int[], param3: (Int[], String) => Bool):  String, Int[], (String) => Int[] {
         |}
@@ -108,7 +108,7 @@ class BuildHelperBlockTest extends AnyFunSuite {
   }
 
   test("Currying") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """helper {
         |func myFunc(param1: String, param2: Int[])(param3: () => Bool, param4: String) {
         |}

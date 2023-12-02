@@ -1,10 +1,6 @@
 package dev.tlang.tlang.generator.langs.java
 
 import dev.tlang.tlang.astbuilder.context.ContextResource
-import dev.tlang.tlang.generator.formatter.Formatter
-import dev.tlang.tlang.tmpl.lang.astbuilder.BuildTmplBlock
-import dev.tlang.tlang.{TLangLexer, TLang}
-import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
 
 class JavaFormatterTest extends AnyFunSuite {
@@ -14,7 +10,7 @@ class JavaFormatterTest extends AnyFunSuite {
   val RET: String = System.lineSeparator()
 
   /*test("Format func in class") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[java] myTmpl {
         |impl MyClass {
         | func myFunc(): String {
@@ -31,7 +27,7 @@ class JavaFormatterTest extends AnyFunSuite {
   }*/
 
  /* test("Format condition in class") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[java] myTmpl {
         |impl MyClass {
         | func myFunc(): String {

@@ -1,20 +1,14 @@
 package dev.tlang.tlang.generator.langs.scalalang
 
-import dev.tlang.tlang.tmpl.lang.ast.func.TmplFunc
 import dev.tlang.tlang.astbuilder.context.ContextResource
-import dev.tlang.tlang.tmpl.lang.astbuilder.BuildTmplBlock
-import dev.tlang.tlang.{TLangLexer, TLang}
-import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
-
-import scala.jdk.CollectionConverters._
 
 class ScalaImplFuncGeneratorTest extends AnyFunSuite {
 
   val fakeContext: ContextResource = ContextResource("", "", "", "")
 
  /* test("Test func to scala") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
         |impl Test {
         |func test {
@@ -28,7 +22,7 @@ class ScalaImplFuncGeneratorTest extends AnyFunSuite {
   }
 
   test("Test func to scala with ()") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
         |impl Test {
         |func test() {
@@ -42,7 +36,7 @@ class ScalaImplFuncGeneratorTest extends AnyFunSuite {
   }
 
   test("Test func to scala with one parameter") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
         |impl Test {
         |func test(myParam: MyType) {
@@ -56,7 +50,7 @@ class ScalaImplFuncGeneratorTest extends AnyFunSuite {
   }
 
   test("Test func to scala with one array parameter") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
         |impl Test {
         |func test(myParam: MyType[]) {
@@ -70,7 +64,7 @@ class ScalaImplFuncGeneratorTest extends AnyFunSuite {
   }
 
   test("Test func to scala with parameters and generics") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
         |impl Test {
         |func test(myParam: MyType<JustAType<AlsoGeneric>>, mySecondParam: MySecondType<SomeThing, AnotherThing<EvenSomethingElse>>) {
@@ -84,7 +78,7 @@ class ScalaImplFuncGeneratorTest extends AnyFunSuite {
   }
 
   test("Test func to scala with currying") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
         |impl Test {
         |func test(myParam: MyType[])(mySecondParam: MySecondType<JustTrying>) {

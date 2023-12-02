@@ -54,7 +54,7 @@ callVariable: name=ID;
 
 entityValue: LBRACE attrs+=complexAttribute* RBRACE;
 
-impl: Impl (':' type=ID)? LBRACE (attrs+=complexAttribute)? (',' attrs+=complexAttribute)* '}';
+impl: Impl (':' type=ID)? LBRACE (attrs+=complexAttribute)? (',' attrs+=complexAttribute)* RBRACE;
 
 multiValue: '(' (values+=operation) (',' values+=operation)+ ')'; // '+' is needed to avoid confusion with operation
 

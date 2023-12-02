@@ -6,7 +6,7 @@ import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value.{LazyValue, TLangString}
 import dev.tlang.tlang.ast.helper._
 import dev.tlang.tlang.interpreter.context.{Context, Scope}
-import dev.tlang.tlang.tmpl.lang.ast.{LangBlock, TmplBlockAsValue, TmplPkg, TmplStringID}
+import dev.tlang.tlang.tmpl.lang.ast.{LangBlock, LangFullBlock, TmplBlockAsValue, TmplPkg, TmplStringID}
 import org.scalatest.funsuite.AnyFunSuite
 
 import scala.collection.mutable
@@ -25,21 +25,21 @@ class ExecCallFuncTest extends AnyFunSuite {
   }
 
   test("Call template without parameters") {
-    val block = TmplBlock(None, "myBlock", "scala", None, Some(TmplPkg(None, List(TmplStringID(None, "myPackage")))))
+    val block = LangBlock(None, "myBlock", "scala", None, LangFullBlock(None, "","Scala",None, Some(TmplPkg(None, List(TmplStringID(None, "myPackage"))))))
     val tmplCaller = CallFuncObject(None, Some("myTmpl"), None)
     val context = Context(List(Scope(templates = mutable.Map("myTmpl" -> block))))
     val res = ExecCallFunc.run(tmplCaller, context).toOption.get.get.head.asInstanceOf[TmplBlockAsValue]
-    assert("myPackage" == res.block.pkg.get.parts.head.asInstanceOf[TmplStringID].id)
+    assert("myPackage" == res.block.asInstanceOf[LangBlock].content.pkg.get.parts.head.asInstanceOf[TmplStringID].id)
   }
 
   test("Call template with parameters") {
-    val block = TmplBlock(None, "myBlock", "scala", Some(List(HelperParam(None, Some("var1"), ObjType(None, None, "String")))), Some(TmplPkg(None, List(TmplStringID(None, "myPackage")))))
+    val block = LangBlock(None, "myBlock", "scala", Some(List(HelperParam(None, Some("var1"), ObjType(None, None, "String")))), LangFullBlock(None, "", "", None, Some(TmplPkg(None, List(TmplStringID(None, "myPackage"))))))
     val caller = SetAttribute(None, value = Operation(None, None, Right(CallObject(None, List(CallVarObject(None, "var1"))))))
     val tmplCaller = CallFuncObject(None, Some("myTmpl"), Some(List(CallFuncParam(None, Some(List(caller))))))
     val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangString(None, "MyValue")), templates = mutable.Map("myTmpl" -> block))))
     val res = ExecCallFunc.run(tmplCaller, context).toOption.get.get.head.asInstanceOf[TmplBlockAsValue]
     assert("MyValue" == res.context.scopes.head.variables.head._2.asInstanceOf[TLangString].getElement)
-    assert("myPackage" == res.block.pkg.get.parts.head.asInstanceOf[TmplStringID].id)
+    assert("myPackage" == res.block.asInstanceOf[LangBlock].content.pkg.get.parts.head.asInstanceOf[TmplStringID].id)
   }
 
   test("Merge callers") {

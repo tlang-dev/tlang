@@ -33,7 +33,7 @@ class RunMainTest extends AnyFunSuite {
     )))
     val ast = DomainModel(None, None, List(helper))
     val resource = Resource("Root", "", "", "Main", ast)
-    val manifest = Manifest("Org", "Proj", "Prog", "1.0.0", Some(Stability.FINAL), 1, None)
+    val manifest = Manifest("Org", "Proj", "Prog", "1.0.0", Some(Stability.FINAL), 1, None, None)
     val module = Module("Root", manifest, immutable.Map("Main" -> resource), None, "Main")
     RunMain.runMainFile(module)
     assert(mainFuncRan)

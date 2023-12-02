@@ -16,7 +16,7 @@ case class DocList(context: Option[ContextContent]) extends DocTextType[DocList]
 
   override def getElement: DocList = this
 
-  override def getType: String = getClass.getName
+  override def getType: String = getClass.getSimpleName
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, toModel.name)),

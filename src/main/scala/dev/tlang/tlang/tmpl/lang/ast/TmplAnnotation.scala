@@ -17,7 +17,7 @@ case class TmplAnnotation(context: Option[ContextContent], var name: TmplID, var
 
   override def getElement: TmplAnnotation = this
 
-  override def getType: String = getClass.getName
+  override def getType: String = getClass.getSimpleName
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, TmplLangAst.tmplAnnot.name)),

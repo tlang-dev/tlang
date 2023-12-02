@@ -10,7 +10,7 @@ import java.nio.file.{Path, Paths}
 class PackagerTest extends AnyFunSuite {
 
   test("Gen simple PkgManifest") {
-    val manifest = Manifest("name", "proj", "org", "1.0.0", Some(Stability.ALPHA), 1, None)
+    val manifest = Manifest("name", "proj", "org", "1.0.0", Some(Stability.ALPHA), 1, None, None)
     val res = Packager.genManifest(manifest).toOption.get
     assert("org/proj/name/1.0.0/alpha/1" == res.path)
     assert("name.tbag" == res.files.head.name)

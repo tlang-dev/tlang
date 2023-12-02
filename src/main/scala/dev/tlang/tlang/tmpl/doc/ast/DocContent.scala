@@ -27,5 +27,5 @@ case class DocContent(context: Option[ContextContent], contents: List[DocContent
 
   override def getElement: DocContent = this
 
-  override def getType: String = getClass.getName
+  override def getType: String = getClass.getSimpleName
 }

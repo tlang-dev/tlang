@@ -4,7 +4,7 @@ import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value.{ArrayValue, TLangString}
 import dev.tlang.tlang.ast.model.set._
 import dev.tlang.tlang.astbuilder.context.ContextResource
-import dev.tlang.tlang.{TLangLexer, TLang}
+import dev.tlang.tlang.{CommonLexer, TLang}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -13,7 +13,7 @@ class BuildModelBlockTest extends AnyFunSuite {
   val fakeContext: ContextResource = ContextResource("", "", "", "")
 
   test("Test setting model entity") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """model {
         |set firstEntity {
         |}
@@ -25,7 +25,7 @@ class BuildModelBlockTest extends AnyFunSuite {
   }
 
   test("Test setting model entity with attributes") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """model {
         |set firstEntity (attr1: String, Type2, Type3[]) {
         |}
@@ -42,7 +42,7 @@ class BuildModelBlockTest extends AnyFunSuite {
   }
 
   test("Test setting model entity with types") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """model {
         |set firstEntity {
         |var1: String,
@@ -63,7 +63,7 @@ class BuildModelBlockTest extends AnyFunSuite {
   }
 
   test("Function as parameter") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """model {
         |set firstEntity (attr1: (String, Int[]):(Bool), (String):(Int[], Bool)) {
         |}
@@ -88,7 +88,7 @@ class BuildModelBlockTest extends AnyFunSuite {
   }
 
   test("Function as attribute") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """model {
         |set firstEntity {
         |attr1: (String, Int[]):(Bool),
@@ -115,7 +115,7 @@ class BuildModelBlockTest extends AnyFunSuite {
   }
 
   test("Function as parameter and attribute without parameters") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """model {
         |set firstEntity (():(String, Int[])){
         |attr1: ():(Bool, Int[])
@@ -136,7 +136,7 @@ class BuildModelBlockTest extends AnyFunSuite {
   }
 
   test("Function as parameter and attribute without returns") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """model {
         |set firstEntity ((String, Int[])){
         |attr1: (String, Int[])
@@ -158,7 +158,7 @@ class BuildModelBlockTest extends AnyFunSuite {
   }
 
   test("Reference as parameter") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """model {
         |set firstEntity (param1: &entity1){
         |}
@@ -173,7 +173,7 @@ class BuildModelBlockTest extends AnyFunSuite {
   }
 
   test("Reference as parameter with multiple refs") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """model {
         |set firstEntity (param1: &entity1.attr1.subAttr1){
         |}
@@ -190,7 +190,7 @@ class BuildModelBlockTest extends AnyFunSuite {
   }
 
   test("Reference as attribute") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """model {
         |set firstEntity {
         |attr1: &entity1
@@ -206,7 +206,7 @@ class BuildModelBlockTest extends AnyFunSuite {
   }
 
   test("Reference as attribute with multiple refs") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """model {
         |set firstEntity {
         |attr1: &entity1.attr1.subAttr1
@@ -224,7 +224,7 @@ class BuildModelBlockTest extends AnyFunSuite {
   }
 
   test("Reference: calling a function") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """model {
         |set firstEntity {
         |&anyFunc("myValue", ["1", "2", "3"])
@@ -243,7 +243,7 @@ class BuildModelBlockTest extends AnyFunSuite {
   }
 
   test("Model set entity with impl") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """model {
         |set firstEntity {
         |impl {
@@ -264,7 +264,7 @@ class BuildModelBlockTest extends AnyFunSuite {
   }
 
   test("Model set entity with impl array") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """model {
         |set firstEntity {
         |impl[]

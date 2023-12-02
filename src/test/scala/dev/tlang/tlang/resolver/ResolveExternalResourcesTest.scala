@@ -42,7 +42,7 @@ class ResolveExternalResourcesTest extends AnyFunSuite {
       }
     }
 
-    val module = BuildModuleTree.build(Paths.get("Root"), None).toOption.get
+    val module = BuildModuleTree.build(Paths.get("Root"), "").toOption.get
     ResolveContext.resolveContext(module)
 
     val scope = module.resources(module.mainFile).ast.body.head.asInstanceOf[HelperBlock].funcs.get.head.scope

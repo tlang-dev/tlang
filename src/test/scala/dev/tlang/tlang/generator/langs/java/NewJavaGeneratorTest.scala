@@ -1,10 +1,6 @@
 package dev.tlang.tlang.generator.langs.java
 
 import dev.tlang.tlang.astbuilder.context.ContextResource
-import dev.tlang.tlang.tmpl.lang.ast.{TmplImpl, TmplProp, TmplStringID}
-import dev.tlang.tlang.tmpl.lang.astbuilder.BuildTmplBlock
-import dev.tlang.tlang.{TLangLexer, TLang}
-import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
 
 class NewJavaGeneratorTest extends AnyFunSuite {
@@ -12,7 +8,7 @@ class NewJavaGeneratorTest extends AnyFunSuite {
   val fakeContext: ContextResource = ContextResource("", "", "", "")
 
  /* test("Package") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[java] myTmpl {
         |pkg my.package
         |}""".stripMargin))
@@ -23,7 +19,7 @@ class NewJavaGeneratorTest extends AnyFunSuite {
   }
 
   test("Uses") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[java] myTmpl {
         |use my.package1
         |use my.package2

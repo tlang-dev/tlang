@@ -20,7 +20,7 @@ case class TmplType(context: Option[ContextContent], var name: TmplID, var gener
 
   override def getElement: TmplType = this
 
-  override def getType: String = getClass.getName
+  override def getType: String = getClass.getSimpleName
 
   override def toEntity: EntityValue = ???
 

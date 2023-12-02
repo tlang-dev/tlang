@@ -30,7 +30,7 @@ tmplAnnot: '@' name=tmplID (LPARENT annotParams+=tmplAnnotParam (',' annotParams
 
 tmplAnnotParam:(name=tmplID '=')? value=tmplValueType;
 
-tmplProps: ('[' (props+=tmplID)+ ']')?;
+tmplProps: ('[' (props+=tmplID)+ RSQUARE)?;
 
 tmplImpl:
     (annots+=tmplAnnot)*
@@ -58,7 +58,7 @@ tmplParam:
 	accessor=tmplID? name=tmplID (':' type=tmplType)?;
 
 tmplType:
-	type=tmplID ('<' (generic=tmplGeneric) '>')? (currying += tmplCurryParams)* (array='[' ']')?;
+	type=tmplID ('<' (generic=tmplGeneric) '>')? (currying += tmplCurryParams)* (array='[' RSQUARE)?;
 
 tmplGeneric:
 	(types+=tmplType (',' types+=tmplType)*);
@@ -103,7 +103,7 @@ tmplSetAttribute: (name=tmplIdOrString ':')? value=tmplOperation;
 
 tmplInclSetAttribute: tmplInclude | tmplSetAttribute;
 
-tmplCallArray: name=tmplID '[' elem=tmplOperation ']';
+tmplCallArray: name=tmplID '[' elem=tmplOperation RSQUARE;
 
 tmplCallVariable: name=tmplID;
 
@@ -119,7 +119,7 @@ tmplTextValue: value=tmplText;
 
 tmplBoolValue: value= True | False;
 
-tmplArrayValue: '[' (params+=tmplInclSetAttribute)? (',' params+=tmplInclSetAttribute)* ']';
+tmplArrayValue: '[' (params+=tmplInclSetAttribute)? (',' params+=tmplInclSetAttribute)* RSQUARE;
 
 tmplInclAttribute: tmplInclude | tmplAttribute;
 

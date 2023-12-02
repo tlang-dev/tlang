@@ -1,10 +1,10 @@
 package dev.tlang.tlang.astbuilder
 
-import dev.tlang.tlang.tmpl.lang.ast.func.TmplFunc
 import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.tmpl.lang.ast.TmplStringID
+import dev.tlang.tlang.tmpl.lang.ast.func.TmplFunc
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildTmplBlock
-import dev.tlang.tlang.{TLangLexer, TLang}
+import dev.tlang.tlang.{CommonLexer, TLang}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -15,7 +15,7 @@ class BuildTmplFuncTest extends AnyFunSuite {
   val fakeContext: ContextResource = ContextResource("", "", "", "")
 
   test("Test build func") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
         |impl test {
         |func func1 {
@@ -28,7 +28,7 @@ class BuildTmplFuncTest extends AnyFunSuite {
   }
 
   test("Test build func with ()") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
         |impl test {
         |func func1() {
@@ -41,7 +41,7 @@ class BuildTmplFuncTest extends AnyFunSuite {
   }
 
   test("Test build func with one parameter") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
         |impl test {
         |func func1(myParam: MyType) {
@@ -60,7 +60,7 @@ class BuildTmplFuncTest extends AnyFunSuite {
   }
 
   test("Test build func with one array parameter") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
         |impl test {
         |func func1(myParam: MyType[]) {
@@ -79,7 +79,7 @@ class BuildTmplFuncTest extends AnyFunSuite {
   }
 
   test("Test build func with one generic parameter") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
         |impl test {
         |func func1(myParam: MyType<AnotherType, YetAnotherType<AndSoOn>>) {
@@ -100,7 +100,7 @@ class BuildTmplFuncTest extends AnyFunSuite {
   }
 
   test("Test build func with currying") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[scala] myTmpl {
         |impl test {
         |func func1(myParam: MyType)(myParam2: MyType2[]) {

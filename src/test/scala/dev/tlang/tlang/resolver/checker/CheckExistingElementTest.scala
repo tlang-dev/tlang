@@ -4,7 +4,7 @@ import dev.tlang.tlang.astbuilder.BuildAst
 import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.loader.Resource
 import dev.tlang.tlang.resolver.NameAlreadyUsed
-import dev.tlang.tlang.{TLangLexer, TLang}
+import dev.tlang.tlang.{CommonLexer, TLang}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -13,7 +13,7 @@ class CheckExistingElementTest extends AnyFunSuite {
   val fakeContext: ContextResource = ContextResource("", "", "", "")
 
   test("Check same func name in helper") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """helper {
         | func myFunc() {
         | }
@@ -30,7 +30,7 @@ class CheckExistingElementTest extends AnyFunSuite {
   }
 
   test("Check same tmpl name") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """tmpl[java] myTmpl {
         |}
         |
@@ -46,7 +46,7 @@ class CheckExistingElementTest extends AnyFunSuite {
   }
 
   test("Check same name in model") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """model {
         |set myModel {}
         |let myModel = 5
@@ -61,7 +61,7 @@ class CheckExistingElementTest extends AnyFunSuite {
   }
 
   test("Check name in uses") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """use mySomething
         |use some.thing as mySomething
         |""".stripMargin))
@@ -74,7 +74,7 @@ class CheckExistingElementTest extends AnyFunSuite {
   }
 
   test("Check names inside func") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """helper {
         | func myFunc() {
         |   let myVar=5
@@ -90,7 +90,7 @@ class CheckExistingElementTest extends AnyFunSuite {
   }
 
   test("Check names inside func with func name") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """helper {
         | func something() {
         |   let something=5
@@ -106,7 +106,7 @@ class CheckExistingElementTest extends AnyFunSuite {
 
 
   test("Check func with tmpl") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """helper {
         | func mySomething() {
         | }

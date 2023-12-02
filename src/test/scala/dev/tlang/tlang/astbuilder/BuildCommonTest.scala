@@ -2,7 +2,7 @@ package dev.tlang.tlang.astbuilder
 
 import dev.tlang.tlang.ast.common.value._
 import dev.tlang.tlang.astbuilder.context.ContextResource
-import dev.tlang.tlang.{TLangLexer, TLang}
+import dev.tlang.tlang.{CommonLexer, TLang}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -11,7 +11,7 @@ class BuildCommonTest extends AnyFunSuite {
   val fakeContext: ContextResource = ContextResource("", "", "", "")
 
   test("Impl in entity") {
-    val lexer = new TLangLexer(CharStreams.fromString(
+    val lexer = new CommonLexer(CharStreams.fromString(
       """model {
         |let firstEntity = {
         |impl: MyEntity {

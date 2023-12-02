@@ -1,16 +1,11 @@
 package dev.tlang.tlang.generator
 
-import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.call._
-import dev.tlang.tlang.ast.common.operation.Operation
-import dev.tlang.tlang.ast.common.value.{ArrayValue, ComplexAttribute, LazyValue, TLangString}
-import dev.tlang.tlang.ast.helper.HelperParam
-import dev.tlang.tlang.ast.tmpl._
-import dev.tlang.tlang.tmpl.lang.ast.condition.TmplOperation
-import dev.tlang.tlang.tmpl.lang.ast.primitive.{TmplArrayValue, TmplEntityValue, TmplStringValue}
-import dev.tlang.tlang.generator.builder.{EntityBuilder, TemplateBuilder}
+import dev.tlang.tlang.ast.common.value.TLangString
+import dev.tlang.tlang.generator.builder.TemplateBuilder
 import dev.tlang.tlang.interpreter.context.{Context, Scope}
-import dev.tlang.tlang.libraries.builtin.BuiltIntLibs
+import dev.tlang.tlang.tmpl.lang.ast.condition.TmplOperation
+import dev.tlang.tlang.tmpl.lang.ast.primitive.{TmplArrayValue, TmplStringValue}
 import dev.tlang.tlang.tmpl.lang.ast.{TmplInterpretedID, TmplPkg, TmplSetAttribute, TmplStringID}
 import org.scalatest.funsuite.AnyFunSuite
 
