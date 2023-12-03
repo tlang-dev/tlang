@@ -8,22 +8,21 @@ import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.tmpl.lang.ast.TmplLangAst
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 
-case class DocList(context: Option[ContextContent], order: String, contents: List[DocContent]) extends DocTextType[DocList] {
-  override def deepCopy(): DocList = DocList(context, new String(order), contents.map(_.deepCopy()))
+case class DocAsIs(context: Option[ContextContent], content: String) extends DocContentType[DocAsIs] {
+  override def deepCopy(): DocAsIs = DocAsIs(context, content)
 
   override def getContext: Option[ContextContent] = context
 
-  override def compareTo(value: Value[DocList]): Int = 0
+  override def compareTo(value: Value[DocAsIs]): Int = 0
 
-  override def getElement: DocList = this
+  override def getElement: DocAsIs = this
 
   override def getType: String = getClass.getSimpleName
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, toModel.name)),
     Some(List(
-      BuildLang.createAttrStr(context, "order", order),
-      BuildLang.createArray(context, "contents", contents.map(_.toEntity))
+      BuildLang.createAttrStr(context, "content", content)
     ))
   )
 

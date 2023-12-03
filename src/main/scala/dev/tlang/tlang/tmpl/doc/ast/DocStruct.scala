@@ -1,12 +1,14 @@
 package dev.tlang.tlang.tmpl.doc.ast
 
 import dev.tlang.tlang.ast.common.ObjType
-import dev.tlang.tlang.ast.common.value.EntityValue
+import dev.tlang.tlang.ast.common.value.{ComplexAttribute, EntityValue}
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.tmpl.lang.ast.TmplLangAst
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
+
+import scala.collection.mutable.ListBuffer
 
 case class DocStruct(context: Option[ContextContent], level: Int, title: String, content: Option[DocContent]) extends DocContentType[DocStruct] {
   override def deepCopy(): DocStruct = DocStruct(context, level, new String(title),
@@ -20,14 +22,17 @@ case class DocStruct(context: Option[ContextContent], level: Int, title: String,
 
   override def getType: String = getClass.getSimpleName
 
-  override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, toModel.name)),
-    Some(List(
-      BuildLang.createAttrInt(context, "level", level),
-      BuildLang.createAttrStr(context, "title", title),
-      BuildLang.createAttrEntity(context, "content", content.get.toEntity)
-    ))
-  )
+  override def toEntity: EntityValue = {
+    val elems = ListBuffer.empty[ComplexAttribute]
+    elems += BuildLang.createAttrInt(context, "level", level)
+    elems += BuildLang.createAttrStr(context, "title", title)
+    if (content.isDefined)
+      elems += BuildLang.createAttrEntity(context, "content", content.get.toEntity)
+    EntityValue(context,
+      Some(ObjType(context, None, toModel.name)),
+      Some(elems.toList)
+    )
+  }
 
   override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
   )))

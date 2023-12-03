@@ -15,7 +15,7 @@ case class EntityValue(context: Option[ContextContent],
 
   override def getElement: EntityValue = this
 
-  override def getType: String = if (`type`.isDefined) `type`.get.getContextType else getClass.getName
+  override def getType: String = if (`type`.isDefined) `type`.get.getContextType else getClass.getSimpleName
 
   override def compareTo(value: Value[EntityValue]): Int = 0
 

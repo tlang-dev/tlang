@@ -20,7 +20,7 @@ operation: (content=complexValueType (op=operator  next=operation)* |
                '(' content=complexValueType (op=operator  next=operation)* ')' |
                '(' innerBlock=operation ')' (op=operator  next=operation)*);
 
-operator: '&&' | '||' | '+' | '-' | '*' | '/' | '%' | '==' | '!=' | '>' | '<' | '>=' | '<=' ;
+operator: '&&' | '||' | '+' | '-' | MULTIPLY | '/' | '%' | '==' | '!=' | '>' | '<' | '>=' | '<=' ;
 
 complexValueType: callObj | primitiveValue | multiValue | lazyValue | impl;
 

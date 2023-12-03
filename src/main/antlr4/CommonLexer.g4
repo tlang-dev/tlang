@@ -151,7 +151,7 @@ WHITESPACE : [ \t\r\n]+ -> channel(HIDDEN);
 DOC_STRING :   '"' ( ESCAPED_QUOTE | ~('\n'|'\r') )*? '"';
 DOC_TEXT: '"""' .+? '"""';
 
-PLAIN_TEXT: ~('{' | '}' | '[' | ']' | '#' | '(' | ')' | '<' | '>' | '"' | '\t' | '\n' | '\r')+;
+PLAIN_TEXT: ~('{' | '}' | '[' | ']' | '#' | '*' | '(' | ')' | '<' | '>' | '"' | '\t' | '\n' | '\r')+;
 //PLAIN_TEXT: .+?;
 
 DOC_RSQUARE: ']';
@@ -166,6 +166,7 @@ LIST: '[list';
 INCLUDE: '[include';
 SPAN: '[span';
 SECTION: '[section';
+ASIS: '[asis';
 TYPE: 'type';
 BULLET_LIST: 'bullet';
 NUMBER_LIST: 'number';
@@ -173,6 +174,7 @@ LEVEL1: '#';
 LEVEL2: '##';
 LEVEL3: '###';
 PIPE: '|';
+BULLET: '*';
 
 //END_DOC: '<---' -> popMode;
 
