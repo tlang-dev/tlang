@@ -136,7 +136,7 @@ WHITE_SPACES: [\t\u000B\u000C\u0020\u00A0]+ -> channel(HIDDEN);
 ID:
 	'^'? ('a'..'z' | 'A'..'Z' | '_') ('a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '-')*;
 
-
+DOC_END_INCLUDE: '[/include]'  -> pushMode(DOC_MODE);
 
 //START_DOC: 'START_DOC';
 //END_DOC: 'END_DOC';
@@ -163,7 +163,7 @@ TABLE: '[table';
 LINK: '[link';
 CODE: '[code';
 LIST: '[list';
-INCLUDE: '[include';
+DOC_INCLUDE: '[include]' -> popMode;
 SPAN: '[span';
 SECTION: '[section';
 ASIS: '[asis';
@@ -175,6 +175,7 @@ LEVEL2: '##';
 LEVEL3: '###';
 PIPE: '|';
 BULLET: '*';
+DOC_QUOTE: '"';
 
 //END_DOC: '<---' -> popMode;
 

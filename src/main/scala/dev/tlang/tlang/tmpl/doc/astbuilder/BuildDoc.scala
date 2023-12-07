@@ -1,9 +1,9 @@
 package dev.tlang.tlang.tmpl.doc.astbuilder
 
 import dev.tlang.tlang.TLang._
-import dev.tlang.tlang.astbuilder.AstBuilderUtils
 import dev.tlang.tlang.astbuilder.BuildAst.addContext
 import dev.tlang.tlang.astbuilder.context.ContextResource
+import dev.tlang.tlang.astbuilder.{AstBuilderUtils, BuildHelperStatement}
 import dev.tlang.tlang.tmpl.doc.ast._
 
 import scala.jdk.CollectionConverters._
@@ -38,7 +38,7 @@ object BuildDoc {
   }
 
   def buildDocInclude(resource: ContextResource, include: TmplDocIncludeContext): DocInclude = {
-    DocInclude(None)
+    DocInclude(None, BuildHelperStatement.buildCallObject(resource, include.callObj()))
   }
 
   def buildDocLink(resource: ContextResource, link: TmplDocLinkContext): DocLink = {

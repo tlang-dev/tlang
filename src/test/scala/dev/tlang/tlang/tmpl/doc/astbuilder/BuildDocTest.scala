@@ -1,5 +1,6 @@
 package dev.tlang.tlang.tmpl.doc.astbuilder
 
+import dev.tlang.tlang.ast.common.call.CallVarObject
 import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.tmpl.doc.ast.{DocImg, DocPlainText, DocStruct, DocText}
 import dev.tlang.tlang.{CommonLexer, TLang}
@@ -67,19 +68,11 @@ class BuildDocTest extends AnyFunSuiteLike {
     assert("TLang Dev Icon".equals(impl.getElement.contents.last.contents.head.asInstanceOf[DocText].text.asInstanceOf[DocImg].alt.get))
   }
 
-  test("testBuildDocText") {
-
-  }
-
   test("testBuildDocSpan") {
 
   }
 
   test("testBuildAnyLevel") {
-
-  }
-
-  test("testBuildTmplDoc") {
 
   }
 
@@ -102,7 +95,16 @@ class BuildDocTest extends AnyFunSuiteLike {
   }
 
   test("testBuildDocInclude") {
-
+    val lexer = new CommonLexer(CharStreams.fromString(
+      """tmpl[HtmlDoc] myTmpl() doc {
+        |[include]test1.test2.test3[/include]
+        |}""".stripMargin))
+    val tokens = new CommonTokenStream(lexer)
+    val parser = new TLang(tokens)
+    val impl = BuildDoc.buildDocInclude(fakeContext, parser.tmplBlock().block.tmplDoc().tmplDocBlock().tmplDocContent().contents.asScala.toList.head.tmplDocText().tmplDocInclude())
+    assert("test1".equals(impl.getElement.call.statements.head.asInstanceOf[CallVarObject].name))
+    assert("test2".equals(impl.getElement.call.statements(1).asInstanceOf[CallVarObject].name))
+    assert("test3".equals(impl.getElement.call.statements.last.asInstanceOf[CallVarObject].name))
   }
 
   test("testBuildDocStruct") {

@@ -1,14 +1,15 @@
 package dev.tlang.tlang.tmpl.doc.ast
 
 import dev.tlang.tlang.ast.common.ObjType
+import dev.tlang.tlang.ast.common.call.CallObject
 import dev.tlang.tlang.ast.common.value.EntityValue
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
-import dev.tlang.tlang.tmpl.lang.ast.{TmplLangAst, TmplNode}
+import dev.tlang.tlang.tmpl.lang.ast.TmplLangAst
 
-case class DocInclude(context: Option[ContextContent]) extends DocTextType[DocInclude] {
-  override def deepCopy(): DocInclude = DocInclude(context)
+case class DocInclude(context: Option[ContextContent], call: CallObject) extends DocTextType[DocInclude] {
+  override def deepCopy(): DocInclude = DocInclude(context, call)
 
   override def getContext: Option[ContextContent] = context
 

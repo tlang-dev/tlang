@@ -35,7 +35,7 @@ tmplDocList: '[list'  (order = DOC_STRING ) ((BULLET (contents += tmplDocContent
 
 tmplDocTable: '[table' (headers += STRING  ('|' headers += STRING)*) RSQUARE;
 
-tmplDocInclude: '[include' src = STRING RSQUARE;
+tmplDocInclude: DOC_INCLUDE (call=callObj) DOC_END_INCLUDE;
 
 tmplDocPlainText: PLAIN_TEXT;
 

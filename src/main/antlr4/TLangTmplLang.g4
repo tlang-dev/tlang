@@ -138,7 +138,7 @@ tmplOperation:
      LPARENT innerBlock=tmplOperation RPARENT (op=operator  next=tmplOperation)*)
      ('.' combine=tmplCallObj)?;
 
-tmplInclude: '<[' ((calls+=callObj)*) ']>';
+tmplInclude: START_INCLUDE ((calls+=callObj)*) END_INCLUDE;
 
 tmplReturn: Return call=tmplOperation;
 
@@ -152,7 +152,7 @@ tmplIntprID: (pre=ID)? INTEPRETED callObj RBRACE (pos=ID)?;
 
 tmplString: STRING | tmplIntprString;
 
-tmplIntprString: 's"' (pre=.)? INTEPRETED callObj RBRACE (pos=.)? '"';
+tmplIntprString: 's"' (pre=.)? INTEPRETED callObj RBRACE (pos=.)? QUOTE;
 
 tmplText: TEXT | tmplIntprText;
 

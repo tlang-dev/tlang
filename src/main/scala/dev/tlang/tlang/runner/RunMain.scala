@@ -1,14 +1,15 @@
 package dev.tlang.tlang.runner
 
 import dev.tlang.tlang.ast.helper.{HelperBlock, HelperFunc}
-import dev.tlang.tlang.interpreter.ExecFunc
-import dev.tlang.tlang.interpreter.context.Context
+import dev.tlang.tlang.interpreter.context.{Context, Scope}
+import dev.tlang.tlang.interpreter.{ExecError, ExecFunc, Value}
 import dev.tlang.tlang.loader.remote.RemoteLoader
 import dev.tlang.tlang.loader.{BuildModuleTree, FileResourceLoader, Module, TBagManager}
 import dev.tlang.tlang.resolver.ResolveContext
 
 import java.io.File
 import java.util.UUID.randomUUID
+import scala.collection.mutable
 
 object RunMain {
 
@@ -22,7 +23,7 @@ object RunMain {
     //BuildModuleTree.build(Paths.get(parts.slice(0, parts.size - 1).mkString(File.separator)), Some(parts.last)) match {
     BuildModuleTree.build(new File(name).toPath, uuid) match {
       case Left(error) => println("Error while loading the program (" + error.code + "): " + error.message)
-      case Right(module) => runMainFile(module)
+      case Right(module) => runMainFile(module)()
     }
   }
 
@@ -30,7 +31,7 @@ object RunMain {
 
   }
 
-  def runMainFile(module: Module): Unit = {
+  def runMainFile(module: Module)(args: Option[Value[_]] = None): Either[ExecError, Option[List[Value[_]]]] = {
     module.resources.get(module.mainFile) match {
       case Some(resource) =>
         val helpers = resource.ast.body.filter(_.isInstanceOf[HelperBlock]).map(_.asInstanceOf[HelperBlock])
@@ -41,12 +42,17 @@ object RunMain {
         func match {
           case Some(main) =>
             ResolveContext.resolveContext(module) match {
-              case Left(errors) => errors.foreach(error => println(error.code + ">> " + error.message))
-              case Right(_) => ExecFunc.run(main, Context(List(main.scope)))
+              case Left(errors) =>
+                errors.foreach(error => println(error.code + ">> " + error.message))
+                Left(new ExecError("RESOLVER_ERROR", "Error while resolving the module", None))
+              case Right(_) => ExecFunc.run(main, Context(List(main.scope, Scope(variables = if (args.isDefined) mutable.Map("args" -> args.get) else mutable.Map()))))
             }
-          case None => println("No main func found in Main file")
+          case None =>
+            println("No main func found in Main file")
+            Left(new ExecError("NO_MAIN_FUNC", "No main func found in Main file", None))
         }
       case None => println("Non main file found in " + module.rootDir)
+        Left(new ExecError("NO_MAIN_FILE", "No main file found", None))
     }
   }
 

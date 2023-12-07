@@ -7,5 +7,5 @@ case class ModelSetType(context: Option[ContextContent], `type`: String) extends
 
   override def getElement: ModelSetType = this
 
-  override def getType: String = "ModelSetType[" + `type` + "]"
+  override def getType: String = `type`
 }
