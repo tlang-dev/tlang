@@ -30,6 +30,11 @@ case class TmplPkg(context: Option[ContextContent], var parts: List[TmplID]) ext
       ))
   }
 
-  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  override def toModel: ModelSetEntity = TmplPkg.model
+}
+
+object TmplPkg {
+
+  val model: ModelSetEntity = ModelSetEntity(None, "LangPkg", Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
   )))
 }

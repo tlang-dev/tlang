@@ -36,6 +36,11 @@ case class TmplFunc(context: Option[ContextContent], var annots: Option[List[Tmp
     ))
   )
 
-  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  override def toModel: ModelSetEntity = TmplFunc.model
+}
+
+object TmplFunc {
+
+  val model: ModelSetEntity = ModelSetEntity(None, "LangFunc", Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
   )))
 }

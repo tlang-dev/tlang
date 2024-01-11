@@ -25,6 +25,11 @@ case class TmplExprBlock(context: Option[ContextContent], var exprs: List[TmplNo
     ))
   )
 
-  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  override def toModel: ModelSetEntity = TmplExprBlock.model
+}
+
+object TmplExprBlock {
+
+  val model: ModelSetEntity = ModelSetEntity(None, "LangExprBlock", Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
   )))
 }

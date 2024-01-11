@@ -29,6 +29,11 @@ case class TmplCallObj(context: Option[ContextContent], var props: Option[TmplPr
     ))
   )
 
-  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  override def toModel: ModelSetEntity = TmplCallObj.model
+}
+
+object TmplCallObj {
+
+  val model: ModelSetEntity = ModelSetEntity(None, "LangCallObj", Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
   )))
 }

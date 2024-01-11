@@ -34,6 +34,11 @@ case class TmplImpl(context: Option[ContextContent], var annots: Option[List[Tmp
     ))
   )
 
-  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  override def toModel: ModelSetEntity = TmplImpl.model
+}
+
+object TmplImpl {
+
+  val model: ModelSetEntity = ModelSetEntity(None, "LangImpl", Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
   )))
 }

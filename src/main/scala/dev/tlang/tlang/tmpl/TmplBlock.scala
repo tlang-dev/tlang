@@ -13,4 +13,6 @@ trait TmplBlock[T] extends TmplNode[T] with DomainBlock {
 
   def getScope: Scope
 
+  def getName: String
+
 }

@@ -5,7 +5,7 @@ import dev.tlang.tlang.ast.common.value.EntityValue
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
-import dev.tlang.tlang.tmpl.lang.ast.{TmplID, TmplLangAst, TmplNode, TmplStringID, TmplValueAst}
+import dev.tlang.tlang.tmpl.lang.ast._
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 
 case class TmplEntityValue(context: Option[ContextContent], var name: Option[TmplID], var params: Option[List[TmplNode[_]]], var attrs: Option[List[TmplNode[_]]]) extends TmplPrimitiveValue[TmplEntityValue] {
@@ -32,6 +32,11 @@ case class TmplEntityValue(context: Option[ContextContent], var name: Option[Tmp
     ))
   )
 
-  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  override def toModel: ModelSetEntity = TmplEntityValue.model
+}
+
+object TmplEntityValue {
+
+  val model: ModelSetEntity = ModelSetEntity(None, "LangEntity", Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
   )))
 }

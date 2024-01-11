@@ -26,6 +26,12 @@ case class TmplReturn(context: Option[ContextContent], var operation: TmplOperat
     ))
   )
 
-  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  override def toModel: ModelSetEntity = TmplReturn.model
+}
+
+object TmplReturn {
+
+  val model: ModelSetEntity = ModelSetEntity(None, "LangReturn", Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
   )))
+
 }

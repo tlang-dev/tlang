@@ -17,6 +17,8 @@ abstract class ModulePattern {
 
   def getFunctions: List[HelperFunc]
 
+  def getMain: String = "Main"
+
   def getModuleName: String = {
     Modules.organisation + "/" + getProject + "/" + getName
   }
@@ -24,8 +26,8 @@ abstract class ModulePattern {
   def getDependencies: Option[List[Dependency]] = None
 
 
-  private def getMainResource: Resource = {
-    Resource("", "", "", "Main", DomainModel(None, Some(DomainHeader(None, Some(exposeFunctions), None)), List(
+  protected def getMainResource: Resource = {
+    Resource("", "", "", getMain, DomainModel(None, Some(DomainHeader(None, Some(exposeFunctions), None)), List(
       HelperBlock(None, Some(getFunctions)),
       ModelBlock(None, getModelContent)
     )))
@@ -45,7 +47,7 @@ abstract class ModulePattern {
     exposes.toList
   }
 
-  private def getResources: Map[String, Resource] = Map("Main" -> getMainResource)
+  protected def getResources: Map[String, Resource] = Map(getMain -> getMainResource)
 
   private def getExternalResources: Option[Map[String, Module]] = None
 
@@ -53,6 +55,6 @@ abstract class ModulePattern {
     Manifest(getName, getProject, Modules.organisation, Modules.version, Some(Modules.stability), Modules.releaseNumber, None, getDependencies)
   }
 
-  def getModule: Module = Module("", getManifest, getResources, getExternalResources, "Main")
+  def getModule: Module = Module("", getManifest, getResources, getExternalResources, getMain, isInternal = true)
 
 }

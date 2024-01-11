@@ -41,4 +41,6 @@ case class DocBlock(context: Option[ContextContent], name: String, lang: String,
   override def getLang: String = lang
 
   override def getScope: Scope = scope
+
+  override def getName: String = name
 }

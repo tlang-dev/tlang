@@ -36,12 +36,19 @@ case class LangBlock(context: Option[ContextContent], name: String, lang: String
       ))))
   }
 
-  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
-  )))
+  override def toModel: ModelSetEntity = LangBlock.model
 
   override def getParams: Option[List[HelperParam]] = params
 
   override def getLang: String = lang
 
   override def getScope: Scope = scope
+
+  override def getName: String = name
+}
+
+object LangBlock {
+
+  val model: ModelSetEntity = ModelSetEntity(None, "LangBlock", Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  )))
 }

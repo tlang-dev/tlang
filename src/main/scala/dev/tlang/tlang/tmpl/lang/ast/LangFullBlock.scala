@@ -40,7 +40,7 @@ case class LangFullBlock(context: Option[ContextContent], name: String, lang: St
   override def toEntity: EntityValue = {
     val elems = ListBuffer.empty[ComplexAttribute]
 
-    if (pkg.nonEmpty) elems += ComplexAttribute(context, Some("package"),
+    if (pkg.nonEmpty) elems += ComplexAttribute(context, Some("tpkg"),
       Some(ObjType(context, None, TmplLangAst.langPkg.name)), Operation(context, None, Right(pkg.get.toEntity)))
 
     elems += createArray(context, "uses", if (uses.isDefined) uses.get.map(_.toEntity) else List())
@@ -51,6 +51,10 @@ case class LangFullBlock(context: Option[ContextContent], name: String, lang: St
       Some(elems.toList))
   }
 
-  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  override def toModel: ModelSetEntity = LangFullBlock.model
+}
+
+object LangFullBlock {
+  val model: ModelSetEntity = ModelSetEntity(None, "LangFullBlock", Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
   )))
 }
