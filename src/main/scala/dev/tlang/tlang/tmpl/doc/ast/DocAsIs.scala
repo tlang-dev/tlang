@@ -5,7 +5,6 @@ import dev.tlang.tlang.ast.common.value.EntityValue
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
-import dev.tlang.tlang.tmpl.lang.ast.TmplLangAst
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 
 case class DocAsIs(context: Option[ContextContent], content: String) extends DocContentType[DocAsIs] {
@@ -26,6 +25,10 @@ case class DocAsIs(context: Option[ContextContent], content: String) extends Doc
     ))
   )
 
-  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  override def toModel: ModelSetEntity = DocAsIs.model
+}
+
+object DocAsIs {
+  val model: ModelSetEntity = ModelSetEntity(None, "DocAsIs", Some(ObjType(None, None, DocModel.docModel.name)), None, Some(List(
   )))
 }

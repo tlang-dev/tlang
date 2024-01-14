@@ -6,9 +6,9 @@ options {
   tokenVocab = CommonLexer;
 }
 
-tmplCmd: 'cmd' content = tmplCmdBloc;
+tmplCmd: 'cmd' content = tmplCmdBlock;
 
-tmplCmdBloc: cmd = tmplCmdName | tmplCmdCallFunc;
+tmplCmdBlock: cmd = tmplCmdName | tmplCmdCallFunc;
 
 tmplCmdName: name = ID;
 

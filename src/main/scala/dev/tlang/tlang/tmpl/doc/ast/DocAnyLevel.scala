@@ -5,6 +5,7 @@ import dev.tlang.tlang.ast.common.value.EntityValue
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
+import dev.tlang.tlang.tmpl.data.ast.DataModel
 import dev.tlang.tlang.tmpl.lang.ast.{TmplLangAst, TmplNode}
 
 case class DocAnyLevel(context: Option[ContextContent]) extends TmplNode[DocAnyLevel] {
@@ -23,6 +24,10 @@ case class DocAnyLevel(context: Option[ContextContent]) extends TmplNode[DocAnyL
 
   override def getType: String = getClass.getSimpleName
 
-  override val toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  override val toModel: ModelSetEntity = DocAnyLevel.model
+}
+
+object DocAnyLevel {
+  val model: ModelSetEntity = ModelSetEntity(None, "DocAnyLevel", Some(ObjType(None, None, DocModel.docModel.name)), None, Some(List(
   )))
 }

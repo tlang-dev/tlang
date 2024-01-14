@@ -5,7 +5,6 @@ import dev.tlang.tlang.ast.common.value.{ComplexAttribute, EntityValue}
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
-import dev.tlang.tlang.tmpl.lang.ast.TmplLangAst
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 
 import scala.collection.mutable.ListBuffer
@@ -34,6 +33,10 @@ case class DocStruct(context: Option[ContextContent], level: Int, title: String,
     )
   }
 
-  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  override def toModel: ModelSetEntity = DocStruct.model
+}
+
+object DocStruct {
+  val model: ModelSetEntity = ModelSetEntity(None, "DocStruct", Some(ObjType(None, None, DocModel.docModel.name)), None, Some(List(
   )))
 }

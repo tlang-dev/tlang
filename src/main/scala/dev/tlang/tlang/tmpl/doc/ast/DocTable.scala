@@ -5,7 +5,6 @@ import dev.tlang.tlang.ast.common.value.EntityValue
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
-import dev.tlang.tlang.tmpl.lang.ast.{TmplLangAst, TmplNode}
 
 case class DocTable(context: Option[ContextContent]) extends DocTextType[DocTable] {
   override def deepCopy(): DocTable = DocTable(context)
@@ -23,6 +22,10 @@ case class DocTable(context: Option[ContextContent]) extends DocTextType[DocTabl
     Some(List())
   )
 
-  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  override def toModel: ModelSetEntity = DocTable.model
+}
+
+object DocTable {
+  val model: ModelSetEntity = ModelSetEntity(None, "DocTable", Some(ObjType(None, None, DocModel.docModel.name)), None, Some(List(
   )))
 }

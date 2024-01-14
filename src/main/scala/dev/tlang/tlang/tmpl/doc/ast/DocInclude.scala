@@ -6,7 +6,6 @@ import dev.tlang.tlang.ast.common.value.EntityValue
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
-import dev.tlang.tlang.tmpl.lang.ast.TmplLangAst
 
 case class DocInclude(context: Option[ContextContent], call: CallObject) extends DocTextType[DocInclude] {
   override def deepCopy(): DocInclude = DocInclude(context, call)
@@ -20,10 +19,14 @@ case class DocInclude(context: Option[ContextContent], call: CallObject) extends
     Some(List())
   )
 
-  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
-  )))
+  override def toModel: ModelSetEntity = DocInclude.model
 
   override def getElement: DocInclude = this
 
   override def getType: String = getClass.getSimpleName
+}
+
+object DocInclude {
+  val model: ModelSetEntity = ModelSetEntity(None, "DocInclude", Some(ObjType(None, None, DocModel.docModel.name)), None, Some(List(
+  )))
 }

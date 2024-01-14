@@ -5,7 +5,6 @@ import dev.tlang.tlang.ast.common.value.EntityValue
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
-import dev.tlang.tlang.tmpl.lang.ast.{TmplLangAst, TmplNode}
 
 case class DocSpan(context: Option[ContextContent]) extends DocTextType[DocSpan] {
   override def deepCopy(): DocSpan = DocSpan(context)
@@ -23,6 +22,10 @@ case class DocSpan(context: Option[ContextContent]) extends DocTextType[DocSpan]
     Some(List())
   )
 
-  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  override def toModel: ModelSetEntity = DocSpan.model
+}
+
+object DocSpan {
+  val model: ModelSetEntity = ModelSetEntity(None, "DocSpan", Some(ObjType(None, None, DocModel.docModel.name)), None, Some(List(
   )))
 }

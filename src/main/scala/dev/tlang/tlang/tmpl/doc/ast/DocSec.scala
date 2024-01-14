@@ -5,7 +5,6 @@ import dev.tlang.tlang.ast.common.value.EntityValue
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
-import dev.tlang.tlang.tmpl.lang.ast.{TmplID, TmplLangAst}
 
 case class DocSec(context: Option[ContextContent], title: String, content: DocContent) extends DocContentType[DocSec] {
   override def deepCopy(): DocSec = DocSec(context, new String(title), content.deepCopy())
@@ -23,6 +22,10 @@ case class DocSec(context: Option[ContextContent], title: String, content: DocCo
     Some(List())
   )
 
-  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  override def toModel: ModelSetEntity = DocSec.model
+}
+
+object DocSec {
+  val model: ModelSetEntity = ModelSetEntity(None, "DocSec", Some(ObjType(None, None, DocModel.docModel.name)), None, Some(List(
   )))
 }

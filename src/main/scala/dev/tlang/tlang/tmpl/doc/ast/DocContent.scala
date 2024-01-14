@@ -20,12 +20,16 @@ case class DocContent(context: Option[ContextContent], contents: List[DocContent
     ))
   )
 
-  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
-  )))
+  override def toModel: ModelSetEntity = DocContent.model
 
   override def compareTo(value: Value[DocContent]): Int = 0
 
   override def getElement: DocContent = this
 
   override def getType: String = getClass.getSimpleName
+}
+
+object DocContent {
+  val model: ModelSetEntity = ModelSetEntity(None, "DocContent", Some(ObjType(None, None, DocModel.docModel.name)), None, Some(List(
+  )))
 }

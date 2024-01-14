@@ -9,7 +9,6 @@ import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.interpreter.context.Scope
 import dev.tlang.tlang.tmpl.TmplBlock
-import dev.tlang.tlang.tmpl.lang.ast.TmplLangAst
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 
 case class DocBlock(context: Option[ContextContent], name: String, lang: String,
@@ -23,8 +22,7 @@ case class DocBlock(context: Option[ContextContent], name: String, lang: String,
     ))
   )
 
-  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
-  )))
+  override def toModel: ModelSetEntity = DocBlock.model
 
   override def compareTo(value: Value[DocBlock]): Int = 0
 
@@ -43,4 +41,9 @@ case class DocBlock(context: Option[ContextContent], name: String, lang: String,
   override def getScope: Scope = scope
 
   override def getName: String = name
+}
+
+object DocBlock {
+  val model: ModelSetEntity = ModelSetEntity(None, "DocBlock", Some(ObjType(None, None, DocModel.docModel.name)), None, Some(List(
+  )))
 }
