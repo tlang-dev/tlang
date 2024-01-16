@@ -5,7 +5,7 @@ import dev.tlang.tlang.ast.model.set.{ModelSetEntity, ModelSetRefValue}
 import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
 import dev.tlang.tlang.interpreter.context.Scope
 import dev.tlang.tlang.interpreter.{ExecError, NotImplemented, Value}
-import dev.tlang.tlang.tmpl.lang.ast.{TmplLangAst, TmplValueAst}
+import dev.tlang.tlang.tmpl.lang.ast.LangModel
 
 case class EntityValue(context: Option[ContextContent],
                        var `type`: Option[ValueType],
@@ -34,10 +34,17 @@ case class EntityValue(context: Option[ContextContent],
   override def deepCopy(): EntityValue = EntityValue(context, `type`, attrs, scope)
 
   override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, TmplValueAst.langEntity.name)),
+    Some(ObjType(context, None, EntityValue.name)),
     Some(List())
   )
 
-  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
+  )))
+}
+
+object EntityValue {
+  val name: String = this.getClass.getSimpleName.replace("$", "")
+
+  val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
   )))
 }

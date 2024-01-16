@@ -4,7 +4,6 @@ import dev.tlang.tlang.ast.common.{ObjType, ValueType}
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
 import dev.tlang.tlang.interpreter.{ExecError, Value}
-import dev.tlang.tlang.tmpl.lang.ast.{TmplLangAst, TmplValueAst}
 
 class TLangLong(context: Option[ContextContent], value: Long) extends PrimitiveValue[Long] with AstContext {
   override def getElement: Long = value

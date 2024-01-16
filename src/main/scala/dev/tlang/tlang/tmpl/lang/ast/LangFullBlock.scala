@@ -15,18 +15,18 @@ import scala.collection.mutable.ListBuffer
 
 case class LangFullBlock(context: Option[ContextContent], name: String, lang: String,
                          var params: Option[List[HelperParam]],
-                         var pkg: Option[TmplPkg] = None,
-                         var uses: Option[List[TmplUse]] = None,
+                         var pkg: Option[LangPkg] = None,
+                         var uses: Option[List[LangUse]] = None,
                          var specialised: Boolean = false,
-                         var content: Option[List[TmplNode[_]]] = None,
-                         scope: Scope = Scope()) extends DomainBlock with DeepCopy with TmplNode[LangFullBlock] {
+                         var content: Option[List[LangNode[_]]] = None,
+                         scope: Scope = Scope()) extends DomainBlock with DeepCopy with LangNode[LangFullBlock] {
 
   override def deepCopy(): LangFullBlock =
     LangFullBlock(context, name, lang, params,
       if (pkg.isDefined) Some(pkg.get.deepCopy()) else None,
       if (uses.isDefined) Some(uses.get.map(_.deepCopy())) else None,
       specialised,
-      if (content.isDefined) Some(content.get.map(_.deepCopy().asInstanceOf[TmplNode[_]])) else None,
+      if (content.isDefined) Some(content.get.map(_.deepCopy().asInstanceOf[LangNode[_]])) else None,
       scope)
 
   override def getContext: Option[ContextContent] = context

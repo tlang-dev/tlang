@@ -4,7 +4,7 @@ import dev.tlang.tlang.ast.common.call.{CallFuncObject, CallFuncParam, CallRefFu
 import dev.tlang.tlang.ast.common.value.LazyValue
 import dev.tlang.tlang.ast.helper.{HelperFunc, HelperStatement}
 import dev.tlang.tlang.interpreter.context.{Context, ContextUtils, MutableContext, Scope}
-import dev.tlang.tlang.tmpl.TmplBlock
+import dev.tlang.tlang.tmpl.LangBlock
 import dev.tlang.tlang.tmpl.lang.ast.{LangBlock, TmplBlockAsValue}
 
 import scala.collection.mutable
@@ -20,7 +20,7 @@ object ExecCallFunc extends Executor {
         ExecFunc.run(func, newContext)
       case None => ContextUtils.findTmpl(context, caller.name.get) match {
         case Some(tmpl) =>
-          val tmplCopy = tmpl.deepCopy().asInstanceOf[TmplBlock[_]]
+          val tmplCopy = tmpl.deepCopy().asInstanceOf[LangBlock[_]]
           val newContext = manageTmplParameters(caller, tmplCopy, MutableContext.toMutable(context).removeLocalScopes().toContext())
           Right(Some(List(TmplBlockAsValue(tmplCopy.getContext, tmplCopy, Context(newContext.scopes :+ tmplCopy.getScope)))))
         case None => //Left(CallableNotFound(caller.name.get))
@@ -73,7 +73,7 @@ object ExecCallFunc extends Executor {
     helperFunc.currying.get(curryPos).params(paramPos).param.getOrElse(paramPos.toString)
   }
 
-  def manageTmplParameters(caller: CallFuncObject, tmpl: TmplBlock[_], context: Context): Context = {
+  def manageTmplParameters(caller: CallFuncObject, tmpl: LangBlock[_], context: Context): Context = {
     val vars: mutable.Map[String, Value[_]] = mutable.Map()
     val funcs: mutable.Map[String, HelperFunc] = mutable.Map()
     if (tmpl.getParams.isDefined) {
@@ -90,7 +90,7 @@ object ExecCallFunc extends Executor {
     Context(context.scopes :+ Scope(variables = vars, functions = funcs) :+ tmpl.getScope)
   }
 
-  def findTmplParamName(paramPos: Int, tmplBlock: TmplBlock[_]): String = {
+  def findTmplParamName(paramPos: Int, tmplBlock: LangBlock[_]): String = {
     tmplBlock.getParams.get(paramPos).param.getOrElse(paramPos.toString)
   }
 

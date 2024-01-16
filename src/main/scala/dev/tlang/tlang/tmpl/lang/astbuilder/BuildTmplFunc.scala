@@ -4,29 +4,29 @@ import dev.tlang.tlang.TLang
 import dev.tlang.tlang.TLang.{TmplCurryingContext, TmplFuncContext}
 import dev.tlang.tlang.astbuilder.BuildAst.addContext
 import dev.tlang.tlang.astbuilder.context.ContextResource
-import dev.tlang.tlang.tmpl.lang.ast.TmplParam
-import dev.tlang.tlang.tmpl.lang.ast.func.{TmplFunc, TmplFuncParam}
+import dev.tlang.tlang.tmpl.lang.ast.LangParam
+import dev.tlang.tlang.tmpl.lang.ast.func.{LangFunc, LangFuncParam}
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildTmplBlock._
 
 import scala.jdk.CollectionConverters._
 
 object BuildTmplFunc {
 
-  def buildFunc(resource: ContextResource, func: TmplFuncContext): TmplFunc = {
+  def buildFunc(resource: ContextResource, func: TmplFuncContext): LangFunc = {
     val curries =
       if (func.curries != null && !func.curries.isEmpty) buildFuncCurries(resource, func.curries.asScala.toList)
       else None
 
     val preNames = if (!func.preNames.isEmpty) Some(func.preNames.asScala.toList.map(preName => buildId(resource, preName))) else None
 
-    TmplFunc(addContext(resource, func), buildAnnotations(resource, func.annots.asScala.toList), buildProps(resource, func.props),
+    LangFunc(addContext(resource, func), buildAnnotations(resource, func.annots.asScala.toList), buildProps(resource, func.props),
       preNames = preNames,
       buildId(resource, func.name), curries,
       if (func.content != null) Some(buildExprContent(resource, func.content)) else None,
       if (func.types != null && !func.types.isEmpty) Some(func.types.asScala.toList.map(t => buildType(resource, t))) else None, buildProps(resource, func.postProps))
   }
 
-  def buildFuncCurries(resource: ContextResource, curries: List[TmplCurryingContext]): Option[List[TmplFuncParam]] = {
+  def buildFuncCurries(resource: ContextResource, curries: List[TmplCurryingContext]): Option[List[LangFuncParam]] = {
     //    val params = ListBuffer.empty[TmplFuncParam]
     if (curries != null && curries.nonEmpty) Some(curries.map(param => buildFuncParam(resource, param)))
     else None
@@ -41,9 +41,9 @@ object BuildTmplFunc {
 
    }*/
 
-  def buildFuncParam(resource: ContextResource, params: TmplCurryingContext): TmplFuncParam = {
+  def buildFuncParam(resource: ContextResource, params: TmplCurryingContext): LangFuncParam = {
     var strType = "NONE"
-    var paramList: List[TmplParam] = List()
+    var paramList: List[LangParam] = List()
     params.params.asScala.toList.foreach(param => {
       paramList = param match {
         case attr@_ if attr.tmplCurryingParam() != null => {
@@ -61,10 +61,10 @@ object BuildTmplFunc {
         case _ => List()
       }
     })
-    TmplFuncParam(addContext(resource, params), if (paramList.nonEmpty) Some(paramList) else None, strType)
+    LangFuncParam(addContext(resource, params), if (paramList.nonEmpty) Some(paramList) else None, strType)
   }
 
-  def buildCurryingParam(resource: ContextResource, param: TLang.TmplCurryingParamContext): List[TmplParam] = {
+  def buildCurryingParam(resource: ContextResource, param: TLang.TmplCurryingParamContext): List[LangParam] = {
     param.params.asScala.toList.map(buildParam(resource, _))
   }
 

@@ -6,10 +6,10 @@ import dev.tlang.tlang.ast.helper.HelperFunc
 import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
 import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.interpreter.context.Scope
-import dev.tlang.tlang.tmpl.TmplBlock
+import dev.tlang.tlang.tmpl.LangBlock
 import dev.tlang.tlang.tmpl.lang.ast.LangBlock
 
-case class CallRefFuncObject(context: Option[ContextContent], name: Option[String], currying: Option[List[CallFuncParam]], var func: Option[Either[HelperFunc, TmplBlock[_]]] = None, scope: Scope = Scope()) extends CallObjectType with Value[CallRefFuncObject] with AstContext {
+case class CallRefFuncObject(context: Option[ContextContent], name: Option[String], currying: Option[List[CallFuncParam]], var func: Option[Either[HelperFunc, LangBlock[_]]] = None, scope: Scope = Scope()) extends CallObjectType with Value[CallRefFuncObject] with AstContext {
   override def getElement: CallRefFuncObject = this
 
   override def getType: String = CallRefFuncObject.getType

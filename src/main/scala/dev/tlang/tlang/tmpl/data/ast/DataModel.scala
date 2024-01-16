@@ -1,7 +1,7 @@
 package dev.tlang.tlang.tmpl.data.ast
 
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity}
-import dev.tlang.tlang.tmpl.lang.ast.TmplLangAst.langContext
+import .langContext
 
 object DataModel {
 

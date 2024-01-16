@@ -5,7 +5,6 @@ import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.value.EntityValue
 import dev.tlang.tlang.astbuilder.BuildAst
 import dev.tlang.tlang.astbuilder.context.ContextResource
-import dev.tlang.tlang.tmpl.lang.ast.TmplImplAst
 
 object BuildLangImpl {
 

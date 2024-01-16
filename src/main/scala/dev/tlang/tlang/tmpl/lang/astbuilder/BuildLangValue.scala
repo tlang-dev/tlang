@@ -7,7 +7,7 @@ import dev.tlang.tlang.ast.common.value.EntityValue
 import dev.tlang.tlang.astbuilder.context.{ContextContent, ContextResource}
 import dev.tlang.tlang.astbuilder.{AstBuilderUtils, BuildAst, BuildHelperStatement}
 import BuildLang.createAttrStr
-import dev.tlang.tlang.tmpl.lang.ast.{TmplType, TmplValueAst}
+import dev.tlang.tlang.tmpl.lang.ast.LangType
 
 object BuildLangValue {
 
@@ -73,7 +73,7 @@ object BuildLangValue {
     )
   }
 
-  def buildArray(resource: ContextResource, `type`: Option[TmplType] = None, array: TmplArrayValueContext): EntityValue = {
+  def buildArray(resource: ContextResource, `type`: Option[LangType] = None, array: TmplArrayValueContext): EntityValue = {
     val context = BuildAst.addContext(resource, array)
     EntityValue(context,
       Some(ObjType(context, None, TmplValueAst.langArray.name)),

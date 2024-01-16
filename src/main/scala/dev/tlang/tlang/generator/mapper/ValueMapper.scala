@@ -6,9 +6,9 @@ import dev.tlang.tlang.interpreter.context.Context
 import dev.tlang.tlang.libraries.generator.Generator
 import dev.tlang.tlang.tmpl.doc.ast.DocBlock
 import dev.tlang.tlang.tmpl.lang.ast.call._
-import dev.tlang.tlang.tmpl.lang.ast.condition.TmplOperation
-import dev.tlang.tlang.tmpl.lang.ast.func.{TmplAnnotationParam, TmplAnonFunc, TmplFunc}
-import dev.tlang.tlang.tmpl.lang.ast.loop.TmplFor
+import dev.tlang.tlang.tmpl.lang.ast.condition.LangOperation
+import dev.tlang.tlang.tmpl.lang.ast.func.{LangAnnotationParam, LangAnonFunc, LangFunc}
+import dev.tlang.tlang.tmpl.lang.ast.loop.LangFor
 import dev.tlang.tlang.tmpl.lang.ast.primitive._
 import dev.tlang.tlang.tmpl.lang.ast._
 
@@ -39,36 +39,36 @@ object ValueMapper {
     block
   }
 
-  def mapPkg(pkg: Option[TmplPkg], context: Context): Option[TmplPkg] = {
+  def mapPkg(pkg: Option[LangPkg], context: Context): Option[LangPkg] = {
     pkg.foreach(p => p.parts = p.parts.map(mapID(_, context)))
     pkg
   }
 
-  def mapUses(uses: Option[List[TmplUse]], context: Context): Option[List[TmplUse]] = {
+  def mapUses(uses: Option[List[LangUse]], context: Context): Option[List[LangUse]] = {
     uses.foreach(_.foreach(use => mapUse(use, context)))
     uses
   }
 
-  def mapUse(use: TmplUse, context: Context): TmplUse = {
+  def mapUse(use: LangUse, context: Context): LangUse = {
     use.parts = use.parts.map(mapID(_, context))
     use
   }
 
-  def mapContents(content: Option[List[TmplNode[_]]], context: Context): Option[List[TmplNode[_]]] = {
+  def mapContents(content: Option[List[LangNode[_]]], context: Context): Option[List[LangNode[_]]] = {
     if (content.isDefined) {
-      val newContent = ListBuffer.empty[TmplNode[_]]
+      val newContent = ListBuffer.empty[LangNode[_]]
 
       content.get.foreach {
-        case func: TmplFunc => newContent += mapFunc(func, context)
-        case block: TmplSpecialBlock => newContent += mapSpecialBlock(block, context)
-        case expr: TmplExpression[_] => newContent += mapExpression(expr, context)
+        case func: LangFunc => newContent += mapFunc(func, context)
+        case block: LangSpecialBlock => newContent += mapSpecialBlock(block, context)
+        case expr: LangExpression[_] => newContent += mapExpression(expr, context)
         //        case block: TmplBlock => mapContent(block.content, context).foreach { blocks => newContent.addAll(blocks) }
         // Specialized content
-        case impl: TmplImpl => newContent += mapImpl(impl, context)
-        case attr: TmplAttribute => newContent += mapAttribute(attr, context)
-        case setAttr: TmplSetAttribute => newContent += mapSetAttribute(setAttr, context)
-        case param: TmplParam => newContent += mapParam(param, context)
-        case use: TmplUse => newContent += mapUse(use, context)
+        case impl: LangImpl => newContent += mapImpl(impl, context)
+        case attr: LangAttribute => newContent += mapAttribute(attr, context)
+        case setAttr: LangSetAttribute => newContent += mapSetAttribute(setAttr, context)
+        case param: LangParam => newContent += mapParam(param, context)
+        case use: LangUse => newContent += mapUse(use, context)
         case block: LangBlock => newContent += mapBlock(block, context)
         //        newContent ++= mapNode(_, context)
       }
@@ -76,26 +76,26 @@ object ValueMapper {
     } else None
   }
 
-  def mapExpressions(exprs: Option[List[TmplExpression[_]]], context: Context): Option[List[TmplExpression[_]]] = {
+  def mapExpressions(exprs: Option[List[LangExpression[_]]], context: Context): Option[List[LangExpression[_]]] = {
     if (exprs.isDefined) {
-      val newExprs: List[TmplExpression[_]] = exprs.get.map(mapExpression(_, context))
+      val newExprs: List[LangExpression[_]] = exprs.get.map(mapExpression(_, context))
       Some(newExprs)
     } else None
   }
 
-  def mapExpression(expr: TmplExpression[_], context: Context): TmplExpression[_] = {
+  def mapExpression(expr: LangExpression[_], context: Context): LangExpression[_] = {
     expr match {
-      case func: TmplFunc => mapFunc(func, context)
-      case variable: TmplVar => mapVar(variable, context)
-      case call: TmplCallObj => mapCallObj(call, context)
+      case func: LangFunc => mapFunc(func, context)
+      case variable: LangVar => mapVar(variable, context)
+      case call: LangCallObj => mapCallObj(call, context)
       //      case incl: TmplInclude => mapInclude(incl, context)
-      case primitiveValue: TmplPrimitiveValue[_] => mapPrimitive(primitiveValue, context)
-      case valueType: TmplValueType[_] => mapValueType(valueType, context)
-      case ret: TmplReturn => mapReturn(ret, context)
-      case affect: TmplAffect => mapAffect(affect, context)
-      case tmplFor: TmplFor => mapFor(tmplFor, context)
-      case anonFunc: TmplAnonFunc => mapAnonFunc(anonFunc, context)
-      case block: TmplSpecialBlock => mapSpecialBlock(block, context)
+      case primitiveValue: LangPrimitiveValue[_] => mapPrimitive(primitiveValue, context)
+      case valueType: LangValueType[_] => mapValueType(valueType, context)
+      case ret: LangReturn => mapReturn(ret, context)
+      case affect: LangAffect => mapAffect(affect, context)
+      case tmplFor: LangFor => mapFor(tmplFor, context)
+      case anonFunc: LangAnonFunc => mapAnonFunc(anonFunc, context)
+      case block: LangSpecialBlock => mapSpecialBlock(block, context)
       case _ => expr
     }
   }
@@ -116,7 +116,7 @@ object ValueMapper {
   //    tmplInclude
   //  }
 
-  def mapImpl(impl: TmplImpl, context: Context): TmplImpl = {
+  def mapImpl(impl: LangImpl, context: Context): LangImpl = {
     impl.name = mapID(impl.name, context)
     impl.content = mapContents(impl.content, context)
     impl.fors = mapFors(impl.fors, context)
@@ -124,7 +124,7 @@ object ValueMapper {
     impl
   }
 
-  def mapFors(aFor: Option[TmplImplFor], context: Context): Option[TmplImplFor] = {
+  def mapFors(aFor: Option[LangImplFor], context: Context): Option[LangImplFor] = {
     if (aFor.isDefined) {
       val newFor = aFor.get
       newFor.props = mapProps(newFor.props, context)
@@ -133,7 +133,7 @@ object ValueMapper {
     } else None
   }
 
-  def mapWiths(withs: Option[TmplImplWith], context: Context): Option[TmplImplWith] = {
+  def mapWiths(withs: Option[LangImplWith], context: Context): Option[LangImplWith] = {
     if (withs.isDefined) {
       val newWiths = withs.get
       newWiths.props = mapProps(newWiths.props, context)
@@ -142,7 +142,7 @@ object ValueMapper {
     } else None
   }
 
-  def mapFunc(func: TmplFunc, context: Context): TmplFunc = {
+  def mapFunc(func: LangFunc, context: Context): LangFunc = {
     func.annots = mapAnnots(func.annots, context)
     func.props = mapProps(func.props, context)
     func.preNames = if (func.preNames.isDefined) Some(func.preNames.get.map(name => mapID(name, context))) else None
@@ -153,7 +153,7 @@ object ValueMapper {
     func
   }
 
-  def mapAnnots(annots: Option[List[TmplAnnotation]], context: Context): Option[List[TmplAnnotation]] = {
+  def mapAnnots(annots: Option[List[LangAnnotation]], context: Context): Option[List[LangAnnotation]] = {
     if (annots.isDefined) {
       annots.get.map(annot => {
         annot.name = mapID(annot.name, context)
@@ -164,7 +164,7 @@ object ValueMapper {
     } else None
   }
 
-  def mapAnnotParams(params: Option[List[TmplAnnotationParam]], context: Context): Option[List[TmplAnnotationParam]] = {
+  def mapAnnotParams(params: Option[List[LangAnnotationParam]], context: Context): Option[List[LangAnnotationParam]] = {
     if (params.isDefined) {
       params.get.foreach(param => {
         param.name = mapOptID(param.name, context)
@@ -174,7 +174,7 @@ object ValueMapper {
     } else None
   }
 
-  def mapProps(props: Option[TmplProp], context: Context): Option[TmplProp] = {
+  def mapProps(props: Option[LangProp], context: Context): Option[LangProp] = {
     if (props.isDefined) {
       val newProps = props.get
       newProps.props = newProps.props.map(p => mapID(p, context))
@@ -182,29 +182,29 @@ object ValueMapper {
     } else None
   }
 
-  def mapExprContent(content: TmplExprContent[_], context: Context): TmplExprContent[_] = {
+  def mapExprContent(content: LangExprContent[_], context: Context): LangExprContent[_] = {
     content match {
-      case block: TmplExprBlock => mapExprBlock(block, context)
-      case expression: TmplExpression[_] => mapExpression(expression, context)
+      case block: LangExprBlock => mapExprBlock(block, context)
+      case expression: LangExpression[_] => mapExpression(expression, context)
     }
   }
 
-  def mapOptExprBlock(block: Option[TmplExprBlock], context: Context): Option[TmplExprBlock] = {
+  def mapOptExprBlock(block: Option[LangExprBlock], context: Context): Option[LangExprBlock] = {
     if (block.isDefined) Some(mapExprBlock(block.get, context))
     else None
   }
 
-  def mapExprBlock(block: TmplExprBlock, context: Context): TmplExprBlock = {
-    val exprs = ListBuffer.empty[TmplNode[_]]
+  def mapExprBlock(block: LangExprBlock, context: Context): LangExprBlock = {
+    val exprs = ListBuffer.empty[LangNode[_]]
     //    block.exprs.foreach(_.getType)
     block.exprs.foreach {
       case block: LangBlock => exprs += mapFullBlock(block.content, context)
-      case expr: TmplExpression[_] => exprs += mapExpression(expr, context)
+      case expr: LangExpression[_] => exprs += mapExpression(expr, context)
     }
-    TmplExprBlock(block.context, exprs.toList)
+    LangExprBlock(block.context, exprs.toList)
   }
 
-  def mapSpecialBlock(block: TmplSpecialBlock, context: Context): TmplSpecialBlock = {
+  def mapSpecialBlock(block: LangSpecialBlock, context: Context): LangSpecialBlock = {
     //    block.curries = mapCurries(block.curries, context)
     if (block.content.isDefined) block.content = Some(mapExprContent(block.content.get, context))
 
@@ -223,20 +223,20 @@ object ValueMapper {
       curry
     }*/
 
-  def mapParam(param: TmplParam, context: Context): TmplParam = {
+  def mapParam(param: LangParam, context: Context): LangParam = {
     param.annots = mapAnnots(param.annots, context)
     param.name = mapID(param.name, context)
     if (param.`type`.isDefined) param.`type` = Some(mapType(param.`type`.get, context))
     param
   }
 
-  def mapAnonFunc(anonFunc: TmplAnonFunc, context: Context): TmplAnonFunc = {
+  def mapAnonFunc(anonFunc: LangAnonFunc, context: Context): LangAnonFunc = {
     //    anonFunc.currying = mapFuncCurry(anonFunc.currying, context)
     anonFunc.content = mapExprContent(anonFunc.content, context)
     anonFunc
   }
 
-  def mapFor(tmplFor: TmplFor, context: Context): TmplFor = {
+  def mapFor(tmplFor: LangFor, context: Context): LangFor = {
     tmplFor.variable = mapID(tmplFor.variable, context)
     if (tmplFor.start.isDefined) tmplFor.start = Some(mapOperation(tmplFor.start.get, context))
     tmplFor.cond = mapOperation(tmplFor.cond, context)
@@ -244,44 +244,44 @@ object ValueMapper {
     tmplFor
   }
 
-  def mapReturn(ret: TmplReturn, context: Context): TmplReturn = {
+  def mapReturn(ret: LangReturn, context: Context): LangReturn = {
     ret.operation = mapOperation(ret.operation, context)
     ret
   }
 
-  def mapAffect(affect: TmplAffect, context: Context): TmplAffect = {
+  def mapAffect(affect: LangAffect, context: Context): LangAffect = {
     affect.variable = mapCallObj(affect.variable, context)
     affect.value = mapOperation(affect.value, context)
     affect
   }
 
-  def mapCallObj(call: TmplCallObj, context: Context): TmplCallObj = {
+  def mapCallObj(call: LangCallObj, context: Context): LangCallObj = {
     call.firstCall = mapCallObjType(call.firstCall, context)
     call.calls = call.calls.map(link => mapCallObjLink(link, context))
     call
   }
 
-  def mapCallObjLink(call: TmplCallObjectLink, context: Context): TmplCallObjectLink = {
+  def mapCallObjLink(call: LangCallObjectLink, context: Context): LangCallObjectLink = {
     call.call = mapCallObjType(call.call, context)
     call
   }
 
-  def mapCallObjType(objType: TmplCallObjType[_], context: Context): TmplCallObjType[_] = {
+  def mapCallObjType(objType: LangCallObjType[_], context: Context): LangCallObjType[_] = {
     objType match {
-      case array: TmplCallArray => mapCallArray(array, context)
-      case func: TmplCallFunc => mapCallFunc(func, context)
-      case variable: TmplCallVar => mapCallVar(variable, context)
-      case primitive: TmplPrimitiveValue[_] => mapPrimitive(primitive, context)
+      case array: LangCallArray => mapCallArray(array, context)
+      case func: LangCallFunc => mapCallFunc(func, context)
+      case variable: LangCallVar => mapCallVar(variable, context)
+      case primitive: LangPrimitiveValue[_] => mapPrimitive(primitive, context)
     }
   }
 
-  def mapCallArray(array: TmplCallArray, context: Context): TmplCallArray = {
+  def mapCallArray(array: LangCallArray, context: Context): LangCallArray = {
     array.name = mapID(array.name, context)
     array.elem = mapOperation(array.elem, context)
     array
   }
 
-  def mapCallFunc(func: TmplCallFunc, context: Context): TmplCallFunc = {
+  def mapCallFunc(func: LangCallFunc, context: Context): LangCallFunc = {
     func.name = mapID(func.name, context)
     //    func.currying = mapCallFuncCurryParams(func.currying, context)
     func
@@ -303,40 +303,40 @@ object ValueMapper {
     params
   }*/
 
-  def mapSetAttributes(attrs: Option[List[TmplSetAttribute]], context: Context): Option[List[TmplSetAttribute]] = {
+  def mapSetAttributes(attrs: Option[List[LangSetAttribute]], context: Context): Option[List[LangSetAttribute]] = {
     if (attrs.isDefined) {
-      val newAttrs: List[TmplSetAttribute] = attrs.get.map(mapSetAttribute(_, context))
+      val newAttrs: List[LangSetAttribute] = attrs.get.map(mapSetAttribute(_, context))
       Some(newAttrs)
     } else None
   }
 
-  def mapSetAttribute(attr: TmplSetAttribute, context: Context): TmplSetAttribute = {
+  def mapSetAttribute(attr: LangSetAttribute, context: Context): LangSetAttribute = {
     attr.name = if (attr.name.isDefined) Some(mapID(attr.name.get, context)) else None
     attr.value = mapOperation(attr.value, context)
     attr
   }
 
-  def mapAttribute(attrs: TmplAttribute, context: Context): TmplAttribute = {
+  def mapAttribute(attrs: LangAttribute, context: Context): LangAttribute = {
     attrs.attr = mapOptID(attrs.attr, context)
     if (attrs.`type`.isDefined) attrs.`type` = Some(mapType(attrs.`type`.get, context))
     attrs.value = mapOperation(attrs.value, context)
     attrs
   }
 
-  def mapCallVar(variable: TmplCallVar, context: Context): TmplCallVar = {
+  def mapCallVar(variable: LangCallVar, context: Context): LangCallVar = {
     variable.name = mapID(variable.name, context)
     variable
   }
 
-  def mapValueType(value: TmplValueType[_], context: Context): TmplValueType[_] = {
+  def mapValueType(value: LangValueType[_], context: Context): LangValueType[_] = {
     value match {
-      case multi: TmplMultiValue => mapMultiValue(multi, context)
-      case primitive: TmplPrimitiveValue[_] => mapPrimitive(primitive, context)
-      case call: TmplCallObj => mapCallObj(call, context)
+      case multi: LangMultiValue => mapMultiValue(multi, context)
+      case primitive: LangPrimitiveValue[_] => mapPrimitive(primitive, context)
+      case call: LangCallObj => mapCallObj(call, context)
     }
   }
 
-  def mapOperation(op: TmplOperation, context: Context): TmplOperation = {
+  def mapOperation(op: LangOperation, context: Context): LangOperation = {
     op.content match {
       case Left(subOp) => op.content = Left(mapOperation(subOp, context))
       case Right(expr) => op.content = Right(mapExpression(expr, context))
@@ -345,78 +345,78 @@ object ValueMapper {
     op
   }
 
-  def mapMultiValue(multi: TmplMultiValue, context: Context): TmplMultiValue = {
+  def mapMultiValue(multi: LangMultiValue, context: Context): LangMultiValue = {
     multi.values = multi.values.map(mapValueType(_, context))
     multi
   }
 
-  def mapPrimitive(primitive: TmplPrimitiveValue[_], context: Context): TmplPrimitiveValue[_] = {
+  def mapPrimitive(primitive: LangPrimitiveValue[_], context: Context): LangPrimitiveValue[_] = {
     primitive match {
-      case str: TmplStringValue => TmplStringValue(str.context, mapID(str.value, context))
-      case text: TmplTextValue => TmplTextValue(text.context, mapID(text.value, context))
-      case entityValue: TmplEntityValue => mapEntityValue(entityValue, context)
-      case array: TmplArrayValue => mapArrayValue(array, context)
+      case str: LangStringValue => LangStringValue(str.context, mapID(str.value, context))
+      case text: LangTextValue => LangTextValue(text.context, mapID(text.value, context))
+      case entityValue: LangEntityValue => mapEntityValue(entityValue, context)
+      case array: LangArrayValue => mapArrayValue(array, context)
     }
   }
 
-  def mapEntityValue(entity: TmplEntityValue, context: Context): TmplEntityValue = {
+  def mapEntityValue(entity: LangEntityValue, context: Context): LangEntityValue = {
     entity.name = mapOptID(entity.name, context)
-    entity.params = mapSetAttributes(entity.params.asInstanceOf[Option[List[TmplSetAttribute]]], context)
-    entity.attrs = mapSetAttributes(entity.attrs.asInstanceOf[Option[List[TmplSetAttribute]]], context)
+    entity.params = mapSetAttributes(entity.params.asInstanceOf[Option[List[LangSetAttribute]]], context)
+    entity.attrs = mapSetAttributes(entity.attrs.asInstanceOf[Option[List[LangSetAttribute]]], context)
     entity
   }
 
-  def mapArrayValue(array: TmplArrayValue, context: Context): TmplArrayValue = {
+  def mapArrayValue(array: LangArrayValue, context: Context): LangArrayValue = {
     if (array.`type`.isDefined) array.`type` = Some(mapType(array.`type`.get, context))
-    array.params = mapSetAttributes(array.params.asInstanceOf[Option[List[TmplSetAttribute]]], context)
+    array.params = mapSetAttributes(array.params.asInstanceOf[Option[List[LangSetAttribute]]], context)
     array
   }
 
-  def mapVar(variable: TmplVar, context: Context): TmplVar = {
+  def mapVar(variable: LangVar, context: Context): LangVar = {
     variable.name = mapID(variable.name, context)
     variable.`type` = if (variable.`type`.isDefined) Some(mapType(variable.`type`.get, context)) else None
     variable.value = if (variable.value.isDefined) Some(mapOperation(variable.value.get, context)) else None
     variable
   }
 
-  def mapTypes(types: Option[List[TmplType]], context: Context): Option[List[TmplType]] = {
+  def mapTypes(types: Option[List[LangType]], context: Context): Option[List[LangType]] = {
     if (types.isDefined) Some(types.get.map(t => mapType(t, context)))
     else None
   }
 
-  def mapType(`type`: TmplType, context: Context): TmplType = {
+  def mapType(`type`: LangType, context: Context): LangType = {
     `type`.name = mapID(`type`.name, context)
     `type`.generic = mapGeneric(`type`.generic, context)
     `type`
   }
 
-  def mapGeneric(gen: Option[TmplGeneric], context: Context): Option[TmplGeneric] = {
+  def mapGeneric(gen: Option[LangGeneric], context: Context): Option[LangGeneric] = {
     if (gen.isDefined) {
       gen.get.types = gen.get.types.map(mapType(_, context))
       gen
     } else None
   }
 
-  def mapOptID(id: Option[TmplID], context: Context): Option[TmplStringID] = {
+  def mapOptID(id: Option[LangID], context: Context): Option[LangStringID] = {
     if (id.isDefined) Some(mapID(id.get, context))
     else None
   }
 
-  def mapID(id: TmplID, context: Context): TmplStringID = {
+  def mapID(id: LangID, context: Context): LangStringID = {
     id match {
-      case interId: TmplInterpretedID => ExecCallObject.run(interId.call, context) match {
-        case Left(error) => TmplStringID(interId.context, error.message)
+      case interId: LangInterpretedID => ExecCallObject.run(interId.call, context) match {
+        case Left(error) => LangStringID(interId.context, error.message)
         case Right(value) => if (value.isDefined) {
           value.get.head match {
-            case str: TLangString => TmplStringID(interId.context, interId.pre.getOrElse("") + str.getElement + interId.post.getOrElse(""))
-            case block: TmplBlockAsValue => TmplStringID(interId.context, interId.pre.getOrElse("") + Generator.generate(block, context) + interId.post.getOrElse(""))
-            case _ => TmplStringID(interId.context, interId.pre.getOrElse("") + value.get.head.toString + interId.post.getOrElse(""))
+            case str: TLangString => LangStringID(interId.context, interId.pre.getOrElse("") + str.getElement + interId.post.getOrElse(""))
+            case block: TmplBlockAsValue => LangStringID(interId.context, interId.pre.getOrElse("") + Generator.generate(block, context) + interId.post.getOrElse(""))
+            case _ => LangStringID(interId.context, interId.pre.getOrElse("") + value.get.head.toString + interId.post.getOrElse(""))
           }
-        } else TmplStringID(interId.context, "Undefined")
+        } else LangStringID(interId.context, "Undefined")
       }
-      case replacedId: TmplReplacedId => TmplStringID(replacedId.context, replacedId.pre.getOrElse("") + replacedId.node.toString + replacedId.post.getOrElse(""))
-      case str: TmplStringID => TmplStringID(str.context, str.id)
-      case block: TmplBlockID => TmplStringID(block.context, "Undefined")
+      case replacedId: LangReplacedId => LangStringID(replacedId.context, replacedId.pre.getOrElse("") + replacedId.node.toString + replacedId.post.getOrElse(""))
+      case str: LangStringID => LangStringID(str.context, str.id)
+      case block: LangBlockID => LangStringID(block.context, "Undefined")
     }
     //      var pos = str.indexOf("${")
     //      val ret = new StringBuilder(str)

@@ -7,21 +7,21 @@ import dev.tlang.tlang.generator.langs.common.GenParameter
 import dev.tlang.tlang.generator.langs.dart.DartFormatter.END_OF_STATEMENT
 import dev.tlang.tlang.generator.langs.dart.DartGenerator.includeKeyword
 import dev.tlang.tlang.tmpl.lang.ast.call._
-import dev.tlang.tlang.tmpl.lang.ast.condition.TmplOperation
-import dev.tlang.tlang.tmpl.lang.ast.func.TmplAnnotationParam
+import dev.tlang.tlang.tmpl.lang.ast.condition.LangOperation
+import dev.tlang.tlang.tmpl.lang.ast.func.LangAnnotationParam
 import dev.tlang.tlang.tmpl.lang.ast.primitive._
 import dev.tlang.tlang.tmpl.lang.ast._
 
 object GenericGenerator {
 
-  def genPackage: BlockGenerator = (node: TmplNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (TmplNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
+  def genPackage: BlockGenerator = (node: LangNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (LangNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
     var _ind = indent
     _ind
   }
 
-  def genUse: BlockGenerator = (node: TmplNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (TmplNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
+  def genUse: BlockGenerator = (node: LangNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (LangNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
     var _ind = indent
-    val tmpl = node.asInstanceOf[TmplUse]
+    val tmpl = node.asInstanceOf[LangUse]
     val useRules = FormatManager.findRules("use", rules)
     _ind = Formatter.indent(str, indent)
     str ++= includeKeyword() ++= " '" ++= tmpl.parts.mkString("/").replaceFirst("/", ":").replace("/dart", ".dart") ++= "'"
@@ -57,9 +57,9 @@ object GenericGenerator {
     _ind
   }*/
 
-  def genGeneric: BlockGenerator = (node: TmplNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (TmplNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
+  def genGeneric: BlockGenerator = (node: LangNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (LangNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
     var _ind = indent
-    val tmpl = node.asInstanceOf[TmplGeneric]
+    val tmpl = node.asInstanceOf[LangGeneric]
     _ind = Formatter.indent(str, indent)
     str ++= "<"
     tmpl.types.zipWithIndex.foreach { case (t, i) =>
@@ -71,9 +71,9 @@ object GenericGenerator {
     _ind
   }
 
-  def genReturn: BlockGenerator = (node: TmplNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (TmplNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
+  def genReturn: BlockGenerator = (node: LangNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (LangNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
     var _ind = indent
-    val tmpl = node.asInstanceOf[TmplReturn]
+    val tmpl = node.asInstanceOf[LangReturn]
     _ind = Formatter.indent(str, indent)
     str ++= "return" ++= " "
     _ind = followUp(tmpl.operation, str, _ind, rules, params.copy(addEOS = false))
@@ -81,9 +81,9 @@ object GenericGenerator {
     _ind
   }
 
-  def genVar: BlockGenerator = (node: TmplNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (TmplNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
+  def genVar: BlockGenerator = (node: LangNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (LangNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
     var _ind = indent
-    val tmpl = node.asInstanceOf[TmplVar]
+    val tmpl = node.asInstanceOf[LangVar]
     val varRules = FormatManager.findRules("var", rules)
     val noEOS = params.copy(addEOS = false)
     _ind = Formatter.indent(str, indent)
@@ -122,9 +122,9 @@ object GenericGenerator {
     _ind
   }*/
 
-  def genParam: BlockGenerator = (node: TmplNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (TmplNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
+  def genParam: BlockGenerator = (node: LangNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (LangNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
     var _ind = indent
-    val tmpl = node.asInstanceOf[TmplParam]
+    val tmpl = node.asInstanceOf[LangParam]
     if (tmpl.annots.isDefined) tmpl.annots.get.foreach(annot => _ind = followUp(annot, str, _ind, rules, params))
     if (tmpl.`type`.isDefined) {
       _ind = followUp(tmpl.`type`.get, str, _ind, rules, params)
@@ -134,9 +134,9 @@ object GenericGenerator {
     _ind
   }
 
-  def genProps: BlockGenerator = (node: TmplNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (TmplNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
+  def genProps: BlockGenerator = (node: LangNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (LangNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
     var _ind = indent
-    val tmpl = node.asInstanceOf[TmplProp]
+    val tmpl = node.asInstanceOf[LangProp]
     tmpl.props.zipWithIndex.foreach { case (prop, i) =>
       //      _ind = followUp(prop, str, _ind, rules, params)
       str ++= prop.toString
@@ -145,9 +145,9 @@ object GenericGenerator {
     _ind
   }
 
-  def genOperation: BlockGenerator = (node: TmplNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (TmplNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
+  def genOperation: BlockGenerator = (node: LangNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (LangNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
     var _ind = indent
-    val tmpl = node.asInstanceOf[TmplOperation]
+    val tmpl = node.asInstanceOf[LangOperation]
     tmpl.content match {
       case Left(block) => {
         str ++= "("
@@ -163,17 +163,17 @@ object GenericGenerator {
     _ind
   }
 
-  def genCallLink: BlockGenerator = (node: TmplNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (TmplNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
+  def genCallLink: BlockGenerator = (node: LangNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (LangNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
     var _ind = indent
-    val tmpl = node.asInstanceOf[TmplCallObjectLink]
+    val tmpl = node.asInstanceOf[LangCallObjectLink]
     str ++= tmpl.link
     _ind = followUp(tmpl.call, str, _ind, rules, params)
     _ind
   }
 
-  def genCallObject: BlockGenerator = (node: TmplNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (TmplNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
+  def genCallObject: BlockGenerator = (node: LangNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (LangNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
     var _ind = indent
-    val tmpl = node.asInstanceOf[TmplCallObj]
+    val tmpl = node.asInstanceOf[LangCallObj]
     tmpl.props.foreach(prop => {
       followUp(prop, str, _ind, rules, params)
       str ++= " "
@@ -185,16 +185,16 @@ object GenericGenerator {
     _ind
   }
 
-  def genCallVar: BlockGenerator = (node: TmplNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (TmplNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
+  def genCallVar: BlockGenerator = (node: LangNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (LangNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
     var _ind = indent
-    val tmpl = node.asInstanceOf[TmplCallVar]
+    val tmpl = node.asInstanceOf[LangCallVar]
     str ++= tmpl.name.toString
     _ind
   }
 
-  def genCallArray: BlockGenerator = (node: TmplNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (TmplNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
+  def genCallArray: BlockGenerator = (node: LangNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (LangNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
     var _ind = indent
-    val tmpl = node.asInstanceOf[TmplCallArray]
+    val tmpl = node.asInstanceOf[LangCallArray]
     str ++= tmpl.name.toString
     str ++= "["
     _ind = followUp(tmpl.elem, str, _ind, rules, params)
@@ -202,18 +202,18 @@ object GenericGenerator {
     _ind
   }
 
-  def genAffect: BlockGenerator = (node: TmplNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (TmplNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
+  def genAffect: BlockGenerator = (node: LangNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (LangNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
     var _ind = indent
-    val tmpl = node.asInstanceOf[TmplAffect]
+    val tmpl = node.asInstanceOf[LangAffect]
     _ind = followUp(tmpl.variable, str, _ind, rules, params)
     str ++= "="
     _ind = followUp(tmpl.value, str, _ind, rules, params)
     _ind
   }
 
-  def genAnnot: BlockGenerator = (node: TmplNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (TmplNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
+  def genAnnot: BlockGenerator = (node: LangNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (LangNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
     var _ind = indent
-    val tmpl = node.asInstanceOf[TmplAnnotation]
+    val tmpl = node.asInstanceOf[LangAnnotation]
     str ++= "@"
     str ++= tmpl.name.toString
     if (tmpl.values.isDefined) {
@@ -227,9 +227,9 @@ object GenericGenerator {
     _ind
   }
 
-  def genAnnotParam: BlockGenerator = (node: TmplNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (TmplNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
+  def genAnnotParam: BlockGenerator = (node: LangNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (LangNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
     var _ind = indent
-    val tmpl = node.asInstanceOf[TmplAnnotationParam]
+    val tmpl = node.asInstanceOf[LangAnnotationParam]
     if (tmpl.name.isDefined) str ++= tmpl.name.get.toString
     str ++= "="
     _ind = followUp(tmpl.value, str, _ind, rules, params)
@@ -278,14 +278,14 @@ object GenericGenerator {
     _ind
   }*/
 
-  def genSpecialBlock: BlockGenerator = (node: TmplNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (TmplNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
+  def genSpecialBlock: BlockGenerator = (node: LangNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (LangNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
     var _ind = indent
-    val tmpl = node.asInstanceOf[TmplSpecialBlock]
+    val tmpl = node.asInstanceOf[LangSpecialBlock]
     _ind = Formatter.indent(str, indent)
     //    val noEOS = params.copy(addEOS = false)
     str ++= genSpecialType(tmpl.`type`) ++= " "
     if (tmpl.curries.isDefined) tmpl.curries.get.foreach(curry => _ind = followUp(curry, str, _ind, rules, params))
-    if (tmpl.content.isDefined && tmpl.content.get.isInstanceOf[TmplExprBlock]) _ind = followUp(tmpl.content.get, str, _ind, rules, params.copy(addEOS = true))
+    if (tmpl.content.isDefined && tmpl.content.get.isInstanceOf[LangExprBlock]) _ind = followUp(tmpl.content.get, str, _ind, rules, params.copy(addEOS = true))
     else if (tmpl.content.isDefined) _ind = followUp(tmpl.content.get, str, _ind, rules, params)
     _ind
   }
@@ -295,9 +295,9 @@ object GenericGenerator {
     case _ => name
   }
 
-  def genSetAttribute: BlockGenerator = (node: TmplNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (TmplNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
+  def genSetAttribute: BlockGenerator = (node: LangNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (LangNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
     var _ind = indent
-    val tmpl = node.asInstanceOf[TmplSetAttribute]
+    val tmpl = node.asInstanceOf[LangSetAttribute]
     if (tmpl.name.isDefined) {
       str ++= tmpl.name.get.toString
       str ++= ":"
@@ -306,9 +306,9 @@ object GenericGenerator {
     _ind
   }
 
-  def genEntityValue: BlockGenerator = (node: TmplNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (TmplNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
+  def genEntityValue: BlockGenerator = (node: LangNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (LangNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
     var _ind = indent
-    val tmpl = node.asInstanceOf[TmplEntityValue]
+    val tmpl = node.asInstanceOf[LangEntityValue]
     if (tmpl.name.isDefined) str ++= tmpl.name.get.toString
 
     val noEOS = params.copy(addEOS = false)
@@ -334,9 +334,9 @@ object GenericGenerator {
     _ind
   }
 
-  def genAttribute: BlockGenerator = (node: TmplNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (TmplNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
+  def genAttribute: BlockGenerator = (node: LangNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (LangNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
     var _ind = indent
-    val tmpl = node.asInstanceOf[TmplAttribute]
+    val tmpl = node.asInstanceOf[LangAttribute]
     if (tmpl.`type`.isDefined) str ++= tmpl.`type`.get.toString ++= ":"
     if (tmpl.attr.isDefined) {
       str ++= tmpl.attr.get.toString
@@ -346,9 +346,9 @@ object GenericGenerator {
     _ind
   }
 
-  def genArrayValue: BlockGenerator = (node: TmplNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (TmplNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
+  def genArrayValue: BlockGenerator = (node: LangNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (LangNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
     var _ind = indent
-    val tmpl = node.asInstanceOf[TmplArrayValue]
+    val tmpl = node.asInstanceOf[LangArrayValue]
     if (tmpl.`type`.isDefined) _ind = followUp(tmpl.`type`.get, str, _ind, rules, params)
     str ++= "["
     if (tmpl.params.isDefined) tmpl.params.get.zipWithIndex.foreach { case (param, i) =>
@@ -359,48 +359,48 @@ object GenericGenerator {
     _ind
   }
 
-  def genStringValue: BlockGenerator = (node: TmplNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (TmplNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
-    val tmpl = node.asInstanceOf[TmplStringValue]
+  def genStringValue: BlockGenerator = (node: LangNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (LangNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
+    val tmpl = node.asInstanceOf[LangStringValue]
     str ++= "\""
     str ++= tmpl.value.toString
     str ++= "\""
     indent
   }
 
-  def genTextValue: BlockGenerator = (node: TmplNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (TmplNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
-    val tmpl = node.asInstanceOf[TmplTextValue]
+  def genTextValue: BlockGenerator = (node: LangNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (LangNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
+    val tmpl = node.asInstanceOf[LangTextValue]
     str ++= "\""
     str ++= tmpl.value.toString
     str ++= "\""
     indent
   }
 
-  def genLongValue: BlockGenerator = (node: TmplNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (TmplNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
-    val tmpl = node.asInstanceOf[TmplLongValue]
+  def genLongValue: BlockGenerator = (node: LangNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (LangNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
+    val tmpl = node.asInstanceOf[LangLongValue]
     str ++= tmpl.value.toString
     indent
   }
 
-  def genDoubleValue: BlockGenerator = (node: TmplNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (TmplNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
-    val tmpl = node.asInstanceOf[TmplDoubleValue]
+  def genDoubleValue: BlockGenerator = (node: LangNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (LangNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
+    val tmpl = node.asInstanceOf[LangDoubleValue]
     str ++= tmpl.value.toString
     indent
   }
 
-  def genBoolValue: BlockGenerator = (node: TmplNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (TmplNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
-    val tmpl = node.asInstanceOf[TmplBoolValue]
+  def genBoolValue: BlockGenerator = (node: LangNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (LangNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
+    val tmpl = node.asInstanceOf[LangBoolValue]
     if (tmpl.value) str ++= "true" else str ++= "false"
     indent
   }
 
-  def genOptTmplID(tmplId: Option[TmplID]): String = {
+  def genOptTmplID(tmplId: Option[LangID]): String = {
     if (tmplId.isDefined) genTmplID(tmplId.get)
     else ""
   }
 
-  def genTmplID(tmplId: TmplID): String = {
+  def genTmplID(tmplId: LangID): String = {
     tmplId match {
-      case str: TmplStringID =>
+      case str: LangStringID =>
         var seq = "\""
         seq += str.toString
         seq += "\""

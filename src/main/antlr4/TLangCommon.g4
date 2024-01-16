@@ -48,6 +48,8 @@ callFunc: ((name=ID) | '_') (currying += curryParams)+;
 
 curryParams:'(' (params+=setAttribute (',' params+=setAttribute)*)? ')';
 
+
+
 setAttribute: (attr=ID '=')? value=operation;
 
 callVariable: name=ID;

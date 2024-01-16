@@ -8,7 +8,6 @@ import dev.tlang.tlang.ast.common.value._
 import dev.tlang.tlang.astbuilder.BuildAst
 import dev.tlang.tlang.astbuilder.BuildAst.addContext
 import dev.tlang.tlang.astbuilder.context.{ContextContent, ContextResource}
-import dev.tlang.tlang.tmpl.lang.ast.{TmplExprAst, TmplFuncAst, TmplLangAst}
 
 import scala.jdk.CollectionConverters.CollectionHasAsScala
 

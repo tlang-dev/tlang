@@ -1,16 +1,16 @@
 package dev.tlang.tlang.generator.builder
 
-import dev.tlang.tlang.tmpl.lang.ast.primitive.TmplEntityValue
+import dev.tlang.tlang.tmpl.lang.ast.primitive.LangEntityValue
 import dev.tlang.tlang.generator.builder.TemplateBuilder.{buildInclAttributes, includeTmplId}
 import dev.tlang.tlang.interpreter.ExecError
 import dev.tlang.tlang.interpreter.context.Context
-import dev.tlang.tlang.tmpl.lang.ast.TmplID
+import dev.tlang.tlang.tmpl.lang.ast.LangID
 
 object EntityBuilder {
 
-  def buildEntity(entity: TmplEntityValue, context: Context): Either[ExecError, TmplEntityValue] = {
+  def buildEntity(entity: LangEntityValue, context: Context): Either[ExecError, LangEntityValue] = {
 
-    def params(): Either[ExecError, TmplEntityValue] = {
+    def params(): Either[ExecError, LangEntityValue] = {
       if (entity.params.isDefined) {
         buildInclAttributes(entity.params, context) match {
           case Left(error) => Left(error)
@@ -21,7 +21,7 @@ object EntityBuilder {
       } else attrs()
     }
 
-    def attrs(): Either[ExecError, TmplEntityValue] = {
+    def attrs(): Either[ExecError, LangEntityValue] = {
       if (entity.attrs.isDefined) {
         buildInclAttributes(entity.attrs, context) match {
           case Left(error) => Left(error)
@@ -35,7 +35,7 @@ object EntityBuilder {
     if (entity.name.isDefined) includeTmplId(entity.name.get, context) match {
       case Left(error) => Left(error)
       case Right(value) =>
-        entity.name = Some(value.head.asInstanceOf[TmplID])
+        entity.name = Some(value.head.asInstanceOf[LangID])
         params()
     } else params()
 

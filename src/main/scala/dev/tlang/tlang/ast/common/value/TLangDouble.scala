@@ -4,7 +4,6 @@ import dev.tlang.tlang.ast.common.{ObjType, ValueType}
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.{ExecError, Value}
-import dev.tlang.tlang.tmpl.lang.ast.{TmplLangAst, TmplValueAst}
 
 class TLangDouble(context: Option[ContextContent], value: Double) extends PrimitiveValue[Double] {
   override def getElement: Double = value

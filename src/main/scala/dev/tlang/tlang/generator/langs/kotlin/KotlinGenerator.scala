@@ -3,14 +3,14 @@ package dev.tlang.tlang.generator.langs.kotlin
 import dev.tlang.tlang.ast.common.operation.Operator
 import dev.tlang.tlang.tmpl._
 import dev.tlang.tlang.tmpl.lang.ast.call._
-import dev.tlang.tlang.tmpl.lang.ast.condition.TmplOperation
-import dev.tlang.tlang.tmpl.lang.ast.func.{TmplAnnotationParam, TmplAnonFunc, TmplFunc}
+import dev.tlang.tlang.tmpl.lang.ast.condition.LangOperation
+import dev.tlang.tlang.tmpl.lang.ast.func.{LangAnnotationParam, LangAnonFunc, LangFunc}
 import dev.tlang.tlang.tmpl.lang.ast.loop.ForType.ForType
-import dev.tlang.tlang.tmpl.lang.ast.loop.{TmplDoWhile, TmplFor, TmplWhile}
+import dev.tlang.tlang.tmpl.lang.ast.loop.{LangDoWhile, LangFor, LangWhile}
 import dev.tlang.tlang.tmpl.lang.ast.primitive._
 import dev.tlang.tlang.generator.formatter.Formatter
 import dev.tlang.tlang.generator.{CodeGenerator, Seq}
-import dev.tlang.tlang.tmpl.lang.ast.{TmplAffect, TmplAnnotation, TmplAttribute, LangBlock, TmplExprBlock, TmplExprContent, TmplExpression, TmplGeneric, TmplID, TmplIf, TmplImpl, TmplInclude, TmplNode, TmplParam, TmplPkg, TmplProp, TmplReturn, TmplSetAttribute, TmplSimpleValueType, TmplStringID, TmplType, TmplUse, TmplValueType, TmplVar}
+import dev.tlang.tlang.tmpl.lang.ast.{LangAffect, LangAnnotation, LangAttribute, LangBlock, LangExprBlock, LangExprContent, LangExpression, LangGeneric, LangID, LangIf, LangImpl, LangInclude, LangNode, LangParam, LangPkg, LangProp, LangReturn, LangSetAttribute, LangSimpleValueType, LangStringID, LangType, LangUse, LangValueType, LangVar}
 
 import scala.language.postfixOps
 
@@ -30,13 +30,13 @@ object KotlinGenerator {
     root
   }
 
-  def genPackage(pkg: Option[TmplPkg]): Seq = {
+  def genPackage(pkg: Option[LangPkg]): Seq = {
     val seq = Seq()
     pkg.foreach(p => seq -> "package" += " " += mkSeq(p.parts, ".") += KotlinFormatter.RET)
     seq
   }
 
-  def genIncludes(uses: Option[List[TmplUse]]): Iterable[Seq] = {
+  def genIncludes(uses: Option[List[LangUse]]): Iterable[Seq] = {
     val str: Array[Seq] = Array.ofDim[Seq](uses.fold(0)(_.size))
     uses.foreach(_.zipWithIndex.foreach(use => {
       val seq = Seq("import")
@@ -46,23 +46,23 @@ object KotlinGenerator {
     str
   }
 
-  def genContents(impls: List[TmplNode[_]]): Iterable[Seq] = {
+  def genContents(impls: List[LangNode[_]]): Iterable[Seq] = {
     val str: Array[Seq] = Array.ofDim[Seq](impls.size)
     impls.zipWithIndex.foreach(impl => str(impl._2) = genContent(impl._1))
     str
   }
 
-  def genContent(impl: TmplNode[_], addEndOfStatement: Boolean = false): Seq = {
+  def genContent(impl: LangNode[_], addEndOfStatement: Boolean = false): Seq = {
     impl match {
-      case func: TmplFunc => genFunc(func)
-      case expr: TmplExpression[_] => genExpression(expr, addEndOfStatement)
-      case impl: TmplImpl => genImpl(impl)
-      case exprBlock: TmplExprBlock => genExprBlock(exprBlock, addEndOfStatement)
+      case func: LangFunc => genFunc(func)
+      case expr: LangExpression[_] => genExpression(expr, addEndOfStatement)
+      case impl: LangImpl => genImpl(impl)
+      case exprBlock: LangExprBlock => genExprBlock(exprBlock, addEndOfStatement)
       case tmplBlock: LangBlock => genBlock(tmplBlock)
     }
   }
 
-  def genImpl(impl: TmplImpl): Seq = {
+  def genImpl(impl: LangImpl): Seq = {
     val str = Seq()
     var cur = str
     cur += genAnnotations(impl.annots, KotlinFormatter.RET)
@@ -82,7 +82,7 @@ object KotlinGenerator {
     str
   }
 
-  def genFunc(func: TmplFunc): Seq = {
+  def genFunc(func: LangFunc): Seq = {
     val str = Seq()
     str += genAnnotations(func.annots)
     //    str += func.props.fold(Seq("public"))(prop => genProps(prop)) += " "
@@ -112,7 +112,7 @@ object KotlinGenerator {
 //    str
 //  }
 
-  def genAnnotations(annots: Option[List[TmplAnnotation]], sep: String = ""): Seq = {
+  def genAnnotations(annots: Option[List[LangAnnotation]], sep: String = ""): Seq = {
     if (annots.isDefined) {
       val str = Seq()
       annots.get.foreach(annot => {
@@ -130,7 +130,7 @@ object KotlinGenerator {
     else Seq()
   }
 
-  private def genAnnotValue(value: TmplAnnotationParam): Seq = {
+  private def genAnnotValue(value: LangAnnotationParam): Seq = {
     val seq = Seq()
     if (value.name.isDefined) {
       seq += value.name.get.toString
@@ -140,19 +140,19 @@ object KotlinGenerator {
     seq
   }
 
-  def genOptionalProps(props: Option[TmplProp], addSpace: Boolean = false): Seq = {
+  def genOptionalProps(props: Option[LangProp], addSpace: Boolean = false): Seq = {
     if (props.isDefined) genProps(props.get, addSpace)
     else Seq("")
   }
 
-  def genProps(props: TmplProp, addSpace: Boolean = false): Seq = {
+  def genProps(props: LangProp, addSpace: Boolean = false): Seq = {
     val seq = Seq()
     seq += mkSeq(props.props, " ")
     if (addSpace) seq += " "
     seq
   }
 
-  def genParam(param: TmplParam): String = {
+  def genParam(param: LangParam): String = {
     val str = Seq()
     str += genAnnotations(param.annots, sep = " ")
     str += param.name.toString
@@ -161,7 +161,7 @@ object KotlinGenerator {
     str.toString()
   }
 
-  def genType(`type`: TmplType): Seq = {
+  def genType(`type`: LangType): Seq = {
     val str = Seq()
     str += `type`.name.toString
     str += genGeneric(`type`.generic)
@@ -178,7 +178,7 @@ object KotlinGenerator {
 //    str
 //  }
 
-  def genGeneric(gen: Option[TmplGeneric]): Seq = {
+  def genGeneric(gen: Option[LangGeneric]): Seq = {
     if (gen.isDefined) {
       val str = Seq()
       str += "<" += mkSeqFromSeq(gen.get.types.map(genType), ",") += ">"
@@ -186,33 +186,33 @@ object KotlinGenerator {
     } else Seq()
   }
 
-  def genExprContent(content: TmplExprContent[_], endOfStatement: Boolean = false, newLine: Boolean = false): Seq = {
+  def genExprContent(content: LangExprContent[_], endOfStatement: Boolean = false, newLine: Boolean = false): Seq = {
     content match {
-      case block: TmplExprBlock => genExprBlock(block)
-      case expression: TmplExpression[_] => genExpression(expression, endOfStatement)
+      case block: LangExprBlock => genExprBlock(block)
+      case expression: LangExpression[_] => genExpression(expression, endOfStatement)
     }
   }
 
-  def genExprBlock(block: TmplExprBlock, endOfStatement: Boolean = false): Seq = {
+  def genExprBlock(block: LangExprBlock, endOfStatement: Boolean = false): Seq = {
     val str = Seq()
     str += "{" += mkSeqFromSeq(block.exprs.map(b => genContent(b, endOfStatement)), "") += "}"
     str
   }
 
-  def genExpression(expr: TmplExpression[_], endOfStatement: Boolean = false): Seq = {
+  def genExpression(expr: LangExpression[_], endOfStatement: Boolean = false): Seq = {
     expr match {
-      case call: TmplCallObj => genEndOfStatement(genTmplCallObj(call), endOfStatement)
-      case func: TmplFunc => genFunc(func)
-      case valueType: TmplValueType[_] => genValueType(valueType)
-      case variable: TmplVar => genEndOfStatement(genVar(variable), endOfStatement)
-      case ifStmt: TmplIf => genIf(ifStmt)
-      case forLoop: TmplFor => genFor(forLoop)
-      case whileLoop: TmplWhile => genWhile(whileLoop)
-      case doWhile: TmplDoWhile => genDoWhile(doWhile)
+      case call: LangCallObj => genEndOfStatement(genTmplCallObj(call), endOfStatement)
+      case func: LangFunc => genFunc(func)
+      case valueType: LangValueType[_] => genValueType(valueType)
+      case variable: LangVar => genEndOfStatement(genVar(variable), endOfStatement)
+      case ifStmt: LangIf => genIf(ifStmt)
+      case forLoop: LangFor => genFor(forLoop)
+      case whileLoop: LangWhile => genWhile(whileLoop)
+      case doWhile: LangDoWhile => genDoWhile(doWhile)
       //      case incl: TmplInclude => genInclude(incl)
-      case ret: TmplReturn => genEndOfStatement(genReturn(ret), endOfStatement)
-      case affect: TmplAffect => genEndOfStatement(genAffect(affect), endOfStatement)
-      case anonFunc: TmplAnonFunc => genAnonFunc(anonFunc)
+      case ret: LangReturn => genEndOfStatement(genReturn(ret), endOfStatement)
+      case affect: LangAffect => genEndOfStatement(genAffect(affect), endOfStatement)
+      case anonFunc: LangAnonFunc => genAnonFunc(anonFunc)
     }
   }
 
@@ -226,37 +226,37 @@ object KotlinGenerator {
     statement
   }
 
-  def genAffect(affect: TmplAffect): Seq = {
+  def genAffect(affect: LangAffect): Seq = {
     val str = Seq()
     str += genTmplCallObj(affect.variable) += "=" += genOperation(affect.value)
     str
   }
 
-  def genReturn(ret: TmplReturn): Seq = {
+  def genReturn(ret: LangReturn): Seq = {
     val str = Seq()
     str += "return " += genOperation(ret.operation)
     str
   }
 
-  def genAnonFunc(anonFunc: TmplAnonFunc): Seq = {
+  def genAnonFunc(anonFunc: LangAnonFunc): Seq = {
     val str = Seq()
    // str += genFuncCurry(anonFunc.currying)
     str += genExprContent(anonFunc.content)
     str
   }
 
-  def genIf(ifStmt: TmplIf): Seq = {
+  def genIf(ifStmt: LangIf): Seq = {
     val str = Seq()
     str += "if(" += genOperation(ifStmt.cond) += ")"
-    str += genExprContent(ifStmt.content, ifStmt.content.isInstanceOf[TmplExpression[_]])
+    str += genExprContent(ifStmt.content, ifStmt.content.isInstanceOf[LangExpression[_]])
     if (ifStmt.elseBlock.isDefined) ifStmt.elseBlock.get match {
-      case Left(elseBlock) => str += " else " += genExprContent(elseBlock, elseBlock.isInstanceOf[TmplExpression[_]])
+      case Left(elseBlock) => str += " else " += genExprContent(elseBlock, elseBlock.isInstanceOf[LangExpression[_]])
       case Right(ifBlock) => str += " else " += genIf(ifBlock)
     }
     str
   }
 
-  def genFor(forLoop: TmplFor): Seq = {
+  def genFor(forLoop: LangFor): Seq = {
     val str = Seq()
     str += "for("
     str += forLoop.variable.toString
@@ -273,21 +273,21 @@ object KotlinGenerator {
 //    case dev.tlang.tlang.ast.tmpl.loop.ForType.UNTIL => Seq("until")
 //  }
 
-  def genWhile(whileLoop: TmplWhile): Seq = {
+  def genWhile(whileLoop: LangWhile): Seq = {
     val str = Seq()
     str += "while(" += genOperation(whileLoop.cond) += ") "
-    str += genExprContent(whileLoop.content, whileLoop.content.isInstanceOf[TmplExpression[_]])
+    str += genExprContent(whileLoop.content, whileLoop.content.isInstanceOf[LangExpression[_]])
     str
   }
 
-  def genDoWhile(doWhile: TmplDoWhile): Seq = {
+  def genDoWhile(doWhile: LangDoWhile): Seq = {
     val str = Seq()
-    str += "do " += genExprContent(doWhile.content, doWhile.content.isInstanceOf[TmplExpression[_]])
+    str += "do " += genExprContent(doWhile.content, doWhile.content.isInstanceOf[LangExpression[_]])
     str += " while(" += genOperation(doWhile.cond) += ");"
     str
   }
 
-  def genTmplCallObj(callObj: TmplCallObj): Seq = {
+  def genTmplCallObj(callObj: LangCallObj): Seq = {
     val str = Seq()
     callObj.props.foreach(prop => str += genProps(prop, addSpace = true))
     str += genCallObjType(callObj.firstCall)
@@ -295,28 +295,28 @@ object KotlinGenerator {
     str
   }
 
-  def genCallLink(objLink: TmplCallObjectLink): Seq = {
+  def genCallLink(objLink: LangCallObjectLink): Seq = {
     val str = Seq()
     str += objLink.link
     str += genCallObjType(objLink.call)
     str
   }
 
-  def genCallObjType(objType: TmplCallObjType[_]): Seq = {
+  def genCallObjType(objType: LangCallObjType[_]): Seq = {
     objType match {
-      case array: TmplCallArray => genCallArray(array)
-      case func: TmplCallFunc => genCallFunc(func)
-      case variable: TmplCallVar => genCallVar(variable)
+      case array: LangCallArray => genCallArray(array)
+      case func: LangCallFunc => genCallFunc(func)
+      case variable: LangCallVar => genCallVar(variable)
     }
   }
 
-  def genCallArray(array: TmplCallArray): Seq = {
+  def genCallArray(array: LangCallArray): Seq = {
     val str = Seq()
     str += array.name.toString += "[" += genOperation(array.elem) += "]"
     str
   }
 
-  def genCallFunc(func: TmplCallFunc): Seq = {
+  def genCallFunc(func: LangCallFunc): Seq = {
     val str = Seq()
     str += func.name.toString
     if (func.currying.isDefined) {
@@ -329,9 +329,9 @@ object KotlinGenerator {
     str
   }
 
-  def genCallVar(variable: TmplCallVar): Seq = Seq(variable.name.toString)
+  def genCallVar(variable: LangCallVar): Seq = Seq(variable.name.toString)
 
-  def genVar(variable: TmplVar): Seq = {
+  def genVar(variable: LangVar): Seq = {
     val str = Seq()
     str += genAnnotations(variable.annots, KotlinFormatter.RET)
     variable.props.foreach(prop => str += genPropsForVar(prop, variable, addSpace = true))
@@ -352,7 +352,7 @@ object KotlinGenerator {
     str
   }
 
-  def genPropsForVar(props: TmplProp, variable: TmplVar, addSpace: Boolean = false): Seq = {
+  def genPropsForVar(props: LangProp, variable: LangVar, addSpace: Boolean = false): Seq = {
     val seq = Seq()
     if (props.props.nonEmpty && props.props.head.toString.equals("lateinit")) {
       seq += "lateinit var"
@@ -363,21 +363,21 @@ object KotlinGenerator {
     seq
   }
 
-  def genValueType(valueType: TmplValueType[_]): Seq = {
+  def genValueType(valueType: LangValueType[_]): Seq = {
     valueType match {
-      case call: TmplCallObj => genTmplCallObj(call)
-      case primitive: TmplPrimitiveValue[_] => genPrimitive(primitive)
+      case call: LangCallObj => genTmplCallObj(call)
+      case primitive: LangPrimitiveValue[_] => genPrimitive(primitive)
     }
   }
 
-  def genSimpleValueType(valueType: TmplSimpleValueType[_]): Seq = {
+  def genSimpleValueType(valueType: LangSimpleValueType[_]): Seq = {
     valueType match {
-      case call: TmplCallObj => genTmplCallObj(call)
-      case value: TmplPrimitiveValue[_] => genPrimitive(value)
+      case call: LangCallObj => genTmplCallObj(call)
+      case value: LangPrimitiveValue[_] => genPrimitive(value)
     }
   }
 
-  def genOperation(block: TmplOperation): Seq = {
+  def genOperation(block: LangOperation): Seq = {
     val str = Seq()
     block.content match {
       case Left(block) => str += "(" += genOperation(block) += ")"
@@ -408,19 +408,19 @@ object KotlinGenerator {
     }
   }
 
-  def genPrimitive(primitive: TmplPrimitiveValue[_]): Seq = {
+  def genPrimitive(primitive: LangPrimitiveValue[_]): Seq = {
     primitive match {
-      case string: TmplStringValue => genStringValue(string)
-      case string: TmplTextValue => genTextValue(string)
-      case long: TmplLongValue => genLongValue(long)
-      case double: TmplDoubleValue => genDoubleValue(double)
-      case bool: TmplBoolValue => genBoolValue(bool)
-      case array: TmplArrayValue => genArrayValue(array)
-      case entity: TmplEntityValue => genEntityValue(entity)
+      case string: LangStringValue => genStringValue(string)
+      case string: LangTextValue => genTextValue(string)
+      case long: LangLongValue => genLongValue(long)
+      case double: LangDoubleValue => genDoubleValue(double)
+      case bool: LangBoolValue => genBoolValue(bool)
+      case array: LangArrayValue => genArrayValue(array)
+      case entity: LangEntityValue => genEntityValue(entity)
     }
   }
 
-  def genEntityValue(entity: TmplEntityValue): Seq = {
+  def genEntityValue(entity: LangEntityValue): Seq = {
     val str = Seq()
     if (entity.name.isDefined) str += entity.name.get.toString
     str += "("
@@ -429,35 +429,35 @@ object KotlinGenerator {
     str
   }
 
-  def genEntityValueAttribute(attrs: Option[List[TmplNode[_]]]): Seq = {
+  def genEntityValueAttribute(attrs: Option[List[LangNode[_]]]): Seq = {
     val str = Seq()
     attrs.foreach(_.foreach { attr =>
       attr match {
-        case operation: TmplOperation => str += genOperation(operation)
-        case attribute: TmplAttribute => str += genAttribute(attribute)
-        case include: TmplInclude =>
+        case operation: LangOperation => str += genOperation(operation)
+        case attribute: LangAttribute => str += genAttribute(attribute)
+        case include: LangInclude =>
       }
     })
     str
   }
 
-  def genAttribute(attr: TmplAttribute): Seq = {
+  def genAttribute(attr: LangAttribute): Seq = {
     val str = Seq()
     if (attr.`type`.isDefined) str += attr.`type`.get.toString += ":"
     str += genOperation(attr.value)
     str
   }
 
-  def genArrayValue(array: TmplArrayValue): Seq = {
+  def genArrayValue(array: LangArrayValue): Seq = {
     val str = Seq()
     array.`type`.foreach(t => str += genType(t))
     str += "["
-    str += genArrayValueParams(array.params.asInstanceOf[Option[List[TmplSetAttribute]]])
+    str += genArrayValueParams(array.params.asInstanceOf[Option[List[LangSetAttribute]]])
     str += "]"
     str
   }
 
-  def genArrayValueParams(params: Option[List[TmplSetAttribute]]): Seq = {
+  def genArrayValueParams(params: Option[List[LangSetAttribute]]): Seq = {
     val str = Seq()
     if (params.isDefined) {
       //      str += "{"
@@ -467,31 +467,31 @@ object KotlinGenerator {
     str
   }
 
-  def genStringValue(string: TmplStringValue): Seq = Seq.build("\"", string.value.toString, "\"")
+  def genStringValue(string: LangStringValue): Seq = Seq.build("\"", string.value.toString, "\"")
 
-  def genTextValue(string: TmplTextValue): Seq = Seq.build("\"", string.value.toString, "\"")
+  def genTextValue(string: LangTextValue): Seq = Seq.build("\"", string.value.toString, "\"")
 
-  def genLongValue(long: TmplLongValue): Seq = Seq(long.value.toString)
+  def genLongValue(long: LangLongValue): Seq = Seq(long.value.toString)
 
-  def genDoubleValue(double: TmplDoubleValue): Seq = Seq(double.value.toString)
+  def genDoubleValue(double: LangDoubleValue): Seq = Seq(double.value.toString)
 
-  def genBoolValue(bool: TmplBoolValue): Seq = Seq(if (bool.value) "true" else "false")
+  def genBoolValue(bool: LangBoolValue): Seq = Seq(if (bool.value) "true" else "false")
 
-  def genSetAttribute(attr: TmplSetAttribute): Seq = {
+  def genSetAttribute(attr: LangSetAttribute): Seq = {
     val str = Seq()
     if (attr.name.isDefined) str += genOptTmplID(attr.name) += ":"
     str += genOperation(attr.value)
     str
   }
 
-  def genOptTmplID(tmplId: Option[TmplID]): Seq = {
+  def genOptTmplID(tmplId: Option[LangID]): Seq = {
     if (tmplId.isDefined) genTmplID(tmplId.get)
     else Seq()
   }
 
-  def genTmplID(tmplId: TmplID): Seq = {
+  def genTmplID(tmplId: LangID): Seq = {
     tmplId match {
-      case str: TmplStringID =>
+      case str: LangStringID =>
         val seq = Seq("\"")
         seq += str.toString
         seq += "\""

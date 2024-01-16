@@ -10,7 +10,7 @@ import dev.tlang.tlang.interpreter.context.{Context, Scope}
 import dev.tlang.tlang.libraries.Modules
 import dev.tlang.tlang.loader.{BuildModuleTree, Module, Resource}
 import dev.tlang.tlang.resolver.checker.CheckExistingElement
-import dev.tlang.tlang.tmpl.TmplBlock
+import dev.tlang.tlang.tmpl.LangBlock
 import dev.tlang.tlang.tmpl.doc.ast.DocBlock
 import dev.tlang.tlang.tmpl.lang.ast
 import dev.tlang.tlang.tmpl.lang.ast.{LangBlock, TmplBlockAsValue}
@@ -36,7 +36,7 @@ object ResolveContext {
             ast.body.foreach {
               case HelperBlock(_, funcs) => funcs.foreach(func => extractErrors(errors, BrowseFunc.resolveFuncs(func, module, uses, resource._2)))
               case model: ModelBlock => extractErrors(errors, ResolveModel.resolveModel(model, module, uses, resource._2))
-              case tmpl: TmplBlock[_] => extractErrors(errors, ResolveTmpl.resolveTmpl(tmpl, module, uses, resource._2))
+              case tmpl: LangBlock[_] => extractErrors(errors, ResolveTmpl.resolveTmpl(tmpl, module, uses, resource._2))
             }
         }
       })
@@ -102,7 +102,7 @@ object ResolveContext {
           case None =>
         }
       }
-      case tmpl: TmplBlock[_] => findInTmpl(tmpl, name) match {
+      case tmpl: LangBlock[_] => findInTmpl(tmpl, name) match {
         case Right(value) => elem = value
         case Left(errs) => errors.addAll(errs)
       }
@@ -111,7 +111,7 @@ object ResolveContext {
     else Right(elem)
   }
 
-  def findInTmpl(tmpl: TmplBlock[_], name: String): Either[List[ResolverError], Option[Value[_]]] = {
+  def findInTmpl(tmpl: LangBlock[_], name: String): Either[List[ResolverError], Option[Value[_]]] = {
     val errors = ListBuffer.empty[ResolverError]
     var elem: Option[Value[_]] = None
     tmpl match {

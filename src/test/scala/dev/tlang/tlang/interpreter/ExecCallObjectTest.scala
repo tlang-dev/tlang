@@ -7,7 +7,7 @@ import dev.tlang.tlang.ast.common.value._
 import dev.tlang.tlang.ast.helper._
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetRef, ModelSetRefCurrying}
 import dev.tlang.tlang.interpreter.context.{Context, Scope}
-import dev.tlang.tlang.tmpl.lang.ast.{LangBlock, LangFullBlock, TmplBlockAsValue, TmplPkg, TmplStringID}
+import dev.tlang.tlang.tmpl.lang.ast.{LangBlock, LangFullBlock, TmplBlockAsValue, LangPkg, LangStringID}
 import org.scalatest.funsuite.AnyFunSuite
 
 import scala.collection.mutable
@@ -166,7 +166,7 @@ class ExecCallObjectTest extends AnyFunSuite {
   }
 
   test("Call tmpl in other resources") {
-    val tmpl = LangBlock(None, "myTmpl", "scala", None, LangFullBlock(None, "","",None,Some(TmplPkg(None, List(TmplStringID(None, "pkg1")))), None))
+    val tmpl = LangBlock(None, "myTmpl", "scala", None, LangFullBlock(None, "","",None,Some(LangPkg(None, List(LangStringID(None, "pkg1")))), None))
     val statement = CallObject(None, List(CallVarObject(None, "myResource"), CallFuncObject(None, Some("myTmpl"), None)))
     val context = Context(List(Scope(templates = mutable.Map("myResource/myTmpl" -> tmpl))))
     val res = ExecCallObject.run(statement, context).toOption.get.get

@@ -28,11 +28,11 @@ class ExecCallRefFuncTest extends AnyFunSuite {
   }
 
   test("Call tmpl") {
-    val calledTmpl = LangBlock(None, "myTmpl", "scala", Some(List(HelperParam(None, Some("param1"), ObjType(None, None, TLangString.getType)))), LangFullBlock(None, "", "", None, Some(TmplPkg(None, List(TmplStringID(None, "myPackage"))))))
+    val calledTmpl = LangBlock(None, "myTmpl", "scala", Some(List(HelperParam(None, Some("param1"), ObjType(None, None, TLangString.getType)))), LangFullBlock(None, "", "", None, Some(LangPkg(None, List(LangStringID(None, "myPackage"))))))
     val call = CallRefFuncObject(None, None, Some(List(CallFuncParam(None, Some(List(SetAttribute(None, value = Operation(None, None, Right(new TLangString(None, "myValue"))))))))), Some(Right(calledTmpl)))
 
     val res = ExecCallRefFunc.run(call, Context()).toOption.get.get.head.asInstanceOf[TmplBlockAsValue]
-    assert("myPackage" == res.block.asInstanceOf[LangBlock].content.pkg.get.parts.head.asInstanceOf[TmplStringID].id)
+    assert("myPackage" == res.block.asInstanceOf[LangBlock].content.pkg.get.parts.head.asInstanceOf[LangStringID].id)
     assert("myValue" == res.context.scopes.head.variables.head._2.asInstanceOf[TLangString].getElement)
   }
 

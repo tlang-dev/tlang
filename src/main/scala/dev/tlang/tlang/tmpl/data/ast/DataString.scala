@@ -5,9 +5,9 @@ import dev.tlang.tlang.ast.common.value.EntityValue
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
-import dev.tlang.tlang.tmpl.lang.ast.{TmplLangAst, TmplNode}
+import dev.tlang.tlang.tmpl.lang.ast.LangNode
 
-case class DataString(context: Option[ContextContent]) extends TmplNode[DataString] {
+case class DataString(context: Option[ContextContent]) extends LangNode[DataString] {
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, toModel.name)),

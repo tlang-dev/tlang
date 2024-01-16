@@ -5,9 +5,9 @@ import dev.tlang.tlang.ast.common.value.EntityValue
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
-import dev.tlang.tlang.tmpl.lang.ast.TmplNode
+import dev.tlang.tlang.tmpl.lang.ast.LangNode
 
-case class StyleValue(context: Option[ContextContent]) extends TmplNode[StyleValue] {
+case class StyleValue(context: Option[ContextContent]) extends LangNode[StyleValue] {
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, toModel.name)),
     Some(List())

@@ -3,13 +3,13 @@ package dev.tlang.tlang.generator.langs.dart
 import dev.tlang.tlang.generator.formatter.{FormatManager, FormatRule, Formatter, Indent}
 import dev.tlang.tlang.generator.langs.BlockGenerator
 import dev.tlang.tlang.generator.langs.common.GenParameter
-import dev.tlang.tlang.tmpl.lang.ast.{TmplExprBlock, TmplNode}
+import dev.tlang.tlang.tmpl.lang.ast.{LangExprBlock, LangNode}
 
 object GenericExprBlock extends BlockGenerator {
 
-  override def generate(node: TmplNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (TmplNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent): Indent = {
+  override def generate(node: LangNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (LangNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent): Indent = {
     var _ind = indent
-    val tmpl = node.asInstanceOf[TmplExprBlock]
+    val tmpl = node.asInstanceOf[LangExprBlock]
     val expBlockRules = FormatManager.findRules("exprBlock", rules)
     _ind = FormatManager.applyRules(str, expBlockRules, "{", _ind)
     tmpl.exprs.foreach(content => {

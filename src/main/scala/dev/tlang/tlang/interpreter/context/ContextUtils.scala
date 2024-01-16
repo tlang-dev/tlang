@@ -5,7 +5,7 @@ import dev.tlang.tlang.ast.common.value.{TLangBool, TLangDouble, TLangLong, TLan
 import dev.tlang.tlang.ast.helper.HelperFunc
 import dev.tlang.tlang.ast.model.set.ModelSetValueType
 import dev.tlang.tlang.interpreter.Value
-import dev.tlang.tlang.tmpl.TmplBlock
+import dev.tlang.tlang.tmpl.LangBlock
 import dev.tlang.tlang.tmpl.lang.ast.LangBlock
 
 object ContextUtils {
@@ -43,9 +43,9 @@ object ContextUtils {
     func
   }
 
-  def findTmpl(context: Context, name: String): Option[TmplBlock[_]] = {
+  def findTmpl(context: Context, name: String): Option[LangBlock[_]] = {
     var i = context.scopes.length - 1
-    var tmpl: Option[TmplBlock[_]] = None
+    var tmpl: Option[LangBlock[_]] = None
     while (tmpl.isEmpty && i >= 0) {
       context.scopes(i).templates.get(name).foreach(value => tmpl = Some(value))
       i -= 1

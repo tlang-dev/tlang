@@ -9,12 +9,12 @@ import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.interpreter.context.Scope
-import dev.tlang.tlang.tmpl.TmplBlock
+import dev.tlang.tlang.tmpl.LangBlock
 
 case class LangBlock(context: Option[ContextContent], name: String, lang: String,
                      var params: Option[List[HelperParam]],
                      var content: LangFullBlock,
-                     scope: Scope = Scope()) extends DomainBlock with TmplBlock[LangBlock] {
+                     scope: Scope = Scope()) extends DomainBlock with LangBlock[LangBlock] {
 
   override def deepCopy(): LangBlock =
     LangBlock(context, name, lang, params,
