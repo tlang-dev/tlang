@@ -9,12 +9,12 @@ import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.interpreter.context.Scope
-import dev.tlang.tlang.tmpl.LangBlock
+import dev.tlang.tlang.tmpl.AnyTmplBlock
 
 case class LangBlock(context: Option[ContextContent], name: String, lang: String,
                      var params: Option[List[HelperParam]],
                      var content: LangFullBlock,
-                     scope: Scope = Scope()) extends DomainBlock with LangBlock[LangBlock] {
+                     scope: Scope = Scope()) extends DomainBlock with AnyTmplBlock[LangBlock] {
 
   override def deepCopy(): LangBlock =
     LangBlock(context, name, lang, params,
@@ -30,9 +30,9 @@ case class LangBlock(context: Option[ContextContent], name: String, lang: String
   override def getType: String = getClass.getSimpleName
 
   override def toEntity: EntityValue = {
-    EntityValue(context, Some(ObjType(context, None, TmplLangAst.tmplLang.name)), Some(List(
+    EntityValue(context, Some(ObjType(context, None, LangBlock.name)), Some(List(
       ComplexAttribute(context, Some("content"),
-        Some(ObjType(context, None, TmplLangAst.langFullBlock.name)), Operation(context, None, Right(content.toEntity))
+        Some(ObjType(context, None, LangFullBlock.name)), Operation(context, None, Right(content.toEntity))
       ))))
   }
 
@@ -49,6 +49,8 @@ case class LangBlock(context: Option[ContextContent], name: String, lang: String
 
 object LangBlock {
 
-  val model: ModelSetEntity = ModelSetEntity(None, "LangBlock", Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  val name: String = this.getClass.getSimpleName.replace("$", "")
+
+  val model: ModelSetEntity = ModelSetEntity(None, "LangBlock", Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
   )))
 }

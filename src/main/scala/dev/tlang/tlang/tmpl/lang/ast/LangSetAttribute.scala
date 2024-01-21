@@ -20,11 +20,18 @@ case class LangSetAttribute(context: Option[ContextContent], var name: Option[La
   override def getType: String = getClass.getSimpleName
 
   override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, TmplLangAst.tmplSetAttribute.name)),
+    Some(ObjType(context, None, LangSetAttribute.name)),
     Some(List(
 
     )))
 
-  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  override def toModel: ModelSetEntity = LangSetAttribute.model
+}
+
+object LangSetAttribute {
+
+  val name: String = this.getClass.getSimpleName.replace("$", "")
+
+  val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
   )))
 }

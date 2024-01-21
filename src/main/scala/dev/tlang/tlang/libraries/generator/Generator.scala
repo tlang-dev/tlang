@@ -14,7 +14,7 @@ import dev.tlang.tlang.generator.langs.xml.XMLGenerator
 import dev.tlang.tlang.generator.langs.yml.YMLGenerator
 import dev.tlang.tlang.interpreter._
 import dev.tlang.tlang.interpreter.context.{Context, ContextUtils, Scope}
-import dev.tlang.tlang.tmpl.lang.ast.TmplBlockAsValue
+import dev.tlang.tlang.tmpl.lang.ast.LangBlockAsValue
 
 import scala.collection.mutable
 
@@ -33,11 +33,11 @@ object Generator {
     "kotlin" -> new KotlinGenerator(),
   )
 
-  def generateFunc: HelperFunc = HelperFunc(None, "generate", Some(List(HelperCurrying(None, List(HelperParam(None, Some("block"), ObjType(None, None, TmplBlockAsValue.getType)))))),
+  def generateFunc: HelperFunc = HelperFunc(None, "generate", Some(List(HelperCurrying(None, List(HelperParam(None, Some("block"), ObjType(None, None, LangBlockAsValue.getType)))))),
     Some(List(ObjType(None, None, TLangString.getType))), HelperContent(None, Some(List(
       HelperInternalFunc((context: Context) => {
         ContextUtils.findVar(context, "block") match {
-          case Some(block) => generate(block.asInstanceOf[TmplBlockAsValue], context) match {
+          case Some(block) => generate(block.asInstanceOf[LangBlockAsValue], context) match {
             case Left(error) =>
               Right(Some(List(new TLangString(None, error.toString))))
             case Right(value) => Right(Some(List(value)))
@@ -47,14 +47,14 @@ object Generator {
       })
     ))))
 
-  def generate(block: TmplBlockAsValue, context: Context): Either[ExecError, TLangString] = {
+  def generate(block: LangBlockAsValue, context: Context): Either[ExecError, TLangString] = {
     TemplateBuilder.buildBlockAsValue(block) match {
       case Left(error) => Left(error)
       case Right(newBlock) => generateAfterMapping(newBlock, context)
     }
   }
 
-  private def generateAfterMapping(block: TmplBlockAsValue, context: Context): Either[ExecError, TLangString] = {
+  private def generateAfterMapping(block: LangBlockAsValue, context: Context): Either[ExecError, TLangString] = {
     //    generators.get(block.block.lang) match {
     //      case None => Left(ElementNotFound("This language does not exist: " + block.block.lang))
     //      case Some(generator) =>

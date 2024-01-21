@@ -5,13 +5,14 @@ import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.value.EntityValue
 import dev.tlang.tlang.astbuilder.BuildAst
 import dev.tlang.tlang.astbuilder.context.ContextResource
+import dev.tlang.tlang.tmpl.lang.ast.call.LangCallArray
 
 object BuildLangCall {
 
-  def buildCallArray(resource: ContextResource, func: TmplCallArrayContext): EntityValue = {
+ /* def buildCallArray(resource: ContextResource, func: TmplCallArrayContext): EntityValue = {
     val context = BuildAst.addContext(resource, func)
     EntityValue(context,
-      Some(ObjType(context, None, TmplCallAst.tmplCallArray.name)),
+      Some(ObjType(context, None, LangCallArray.name)),
       Some(List(
 
       ))
@@ -66,5 +67,5 @@ object BuildLangCall {
 
       ))
     )
-  }
+  }*/
 }

@@ -26,7 +26,7 @@ case class LangImpl(context: Option[ContextContent], var annots: Option[List[Lan
   override def getType: String = getClass.getSimpleName
 
   override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, TmplImplAst.langImpl.name)),
+    Some(ObjType(context, None, LangImpl.name)),
     Some(List(
       BuildLang.createAttrEntity(context, "name", name.toEntity),
       //      BuildLang.createAttrEntity(context, "fors", fors.t),

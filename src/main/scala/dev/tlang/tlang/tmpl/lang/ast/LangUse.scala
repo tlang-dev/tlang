@@ -21,7 +21,7 @@ case class LangUse(context: Option[ContextContent], var parts: List[LangID], var
 
   override def toEntity: EntityValue = {
     EntityValue(context,
-      Some(ObjType(context, None, TmplLangAst.langUse.name)),
+      Some(ObjType(context, None, LangUse.name)),
       Some(List(
         createArray(context, "parts", parts.map(part => part.toEntity))
       )
@@ -33,7 +33,9 @@ case class LangUse(context: Option[ContextContent], var parts: List[LangID], var
 
 object LangUse {
 
-  val model: ModelSetEntity = ModelSetEntity(None, "LangUse", Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  val name: String = this.getClass.getSimpleName.replace("$", "")
+
+  val model: ModelSetEntity = ModelSetEntity(None, "LangUse", Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
   )))
 }
 

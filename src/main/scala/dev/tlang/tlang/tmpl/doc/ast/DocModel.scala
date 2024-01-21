@@ -1,11 +1,11 @@
 package dev.tlang.tlang.tmpl.doc.ast
 
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity}
-import .langContext
+import dev.tlang.tlang.tmpl.lang.ast.LangModel
 
 object DocModel {
   val docModel: ModelSetEntity = ModelSetEntity(None, "DocNode", None, None, Some(List(
-    ModelSetAttribute(None, Some("context"), langContext)
+    ModelSetAttribute(None, Some("context"), LangModel.langContext)
   )))
 
   val getAll: List[ModelSetEntity] = List(

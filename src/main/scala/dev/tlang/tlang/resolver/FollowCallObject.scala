@@ -6,7 +6,7 @@ import dev.tlang.tlang.ast.helper.HelperFunc
 import dev.tlang.tlang.interpreter.context.Scope
 import dev.tlang.tlang.loader.{Module, Resource}
 import dev.tlang.tlang.resolver.ResolveContext.{addValueInScope, extractErrors, findInResource, followCall}
-import dev.tlang.tlang.tmpl.lang.ast.TmplBlockAsValue
+import dev.tlang.tlang.tmpl.lang.ast.LangBlockAsValue
 
 import scala.collection.mutable.ListBuffer
 
@@ -49,7 +49,7 @@ object FollowCallObject {
             BrowseHelperStatement.browseCallFuncObjectParams(funcObject.currying, value.get, module, uses, scope, currentResource)
           case funcObject: CallRefFuncObject =>
             value.get match {
-              case tmpl: TmplBlockAsValue => funcObject.func = Some(Right(tmpl.block))
+              case tmpl: LangBlockAsValue => funcObject.func = Some(Right(tmpl.block))
               case func: HelperFunc => funcObject.func = Some(Left(func))
             }
             BrowseHelperStatement.browseCallFuncObjectParams(funcObject.currying, value.get, module, uses, scope, currentResource)

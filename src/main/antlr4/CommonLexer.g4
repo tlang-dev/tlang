@@ -95,6 +95,7 @@ LSQUARE: '[';
 RSQUARE: ']';
 INTEPRETED: '${';
 As: 'as';
+Then : 'then';
 
 Sync: 'sync';
 Init: 'init';

@@ -23,8 +23,7 @@ case class LangCallObjectLink(context: Option[ContextContent], var link: String 
     Some(List())
   )
 
-  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
-  )))
+  override def toModel: ModelSetEntity = LangCallObjectLink.model
 }
 
 object LangCallObjectLink {

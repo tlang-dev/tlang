@@ -7,6 +7,7 @@ import dev.tlang.tlang.ast.helper._
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetRef, ModelSetRefCurrying}
 import dev.tlang.tlang.generator.LangEntityUtils
 import dev.tlang.tlang.interpreter.context.{Context, ContextUtils}
+import dev.tlang.tlang.tmpl.lang.ast.{LangReplacedId, LangStringID}
 
 class StrBuilderEntity(strBuilder: StringBuilder) {
 
@@ -53,8 +54,8 @@ class StrBuilderEntity(strBuilder: StringBuilder) {
 
   private def primitiveEntityToString(entity: EntityValue): String = {
     entity.getType match {
-      case TmplValueAst.langStringId.name => LangEntityUtils.findStrValue(entity)
-      case TmplValueAst.langReplacedId.name => LangEntityUtils.findStrValue(entity)
+      case LangStringID.name => LangEntityUtils.findStrValue(entity)
+      case LangReplacedId.name => LangEntityUtils.findStrValue(entity)
     }
   }
 

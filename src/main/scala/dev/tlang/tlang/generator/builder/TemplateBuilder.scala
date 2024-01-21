@@ -4,7 +4,7 @@ import dev.tlang.tlang.ast.common.call.CallObject
 import dev.tlang.tlang.generator.mapper.ValueMapper
 import dev.tlang.tlang.interpreter.context.Context
 import dev.tlang.tlang.interpreter.{ExecCallObject, ExecError, NoValue, Value}
-import dev.tlang.tlang.tmpl.LangBlock
+import dev.tlang.tlang.tmpl.AnyTmplBlock
 import dev.tlang.tlang.tmpl.doc.ast.DocBlock
 import dev.tlang.tlang.tmpl.lang.ast._
 import dev.tlang.tlang.tmpl.lang.ast.call._
@@ -16,7 +16,7 @@ import scala.collection.mutable.ListBuffer
 
 object TemplateBuilder {
 
-  def buildBlockAsValue(blockAsValue: TmplBlockAsValue): Either[ExecError, TmplBlockAsValue] = {
+  def buildBlockAsValue(blockAsValue: LangBlockAsValue): Either[ExecError, LangBlockAsValue] = {
     buildBlock(blockAsValue.block, blockAsValue.context) match {
       case Left(error) => Left(error)
       case Right(newBLock) =>
@@ -26,7 +26,7 @@ object TemplateBuilder {
     }
   }
 
-  def buildBlock(block: LangBlock[_], context: Context): Either[ExecError, LangBlock[_]] = {
+  def buildBlock(block: AnyTmplBlock[_], context: Context): Either[ExecError, AnyTmplBlock[_]] = {
     block match {
       case doc: DocBlock => buildDocBlock(doc, context)
       case lang: LangBlock => buildLangBlock(lang, context)
@@ -325,7 +325,7 @@ object TemplateBuilder {
 
   def buildValue(value: Value[_]): Either[ExecError, LangNode[_]] = {
     value match {
-      case valueBlock: TmplBlockAsValue =>
+      case valueBlock: LangBlockAsValue =>
         buildBlockAsValue(valueBlock)
       case value: Value[_] => Right(value.asInstanceOf[LangNode[_]])
     }

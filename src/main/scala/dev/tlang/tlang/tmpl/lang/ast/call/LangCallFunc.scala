@@ -20,7 +20,7 @@ case class LangCallFunc(context: Option[ContextContent], var name: LangID, var c
   override def getType: String = getClass.getSimpleName
 
   override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, TmplCallAst.tmplCallFunc.name)),
+    Some(ObjType(context, None, LangCallFunc.name)),
     Some(List())
   )
 
@@ -28,6 +28,9 @@ case class LangCallFunc(context: Option[ContextContent], var name: LangID, var c
 }
 
 object LangCallFunc {
+
+  val name: String = this.getClass.getSimpleName.replace("$", "")
+
   val model: ModelSetEntity = ModelSetEntity(None, "LangCallFunc", Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
   )))
 }

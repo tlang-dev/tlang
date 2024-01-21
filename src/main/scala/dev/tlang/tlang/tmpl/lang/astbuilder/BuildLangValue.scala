@@ -6,15 +6,15 @@ import dev.tlang.tlang.ast.common.call.CallObject
 import dev.tlang.tlang.ast.common.value.EntityValue
 import dev.tlang.tlang.astbuilder.context.{ContextContent, ContextResource}
 import dev.tlang.tlang.astbuilder.{AstBuilderUtils, BuildAst, BuildHelperStatement}
-import BuildLang.createAttrStr
-import dev.tlang.tlang.tmpl.lang.ast.LangType
+import dev.tlang.tlang.tmpl.lang.ast.{LangType, LangVar}
+import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang.createAttrStr
 
 object BuildLangValue {
 
-  def buildVar(resource: ContextResource, func: TmplVarContext): EntityValue = {
+ /* def buildVar(resource: ContextResource, func: TmplVarContext): EntityValue = {
     val context = BuildAst.addContext(resource, func)
     EntityValue(context,
-      Some(ObjType(context, None, TmplValueAst.langVar.name)),
+      Some(ObjType(context, None, LangVar.name)),
       Some(List(
 
       ))
@@ -25,7 +25,7 @@ object BuildLangValue {
   def buildValueType(resource: ContextResource, func: TmplValueTypeContext): EntityValue = {
     val context = BuildAst.addContext(resource, func)
     EntityValue(context,
-      Some(ObjType(context, None, TmplValueAst.langValueType.name)),
+      Some(ObjType(context, None, LangValueType.name)),
       Some(List(
 
       ))
@@ -173,5 +173,5 @@ object BuildLangValue {
 
       ))
     )
-  }
+  }*/
 }

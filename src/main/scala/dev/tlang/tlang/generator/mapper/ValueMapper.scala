@@ -5,18 +5,18 @@ import dev.tlang.tlang.interpreter.ExecCallObject
 import dev.tlang.tlang.interpreter.context.Context
 import dev.tlang.tlang.libraries.generator.Generator
 import dev.tlang.tlang.tmpl.doc.ast.DocBlock
+import dev.tlang.tlang.tmpl.lang.ast._
 import dev.tlang.tlang.tmpl.lang.ast.call._
 import dev.tlang.tlang.tmpl.lang.ast.condition.LangOperation
 import dev.tlang.tlang.tmpl.lang.ast.func.{LangAnnotationParam, LangAnonFunc, LangFunc}
 import dev.tlang.tlang.tmpl.lang.ast.loop.LangFor
 import dev.tlang.tlang.tmpl.lang.ast.primitive._
-import dev.tlang.tlang.tmpl.lang.ast._
 
 import scala.collection.mutable.ListBuffer
 
 object ValueMapper {
 
-  def mapBlockAsValue(blockAsValue: TmplBlockAsValue): TmplBlockAsValue = {
+  def mapBlockAsValue(blockAsValue: LangBlockAsValue): LangBlockAsValue = {
     val block = blockAsValue.block
     val con = blockAsValue.context
     block match {
@@ -409,7 +409,7 @@ object ValueMapper {
         case Right(value) => if (value.isDefined) {
           value.get.head match {
             case str: TLangString => LangStringID(interId.context, interId.pre.getOrElse("") + str.getElement + interId.post.getOrElse(""))
-            case block: TmplBlockAsValue => LangStringID(interId.context, interId.pre.getOrElse("") + Generator.generate(block, context) + interId.post.getOrElse(""))
+            case block: LangBlockAsValue => LangStringID(interId.context, interId.pre.getOrElse("") + Generator.generate(block, context) + interId.post.getOrElse(""))
             case _ => LangStringID(interId.context, interId.pre.getOrElse("") + value.get.head.toString + interId.post.getOrElse(""))
           }
         } else LangStringID(interId.context, "Undefined")

@@ -8,6 +8,9 @@ import dev.tlang.tlang.ast.common.value._
 import dev.tlang.tlang.astbuilder.BuildAst
 import dev.tlang.tlang.astbuilder.BuildAst.addContext
 import dev.tlang.tlang.astbuilder.context.{ContextContent, ContextResource}
+import dev.tlang.tlang.tmpl.lang.ast.condition.LangOperation
+import dev.tlang.tlang.tmpl.lang.ast.func.LangAnonFunc
+import dev.tlang.tlang.tmpl.lang.ast._
 
 import scala.jdk.CollectionConverters.CollectionHasAsScala
 
@@ -36,10 +39,10 @@ object BuildLang {
        Some(elems.toList))
    }*/
 
-  def buildPkg(resource: ContextResource, pkg: TLang.TmplPkgContext): EntityValue = {
+/*  def buildPkg(resource: ContextResource, pkg: TLang.TmplPkgContext): EntityValue = {
     val context = addContext(resource, pkg)
     EntityValue(context,
-      Some(ObjType(context, None, TmplLangAst.langPkg.name)),
+      Some(ObjType(context, None, LangPkg.name)),
       Some(List(
         ComplexAttribute(context, Some("parts"),
           None, Operation(context, None, Right(ArrayValue(context, Some(pkg.parts.asScala.toList.map(part => ComplexAttribute(context, None, None, Operation(context, None, Right(new TLangString(context, part.getText)))))))))
@@ -57,12 +60,12 @@ object BuildLang {
     //      if (use.alias != null && !use.alias.isEmpty) Some(buildId(resource, use.alias)) else None)
     val context = addContext(resource, use)
     EntityValue(context,
-      Some(ObjType(context, None, TmplLangAst.langUse.name)),
+      Some(ObjType(context, None, LangUse.name)),
       Some(List(
         createArray(context, "parts", use.parts.asScala.toList.map(part => BuildLangValue.buildId(resource, part)))
       )
       ))
-  }
+  }*/
 
   def createAttrStr(context: Option[ContextContent], name: String, value: String): ComplexAttribute = {
     ComplexAttribute(context, Some(name), None, Operation(
@@ -88,7 +91,7 @@ object BuildLang {
     )
   }
 
-  def buildContents(resource: ContextResource, content: List[TmplContentContext]): List[EntityValue] = {
+  /*def buildContents(resource: ContextResource, content: List[TmplContentContext]): List[EntityValue] = {
     if (content.nonEmpty) content.map(buildContent(resource, _))
     else List()
   }
@@ -105,7 +108,7 @@ object BuildLang {
   def buildSpecialBlock(resource: ContextResource, block: TmplSpecialBlockContext): EntityValue = {
     val context = addContext(resource, block)
     EntityValue(context,
-      Some(ObjType(context, None, TmplLangAst.tmplSpecialBlock.name)),
+      Some(ObjType(context, None, LangSpecialBlock.name)),
       Some(List(
         //        ComplexAttribute(context, Some("parts"),
         //          None, Operation(context, None, Right(ArrayValue(context, Some(pkg.parts.asScala.toList.map(part => ComplexAttribute(context, None, None, Operation(context, None, Right(new TLangString(context, part.getText)))))))))
@@ -136,7 +139,7 @@ object BuildLang {
   def buildIf(resource: ContextResource, func: TmplIfContext): EntityValue = {
     val context = BuildAst.addContext(resource, func)
     EntityValue(context,
-      Some(ObjType(context, None, TmplLangAst.tmplIf.name)),
+      Some(ObjType(context, None, LangIf.name)),
       Some(List(
 
       ))
@@ -146,7 +149,7 @@ object BuildLang {
   def buildInclude(resource: ContextResource, func: TmplIncludeContext): EntityValue = {
     val context = BuildAst.addContext(resource, func)
     EntityValue(context,
-      Some(ObjType(context, None, TmplLangAst.tmplInclude.name)),
+      Some(ObjType(context, None, LangInclude.name)),
       Some(List(
 
       ))
@@ -156,7 +159,7 @@ object BuildLang {
   def buildReturn(resource: ContextResource, func: TmplReturnContext): EntityValue = {
     val context = BuildAst.addContext(resource, func)
     EntityValue(context,
-      Some(ObjType(context, None, TmplLangAst.langReturn.name)),
+      Some(ObjType(context, None, LangReturn.name)),
       Some(List(
 
       ))
@@ -166,7 +169,7 @@ object BuildLang {
   def buildAnonFunc(resource: ContextResource, func: TmplAnonFuncContext): EntityValue = {
     val context = BuildAst.addContext(resource, func)
     EntityValue(context,
-      Some(ObjType(context, None, TmplFuncAst.langAnonFunc.name)),
+      Some(ObjType(context, None, LangAnonFunc.name)),
       Some(List(
 
       ))
@@ -176,11 +179,11 @@ object BuildLang {
   def buildOperation(resource: ContextResource, op: TmplOperationContext): EntityValue = {
     val context = BuildAst.addContext(resource, op)
     EntityValue(context,
-      Some(ObjType(context, None, TmplExprAst.langOperation.name)),
+      Some(ObjType(context, None, LangOperation.name)),
       Some(List(
 
       ))
     )
-  }
+  }*/
 
 }

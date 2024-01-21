@@ -11,7 +11,7 @@ import dev.tlang.tlang.interpreter.{ExecCallFunc, Value}
 import dev.tlang.tlang.loader
 import dev.tlang.tlang.loader.Resource
 import dev.tlang.tlang.resolver.ResolveContext.extractErrors
-import dev.tlang.tlang.tmpl.lang.ast.TmplBlockAsValue
+import dev.tlang.tlang.tmpl.lang.ast.LangBlockAsValue
 
 import scala.collection.mutable.ListBuffer
 
@@ -108,7 +108,7 @@ object BrowseHelperStatement {
     currying.foreach(_.zipWithIndex.foreach(curry => curry._1.params.foreach(_.zipWithIndex.foreach(param => {
       val paramName = called match {
         case func: HelperFunc => Some(ExecCallFunc.findParamName(curry._2, param._2, func))
-        case tmpl: TmplBlockAsValue => Some(ExecCallFunc.findTmplParamName(param._2, tmpl.block))
+        case tmpl: LangBlockAsValue => Some(ExecCallFunc.findTmplParamName(param._2, tmpl.block))
         case _ => None // Can happen but we don't need to follow
       }
       if (paramName.isDefined) extractErrors(errors, browseStatement(param._1.value, module, uses, scope, currentResource, paramName))

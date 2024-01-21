@@ -8,11 +8,11 @@ import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.interpreter.context.Scope
-import dev.tlang.tlang.tmpl.LangBlock
+import dev.tlang.tlang.tmpl.AnyTmplBlock
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 
 case class DocBlock(context: Option[ContextContent], name: String, lang: String,
-                    var params: Option[List[HelperParam]], content: DocContent, scope: Scope = Scope()) extends DomainBlock with LangBlock[DocBlock] {
+                    var params: Option[List[HelperParam]], content: DocContent, scope: Scope = Scope()) extends DomainBlock with AnyTmplBlock[DocBlock] {
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, toModel.name)),
     Some(List(

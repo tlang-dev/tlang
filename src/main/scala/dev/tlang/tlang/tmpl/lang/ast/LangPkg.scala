@@ -22,7 +22,7 @@ case class LangPkg(context: Option[ContextContent], var parts: List[LangID]) ext
 
   override def toEntity: EntityValue = {
     EntityValue(context,
-      Some(ObjType(context, None, TmplLangAst.langPkg.name)),
+      Some(ObjType(context, None, LangPkg.name)),
       Some(List(
         ComplexAttribute(context, Some("parts"),
           None, Operation(context, None, Right(ArrayValue(context, Some(parts.map(part => ComplexAttribute(context, None, None, Operation(context, None, Right(new TLangString(context, part.toString)))))))))
@@ -35,6 +35,8 @@ case class LangPkg(context: Option[ContextContent], var parts: List[LangID]) ext
 
 object LangPkg {
 
-  val model: ModelSetEntity = ModelSetEntity(None, "LangPkg", Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  val name: String = this.getClass.getSimpleName.replace("$", "")
+
+  val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
   )))
 }

@@ -4,6 +4,7 @@ import dev.tlang.tlang.ast.common.{ObjType, ValueType}
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.{ExecError, NotImplemented, Value}
+import dev.tlang.tlang.tmpl.lang.ast.LangModel
 
 case class ArrayValue(context: Option[ContextContent], tbl: Option[List[ComplexAttribute]]) extends PrimitiveValue[ArrayValue] {
   override def getElement: ArrayValue = this
@@ -30,11 +31,11 @@ case class ArrayValue(context: Option[ContextContent], tbl: Option[List[ComplexA
   override def deepCopy(): ArrayValue = ArrayValue(context, tbl)
 
   override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, TmplValueAst.langArray.name)),
+    Some(ObjType(context, None, ArrayValue.getType)),
     Some(List())
   )
 
-  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
   )))
 }
 

@@ -35,11 +35,18 @@ case class LangInterpretedID(context: Option[ContextContent], pre: Option[String
   override def getType: String = getClass.getSimpleName
 
   override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, LangInterpretedId.name)),
+    Some(ObjType(context, None, LangInterpretedID.name)),
     Some(List())
   )
 
-  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  override def toModel: ModelSetEntity = LangInterpretedID.model
+}
+
+object LangInterpretedID {
+
+  val name: String = this.getClass.getSimpleName.replace("$", "")
+
+  val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
   )))
 }
 
@@ -67,7 +74,14 @@ case class LangReplacedId(context: Option[ContextContent], pre: Option[String] =
     Some(List(BuildLang.createAttrStr(context, "value", pre.getOrElse("") + node.toString + post.getOrElse(""))))
   )
 
-  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  override def toModel: ModelSetEntity = LangReplacedId.model
+}
+
+object LangReplacedId {
+
+  val name: String = this.getClass.getSimpleName.replace("$", "")
+
+  val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
   )))
 }
 
@@ -83,13 +97,20 @@ case class LangStringID(context: Option[ContextContent], id: String) extends Lan
   override def getType: String = getClass.getSimpleName
 
   override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, TmplValueAst.langStringId.name)),
+    Some(ObjType(context, None, LangStringID.name)),
     Some(List(
       BuildLang.createAttrStr(context, "value", id)
     ))
   )
 
-  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  override def toModel: ModelSetEntity = LangStringID.model
+}
+
+object LangStringID {
+
+  val name: String = this.getClass.getSimpleName.replace("$", "")
+
+  val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
   )))
 }
 
@@ -105,10 +126,17 @@ case class LangBlockID(context: Option[ContextContent], block: LangBlock) extend
   override def getType: String = getClass.getSimpleName
 
   override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, TmplValueAst.langBlockId.name)),
+    Some(ObjType(context, None, LangBlockID.name)),
     Some(List())
   )
 
-  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  override def toModel: ModelSetEntity = LangBlockID.model
+}
+
+object LangBlockID {
+
+  val name: String = this.getClass.getSimpleName.replace("$", "")
+
+  val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
   )))
 }

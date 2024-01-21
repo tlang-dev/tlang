@@ -4,6 +4,7 @@ import dev.tlang.tlang.ast.common.{ObjType, ValueType}
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
 import dev.tlang.tlang.interpreter.{ExecError, Value}
+import dev.tlang.tlang.tmpl.lang.ast.LangModel
 
 class TLangLong(context: Option[ContextContent], value: Long) extends PrimitiveValue[Long] with AstContext {
   override def getElement: Long = value
@@ -29,11 +30,11 @@ class TLangLong(context: Option[ContextContent], value: Long) extends PrimitiveV
   override def deepCopy(): TLangLong = new TLangLong(context, value)
 
   override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, TmplValueAst.langLong.name)),
+    Some(ObjType(context, None, TLangLong.getType)),
     Some(List())
   )
 
-  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
   )))
 }
 

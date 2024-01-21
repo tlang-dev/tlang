@@ -22,11 +22,13 @@ operation: (content=complexValueType (op=operator  next=operation)* |
 
 operator: '&&' | '||' | '+' | '-' | MULTIPLY | '/' | '%' | '==' | '!=' | '>' | '<' | '>=' | '<=' ;
 
-complexValueType: callObj | primitiveValue | multiValue | lazyValue | impl;
+complexValueType: callObj | primitiveValue | multiValue | lazyValue | impl | either;
 
 primitiveValue: stringValue | numberValue | textValue | entityValue | boolValue | arrayValue;
 
 lazyValue: '_';
+
+either: left=valueType '|' right=valueType;
 
 stringValue: value=STRING;
 
@@ -38,17 +40,18 @@ boolValue: True | False;
 
 arrayValue: '[' (params+=complexAttribute)? (',' params+=complexAttribute)* RSQUARE;
 
-callObj: objs+=callObjType ('.' objs+=callObjType)*;
+callObj: objs+=callObjType ((callType='.' | '?.') objs+=callObjType)* ('??' nonNull=callObjType)?;
 
 callObjType: callArray | (ref='&')? callFunc | callVariable;
 
 callArray: name=ID '[' elem=operation RSQUARE;
 
-callFunc: ((name=ID) | '_') (currying += curryParams)+;
+callFunc: ((name=ID) | '_') (currying += curryParams)+
+    (Then content=operation)?
+    (Catch content=operation)?
+    (Finally content=operation)?;
 
 curryParams:'(' (params+=setAttribute (',' params+=setAttribute)*)? ')';
-
-
 
 setAttribute: (attr=ID '=')? value=operation;
 

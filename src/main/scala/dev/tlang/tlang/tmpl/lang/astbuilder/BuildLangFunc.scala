@@ -9,7 +9,7 @@ import dev.tlang.tlang.astbuilder.context.ContextResource
 
 object BuildLangFunc {
 
-  def buildFunc(resource: ContextResource, func: TmplFuncContext): EntityValue = {
+ /* def buildFunc(resource: ContextResource, func: TmplFuncContext): EntityValue = {
     val context = BuildAst.addContext(resource, func)
     EntityValue(context,
       Some(ObjType(context, None, TmplFuncAst.langFunc.name)),
@@ -37,6 +37,6 @@ object BuildLangFunc {
 
       ))
     )
-  }
+  }*/
 
 }

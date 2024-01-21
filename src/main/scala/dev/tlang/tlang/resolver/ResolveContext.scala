@@ -10,10 +10,9 @@ import dev.tlang.tlang.interpreter.context.{Context, Scope}
 import dev.tlang.tlang.libraries.Modules
 import dev.tlang.tlang.loader.{BuildModuleTree, Module, Resource}
 import dev.tlang.tlang.resolver.checker.CheckExistingElement
-import dev.tlang.tlang.tmpl.LangBlock
+import dev.tlang.tlang.tmpl.AnyTmplBlock
 import dev.tlang.tlang.tmpl.doc.ast.DocBlock
-import dev.tlang.tlang.tmpl.lang.ast
-import dev.tlang.tlang.tmpl.lang.ast.{LangBlock, TmplBlockAsValue}
+import dev.tlang.tlang.tmpl.lang.ast.{LangBlock, LangBlockAsValue}
 
 import scala.collection.mutable.ListBuffer
 
@@ -36,7 +35,7 @@ object ResolveContext {
             ast.body.foreach {
               case HelperBlock(_, funcs) => funcs.foreach(func => extractErrors(errors, BrowseFunc.resolveFuncs(func, module, uses, resource._2)))
               case model: ModelBlock => extractErrors(errors, ResolveModel.resolveModel(model, module, uses, resource._2))
-              case tmpl: LangBlock[_] => extractErrors(errors, ResolveTmpl.resolveTmpl(tmpl, module, uses, resource._2))
+              case tmpl: AnyTmplBlock[_] => extractErrors(errors, ResolveTmpl.resolveTmpl(tmpl, module, uses, resource._2))
             }
         }
       })
@@ -102,7 +101,7 @@ object ResolveContext {
           case None =>
         }
       }
-      case tmpl: LangBlock[_] => findInTmpl(tmpl, name) match {
+      case tmpl: AnyTmplBlock[_] => findInTmpl(tmpl, name) match {
         case Right(value) => elem = value
         case Left(errs) => errors.addAll(errs)
       }
@@ -111,12 +110,12 @@ object ResolveContext {
     else Right(elem)
   }
 
-  def findInTmpl(tmpl: LangBlock[_], name: String): Either[List[ResolverError], Option[Value[_]]] = {
+  def findInTmpl(tmpl: AnyTmplBlock[_], name: String): Either[List[ResolverError], Option[Value[_]]] = {
     val errors = ListBuffer.empty[ResolverError]
     var elem: Option[Value[_]] = None
     tmpl match {
-      case doc: DocBlock => if (doc.name == name) elem = Some(ast.TmplBlockAsValue(doc.context, doc, Context()))
-      case lang: LangBlock => if (lang.name == name) elem = Some(ast.TmplBlockAsValue(lang.context, lang, Context()))
+      case doc: DocBlock => if (doc.name == name) elem = Some(LangBlockAsValue(doc.context, doc, Context()))
+      case lang: LangBlock => if (lang.name == name) elem = Some(LangBlockAsValue(lang.context, lang, Context()))
       case _ => println("ResolveContext: TmplBlock type not yet implemented")
     }
     if (errors.nonEmpty) Left(errors.toList)
@@ -141,7 +140,7 @@ object ResolveContext {
       //        variable
       case variable: Operation => scope.variables.addOne(name, variable)
         variable
-      case tmpl: TmplBlockAsValue => scope.templates.addOne(name, tmpl.block)
+      case tmpl: LangBlockAsValue => scope.templates.addOne(name, tmpl.block)
         tmpl
     }
     Right(Some(ret))

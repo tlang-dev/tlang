@@ -4,7 +4,7 @@ import dev.tlang.tlang.TLang._
 import dev.tlang.tlang.astbuilder.BuildAst.addContext
 import dev.tlang.tlang.astbuilder._
 import dev.tlang.tlang.astbuilder.context.ContextResource
-import dev.tlang.tlang.tmpl.LangBlock
+import dev.tlang.tlang.tmpl.AnyTmplBlock
 import dev.tlang.tlang.tmpl.doc.astbuilder.BuildDoc
 import dev.tlang.tlang.tmpl.lang.ast
 import dev.tlang.tlang.tmpl.lang.ast._
@@ -18,7 +18,7 @@ import scala.jdk.CollectionConverters._
 
 object BuildTmplBlock {
 
-  def build(resource: ContextResource, tmpl: TmplBlockContext): LangBlock[_] = {
+  def build(resource: ContextResource, tmpl: TmplBlockContext): AnyTmplBlock[_] = {
 
     tmpl.block match {
       case lang@_ if lang.tmplLang() != null => buildLangBlock(resource, tmpl)
@@ -30,7 +30,7 @@ object BuildTmplBlock {
 
   }
 
-  def buildLangBlock(resource: ContextResource, tmpl: TmplBlockContext): LangBlock = {
+  def buildLangBlock(resource: ContextResource, tmpl: TmplBlockContext): AnyTmplBlock[_] = {
     val content = buildFullBlock(resource, tmpl, tmpl.block.tmplLang().tmplFullBlock())
     LangBlock(addContext(resource, tmpl), tmpl.name.getText, tmpl.lang.getText,
       if (tmpl.params != null && !tmpl.params.isEmpty) Some(BuildHelperBlock.buildParams(resource, tmpl.params.asScala.toList)) else None,

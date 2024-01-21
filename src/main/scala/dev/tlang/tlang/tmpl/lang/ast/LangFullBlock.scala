@@ -41,13 +41,13 @@ case class LangFullBlock(context: Option[ContextContent], name: String, lang: St
     val elems = ListBuffer.empty[ComplexAttribute]
 
     if (pkg.nonEmpty) elems += ComplexAttribute(context, Some("tpkg"),
-      Some(ObjType(context, None, TmplLangAst.langPkg.name)), Operation(context, None, Right(pkg.get.toEntity)))
+      Some(ObjType(context, None, LangPkg.name)), Operation(context, None, Right(pkg.get.toEntity)))
 
     elems += createArray(context, "uses", if (uses.isDefined) uses.get.map(_.toEntity) else List())
     elems += createArray(context, "contents", if (content.isDefined) content.get.map(_.toEntity) else List())
 
     EntityValue(context,
-      Some(ObjType(context, None, TmplLangAst.langFullBlock.name)),
+      Some(ObjType(context, None, LangFullBlock.name)),
       Some(elems.toList))
   }
 
@@ -55,6 +55,8 @@ case class LangFullBlock(context: Option[ContextContent], name: String, lang: St
 }
 
 object LangFullBlock {
-  val model: ModelSetEntity = ModelSetEntity(None, "LangFullBlock", Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  val name: String = this.getClass.getSimpleName.replace("$", "")
+
+  val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
   )))
 }

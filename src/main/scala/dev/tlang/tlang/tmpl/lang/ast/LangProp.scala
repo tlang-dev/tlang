@@ -18,10 +18,17 @@ case class LangProp(context: Option[ContextContent], var props: List[LangID]) ex
   override def getType: String = getClass.getSimpleName
 
   override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, TmplLangAst.tmplProp.name)),
+    Some(ObjType(context, None, LangProp.name)),
     Some(List())
   )
 
-  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, TmplLangAst.langNode.name)), None, Some(List(
+  override def toModel: ModelSetEntity = LangProp.model
+}
+
+object LangProp {
+
+  val name: String = this.getClass.getSimpleName.replace("$", "")
+
+  val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
   )))
 }

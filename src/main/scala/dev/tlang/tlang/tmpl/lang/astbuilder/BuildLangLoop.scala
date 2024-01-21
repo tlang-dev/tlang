@@ -8,7 +8,7 @@ import dev.tlang.tlang.astbuilder.context.ContextResource
 
 object BuildLangLoop {
 
-  def buildFor(resource: ContextResource, impl: TmplForContext): EntityValue = {
+  /*def buildFor(resource: ContextResource, impl: TmplForContext): EntityValue = {
     val context = BuildAst.addContext(resource, impl)
     EntityValue(context,
       Some(ObjType(context, None, TmplLoopAst.tmplFor.name)),
@@ -36,5 +36,5 @@ object BuildLangLoop {
 
       ))
     )
-  }
+  }*/
 }

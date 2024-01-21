@@ -72,7 +72,12 @@ object LangModel {
     LangReturn.model,
     LangSpecialBlock.model,
     LangVar.model,
-    LangGeneric.model
+    LangVal.model,
+    LangGeneric.model,
+    LangType.model,
+    LangSetAttribute.model,
+    LangParam.model,
+    LangProp.model,
   )
 
 }
