@@ -5,7 +5,7 @@ import dev.tlang.tlang.libraries.std.entity.StdEntityModule
 import dev.tlang.tlang.libraries.std.str_builder.StdBuilderModule
 import dev.tlang.tlang.libraries.tio.file.IOFileModule
 import dev.tlang.tlang.libraries.tio.terminal.TerminalModule
-import dev.tlang.tlang.libraries.tmpl.LangModule
+import dev.tlang.tlang.libraries.tmpl._
 import dev.tlang.tlang.loader.Module
 import dev.tlang.tlang.loader.manifest.{Dependency, Stability}
 
@@ -22,7 +22,11 @@ object Modules {
     IOFileModule.getModuleName -> IOFileModule.getModule,
     StdBuilderModule.getModuleName -> StdBuilderModule.getModule,
     StdEntityModule.getModuleName -> StdEntityModule.getModule,
-    LangModule.getModuleName -> LangModule.getModule
+    LangModule.getModuleName -> LangModule.getModule,
+    CmdModule.getModuleName -> CmdModule.getModule,
+    DataModule.getModuleName -> DataModule.getModule,
+    DocModule.getModuleName -> DocModule.getModule,
+    StyleModule.getModuleName -> StyleModule.getModule,
   )
 
   def findModule(dependency: Dependency): Option[Module] = {

@@ -37,7 +37,7 @@ case class LangEntityValue(context: Option[ContextContent], var name: Option[Lan
 
 object LangEntityValue {
 
-  val name: String = this.getClass.getSimpleName.replace("$", "")
+  val name: String = "LangEntity"
 
   val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
   )))

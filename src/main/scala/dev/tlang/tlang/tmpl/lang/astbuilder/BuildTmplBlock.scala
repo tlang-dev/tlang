@@ -30,7 +30,7 @@ object BuildTmplBlock {
 
   }
 
-  def buildLangBlock(resource: ContextResource, tmpl: TmplBlockContext): AnyTmplBlock[_] = {
+  def buildLangBlock(resource: ContextResource, tmpl: TmplBlockContext): LangBlock = {
     val content = buildFullBlock(resource, tmpl, tmpl.block.tmplLang().tmplFullBlock())
     LangBlock(addContext(resource, tmpl), tmpl.name.getText, tmpl.lang.getText,
       if (tmpl.params != null && !tmpl.params.isEmpty) Some(BuildHelperBlock.buildParams(resource, tmpl.params.asScala.toList)) else None,

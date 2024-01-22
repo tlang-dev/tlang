@@ -22,4 +22,4 @@ project/plugins/project/
 
 ### For external antlr plugins
 gen
-src/main/java
+src/main/java/dev/tlang

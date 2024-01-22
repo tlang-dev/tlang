@@ -5,9 +5,8 @@ import dev.tlang.tlang.ast.common.call._
 import dev.tlang.tlang.ast.common.operation.{Operation, Operator}
 import dev.tlang.tlang.ast.common.value._
 import dev.tlang.tlang.ast.helper._
-import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetRef, ModelSetRefCurrying}
 import dev.tlang.tlang.interpreter.context.{Context, Scope}
-import dev.tlang.tlang.tmpl.lang.ast.{LangBlock, LangFullBlock, TmplBlockAsValue, LangPkg, LangStringID}
+import dev.tlang.tlang.tmpl.lang.ast._
 import org.scalatest.funsuite.AnyFunSuite
 
 import scala.collection.mutable
@@ -170,8 +169,8 @@ class ExecCallObjectTest extends AnyFunSuite {
     val statement = CallObject(None, List(CallVarObject(None, "myResource"), CallFuncObject(None, Some("myTmpl"), None)))
     val context = Context(List(Scope(templates = mutable.Map("myResource/myTmpl" -> tmpl))))
     val res = ExecCallObject.run(statement, context).toOption.get.get
-    assert(res.head.isInstanceOf[TmplBlockAsValue])
-    assert("pkg1" == res.head.asInstanceOf[TmplBlockAsValue].block.asInstanceOf[LangBlock].content.pkg.get.parts.head.toString)
+    assert(res.head.isInstanceOf[LangBlockAsValue])
+    assert("pkg1" == res.head.asInstanceOf[LangBlockAsValue].block.asInstanceOf[LangBlock].content.pkg.get.parts.head.toString)
   }
 
   test("Call attr in impl") {

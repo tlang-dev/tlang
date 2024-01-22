@@ -1,14 +1,6 @@
 package dev.tlang.tlang.libraries.generator
 
-import dev.tlang.tlang.ast.common.call._
-import dev.tlang.tlang.ast.common.operation.Operation
-import dev.tlang.tlang.ast.common.value.TLangString
-import dev.tlang.tlang.interpreter.context.{Context, Scope}
-import dev.tlang.tlang.interpreter.{ElementNotFound, ExecCallFunc}
-import dev.tlang.tlang.tmpl.lang.ast.{LangBlock, TmplBlockAsValue, LangPkg, LangStringID}
 import org.scalatest.funsuite.AnyFunSuite
-
-import scala.collection.mutable
 
 class GeneratorTest extends AnyFunSuite {
 
