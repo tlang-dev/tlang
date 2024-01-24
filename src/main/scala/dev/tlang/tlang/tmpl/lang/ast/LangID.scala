@@ -20,6 +20,10 @@ sealed trait LangID extends LangNode[LangID] {
   }
 }
 
+object LangID {
+  val name: String = this.getClass.getSimpleName.replace("$", "")
+}
+
 case class LangInterpretedID(context: Option[ContextContent], pre: Option[String] = None, call: CallObject, post: Option[String] = None) extends LangID {
   override def deepCopy(): LangInterpretedID = LangInterpretedID(context,
     if (pre.isDefined) Some(new String(pre.get)) else None,

@@ -1,8 +1,8 @@
 package dev.tlang.tlang.tmpl.lang.ast.call
 
 import dev.tlang.tlang.ast.common.ObjType
-import dev.tlang.tlang.ast.common.value.EntityValue
-import dev.tlang.tlang.ast.model.set.ModelSetEntity
+import dev.tlang.tlang.ast.common.value.{ArrayValue, EntityValue, NullValue}
+import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.tmpl.lang.ast._
@@ -25,7 +25,12 @@ case class LangCallObj(context: Option[ContextContent], var props: Option[LangPr
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, LangCallObj.name)),
     Some(List(
+      BuildLang.createAttrNull(context, "props",
+        if (props.isDefined) Some(props.get.toEntity) else None,
+        None
+      ),
       BuildLang.createAttrEntity(context, "firstCall", firstCall.toEntity),
+      BuildLang.createArray(context, "calls", calls.map(_.toEntity))
     ))
   )
 
@@ -37,5 +42,8 @@ object LangCallObj {
   val name: String = this.getClass.getSimpleName.replace("$", "")
 
   val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
+    ModelSetAttribute(None, Some("props"), ModelSetType(None, NullValue.name)),
+    ModelSetAttribute(None, Some("firstCall"), ModelSetType(None, LangCallObjType.name)),
+    ModelSetAttribute(None, Some("calls"), ModelSetType(None, ArrayValue.getType)),
   )))
 }

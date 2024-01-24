@@ -1,18 +1,9 @@
 package dev.tlang.tlang.tmpl.lang.astbuilder
 
-import dev.tlang.tlang.TLang
-import dev.tlang.tlang.TLang._
-import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value._
-import dev.tlang.tlang.astbuilder.BuildAst
-import dev.tlang.tlang.astbuilder.BuildAst.addContext
-import dev.tlang.tlang.astbuilder.context.{ContextContent, ContextResource}
-import dev.tlang.tlang.tmpl.lang.ast.condition.LangOperation
-import dev.tlang.tlang.tmpl.lang.ast.func.LangAnonFunc
-import dev.tlang.tlang.tmpl.lang.ast._
-
-import scala.jdk.CollectionConverters.CollectionHasAsScala
+import dev.tlang.tlang.astbuilder.context.ContextContent
+import dev.tlang.tlang.interpreter.Value
 
 object BuildLang {
 
@@ -39,33 +30,33 @@ object BuildLang {
        Some(elems.toList))
    }*/
 
-/*  def buildPkg(resource: ContextResource, pkg: TLang.TmplPkgContext): EntityValue = {
-    val context = addContext(resource, pkg)
-    EntityValue(context,
-      Some(ObjType(context, None, LangPkg.name)),
-      Some(List(
-        ComplexAttribute(context, Some("parts"),
-          None, Operation(context, None, Right(ArrayValue(context, Some(pkg.parts.asScala.toList.map(part => ComplexAttribute(context, None, None, Operation(context, None, Right(new TLangString(context, part.getText)))))))))
+  /*  def buildPkg(resource: ContextResource, pkg: TLang.TmplPkgContext): EntityValue = {
+      val context = addContext(resource, pkg)
+      EntityValue(context,
+        Some(ObjType(context, None, LangPkg.name)),
+        Some(List(
+          ComplexAttribute(context, Some("parts"),
+            None, Operation(context, None, Right(ArrayValue(context, Some(pkg.parts.asScala.toList.map(part => ComplexAttribute(context, None, None, Operation(context, None, Right(new TLangString(context, part.getText)))))))))
+          ))
         ))
-      ))
-  }
+    }
 
-  def buildUses(resource: ContextResource, uses: List[TmplUseContext]): List[EntityValue] = {
-    if (uses != null && uses.nonEmpty) uses.map(use => buildUse(resource, use))
-    else List()
-  }
+    def buildUses(resource: ContextResource, uses: List[TmplUseContext]): List[EntityValue] = {
+      if (uses != null && uses.nonEmpty) uses.map(use => buildUse(resource, use))
+      else List()
+    }
 
-  def buildUse(resource: ContextResource, use: TmplUseContext): EntityValue = {
-    //    TmplUse(addContext(resource, use), use.parts.asScala.toList.map(part => buildId(resource, part)),
-    //      if (use.alias != null && !use.alias.isEmpty) Some(buildId(resource, use.alias)) else None)
-    val context = addContext(resource, use)
-    EntityValue(context,
-      Some(ObjType(context, None, LangUse.name)),
-      Some(List(
-        createArray(context, "parts", use.parts.asScala.toList.map(part => BuildLangValue.buildId(resource, part)))
-      )
-      ))
-  }*/
+    def buildUse(resource: ContextResource, use: TmplUseContext): EntityValue = {
+      //    TmplUse(addContext(resource, use), use.parts.asScala.toList.map(part => buildId(resource, part)),
+      //      if (use.alias != null && !use.alias.isEmpty) Some(buildId(resource, use.alias)) else None)
+      val context = addContext(resource, use)
+      EntityValue(context,
+        Some(ObjType(context, None, LangUse.name)),
+        Some(List(
+          createArray(context, "parts", use.parts.asScala.toList.map(part => BuildLangValue.buildId(resource, part)))
+        )
+        ))
+    }*/
 
   def createAttrStr(context: Option[ContextContent], name: String, value: String): ComplexAttribute = {
     ComplexAttribute(context, Some(name), None, Operation(
@@ -76,6 +67,12 @@ object BuildLang {
   def createAttrInt(context: Option[ContextContent], name: String, value: Int): ComplexAttribute = {
     ComplexAttribute(context, Some(name), None, Operation(
       context, None, Right(new TLangLong(context, value))
+    ))
+  }
+
+  def createAttrNull(context: Option[ContextContent], name: String, value: Option[Value[_]], valueType: Option[TLangType]): ComplexAttribute = {
+    ComplexAttribute(context, Some(name), None, Operation(
+      context, None, Right(new NullValue[Value[_]](context, value, valueType))
     ))
   }
 

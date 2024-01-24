@@ -1,8 +1,9 @@
 package dev.tlang.tlang.tmpl.lang.ast.func
 
 import dev.tlang.tlang.ast.common.ObjType
-import dev.tlang.tlang.ast.common.value.EntityValue
-import dev.tlang.tlang.ast.model.set.ModelSetEntity
+import dev.tlang.tlang.ast.common.operation.Operation
+import dev.tlang.tlang.ast.common.value.{ArrayValue, ComplexAttribute, EntityValue, NullValue}
+import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
 import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.tmpl.lang.ast._
@@ -31,7 +32,23 @@ case class LangFunc(context: Option[ContextContent], var annots: Option[List[Lan
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, LangFunc.name)),
     Some(List(
+      BuildLang.createAttrNull(context, "annots",
+        if (annots.isDefined) Some(ArrayValue(context, Some(annots.get.map(value => ComplexAttribute(context, None, None, Operation(context, None, Right(value.toEntity))))))) else None,
+        None
+      ),
+      BuildLang.createAttrNull(context, "props",
+        if (props.isDefined) Some(props.get.toEntity) else None,
+        None
+      ),
+      BuildLang.createAttrNull(context, "preNames",
+        if (preNames.isDefined) Some(ArrayValue(context, Some(preNames.get.map(value => ComplexAttribute(context, None, None, Operation(context, None, Right(value.toEntity))))))) else None,
+        None
+      ),
       BuildLang.createAttrEntity(context, "name", name.toEntity),
+      BuildLang.createAttrNull(context, "curries",
+        if (curries.isDefined) Some(ArrayValue(context, Some(curries.get.map(value => ComplexAttribute(context, None, None, Operation(context, None, Right(value.toEntity))))))) else None,
+        None
+      ),
       BuildLang.createAttrEntity(context, "content", content.map(_.toEntity).getOrElse(EntityValue(context, None, None))),
     ))
   )
@@ -44,5 +61,11 @@ object LangFunc {
   val name: String = this.getClass.getSimpleName.replace("$", "")
 
   val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
+    ModelSetAttribute(None, Some("annots"), ModelSetType(None, NullValue.name)),
+    ModelSetAttribute(None, Some("props"), ModelSetType(None, NullValue.name)),
+    ModelSetAttribute(None, Some("preNames"), ModelSetType(None, NullValue.name)),
+    ModelSetAttribute(None, Some("name"), ModelSetType(None, LangID.name)),
+    ModelSetAttribute(None, Some("curries"), ModelSetType(None, NullValue.name)),
+    ModelSetAttribute(None, Some("content"), ModelSetType(None, NullValue.name)),
   )))
 }
