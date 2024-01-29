@@ -3,13 +3,14 @@ package dev.tlang.tlang.tmpl.lang.ast
 import dev.tlang.tlang.ast.DomainBlock
 import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.operation.Operation
-import dev.tlang.tlang.ast.common.value.{ComplexAttribute, EntityValue}
+import dev.tlang.tlang.ast.common.value._
 import dev.tlang.tlang.ast.helper.HelperParam
-import dev.tlang.tlang.ast.model.set.ModelSetEntity
+import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.interpreter.context.Scope
 import dev.tlang.tlang.tmpl.AnyTmplBlock
+import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 
 case class LangBlock(context: Option[ContextContent], name: String, lang: String,
                      var params: Option[List[HelperParam]],
@@ -31,6 +32,12 @@ case class LangBlock(context: Option[ContextContent], name: String, lang: String
 
   override def toEntity: EntityValue = {
     EntityValue(context, Some(ObjType(context, None, LangBlock.name)), Some(List(
+      BuildLang.createAttrStr(context, "name", name),
+      BuildLang.createAttrStr(context, "lang", lang),
+      BuildLang.createAttrNull(context, "params",
+        if (params.isDefined) Some(ArrayValue(context, Some(params.get.map(value => ComplexAttribute(context, None, None, Operation(context, None, Right(value.toEntity))))))) else None,
+        None
+      ),
       ComplexAttribute(context, Some("content"),
         Some(ObjType(context, None, LangFullBlock.name)), Operation(context, None, Right(content.toEntity))
       ))))
@@ -52,5 +59,9 @@ object LangBlock {
   val name: String = this.getClass.getSimpleName.replace("$", "")
 
   val model: ModelSetEntity = ModelSetEntity(None, "LangBlock", Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
+    ModelSetAttribute(None, Some("name"), ModelSetType(None, TLangString.getType)),
+    ModelSetAttribute(None, Some("lang"), ModelSetType(None, TLangString.getType)),
+    ModelSetAttribute(None, Some("params"), ModelSetType(None, NullValue.name)),
+    ModelSetAttribute(None, Some("content"), ModelSetType(None, LangFullBlock.name)),
   )))
 }

@@ -6,6 +6,7 @@ import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
 import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.tmpl.lang.ast.LangModel
+import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 
 case class LangBoolValue(context: Option[ContextContent], value: Boolean) extends LangPrimitiveValue[LangBoolValue] with AstContext {
   override def deepCopy(): LangBoolValue = LangBoolValue(context, if (value) true else false)
@@ -20,7 +21,9 @@ case class LangBoolValue(context: Option[ContextContent], value: Boolean) extend
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, LangBoolValue.name)),
-    Some(List())
+    Some(List(
+      BuildLang.createAttrBool(context, "value", value)
+    ))
   )
 
   override def toModel: ModelSetEntity = LangBoolValue.model

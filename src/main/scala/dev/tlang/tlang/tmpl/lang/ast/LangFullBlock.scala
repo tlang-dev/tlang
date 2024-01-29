@@ -3,13 +3,13 @@ package dev.tlang.tlang.tmpl.lang.ast
 import dev.tlang.tlang.ast.DomainBlock
 import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.operation.Operation
-import dev.tlang.tlang.ast.common.value.{ComplexAttribute, EntityValue}
+import dev.tlang.tlang.ast.common.value.{ComplexAttribute, EntityValue, NullValue, TLangBool}
 import dev.tlang.tlang.ast.helper.HelperParam
-import dev.tlang.tlang.ast.model.set.ModelSetEntity
+import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.interpreter.context.Scope
-import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang.createArray
+import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang.{createArray, createAttrBool}
 
 import scala.collection.mutable.ListBuffer
 
@@ -44,6 +44,7 @@ case class LangFullBlock(context: Option[ContextContent], name: String, lang: St
       Some(ObjType(context, None, LangPkg.name)), Operation(context, None, Right(pkg.get.toEntity)))
 
     elems += createArray(context, "uses", if (uses.isDefined) uses.get.map(_.toEntity) else List())
+    elems += createAttrBool(context, "specialized", specialised)
     elems += createArray(context, "contents", if (content.isDefined) content.get.map(_.toEntity) else List())
 
     EntityValue(context,
@@ -58,5 +59,10 @@ object LangFullBlock {
   val name: String = this.getClass.getSimpleName.replace("$", "")
 
   val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
+    ModelSetAttribute(None, Some("params"), ModelSetType(None, NullValue.name)),
+    ModelSetAttribute(None, Some("tPkg"), ModelSetType(None, NullValue.name)),
+    ModelSetAttribute(None, Some("uses"), ModelSetType(None, NullValue.name)),
+    ModelSetAttribute(None, Some("specialized"), ModelSetType(None, TLangBool.getType)),
+    ModelSetAttribute(None, Some("contents"), ModelSetType(None, NullValue.name)),
   )))
 }

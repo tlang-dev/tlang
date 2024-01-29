@@ -16,3 +16,8 @@ trait AnyTmplBlock[T] extends LangNode[T] with DomainBlock {
   def getName: String
 
 }
+
+object AnyTmplBlock {
+
+  val name: String = this.getClass.getSimpleName.replace("$", "")
+}

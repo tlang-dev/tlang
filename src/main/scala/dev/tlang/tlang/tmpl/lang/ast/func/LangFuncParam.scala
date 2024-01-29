@@ -29,7 +29,7 @@ case class LangFuncParam(context: Option[ContextContent], params: Option[List[La
       BuildLang.createAttrNull(context, "params",
         if (params.isDefined) Some(ArrayValue(context, Some(params.get.map(value => ComplexAttribute(context, None, None, Operation(context, None, Right(value.toEntity))))))) else None,
         None
-      )
+      ),
       BuildLang.createAttrStr(context, "tType", `type`),
     ))
   )

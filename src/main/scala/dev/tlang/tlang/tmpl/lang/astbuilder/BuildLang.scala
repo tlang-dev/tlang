@@ -70,6 +70,24 @@ object BuildLang {
     ))
   }
 
+  def createAttrLong(context: Option[ContextContent], name: String, value: Long): ComplexAttribute = {
+    ComplexAttribute(context, Some(name), None, Operation(
+      context, None, Right(new TLangLong(context, value))
+    ))
+  }
+
+  def createAttrDouble(context: Option[ContextContent], name: String, value: Double): ComplexAttribute = {
+    ComplexAttribute(context, Some(name), None, Operation(
+      context, None, Right(new TLangDouble(context, value))
+    ))
+  }
+
+  def createAttrBool(context: Option[ContextContent], name: String, value: Boolean): ComplexAttribute = {
+    ComplexAttribute(context, Some(name), None, Operation(
+      context, None, Right(new TLangBool(context, value))
+    ))
+  }
+
   def createAttrNull(context: Option[ContextContent], name: String, value: Option[Value[_]], valueType: Option[TLangType]): ComplexAttribute = {
     ComplexAttribute(context, Some(name), None, Operation(
       context, None, Right(new NullValue[Value[_]](context, value, valueType))
