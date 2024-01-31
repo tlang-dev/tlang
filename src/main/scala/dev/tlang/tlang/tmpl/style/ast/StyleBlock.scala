@@ -2,12 +2,15 @@ package dev.tlang.tlang.tmpl.style.ast
 
 import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.value.EntityValue
+import dev.tlang.tlang.ast.helper.HelperParam
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
-import dev.tlang.tlang.tmpl.lang.ast.LangNode
+import dev.tlang.tlang.interpreter.context.Scope
+import dev.tlang.tlang.tmpl.AnyTmplBlock
 
-case class StyleBlock(context: Option[ContextContent]) extends LangNode[StyleBlock] {
+case class StyleBlock(context: Option[ContextContent], name: String, lang: String,
+                      var params: Option[List[HelperParam]],) extends AnyTmplBlock[StyleBlock] {
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, toModel.name)),
     Some(List())
@@ -24,6 +27,14 @@ case class StyleBlock(context: Option[ContextContent]) extends LangNode[StyleBlo
   override def getContext: Option[ContextContent] = context
 
   override def deepCopy(): StyleBlock = StyleBlock(context)
+
+  override def getParams: Option[List[HelperParam]] = ???
+
+  override def getLang: String = ???
+
+  override def getScope: Scope = ???
+
+  override def getName: String = ???
 }
 
 object StyleBlock {

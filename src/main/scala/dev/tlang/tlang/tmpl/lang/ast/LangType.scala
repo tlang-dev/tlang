@@ -1,11 +1,12 @@
 package dev.tlang.tlang.tmpl.lang.ast
 
 import dev.tlang.tlang.ast.common.ObjType
-import dev.tlang.tlang.ast.common.value.EntityValue
-import dev.tlang.tlang.ast.model.set.ModelSetEntity
+import dev.tlang.tlang.ast.common.value.{EntityValue, NullValue}
+import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.tmpl.lang.ast.call.LangCallFuncParam
+import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 
 case class LangType(context: Option[ContextContent], var name: LangID, var generic: Option[LangGeneric] = None, isArray: Boolean = false, var currying: Option[List[LangCallFuncParam]] = None) extends LangNode[LangType] {
   override def deepCopy(): LangType = LangType(context, name.deepCopy().asInstanceOf[LangID],
@@ -24,7 +25,13 @@ case class LangType(context: Option[ContextContent], var name: LangID, var gener
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, LangType.name)),
-    Some(List())
+    Some(List(
+      BuildLang.createAttrEntity(context, "name", name.toEntity),
+      BuildLang.createAttrNull(context, "generic",
+        if (generic.isDefined) Some(generic.get.toEntity) else None,
+        None
+      ),
+    ))
   )
 
   override def toModel: ModelSetEntity = LangType.model
@@ -34,5 +41,7 @@ object LangType {
   val name: String = this.getClass.getSimpleName.replace("$", "")
 
   val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
+    ModelSetAttribute(None, Some("name"), ModelSetType(None, LangID.name)),
+    ModelSetAttribute(None, Some("generic"), ModelSetType(None, NullValue.name)),
   )))
 }

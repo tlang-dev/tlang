@@ -31,7 +31,4 @@ domainBlock: helperBlock | tmplBlock | modelBlock;
  * Tmpl block (Template block)
  * The content of this block will be translated in the final language as it is
  */
-tmplBlock:
-	Tmpl LSQUARE lang=tmplID RSQUARE name=tmplID '(' (params += helperParam (',' params += helperParam)*)?RPARENT block = tmplBlockType;
-
-tmplBlockType: tmplLang | tmplDoc | tmplData | tmplCmd | tmplStyle;
+tmplBlock: tmplLang | tmplDoc | tmplData | tmplCmd | tmplStyle;

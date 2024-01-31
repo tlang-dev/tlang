@@ -15,7 +15,7 @@ import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 case class LangBlock(context: Option[ContextContent], name: String, lang: String,
                      var params: Option[List[HelperParam]],
                      var content: LangFullBlock,
-                     scope: Scope = Scope()) extends DomainBlock with AnyTmplBlock[LangBlock] {
+                     scope: Scope = Scope()) extends AnyTmplBlock[LangBlock] {
 
   override def deepCopy(): LangBlock =
     LangBlock(context, name, lang, params,

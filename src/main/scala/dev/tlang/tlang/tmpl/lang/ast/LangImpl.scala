@@ -1,8 +1,9 @@
 package dev.tlang.tlang.tmpl.lang.ast
 
 import dev.tlang.tlang.ast.common.ObjType
-import dev.tlang.tlang.ast.common.value.EntityValue
-import dev.tlang.tlang.ast.model.set.ModelSetEntity
+import dev.tlang.tlang.ast.common.operation.Operation
+import dev.tlang.tlang.ast.common.value.{ArrayValue, ComplexAttribute, EntityValue, NullValue}
+import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
 import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
@@ -28,9 +29,28 @@ case class LangImpl(context: Option[ContextContent], var annots: Option[List[Lan
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, LangImpl.name)),
     Some(List(
+      BuildLang.createAttrNull(context, "annots",
+        if (annots.isDefined) Some(ArrayValue(context, Some(annots.get.map(value => ComplexAttribute(context, None, None, Operation(context, None, Right(value.toEntity))))))) else None,
+        None
+      ),
+      BuildLang.createAttrNull(context, "props",
+        if (props.isDefined) Some(props.get.toEntity) else None,
+        None
+      ),
       BuildLang.createAttrEntity(context, "name", name.toEntity),
+      BuildLang.createAttrNull(context, "fors",
+        if (fors.isDefined) Some(fors.get.toEntity) else None,
+        None
+      ),
+      BuildLang.createAttrNull(context, "withs",
+        if (withs.isDefined) Some(withs.get.toEntity) else None,
+        None
+      ),
       //      BuildLang.createAttrEntity(context, "fors", fors.t),
-      BuildLang.createArray(context, "contents", content.map(_.map(_.toEntity)).getOrElse(List())),
+      BuildLang.createAttrNull(context, "content",
+        if (content.isDefined) Some(ArrayValue(context, Some(content.get.map(value => ComplexAttribute(context, None, None, Operation(context, None, Right(value.toEntity))))))) else None,
+        None
+      ),
     ))
   )
 
@@ -42,5 +62,11 @@ object LangImpl {
   val name: String = this.getClass.getSimpleName.replace("$", "")
 
   val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
+    ModelSetAttribute(None, Some("annots"), ModelSetType(None, NullValue.name)),
+    ModelSetAttribute(None, Some("props"), ModelSetType(None, NullValue.name)),
+    ModelSetAttribute(None, Some("name"), ModelSetType(None, LangID.name)),
+    ModelSetAttribute(None, Some("fors"), ModelSetType(None, NullValue.name)),
+    ModelSetAttribute(None, Some("withs"), ModelSetType(None, NullValue.name)),
+    ModelSetAttribute(None, Some("content"), ModelSetType(None, NullValue.name)),
   )))
 }

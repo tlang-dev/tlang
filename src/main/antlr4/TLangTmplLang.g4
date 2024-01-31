@@ -6,7 +6,7 @@ options {
   tokenVocab = CommonLexer;
 }
 
-tmplLang: 'lang' content = tmplFullBlock | tmplSpecialisedBlock;
+tmplLang: LANG LSQUARE langs+=ID (',' langs+=ID) RSQUARE name=ID LPARENT (params += helperParam (',' params += helperParam)*)?RPARENT block = tmplFullBlock | tmplSpecialisedBlock;
 
 tmplFullBlock: LBRACE
 	(tmplPakage=tmplPkg)?

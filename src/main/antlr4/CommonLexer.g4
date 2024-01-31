@@ -62,7 +62,6 @@ CMD: 'cmd';
 STYLE: 'style';
 
 Helper : 'helper';
-Tmpl : 'tmpl';
 Model: 'model';
 Use: 'use';
 Expose: 'expose';

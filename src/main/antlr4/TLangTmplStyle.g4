@@ -6,9 +6,9 @@ options {
   tokenVocab = CommonLexer;
 }
 
-tmplStyle: 'style' content=tmplStyleBlock;
+tmplStyle: STYLE LSQUARE langs+=ID (',' langs+=ID) RSQUARE name=ID LPARENT (params += helperParam (',' params += helperParam)*)?RPARENT  LBRACE content=tmplStyleStruct RBRACE;
 
-tmplStyleBlock: (name=tmplID)? (LPARENT ((params+=tmplDataAttribute) (',' params+=tmplDataAttribute)*)? RPARENT)?
+tmplStyleStruct: (name=tmplID)? (LSQUARE ((params+=tmplDataAttribute) (',' params+=tmplDataAttribute)*)? RSQUARE)?
               	(LBRACE ((attrs+=tmplDataAttribute) (',' attrs+=tmplDataAttribute)*)? RBRACE)?;
 
 tmplDataAttribute: tmplInclude | tmplSetAttribute;
@@ -19,7 +19,7 @@ tmplSetAttribute: (name=tmplIdOrString ':')? value=tmplDataValue;
 
 tmplDataValue: tmplArrayValue | tmplIdOrString | tmplNumberValue | tmplBoolValue;
 
-tmplArrayValue: '[' (params+=tmplDataAttribute)? (',' params+=tmplDataAttribute)* RSQUARE;
+tmplArrayValue: LSQUARE (params+=tmplDataAttribute)? (',' params+=tmplDataAttribute)* RSQUARE;
 
 //tmplStringValue: value=tmplString;
 
