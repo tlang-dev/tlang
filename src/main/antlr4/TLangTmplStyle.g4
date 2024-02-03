@@ -1,29 +1,29 @@
 parser grammar TLangTmplStyle;
 
-import TLangCommon, TLangHelper;
+import TLangTmpl;
 
 options {
   tokenVocab = CommonLexer;
 }
 
-tmplStyle: STYLE LSQUARE langs+=ID (',' langs+=ID) RSQUARE name=ID LPARENT (params += helperParam (',' params += helperParam)*)?RPARENT  LBRACE content=tmplStyleStruct RBRACE;
+tmplStyle: STYLE LSQUARE langs+=ID (',' langs+=ID) RSQUARE name=ID LPARENT (params += helperParam (',' params += helperParam)*)?RPARENT  LBRACE content=styleStruct RBRACE;
 
-tmplStyleStruct: (name=tmplID)? (LSQUARE ((params+=tmplDataAttribute) (',' params+=tmplDataAttribute)*)? RSQUARE)?
-              	(LBRACE ((attrs+=tmplDataAttribute) (',' attrs+=tmplDataAttribute)*)? RBRACE)?;
+styleStruct: (name=tmplID)? (LSQUARE ((params+=styleAttribute) (',' params+=styleAttribute)*)? RSQUARE)?
+              	(LBRACE ((attrs+=styleAttribute) (',' attrs+=styleAttribute)*)? RBRACE)?;
 
-tmplDataAttribute: tmplInclude | tmplSetAttribute;
+styleAttribute: styleInclude | styleSetAttribute;
 
-tmplInclude: START_INCLUDE ((calls+=callObj)*) END_INCLUDE;
+styleInclude: START_INCLUDE (call=callObj) END_INCLUDE;
 
-tmplSetAttribute: (name=tmplIdOrString ':')? value=tmplDataValue;
+styleSetAttribute: (name=tmplIdOrString ':')? value=styleValue;
 
-tmplDataValue: tmplArrayValue | tmplIdOrString | tmplNumberValue | tmplBoolValue;
+styleValue: styleArrayValue | tmplIdOrString | tmplNumberValue | tmplBoolValue;
 
-tmplArrayValue: LSQUARE (params+=tmplDataAttribute)? (',' params+=tmplDataAttribute)* RSQUARE;
+styleArrayValue: LSQUARE (params+=styleAttribute)? (',' params+=styleAttribute)* RSQUARE;
 
 //tmplStringValue: value=tmplString;
 
-tmplNumberValue: value=NUMBER;
+//styleNumberValue: value=NUMBER;
 
 //tmplTextValue: value=tmplText;
 
@@ -31,14 +31,7 @@ tmplNumberValue: value=NUMBER;
 
 //tmplIntprText: 's"""' (pre=.)? INTEPRETED callObj RBRACE (pos=.)? '"""';
 
-tmplBoolValue: value= True | False;
+//styleBoolValue: value= True | False;
 
-tmplID: ID | tmplIntprID | ESCAPED_ID;
 
-tmplIdOrString: tmplID | tmplString;
 
-tmplString: STRING | tmplIntprString;
-
-tmplIntprString: 's"' (pre=.)? INTEPRETED callObj RBRACE (pos=.)? QUOTE;
-
-tmplIntprID: (pre=ID)? INTEPRETED callObj RBRACE (pos=ID)?;

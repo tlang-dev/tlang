@@ -10,7 +10,8 @@ import dev.tlang.tlang.tmpl.lang.ast.loop.{LangDoWhile, LangFor, LangWhile}
 import dev.tlang.tlang.tmpl.lang.ast.primitive._
 import dev.tlang.tlang.generator.formatter.Formatter
 import dev.tlang.tlang.generator.{CodeGenerator, Seq}
-import dev.tlang.tlang.tmpl.lang.ast.{LangAffect, LangAnnotation, LangAttribute, LangBlock, LangExprBlock, LangExprContent, LangExpression, LangGeneric, LangID, LangIf, LangImpl, LangInclude, LangNode, LangParam, LangPkg, LangProp, LangReturn, LangSetAttribute, LangSimpleValueType, LangStringID, LangType, LangUse, LangValueType, LangVar}
+import dev.tlang.tlang.tmpl.common.ast.{TmplID, TmplStringID}
+import dev.tlang.tlang.tmpl.lang.ast.{LangAffect, LangAnnotation, LangAttribute, LangBlock, LangExprBlock, LangExprContent, LangExpression, LangGeneric, LangIf, LangImpl, LangInclude, LangParam, LangPkg, LangProp, LangReturn, LangSetAttribute, LangSimpleValueType, LangType, LangUse, LangValueType, LangVar}
 
 import scala.language.postfixOps
 
@@ -46,13 +47,13 @@ object KotlinGenerator {
     str
   }
 
-  def genContents(impls: List[LangNode[_]]): Iterable[Seq] = {
+  def genContents(impls: List[TmplNode[_]]): Iterable[Seq] = {
     val str: Array[Seq] = Array.ofDim[Seq](impls.size)
     impls.zipWithIndex.foreach(impl => str(impl._2) = genContent(impl._1))
     str
   }
 
-  def genContent(impl: LangNode[_], addEndOfStatement: Boolean = false): Seq = {
+  def genContent(impl: TmplNode[_], addEndOfStatement: Boolean = false): Seq = {
     impl match {
       case func: LangFunc => genFunc(func)
       case expr: LangExpression[_] => genExpression(expr, addEndOfStatement)
@@ -429,7 +430,7 @@ object KotlinGenerator {
     str
   }
 
-  def genEntityValueAttribute(attrs: Option[List[LangNode[_]]]): Seq = {
+  def genEntityValueAttribute(attrs: Option[List[TmplNode[_]]]): Seq = {
     val str = Seq()
     attrs.foreach(_.foreach { attr =>
       attr match {
@@ -484,14 +485,14 @@ object KotlinGenerator {
     str
   }
 
-  def genOptTmplID(tmplId: Option[LangID]): Seq = {
+  def genOptTmplID(tmplId: Option[TmplID]): Seq = {
     if (tmplId.isDefined) genTmplID(tmplId.get)
     else Seq()
   }
 
-  def genTmplID(tmplId: LangID): Seq = {
+  def genTmplID(tmplId: TmplID): Seq = {
     tmplId match {
-      case str: LangStringID =>
+      case str: TmplStringID =>
         val seq = Seq("\"")
         seq += str.toString
         seq += "\""

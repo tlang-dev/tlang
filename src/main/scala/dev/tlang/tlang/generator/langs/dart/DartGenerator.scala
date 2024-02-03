@@ -11,7 +11,8 @@ import dev.tlang.tlang.tmpl.lang.ast.primitive._
 import dev.tlang.tlang.generator.formatter.Formatter
 import dev.tlang.tlang.generator.langs.kotlin.KotlinGenerator.{mkSeq, mkSeqFromSeq}
 import dev.tlang.tlang.generator.{CodeGenerator, Seq, SeqBuilder}
-import dev.tlang.tlang.tmpl.lang.ast.{LangAffect, LangAnnotation, LangAttribute, LangBlock, LangExprBlock, LangExprContent, LangExpression, LangID, LangIf, LangImpl, LangInclude, LangNode, LangParam, LangPkg, LangProp, LangReturn, LangSetAttribute, LangSimpleValueType, LangStringID, LangUse, LangValueType, LangVar}
+import dev.tlang.tlang.tmpl.common.ast.{TmplID, TmplStringID}
+import dev.tlang.tlang.tmpl.lang.ast.{LangAffect, LangAnnotation, LangAttribute, LangBlock, LangExprBlock, LangExprContent, LangExpression, LangIf, LangImpl, LangInclude, LangParam, LangPkg, LangProp, LangReturn, LangSetAttribute, LangSimpleValueType, LangUse, LangValueType, LangVar}
 
 class DartGenerator extends CodeGenerator {
   override def generate(tmpl: LangBlock): String = {
@@ -44,13 +45,13 @@ object DartGenerator {
     str.build()
   }
 
-  def genContents(impls: List[LangNode[_]], addEndOfStatement: Boolean = false): Iterable[Seq] = {
+  def genContents(impls: List[TmplNode[_]], addEndOfStatement: Boolean = false): Iterable[Seq] = {
     val str: Array[Seq] = Array.ofDim[Seq](impls.size)
     impls.zipWithIndex.foreach(impl => str(impl._2) = genContent(impl._1, addEndOfStatement))
     str
   }
 
-  def genContent(impl: LangNode[_], addEndOfStatement: Boolean = false): Seq = {
+  def genContent(impl: TmplNode[_], addEndOfStatement: Boolean = false): Seq = {
     impl match {
       case func: LangFunc => genFunc(func)
       case expr: LangExpression[_] => genExpression(expr, addEndOfStatement)
@@ -453,7 +454,7 @@ object DartGenerator {
     str
   }
 
-  def genEntityValueAttribute(attrs: Option[List[LangNode[_]]]): Seq = {
+  def genEntityValueAttribute(attrs: Option[List[TmplNode[_]]]): Seq = {
     val str = Seq()
     attrs.foreach(_.foreach { attr =>
       attr match {
@@ -508,14 +509,14 @@ object DartGenerator {
     str
   }
 
-  def genOptTmplID(tmplId: Option[LangID]): Seq = {
+  def genOptTmplID(tmplId: Option[TmplID]): Seq = {
     if (tmplId.isDefined) genTmplID(tmplId.get)
     else Seq()
   }
 
-  def genTmplID(tmplId: LangID): Seq = {
+  def genTmplID(tmplId: TmplID): Seq = {
     tmplId match {
-      case str: LangStringID =>
+      case str: TmplStringID =>
         val seq = Seq("\"")
         seq += str.toString
         seq += "\""

@@ -11,14 +11,9 @@ object StyleModel {
 
   val getAll: List[ModelSetEntity] = List(
     StyleArray.model,
-    StyleAttribute.model,
     StyleBlock.model,
-    StyleBool.model,
     StyleInclude.model,
-    StyleNumber.model,
     StyleSetAttribute.model,
-    StyleString.model,
-    StyleValue.model
   )
 
 }

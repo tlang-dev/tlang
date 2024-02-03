@@ -6,10 +6,10 @@ import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSe
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.interpreter.context.Context
-import dev.tlang.tlang.tmpl.AnyTmplBlock
+import dev.tlang.tlang.tmpl.{AnyTmplBlock, TmplNode}
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 
-case class LangBlockAsValue(astContext: Option[ContextContent], var block: AnyTmplBlock[_], context: Context) extends LangNode[AnyTmplBlock[_]] {
+case class LangBlockAsValue(astContext: Option[ContextContent], var block: AnyTmplBlock[_], context: Context) extends TmplNode[AnyTmplBlock[_]] {
   override def getElement: AnyTmplBlock[_] = this.block
 
   override def getType: String = LangBlockAsValue.getType

@@ -6,7 +6,8 @@ import dev.tlang.tlang.ast.common.value.{ArrayValue, ComplexAttribute, EntityVal
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
-import dev.tlang.tlang.tmpl.lang.ast.{LangExprContent, LangExpression, LangID, LangModel}
+import dev.tlang.tlang.tmpl.common.ast.TmplID
+import dev.tlang.tlang.tmpl.lang.ast.{LangExprContent, LangExpression, LangModel}
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 
 case class LangAnonFunc(context: Option[ContextContent], var curries: Option[List[LangFuncParam]], var content: LangExprContent[_]) extends LangExpression[LangAnonFunc] {

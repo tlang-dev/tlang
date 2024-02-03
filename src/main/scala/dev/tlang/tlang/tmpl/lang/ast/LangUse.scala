@@ -5,12 +5,14 @@ import dev.tlang.tlang.ast.common.value.{ArrayValue, EntityValue, NullValue}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
+import dev.tlang.tlang.tmpl.common.ast.TmplID
+import dev.tlang.tlang.tmpl.{DeepCopy, TmplNode}
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang.createArray
 
-case class LangUse(context: Option[ContextContent], var parts: List[LangID], var alias: Option[LangID] = None) extends LangNode[LangUse] with DeepCopy {
-  override def deepCopy(): LangUse = LangUse(context, parts.map(_.deepCopy().asInstanceOf[LangID]),
-    if (alias.isDefined) Some(alias.get.deepCopy().asInstanceOf[LangID]) else None)
+case class LangUse(context: Option[ContextContent], var parts: List[TmplID], var alias: Option[TmplID] = None) extends TmplNode[LangUse] with DeepCopy {
+  override def deepCopy(): LangUse = LangUse(context, parts.map(_.deepCopy().asInstanceOf[TmplID]),
+    if (alias.isDefined) Some(alias.get.deepCopy().asInstanceOf[TmplID]) else None)
 
   override def compareTo(value: Value[LangUse]): Int = 0
 

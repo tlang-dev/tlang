@@ -9,7 +9,7 @@ import dev.tlang.tlang.generator.CodeGenerator
 import dev.tlang.tlang.generator.formatter.{FormatRule, Indent}
 import dev.tlang.tlang.generator.langs.BlockGenerator
 import dev.tlang.tlang.generator.langs.common.GenParameter
-import dev.tlang.tlang.tmpl.lang.ast.{LangAffect, LangAnnotation, LangAttribute, LangBlock, LangExprBlock, LangGeneric, LangIf, LangImpl, LangNode, LangParam, LangPkg, LangProp, LangReturn, LangSetAttribute, LangSpecialBlock, LangUse, LangVar}
+import dev.tlang.tlang.tmpl.lang.ast.{LangAffect, LangAnnotation, LangAttribute, LangBlock, LangExprBlock, LangGeneric, LangIf, LangImpl, LangParam, LangPkg, LangProp, LangReturn, LangSetAttribute, LangSpecialBlock, LangUse, LangVar}
 
 class DartGeneratorGen3 extends CodeGenerator {
   override def generate(tmpl: LangBlock): String = {
@@ -65,7 +65,7 @@ object DartGeneratorGen3 {
     str.toString()
   }
 
-  def generate(node: LangNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter): Indent = {
+  def generate(node: TmplNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter): Indent = {
     var _ind = indent
     blocks.get(node.getClass.getTypeName).foreach(block => _ind = block.generate(node, str, indent, rules, params, this.generate))
     _ind

@@ -6,10 +6,12 @@ import dev.tlang.tlang.ast.common.value.{ArrayValue, ComplexAttribute, EntityVal
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
+import dev.tlang.tlang.tmpl.common.ast.TmplID
+import dev.tlang.tlang.tmpl.{DeepCopy, TmplNode}
 
-case class LangPkg(context: Option[ContextContent], var parts: List[LangID]) extends DeepCopy with LangNode[LangPkg] {
+case class LangPkg(context: Option[ContextContent], var parts: List[TmplID]) extends DeepCopy with TmplNode[LangPkg] {
   override def deepCopy(): LangPkg = {
-    LangPkg(context, parts.map(_.deepCopy().asInstanceOf[LangID]))
+    LangPkg(context, parts.map(_.deepCopy().asInstanceOf[TmplID]))
   }
 
   override def compareTo(value: Value[LangPkg]): Int = 0

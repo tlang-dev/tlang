@@ -4,7 +4,9 @@ import dev.tlang.tlang.ast.common.call.CallObject
 import dev.tlang.tlang.generator.mapper.ValueMapper
 import dev.tlang.tlang.interpreter.context.Context
 import dev.tlang.tlang.interpreter.{ExecCallObject, ExecError, NoValue, Value}
-import dev.tlang.tlang.tmpl.AnyTmplBlock
+import dev.tlang.tlang.tmpl.common.ast
+import dev.tlang.tlang.tmpl.common.ast.{LangBlockID, TmplID, TmplInterpretedID, TmplReplacedId}
+import dev.tlang.tlang.tmpl.{AnyTmplBlock, TmplNode}
 import dev.tlang.tlang.tmpl.doc.ast.DocBlock
 import dev.tlang.tlang.tmpl.lang.ast._
 import dev.tlang.tlang.tmpl.lang.ast.call._
@@ -74,23 +76,23 @@ object TemplateBuilder {
     if (pkg.isDefined) {
       forEach(pkg.get.parts, context) match {
         case Left(error) => Left(error)
-        case Right(value) => pkg.get.parts = value.asInstanceOf[List[LangID]]
+        case Right(value) => pkg.get.parts = value.asInstanceOf[List[TmplID]]
           Right(pkg)
       }
     } else Right(None)
   }
 
-  def buildContents(tmplContents: Option[List[LangNode[_]]], context: Context): Either[ExecError, Option[List[LangNode[_]]]] = {
+  def buildContents(tmplContents: Option[List[TmplNode[_]]], context: Context): Either[ExecError, Option[List[TmplNode[_]]]] = {
     if (tmplContents.isDefined) optionalForEach(tmplContents.get, context)
     else Right(None)
   }
 
-  def buildInclAttributes(nodes: Option[List[LangNode[_]]], context: Context): Either[ExecError, Option[List[LangNode[_]]]] = {
+  def buildInclAttributes(nodes: Option[List[TmplNode[_]]], context: Context): Either[ExecError, Option[List[TmplNode[_]]]] = {
     if (nodes.isDefined) optionalForEach(nodes.get, context)
     else Right(None)
   }
 
-  def callObject(callObject: CallObject, context: Context): Either[ExecError, List[LangNode[_]]] = {
+  def callObject(callObject: CallObject, context: Context): Either[ExecError, List[TmplNode[_]]] = {
     ExecCallObject.run(callObject, context) match {
       case Left(error) => Left(error)
       case Right(value) => value match {
@@ -172,7 +174,7 @@ object TemplateBuilder {
     includeTmplId(tmplType.name, context) match {
       case Left(error) => Left(error)
       case Right(name) =>
-        tmplType.name = name.head.asInstanceOf[LangID]
+        tmplType.name = name.head.asInstanceOf[TmplID]
         if (tmplType.generic.isDefined) {
           buildGeneric(tmplType.generic.get, context) match {
             case Left(error) => Left(error)
@@ -256,7 +258,7 @@ object TemplateBuilder {
     includeTmplId(str.value, context) match {
       case Left(error) => Left(error)
       case Right(value) =>
-        str.value = value.head.asInstanceOf[LangID]
+        str.value = value.head.asInstanceOf[TmplID]
         Right(str)
     }
   }
@@ -265,15 +267,15 @@ object TemplateBuilder {
     includeTmplId(str.value, context) match {
       case Left(error) => Left(error)
       case Right(value) =>
-        str.value = value.head.asInstanceOf[LangID]
+        str.value = value.head.asInstanceOf[TmplID]
         Right(str)
     }
   }
 
-  def includeTmplInclude(tmplInclude: LangInclude, context: Context): Either[ExecError, List[LangNode[_]]] = {
+  def includeTmplInclude(tmplInclude: LangInclude, context: Context): Either[ExecError, List[TmplNode[_]]] = {
     var err: Option[ExecError] = None
     var i = 0
-    val newNodes = ListBuffer.empty[LangNode[_]]
+    val newNodes = ListBuffer.empty[TmplNode[_]]
     while (err.isEmpty && i < tmplInclude.calls.length) {
       callObject(tmplInclude.calls(i), context) match {
         case Left(error) => err = Some(error)
@@ -285,16 +287,16 @@ object TemplateBuilder {
     else Right(newNodes.toList)
   }
 
-  def includeTmplId(tmplID: LangID, context: Context): Either[ExecError, List[LangNode[_]]] = {
+  def includeTmplId(tmplID: TmplID, context: Context): Either[ExecError, List[TmplNode[_]]] = {
     tmplID match {
-      case inter: LangInterpretedID => ExecCallObject.run(inter.call, context) match {
+      case inter: TmplInterpretedID => ExecCallObject.run(inter.call, context) match {
         case Left(error) => Left(error)
         case Right(value) => value match {
           case Some(value) =>
             if (value.length == 1) {
               buildValue(value.head) match {
                 case Left(error) => Left(error)
-                case Right(value) => Right(List(LangReplacedId(tmplID.getContext, inter.pre, value, inter.post)))
+                case Right(value) => Right(List(ast.TmplReplacedId(tmplID.getContext, inter.pre, value, inter.post)))
               }
             } else buildValues(value)
           case None => Left(NoValue("No value returned", tmplID.getContext))
@@ -308,10 +310,10 @@ object TemplateBuilder {
     }
   }
 
-  def buildValues(values: List[Value[_]]): Either[ExecError, List[LangNode[_]]] = {
+  def buildValues(values: List[Value[_]]): Either[ExecError, List[TmplNode[_]]] = {
     var err: Option[ExecError] = None
     var i = 0
-    val newNodes = ListBuffer.empty[LangNode[_]]
+    val newNodes = ListBuffer.empty[TmplNode[_]]
     while (err.isEmpty && i < values.length) {
       buildValue(values(i)) match {
         case Left(error) => err = Some(error)
@@ -323,11 +325,11 @@ object TemplateBuilder {
     else Right(newNodes.toList)
   }
 
-  def buildValue(value: Value[_]): Either[ExecError, LangNode[_]] = {
+  def buildValue(value: Value[_]): Either[ExecError, TmplNode[_]] = {
     value match {
       case valueBlock: LangBlockAsValue =>
         buildBlockAsValue(valueBlock)
-      case value: Value[_] => Right(value.asInstanceOf[LangNode[_]])
+      case value: Value[_] => Right(value.asInstanceOf[TmplNode[_]])
     }
   }
 
@@ -338,20 +340,20 @@ object TemplateBuilder {
         Right(ret)
     }
 
-  def optionalForEach(nodes: List[LangNode[_]], context: Context): Either[ExecError, Option[List[LangNode[_]]]] = {
+  def optionalForEach(nodes: List[TmplNode[_]], context: Context): Either[ExecError, Option[List[TmplNode[_]]]] = {
     forEach(nodes, context) match {
       case Left(err) => Left(err)
       case Right(nodes) => Right(Some(nodes))
     }
   }
 
-  def forEach(nodes: List[LangNode[_]], context: Context): Either[ExecError, List[LangNode[_]]] = {
+  def forEach(nodes: List[TmplNode[_]], context: Context): Either[ExecError, List[TmplNode[_]]] = {
     var err: Option[ExecError] = None
     var i = 0
-    val newNodes = ListBuffer.empty[LangNode[_]]
+    val newNodes = ListBuffer.empty[TmplNode[_]]
     while (err.isEmpty && i < nodes.length) {
       nodes(i) match {
-        case tmplID: LangID => includeTmplId(tmplID, context) match {
+        case tmplID: TmplID => includeTmplId(tmplID, context) match {
           case Left(error) => err = Some(error)
           case Right(values) => newNodes.addAll(values)
         }
@@ -359,7 +361,7 @@ object TemplateBuilder {
           case Left(error) => err = Some(error)
           case Right(values) => newNodes.addAll(values)
         }
-        case node: LangNode[_] =>
+        case node: TmplNode[_] =>
           visitNode(node, context) match {
             case Left(error) => err = Some(error)
             case Right(visitedNode) => newNodes.addAll(visitedNode)
@@ -404,10 +406,10 @@ object TemplateBuilder {
     else Right(variable)
   }
 
-  def visitNodes(nodes: List[LangNode[_]], context: Context): Either[ExecError, List[LangNode[_]]] = {
+  def visitNodes(nodes: List[TmplNode[_]], context: Context): Either[ExecError, List[TmplNode[_]]] = {
     var err: Option[ExecError] = None
     var i = 0
-    val visitedNodes = ListBuffer.empty[LangNode[_]]
+    val visitedNodes = ListBuffer.empty[TmplNode[_]]
     while (err.isEmpty && i < nodes.length) {
       visitNode(nodes(i), context) match {
         case Left(error) => err = Some(error)
@@ -419,7 +421,7 @@ object TemplateBuilder {
     else Right(visitedNodes.toList)
   }
 
-  def visitNode(node: LangNode[_], context: Context): Either[ExecError, List[LangNode[_]]] = {
+  def visitNode(node: TmplNode[_], context: Context): Either[ExecError, List[TmplNode[_]]] = {
     node match {
       case entity: LangEntityValue => toList(EntityBuilder.buildEntity(entity, context))
       case impl: LangImpl => toList(ImplBuilder.buildImpl(impl, context))
@@ -436,11 +438,11 @@ object TemplateBuilder {
       case stringValue: LangStringValue => toList(buildStringValue(stringValue, context))
       case variable: LangVar => toList(buildVar(variable, context))
       //case expr: TmplExpression[_] => buildExpression(expr, context)
-      case _: LangNode[_] => Right(List(node))
+      case _: TmplNode[_] => Right(List(node))
     }
   }
 
-  def toList[TYPE](either: Either[ExecError, LangNode[_]]): Either[ExecError, List[TYPE]] = {
+  def toList[TYPE](either: Either[ExecError, TmplNode[_]]): Either[ExecError, List[TYPE]] = {
     either match {
       case Left(error) => Left(error)
       case Right(value) => Right(List(value.asInstanceOf[TYPE]))

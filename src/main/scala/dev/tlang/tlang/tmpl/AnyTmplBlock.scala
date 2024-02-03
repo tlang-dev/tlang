@@ -3,13 +3,12 @@ package dev.tlang.tlang.tmpl
 import dev.tlang.tlang.ast.DomainBlock
 import dev.tlang.tlang.ast.helper.HelperParam
 import dev.tlang.tlang.interpreter.context.Scope
-import dev.tlang.tlang.tmpl.lang.ast.LangNode
 
-trait AnyTmplBlock[T] extends LangNode[T] with DomainBlock {
+trait AnyTmplBlock[T] extends TmplNode[T] with DomainBlock {
 
   def getParams: Option[List[HelperParam]]
 
-  def getLang: String
+  def getLangs: List[String]
 
   def getScope: Scope
 

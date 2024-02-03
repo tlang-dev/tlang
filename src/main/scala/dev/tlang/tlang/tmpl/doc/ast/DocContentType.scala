@@ -1,7 +1,7 @@
 package dev.tlang.tlang.tmpl.doc.ast
 
-import dev.tlang.tlang.tmpl.lang.ast.LangNode
+import dev.tlang.tlang.tmpl.TmplNode
 
-trait DocContentType[T] extends LangNode[T] {
+trait DocContentType[T] extends TmplNode[T] {
 
 }

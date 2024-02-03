@@ -3,7 +3,8 @@ package dev.tlang.tlang.generator.builder
 import dev.tlang.tlang.generator.builder.TemplateBuilder.includeTmplId
 import dev.tlang.tlang.interpreter.ExecError
 import dev.tlang.tlang.interpreter.context.Context
-import dev.tlang.tlang.tmpl.lang.ast.{LangAnnotation, LangID, LangImpl}
+import dev.tlang.tlang.tmpl.common.ast.TmplID
+import dev.tlang.tlang.tmpl.lang.ast.{LangAnnotation, LangImpl}
 
 import scala.collection.mutable.ListBuffer
 
@@ -22,7 +23,7 @@ object ImplBuilder {
     includeTmplId(impl.name, context) match {
       case Left(error) => Left(error)
       case Right(value) =>
-        impl.name = value.head.asInstanceOf[LangID]
+        impl.name = value.head.asInstanceOf[TmplID]
         buildImplContent(impl, context)
     }
   }

@@ -5,11 +5,12 @@ import dev.tlang.tlang.ast.common.value.EntityValue
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
-import dev.tlang.tlang.tmpl.lang.ast.{LangID, LangModel}
+import dev.tlang.tlang.tmpl.common.ast.TmplID
+import dev.tlang.tlang.tmpl.lang.ast.LangModel
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 
-case class LangStringValue(context: Option[ContextContent], var value: LangID) extends LangPrimitiveValue[LangStringValue] {
-  override def deepCopy(): LangStringValue = LangStringValue(context, value.deepCopy().asInstanceOf[LangID])
+case class LangStringValue(context: Option[ContextContent], var value: TmplID) extends LangPrimitiveValue[LangStringValue] {
+  override def deepCopy(): LangStringValue = LangStringValue(context, value.deepCopy().asInstanceOf[TmplID])
 
   override def getContext: Option[ContextContent] = context
 
@@ -35,6 +36,6 @@ object LangStringValue {
   val name: String = this.getClass.getSimpleName.replace("$", "")
 
   val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
-    ModelSetAttribute(None, Some("value"), ModelSetType(None, LangID.name)),
+    ModelSetAttribute(None, Some("value"), ModelSetType(None, TmplID.name)),
   )))
 }

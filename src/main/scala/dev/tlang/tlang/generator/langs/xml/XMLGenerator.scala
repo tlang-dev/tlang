@@ -5,7 +5,8 @@ import dev.tlang.tlang.tmpl.lang.ast.condition.LangOperation
 import dev.tlang.tlang.tmpl.lang.ast.primitive._
 import dev.tlang.tlang.generator.formatter.Formatter
 import dev.tlang.tlang.generator.{CodeGenerator, Seq}
-import dev.tlang.tlang.tmpl.lang.ast.{LangAttribute, LangBlock, LangExpression, LangID, LangNode}
+import dev.tlang.tlang.tmpl.common.ast.TmplID
+import dev.tlang.tlang.tmpl.lang.ast.{LangAttribute, LangBlock, LangExpression}
 
 class XMLGenerator extends CodeGenerator {
   override def generate(tmpl: LangBlock): String = {
@@ -21,13 +22,13 @@ object XMLGenerator {
     root
   }
 
-  def genContents(impls: List[LangNode[_]]): Iterable[Seq] = {
+  def genContents(impls: List[TmplNode[_]]): Iterable[Seq] = {
     val str: Array[Seq] = Array.ofDim[Seq](impls.size)
     impls.zipWithIndex.foreach(impl => str(impl._2) = genContent(impl._1))
     str
   }
 
-  def genContent(impl: LangNode[_]): Seq = {
+  def genContent(impl: TmplNode[_]): Seq = {
     impl match {
       case expr: LangExpression[_] => genExpression(expr)
       case _ => Seq()
@@ -87,7 +88,7 @@ object XMLGenerator {
     }
   }
 
-  def genParams(params: Option[List[LangNode[_]]]): Seq = {
+  def genParams(params: Option[List[TmplNode[_]]]): Seq = {
     val seq = Seq()
     params.foreach(_.foreach(attribute => {
       val attr = attribute.asInstanceOf[LangAttribute]
@@ -96,14 +97,14 @@ object XMLGenerator {
     seq
   }
 
-  def genOptTmplID(tmplID: Option[LangID]): Seq = {
+  def genOptTmplID(tmplID: Option[TmplID]): Seq = {
     tmplID match {
       case Some(value) => genTmplID(value)
       case None => Seq()
     }
   }
 
-  def genTmplID(tmplId: LangID): Seq = {
+  def genTmplID(tmplId: TmplID): Seq = {
     Seq(tmplId.toString)
   }
 

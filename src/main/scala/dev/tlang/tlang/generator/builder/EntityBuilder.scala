@@ -4,7 +4,7 @@ import dev.tlang.tlang.tmpl.lang.ast.primitive.LangEntityValue
 import dev.tlang.tlang.generator.builder.TemplateBuilder.{buildInclAttributes, includeTmplId}
 import dev.tlang.tlang.interpreter.ExecError
 import dev.tlang.tlang.interpreter.context.Context
-import dev.tlang.tlang.tmpl.lang.ast.LangID
+import dev.tlang.tlang.tmpl.common.ast.TmplID
 
 object EntityBuilder {
 
@@ -35,7 +35,7 @@ object EntityBuilder {
     if (entity.name.isDefined) includeTmplId(entity.name.get, context) match {
       case Left(error) => Left(error)
       case Right(value) =>
-        entity.name = Some(value.head.asInstanceOf[LangID])
+        entity.name = Some(value.head.asInstanceOf[TmplID])
         params()
     } else params()
 

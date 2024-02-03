@@ -6,13 +6,14 @@ import dev.tlang.tlang.ast.common.value.{ArrayValue, ComplexAttribute, EntityVal
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
-import dev.tlang.tlang.tmpl.lang.ast.{LangModel, LangNode, LangType}
+import dev.tlang.tlang.tmpl.TmplNode
+import dev.tlang.tlang.tmpl.lang.ast.{LangModel, LangType}
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 
-case class LangArrayValue(context: Option[ContextContent], var `type`: Option[LangType] = None, var params: Option[List[LangNode[_]]]) extends LangPrimitiveValue[LangArrayValue] {
+case class LangArrayValue(context: Option[ContextContent], var `type`: Option[LangType] = None, var params: Option[List[TmplNode[_]]]) extends LangPrimitiveValue[LangArrayValue] {
   override def deepCopy(): LangArrayValue = LangArrayValue(context,
     if (`type`.isDefined) Some(`type`.get.deepCopy()) else None,
-    if (params.isDefined) Some(params.get.map(_.deepCopy().asInstanceOf[LangNode[_]])) else None)
+    if (params.isDefined) Some(params.get.map(_.deepCopy().asInstanceOf[TmplNode[_]])) else None)
 
   override def getContext: Option[ContextContent] = context
 

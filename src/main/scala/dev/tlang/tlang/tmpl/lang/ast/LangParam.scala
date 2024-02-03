@@ -6,12 +6,14 @@ import dev.tlang.tlang.ast.common.value.{ArrayValue, ComplexAttribute, EntityVal
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
+import dev.tlang.tlang.tmpl.TmplNode
+import dev.tlang.tlang.tmpl.common.ast.TmplID
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 
-case class LangParam(context: Option[ContextContent], var annots: Option[List[LangAnnotation]] = None, var name: LangID, var `type`: Option[LangType]) extends LangNode[LangParam] {
+case class LangParam(context: Option[ContextContent], var annots: Option[List[LangAnnotation]] = None, var name: TmplID, var `type`: Option[LangType]) extends TmplNode[LangParam] {
   override def deepCopy(): LangParam = LangParam(context,
     if (annots.isDefined) Some(annots.get.map(_.deepCopy())) else None,
-    name.deepCopy().asInstanceOf[LangID],
+    name.deepCopy().asInstanceOf[TmplID],
     if (`type`.isDefined) Some(`type`.get.deepCopy()) else None)
 
   override def getContext: Option[ContextContent] = context
@@ -46,7 +48,7 @@ object LangParam {
 
   val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
     ModelSetAttribute(None, Some("annots"), ModelSetType(None, NullValue.name)),
-    ModelSetAttribute(None, Some("name"), ModelSetType(None, LangID.name)),
+    ModelSetAttribute(None, Some("name"), ModelSetType(None, TmplID.name)),
     ModelSetAttribute(None, Some("tType"), ModelSetType(None, NullValue.name)),
   )))
 }

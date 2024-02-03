@@ -1,6 +1,6 @@
 parser grammar TLangTmplLang;
 
-import TLangCommon, TLangHelper;
+import TLangTmpl;
 
 options {
   tokenVocab = CommonLexer;
@@ -111,14 +111,6 @@ tmplValueType: tmplCallObj | tmplPrimitiveValue | tmplMultiValue;
 
 tmplPrimitiveValue: tmplStringValue | tmplNumberValue | tmplTextValue | tmplEntityValue | tmplBoolValue | tmplArrayValue;
 
-tmplStringValue: value=tmplString;
-
-tmplNumberValue: value=NUMBER;
-
-tmplTextValue: value=tmplText;
-
-tmplBoolValue: value= True | False;
-
 tmplArrayValue: '[' (params+=tmplInclSetAttribute)? (',' params+=tmplInclSetAttribute)* RSQUARE;
 
 tmplInclAttribute: tmplInclude | tmplAttribute;
@@ -145,19 +137,5 @@ tmplReturn: Return call=tmplOperation;
 tmplAffect: variable=tmplCallObj '=' value=tmplOperation;
 
 tmplCast: LPARENT toCast=tmplOperation 'as' type=tmplType RPARENT ('.' combine=tmplCallObj)?;
-
-tmplID: ID | tmplIntprID | ESCAPED_ID;
-
-tmplIntprID: (pre=ID)? INTEPRETED callObj RBRACE (pos=ID)?;
-
-tmplString: STRING | tmplIntprString;
-
-tmplIntprString: 's"' (pre=.)? INTEPRETED callObj RBRACE (pos=.)? QUOTE;
-
-tmplText: TEXT | tmplIntprText;
-
-tmplIntprText: 's"""' (pre=.)? INTEPRETED callObj RBRACE (pos=.)? '"""';
-
-tmplIdOrString: tmplID | tmplString;
 
 tmplSpecialBlock: type=( Sync | Init | Destroy |Future|Await|Try|Catch|Finally|Continue|Break|Const|Static|Getter|Setter|Factory|Constructor|Throw| Final ) curries+=tmplCurrying* (expr=tmplExprContent)?;

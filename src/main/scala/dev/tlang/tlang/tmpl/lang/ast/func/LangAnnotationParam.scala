@@ -5,13 +5,15 @@ import dev.tlang.tlang.ast.common.value.{EntityValue, NullValue}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
 import dev.tlang.tlang.interpreter.Value
+import dev.tlang.tlang.tmpl.common.ast.TmplID
+import dev.tlang.tlang.tmpl.{DeepCopy, TmplNode}
 import dev.tlang.tlang.tmpl.lang.ast._
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 
-case class LangAnnotationParam(context: Option[ContextContent], var name: Option[LangID], var value: LangValueType[_]) extends DeepCopy with LangNode[LangAnnotationParam] with AstContext {
+case class LangAnnotationParam(context: Option[ContextContent], var name: Option[TmplID], var value: LangValueType[_]) extends DeepCopy with TmplNode[LangAnnotationParam] with AstContext {
   override def deepCopy(): LangAnnotationParam =
     LangAnnotationParam(context,
-      if (name.isDefined) Some(name.get.deepCopy().asInstanceOf[LangID]) else None,
+      if (name.isDefined) Some(name.get.deepCopy().asInstanceOf[TmplID]) else None,
       value.deepCopy().asInstanceOf[LangValueType[_]])
 
   override def getContext: Option[ContextContent] = context

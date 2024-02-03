@@ -5,10 +5,11 @@ import dev.tlang.tlang.ast.common.value.{EntityValue, TLangString}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
-import dev.tlang.tlang.tmpl.lang.ast.{DeepCopy, LangModel, LangNode}
+import dev.tlang.tlang.tmpl.{DeepCopy, TmplNode}
+import dev.tlang.tlang.tmpl.lang.ast.LangModel
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 
-case class LangCallObjectLink(context: Option[ContextContent], var link: String = ".", var call: LangCallObjType[_]) extends DeepCopy with LangNode[LangCallObjectLink] {
+case class LangCallObjectLink(context: Option[ContextContent], var link: String = ".", var call: LangCallObjType[_]) extends DeepCopy with TmplNode[LangCallObjectLink] {
   override def deepCopy(): LangCallObjectLink = LangCallObjectLink(context, link, call.deepCopy().asInstanceOf[LangCallObjType[_]])
 
   override def compareTo(value: Value[LangCallObjectLink]): Int = 0

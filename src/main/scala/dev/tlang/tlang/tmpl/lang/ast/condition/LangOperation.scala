@@ -6,10 +6,11 @@ import dev.tlang.tlang.ast.common.value.EntityValue
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
+import dev.tlang.tlang.tmpl.{DeepCopy, TmplNode}
 import dev.tlang.tlang.tmpl.lang.ast._
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 
-case class LangOperation(context: Option[ContextContent], var content: Either[LangOperation, LangExpression[_]], var next: Option[(Operator.operator, LangOperation)] = None) extends DeepCopy with LangNode[LangOperation] {
+case class LangOperation(context: Option[ContextContent], var content: Either[LangOperation, LangExpression[_]], var next: Option[(Operator.operator, LangOperation)] = None) extends DeepCopy with TmplNode[LangOperation] {
   override def deepCopy(): LangOperation = LangOperation(context,
     content match {
       case Left(value) => Left(value.deepCopy())

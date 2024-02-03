@@ -4,7 +4,8 @@ import dev.tlang.tlang.TLang._
 import dev.tlang.tlang.astbuilder.BuildAst.addContext
 import dev.tlang.tlang.astbuilder._
 import dev.tlang.tlang.astbuilder.context.ContextResource
-import dev.tlang.tlang.tmpl.AnyTmplBlock
+import dev.tlang.tlang.tmpl.common.ast.NativeType
+import dev.tlang.tlang.tmpl.common.astbuilder.BuildCommonTmpl
 import dev.tlang.tlang.tmpl.doc.astbuilder.BuildDoc
 import dev.tlang.tlang.tmpl.lang.ast
 import dev.tlang.tlang.tmpl.lang.ast._
@@ -13,6 +14,8 @@ import dev.tlang.tlang.tmpl.lang.ast.func.{LangAnnotationParam, LangAnonFunc}
 import dev.tlang.tlang.tmpl.lang.ast.loop.ForType.ForType
 import dev.tlang.tlang.tmpl.lang.ast.loop.{ForType, LangFor}
 import dev.tlang.tlang.tmpl.lang.ast.primitive._
+import dev.tlang.tlang.tmpl.style.astbuilder.BuildStyle
+import dev.tlang.tlang.tmpl.{AnyTmplBlock, TmplNode}
 
 import scala.jdk.CollectionConverters._
 
@@ -20,9 +23,10 @@ object BuildTmplBlock {
 
   def build(resource: ContextResource, tmpl: TmplBlockContext): AnyTmplBlock[_] = {
 
-    tmpl.block match {
-      case lang@_ if lang.tmplLang() != null => buildLangBlock(resource, tmpl)
-      case doc@_ if doc.tmplDoc() != null => BuildDoc.buildTmplDoc(resource, tmpl)
+    tmpl match {
+      case lang@_ if lang.tmplLang() != null => buildLangBlock(resource, tmpl.tmplLang())
+      case doc@_ if doc.tmplDoc() != null => BuildDoc.buildTmplDoc(resource, tmpl.tmplDoc())
+      case style@_ if style.tmplStyle() != null => BuildStyle.buildStyle(resource, style.tmplStyle())
       //      case data@_ if data.tmplData() != null => EntityValue(None, None)
       //      case cmd@_ if cmd.tmplCmd() != null => EntityValue(None, None)
     }
@@ -30,10 +34,11 @@ object BuildTmplBlock {
 
   }
 
-  def buildLangBlock(resource: ContextResource, tmpl: TmplBlockContext): LangBlock = {
-    val content = buildFullBlock(resource, tmpl, tmpl.block.tmplLang().tmplFullBlock())
-    LangBlock(addContext(resource, tmpl), tmpl.name.getText, tmpl.lang.getText,
-      if (tmpl.params != null && !tmpl.params.isEmpty) Some(BuildHelperBlock.buildParams(resource, tmpl.params.asScala.toList)) else None,
+  def buildLangBlock(resource: ContextResource, tmpl: TmplLangContext): LangBlock = {
+    val content = buildFullBlock(resource, tmpl.tmplFullBlock())
+    LangBlock(addContext(resource, tmpl), tmpl.name.getText,
+      tmpl.langs.asScala.map(_.getText).toList,
+      if (tmpl.params != null && !tmpl.params.isEmpty) Some(BuildHelperBlock.buildParams(resource, tmpl.params.asScala.toList).map(param => NativeType(param.context, param))) else None,
       content)
   }
 
@@ -42,11 +47,10 @@ object BuildTmplBlock {
      else buildSpecialisedBlock(resource, tmpl, tmpl.block.tmplSpecialisedBlock())
    }*/
 
-  def buildFullBlock(resource: ContextResource, tmpl: TmplBlockContext, full: TmplFullBlockContext): LangFullBlock = {
+  def buildFullBlock(resource: ContextResource, full: TmplFullBlockContext): LangFullBlock = {
     val pkg = if (full.tmplPkg() != null && !full.tmplPkg().isEmpty) Some(buildPkg(resource, full.tmplPkg())) else None
     val uses: List[LangUse] = buildUses(resource, full.tmplUses.asScala.toList)
-    LangFullBlock(addContext(resource, tmpl), tmpl.name.getText, tmpl.lang.getText,
-      if (tmpl.params != null && !tmpl.params.isEmpty) Some(BuildHelperBlock.buildParams(resource, tmpl.params.asScala.toList)) else None,
+    LangFullBlock(addContext(resource, full),
       pkg, Some(uses), specialised = false,
       buildContents(resource, full.tmplContents.asScala.toList))
   }
@@ -59,7 +63,7 @@ object BuildTmplBlock {
   }*/
 
   def buildPkg(resource: ContextResource, pkg: TmplPkgContext): LangPkg = {
-    LangPkg(addContext(resource, pkg), pkg.parts.asScala.toList.map(part => buildId(resource, part)))
+    LangPkg(addContext(resource, pkg), pkg.parts.asScala.toList.map(part => BuildCommonTmpl.buildId(resource, part)))
   }
 
   def buildUses(resource: ContextResource, uses: List[TmplUseContext]): List[LangUse] = {
@@ -68,8 +72,8 @@ object BuildTmplBlock {
   }
 
   def buildUse(resource: ContextResource, use: TmplUseContext): LangUse = {
-    LangUse(addContext(resource, use), use.parts.asScala.toList.map(part => buildId(resource, part)),
-      if (use.alias != null && !use.alias.isEmpty) Some(buildId(resource, use.alias)) else None)
+    LangUse(addContext(resource, use), use.parts.asScala.toList.map(part => BuildCommonTmpl.buildId(resource, part)),
+      if (use.alias != null && !use.alias.isEmpty) Some(BuildCommonTmpl.buildId(resource, use.alias)) else None)
   }
 
   def buildContents(resource: ContextResource, content: List[TmplContentContext]): Option[List[LangContent[_]]] = {
@@ -99,7 +103,7 @@ object BuildTmplBlock {
     )
   }
 
-  def buildSpecializedContent(resource: ContextResource, content: TmplSpecialisedContentContext): LangNode[_] = {
+  def buildSpecializedContent(resource: ContextResource, content: TmplSpecialisedContentContext): TmplNode[_] = {
     content match {
       case content@_ if content.tmplContent() != null => buildContent(resource, content.tmplContent())
       case attr@_ if attr.tmplAttribute() != null => buildAttribute(resource, attr.tmplAttribute())
@@ -110,7 +114,7 @@ object BuildTmplBlock {
 
   def buildImpl(resource: ContextResource, impl: TmplImplContext): LangImpl = {
     LangImpl(addContext(resource, impl), buildAnnotations(resource, impl.annots.asScala.toList), buildProps(resource, impl.props),
-      buildId(resource, impl.name), buildFors(resource, impl.forProps, impl.forNames), buildWiths(resource, impl.withProps, impl.withNames),
+      BuildCommonTmpl.buildId(resource, impl.name), buildFors(resource, impl.forProps, impl.forNames), buildWiths(resource, impl.withProps, impl.withNames),
       if (impl.tmplImplContents != null && !impl.tmplImplContents.isEmpty) buildContents(resource, impl.tmplImplContents.asScala.toList) else None)
   }
 
@@ -129,15 +133,15 @@ object BuildTmplBlock {
 
   def buildAnnotations(resource: ContextResource, annots: List[TmplAnnotContext]): Option[List[LangAnnotation]] = {
     if (annots.nonEmpty) Some(annots.map(annot => {
-      val params = annot.annotParams.asScala.toList.map(param => LangAnnotationParam(addContext(resource, param), buildOptionId(resource, param.name), buildValueType(resource, param.value)))
-      LangAnnotation(addContext(resource, annot), buildId(resource, annot.name), if (params.nonEmpty) Some(params) else None)
+      val params = annot.annotParams.asScala.toList.map(param => LangAnnotationParam(addContext(resource, param), BuildCommonTmpl.buildOptionId(resource, param.name), buildValueType(resource, param.value)))
+      LangAnnotation(addContext(resource, annot), BuildCommonTmpl.buildId(resource, annot.name), if (params.nonEmpty) Some(params) else None)
     }))
     else None
   }
 
   def buildProps(resource: ContextResource, props: TmplPropsContext): Option[LangProp] = {
     val elems = props.props.asScala.toList
-    if (elems.nonEmpty) Some(LangProp(addContext(resource, props), elems.map(buildId(resource, _))))
+    if (elems.nonEmpty) Some(LangProp(addContext(resource, props), elems.map(BuildCommonTmpl.buildId(resource, _))))
     else None
   }
 
@@ -153,12 +157,12 @@ object BuildTmplBlock {
   def buildParam(resource: ContextResource, param: TmplParamContext): LangParam = {
     LangParam(addContext(resource, param),
       buildAnnotations(resource, param.annots.asScala.toList),
-      buildId(resource, param.name),
+      BuildCommonTmpl.buildId(resource, param.name),
       if (param.`type` != null && !param.`type`.isEmpty) Some(buildType(resource, param.`type`)) else None)
   }
 
   def buildType(resource: ContextResource, `type`: TmplTypeContext): LangType = {
-    ast.LangType(addContext(resource, `type`), buildId(resource, `type`.`type`), buildGeneric(resource, `type`.generic), `type`.array != null,
+    ast.LangType(addContext(resource, `type`), BuildCommonTmpl.buildId(resource, `type`.`type`), buildGeneric(resource, `type`.generic), `type`.array != null,
       if (`type`.currying != null && !`type`.currying.isEmpty) Some(BuildTmplCall.buildCallFuncCurrying(resource, `type`.currying.asScala.toList)) else None)
   }
 
@@ -221,7 +225,7 @@ object BuildTmplBlock {
 
   def buildTmplFor(resource: ContextResource, tmplFor: TmplForContext): LangFor = {
     LangFor(addContext(resource, tmplFor),
-      buildId(resource, tmplFor.variable),
+      BuildCommonTmpl.buildId(resource, tmplFor.variable),
       if (tmplFor.start != null && !tmplFor.start.isEmpty) Some(buildOperation(resource, tmplFor.start)) else None,
       buildForType(tmplFor.`type`.getText), buildOperation(resource, tmplFor.array), buildExprContent(resource, tmplFor.tmplExprContent()))
   }
@@ -233,7 +237,7 @@ object BuildTmplBlock {
   }
 
   def buildVar(resource: ContextResource, variable: TmplVarContext): LangVar = {
-    LangVar(addContext(resource, variable), buildAnnotations(resource, variable.annots.asScala.toList), buildProps(resource, variable.props), buildId(resource, variable.name),
+    LangVar(addContext(resource, variable), buildAnnotations(resource, variable.annots.asScala.toList), buildProps(resource, variable.props), BuildCommonTmpl.buildId(resource, variable.name),
       if (variable.`type` != null) Some(buildType(resource, variable.`type`)) else None,
       if (variable.value != null) Some(buildOperation(resource, variable.value)) else None,
       variable.optional != null
@@ -250,11 +254,11 @@ object BuildTmplBlock {
 
   def buildSetAttribute(resource: ContextResource, param: TmplSetAttributeContext): LangSetAttribute = {
     LangSetAttribute(addContext(resource, param),
-      buildIdOrString(resource, param.name),
+      BuildCommonTmpl.buildIdOrString(resource, param.name),
       buildOperation(resource, param.value))
   }
 
-  def buildInclSetAttribute(resource: ContextResource, attr: TmplInclSetAttributeContext): LangNode[_] = {
+  def buildInclSetAttribute(resource: ContextResource, attr: TmplInclSetAttributeContext): TmplNode[_] = {
     attr match {
       case incl@_ if incl.tmplInclude() != null => buildInclude(resource, incl.tmplInclude())
       case attr@_ if attr.tmplSetAttribute() != null => buildSetAttribute(resource, attr.tmplSetAttribute())
@@ -275,7 +279,7 @@ object BuildTmplBlock {
       if (block.op != null) Some(BuildCommon.buildOperator(block.op.getText), buildOperation(resource, block.next)) else None)
   }
 
-  def buildInclAttribute(resource: ContextResource, attr: TmplInclAttributeContext): LangNode[_] = {
+  def buildInclAttribute(resource: ContextResource, attr: TmplInclAttributeContext): TmplNode[_] = {
     attr match {
       case incl@_ if incl.tmplInclude() != null => buildInclude(resource, incl.tmplInclude())
       case attr@_ if attr.tmplAttribute() != null => buildAttribute(resource, attr.tmplAttribute())
@@ -283,23 +287,23 @@ object BuildTmplBlock {
   }
 
   def buildAttribute(resource: ContextResource, attr: TmplAttributeContext): LangAttribute = {
-    LangAttribute(addContext(resource, attr), buildOptionId(resource, attr.attr), if (attr.`type` != null) Some(buildType(resource, attr.`type`)) else None, buildOperation(resource, attr.value))
+    LangAttribute(addContext(resource, attr), BuildCommonTmpl.buildOptionId(resource, attr.attr), if (attr.`type` != null) Some(buildType(resource, attr.`type`)) else None, buildOperation(resource, attr.value))
   }
 
   def buildMultiValue(resource: ContextResource, value: TmplMultiValueContext): LangMultiValue = LangMultiValue(addContext(resource, value), value.values.asScala.toList.map(value => buildValueType(resource, value)))
 
   def buildPrimitive(resource: ContextResource, value: TmplPrimitiveValueContext): LangPrimitiveValue[_] = value match {
-    case string@_ if string.tmplStringValue() != null => buildString(resource, string.tmplStringValue())
-    case number@_ if number.tmplNumberValue() != null => buildNumber(resource, number.tmplNumberValue())
-    case text@_ if text.tmplTextValue() != null => buildText(resource, text.tmplTextValue())
+    case string@_ if string.tmplStringValue() != null => BuildCommonTmpl.buildString(resource, string.tmplStringValue())
+    case number@_ if number.tmplNumberValue() != null => BuildCommonTmpl.buildNumber(resource, number.tmplNumberValue())
+    case text@_ if text.tmplTextValue() != null => BuildCommonTmpl.buildText(resource, text.tmplTextValue())
     case entity@_ if entity.tmplEntityValue() != null => buildEntity(resource, entity.tmplEntityValue())
-    case bool@_ if bool.tmplBoolValue() != null => buildBool(resource, bool.tmplBoolValue())
+    case bool@_ if bool.tmplBoolValue() != null => BuildCommonTmpl.buildBool(resource, bool.tmplBoolValue())
     case array@_ if array.tmplArrayValue() != null => buildArray(resource, None, array.tmplArrayValue())
   }
 
   def buildEntity(resource: ContextResource, entity: TmplEntityValueContext): LangEntityValue = LangEntityValue(
     addContext(resource, entity),
-    buildOptionId(resource, entity.name),
+    BuildCommonTmpl.buildOptionId(resource, entity.name),
     if (entity.params != null && !entity.params.isEmpty) Some(entity.params.asScala.toList.map(param => buildInclSetAttribute(resource, param))) else None,
     if (entity.attrs != null && !entity.attrs.isEmpty) Some(entity.attrs.asScala.toList.map(attr => buildInclSetAttribute(resource, attr))) else None
   )
@@ -307,45 +311,6 @@ object BuildTmplBlock {
   def buildArray(resource: ContextResource, `type`: Option[LangType] = None, array: TmplArrayValueContext): LangArrayValue = {
     LangArrayValue(addContext(resource, array), `type`,
       if (array.params != null && !array.params.isEmpty) Some(array.params.asScala.toList.map(param => buildInclSetAttribute(resource, param))) else None)
-  }
-
-  def buildOptionId(resource: ContextResource, id: TmplIDContext): Option[LangID] = {
-    if (id != null && !id.isEmpty) Some(buildId(resource, id))
-    else None
-  }
-
-  def buildId(resource: ContextResource, id: TmplIDContext): LangID = id match {
-    case id@_ if id.ID() != null => LangStringID(addContext(resource, id), id.ID().getSymbol.getText)
-    case interId@_ if interId.tmplIntprID() != null => LangInterpretedID(addContext(resource, id), AstBuilderUtils.getText(interId.tmplIntprID().pre), BuildHelperStatement.buildCallObject(resource, interId.tmplIntprID().callObj()), AstBuilderUtils.getText(interId.tmplIntprID().pos))
-    case escaped@_ if escaped.ESCAPED_ID() != null => LangStringID(addContext(resource, escaped), escaped.ESCAPED_ID().getText.replace("`", ""))
-  }
-
-  def buildString(resource: ContextResource, str: TmplStringContext): LangID = str match {
-    case id@_ if id.STRING() != null => LangStringID(addContext(resource, str), AstBuilderUtils.extraString(id.STRING().getSymbol.getText))
-    case interId@_ if interId.tmplIntprString() != null => LangInterpretedID(addContext(resource, str), AstBuilderUtils.getText(interId.tmplIntprString().pre), BuildHelperStatement.buildCallObject(resource, interId.tmplIntprString().callObj()), AstBuilderUtils.getText(interId.tmplIntprString().pos))
-  }
-
-  def buildText(resource: ContextResource, txt: TmplTextContext): LangID = txt match {
-    case id@_ if id.TEXT() != null => LangStringID(addContext(resource, txt), AstBuilderUtils.extraText(id.TEXT().getSymbol.getText))
-    case interId@_ if interId.tmplIntprText() != null => LangInterpretedID(addContext(resource, txt), AstBuilderUtils.getText(interId.tmplIntprText().pre), BuildHelperStatement.buildCallObject(resource, interId.tmplIntprText().callObj()), AstBuilderUtils.getText(interId.tmplIntprText().pos))
-  }
-
-  def buildString(resource: ContextResource, string: TmplStringValueContext): LangStringValue = LangStringValue(addContext(resource, string), buildString(resource, string.value))
-
-  def buildNumber(resource: ContextResource, number: TmplNumberValueContext): LangPrimitiveValue[_] = {
-    val value = number.value.getText
-    if (value.contains(".")) LangDoubleValue(addContext(resource, number), value.toDouble)
-    else LangLongValue(addContext(resource, number), value.toLong)
-  }
-
-  def buildText(resource: ContextResource, text: TmplTextValueContext): LangTextValue = LangTextValue(addContext(resource, text), buildText(resource, text.value))
-
-  def buildBool(resource: ContextResource, bool: TmplBoolValueContext): LangBoolValue = LangBoolValue(addContext(resource, bool), bool.value.getText == "true")
-
-  def buildIdOrString(resource: ContextResource, idOrString: TmplIdOrStringContext): Option[LangID] = {
-    if (idOrString != null && idOrString.tmplID() != null) Some(buildId(resource, idOrString.tmplID()))
-    else if (idOrString != null && idOrString.tmplString() != null) Some(buildString(resource, idOrString.tmplString()))
-    else None
   }
 
 }

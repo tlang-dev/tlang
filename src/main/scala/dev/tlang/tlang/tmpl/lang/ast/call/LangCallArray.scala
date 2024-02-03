@@ -5,12 +5,13 @@ import dev.tlang.tlang.ast.common.value.EntityValue
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
+import dev.tlang.tlang.tmpl.common.ast.TmplID
 import dev.tlang.tlang.tmpl.lang.ast.condition.LangOperation
-import dev.tlang.tlang.tmpl.lang.ast.{LangID, LangModel}
+import dev.tlang.tlang.tmpl.lang.ast.LangModel
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 
-case class LangCallArray(context: Option[ContextContent], var name: LangID, var elem: LangOperation) extends LangCallObjType[LangCallArray] {
-  override def deepCopy(): LangCallArray = LangCallArray(context, name.deepCopy().asInstanceOf[LangID], elem.deepCopy())
+case class LangCallArray(context: Option[ContextContent], var name: TmplID, var elem: LangOperation) extends LangCallObjType[LangCallArray] {
+  override def deepCopy(): LangCallArray = LangCallArray(context, name.deepCopy().asInstanceOf[TmplID], elem.deepCopy())
 
   override def getContext: Option[ContextContent] = context
 
@@ -36,7 +37,7 @@ object LangCallArray {
   val name: String = this.getClass.getSimpleName.replace("$", "")
 
   val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
-    ModelSetAttribute(None, Some("name"), ModelSetType(None, LangID.name)),
+    ModelSetAttribute(None, Some("name"), ModelSetType(None, TmplID.name)),
     ModelSetAttribute(None, Some("operation"), ModelSetType(None, LangOperation.name)),
   )))
 }

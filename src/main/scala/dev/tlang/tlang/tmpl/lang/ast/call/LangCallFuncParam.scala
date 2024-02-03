@@ -6,10 +6,11 @@ import dev.tlang.tlang.ast.common.value.{ArrayValue, ComplexAttribute, EntityVal
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
-import dev.tlang.tlang.tmpl.lang.ast.{LangModel, LangNode}
+import dev.tlang.tlang.tmpl.TmplNode
+import dev.tlang.tlang.tmpl.lang.ast.LangModel
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 
-case class LangCallFuncParam(context: Option[ContextContent], var params: Option[List[LangNode[_]]]) extends LangNode[LangCallFuncParam] {
+case class LangCallFuncParam(context: Option[ContextContent], var params: Option[List[TmplNode[_]]]) extends TmplNode[LangCallFuncParam] {
   override def compareTo(value: Value[LangCallFuncParam]): Int = 0
 
   override def getElement: LangCallFuncParam = this
@@ -20,7 +21,7 @@ case class LangCallFuncParam(context: Option[ContextContent], var params: Option
 
   override def deepCopy(): LangCallFuncParam = LangCallFuncParam(
     context,
-    if (params.isDefined) Some(params.get.map(_.deepCopy().asInstanceOf[LangNode[_]])) else None,
+    if (params.isDefined) Some(params.get.map(_.deepCopy().asInstanceOf[TmplNode[_]])) else None,
   )
 
   override def toEntity: EntityValue = EntityValue(context,

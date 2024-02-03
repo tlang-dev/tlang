@@ -5,9 +5,10 @@ import dev.tlang.tlang.ast.common.value.{ArrayValue, EntityValue}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
+import dev.tlang.tlang.tmpl.TmplNode
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 
-case class LangGeneric(context: Option[ContextContent], var types: List[LangType]) extends LangNode[LangGeneric] {
+case class LangGeneric(context: Option[ContextContent], var types: List[LangType]) extends TmplNode[LangGeneric] {
   override def deepCopy(): LangGeneric = LangGeneric(context, types.map(_.deepCopy()))
 
   override def getContext: Option[ContextContent] = context

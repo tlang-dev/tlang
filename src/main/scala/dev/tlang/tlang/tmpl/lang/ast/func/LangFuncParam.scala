@@ -6,10 +6,11 @@ import dev.tlang.tlang.ast.common.value.{ArrayValue, ComplexAttribute, EntityVal
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
-import dev.tlang.tlang.tmpl.lang.ast.{LangModel, LangNode, LangParam}
+import dev.tlang.tlang.tmpl.TmplNode
+import dev.tlang.tlang.tmpl.lang.ast.{LangModel, LangParam}
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 
-case class LangFuncParam(context: Option[ContextContent], params: Option[List[LangParam]], var `type`: String) extends LangNode[LangFuncParam] {
+case class LangFuncParam(context: Option[ContextContent], params: Option[List[LangParam]], var `type`: String) extends TmplNode[LangFuncParam] {
   override def compareTo(value: Value[LangFuncParam]): Int = 0
 
   override def getElement: LangFuncParam = this

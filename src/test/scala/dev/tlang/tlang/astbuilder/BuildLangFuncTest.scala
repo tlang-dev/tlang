@@ -1,7 +1,7 @@
 package dev.tlang.tlang.astbuilder
 
 import dev.tlang.tlang.astbuilder.context.ContextResource
-import dev.tlang.tlang.tmpl.lang.ast.LangStringID
+import dev.tlang.tlang.tmpl.common.ast.TmplStringID
 import dev.tlang.tlang.tmpl.lang.ast.func.LangFunc
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildTmplBlock
 import dev.tlang.tlang.{CommonLexer, TLang}
@@ -53,7 +53,7 @@ class BuildLangFuncTest extends AnyFunSuite {
     val func = impl.content.get.head.asInstanceOf[LangFunc]
     val param = func.curries.get.head.params.get.head
     assert("func1".equals(func.name.toString))
-    assert("myParam" == param.name.asInstanceOf[LangStringID].id)
+    assert("myParam" == param.name.asInstanceOf[TmplStringID].id)
     assert("MyType" == param.`type`.get.name.toString)
     assert(!param.`type`.get.isArray)
     assert(param.`type`.get.generic.isEmpty)
@@ -72,7 +72,7 @@ class BuildLangFuncTest extends AnyFunSuite {
     val func = impl.content.get.head.asInstanceOf[LangFunc]
     val param = func.curries.get.head.params.get.head
     assert("func1" == func.name.toString)
-    assert("myParam" == param.name.asInstanceOf[LangStringID].id)
+    assert("myParam" == param.name.asInstanceOf[TmplStringID].id)
     assert("MyType" == param.`type`.get.name.toString)
     assert(param.`type`.get.isArray)
     assert(param.`type`.get.generic.isEmpty)
@@ -91,7 +91,7 @@ class BuildLangFuncTest extends AnyFunSuite {
     val func = impl.content.get.head.asInstanceOf[LangFunc]
     val param = func.curries.get.head.params.get.head
     assert("func1" == func.name.toString)
-    assert("myParam" == param.name.asInstanceOf[LangStringID].id)
+    assert("myParam" == param.name.asInstanceOf[TmplStringID].id)
     assert("MyType" == param.`type`.get.name.toString)
     assert("AnotherType" == param.`type`.get.generic.head.types.head.name.toString)
     assert("YetAnotherType" == param.`type`.get.generic.head.types.last.name.toString)
@@ -115,12 +115,12 @@ class BuildLangFuncTest extends AnyFunSuite {
 
     assert("func1" == func.name.toString)
 
-    assert("myParam" == param1.name.asInstanceOf[LangStringID].id)
+    assert("myParam" == param1.name.asInstanceOf[TmplStringID].id)
     assert("MyType" == param1.`type`.get.name.toString)
     assert(!param1.`type`.get.isArray)
     assert(param1.`type`.get.generic.isEmpty)
 
-    assert("myParam2" == param2.name.asInstanceOf[LangStringID].id)
+    assert("myParam2" == param2.name.asInstanceOf[TmplStringID].id)
     assert("MyType2" == param2.`type`.get.name.toString)
     assert(param2.`type`.get.isArray)
     assert(param2.`type`.get.generic.isEmpty)

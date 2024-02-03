@@ -5,8 +5,14 @@ import dev.tlang.tlang.ast.common.value.EntityValue
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
-import dev.tlang.tlang.tmpl.lang.ast.LangNode
+import dev.tlang.tlang.tmpl.TmplNode
 
+trait StyleAttribute[T] extends TmplNode[T] {
+
+
+}
+
+/*
 case class StyleAttribute(context: Option[ContextContent]) extends LangNode[StyleAttribute] {
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, toModel.name)),
@@ -29,4 +35,4 @@ case class StyleAttribute(context: Option[ContextContent]) extends LangNode[Styl
 object StyleAttribute {
   val model: ModelSetEntity = ModelSetEntity(None, "StyleAttribute", Some(ObjType(None, None, StyleModel.styleModel.name)), None, Some(List(
   )))
-}
+}*/

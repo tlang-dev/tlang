@@ -3,6 +3,7 @@ package dev.tlang.tlang.tmpl.lang.astbuilder
 import dev.tlang.tlang.TLang._
 import dev.tlang.tlang.astbuilder.BuildAst.addContext
 import dev.tlang.tlang.astbuilder.context.ContextResource
+import dev.tlang.tlang.tmpl.common.astbuilder.BuildCommonTmpl
 import dev.tlang.tlang.tmpl.lang.ast.call._
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildTmplBlock._
 
@@ -28,15 +29,15 @@ object BuildTmplCall {
   }
 
   def buildCallArray(resource: ContextResource, array: TmplCallArrayContext): LangCallArray = {
-    LangCallArray(addContext(resource, array), buildId(resource, array.name), buildOperation(resource, array.elem))
+    LangCallArray(addContext(resource, array), BuildCommonTmpl.buildId(resource, array.name), buildOperation(resource, array.elem))
   }
 
   def buildCallVar(resource: ContextResource, variable: TmplCallVariableContext): LangCallVar = {
-    LangCallVar(addContext(resource, variable), buildId(resource, variable.name))
+    LangCallVar(addContext(resource, variable), BuildCommonTmpl.buildId(resource, variable.name))
   }
 
   def buildCallFunc(resource: ContextResource, func: TmplCallFuncContext): LangCallFunc = {
-    LangCallFunc(addContext(resource, func), buildId(resource, func.name), if (func.currying != null && !func.currying.isEmpty) Some(buildCallFuncCurrying(resource, func.currying.asScala.toList)) else None)
+    LangCallFunc(addContext(resource, func), BuildCommonTmpl.buildId(resource, func.name), if (func.currying != null && !func.currying.isEmpty) Some(buildCallFuncCurrying(resource, func.currying.asScala.toList)) else None)
   }
 
   def buildCallFuncCurrying(resource: ContextResource, currying: List[TmplCurryParamsContext]): List[LangCallFuncParam] = {

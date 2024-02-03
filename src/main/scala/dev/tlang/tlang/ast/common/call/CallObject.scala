@@ -5,9 +5,10 @@ import dev.tlang.tlang.ast.common.{ObjType, ValueType}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
-import dev.tlang.tlang.tmpl.lang.ast.{LangModel, LangNode}
+import dev.tlang.tlang.tmpl.TmplNode
+import dev.tlang.tlang.tmpl.lang.ast.LangModel
 
-case class CallObject(context: Option[ContextContent], statements: List[CallObjectType]) extends ComplexValueStatement[CallObject] with LangNode[CallObject] {
+case class CallObject(context: Option[ContextContent], statements: List[CallObjectType]) extends ComplexValueStatement[CallObject] with TmplNode[CallObject] {
   override def getElement: CallObject = this
 
   override def getType: String = CallObject.getType
@@ -16,11 +17,15 @@ case class CallObject(context: Option[ContextContent], statements: List[CallObje
 
   override def getContext: Option[ContextContent] = context
 
-  override def toEntity: EntityValue = ???
+  override def toEntity: EntityValue = EntityValue(context,
+    Some(ObjType(context, None, CallObject.name)),
+    Some(List(
+    ))
+  )
 
   override def toModel: ModelSetEntity = CallObject.model
 
-  override def deepCopy(): CallObject = CallObject(context, statements.map(_.deepCopy()))
+  override def deepCopy(): CallObject = CallObject(context, statements)
 }
 
 object CallObject extends TLangType {

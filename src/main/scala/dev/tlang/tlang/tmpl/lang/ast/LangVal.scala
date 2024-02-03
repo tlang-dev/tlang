@@ -6,14 +6,15 @@ import dev.tlang.tlang.ast.common.value._
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
 import dev.tlang.tlang.interpreter.Value
+import dev.tlang.tlang.tmpl.common.ast.TmplID
 import dev.tlang.tlang.tmpl.lang.ast.condition.LangOperation
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 
-case class LangVal(context: Option[ContextContent], var annots: Option[List[LangAnnotation]] = None, var props: Option[LangProp] = None, var name: LangID, var `type`: Option[LangType], var value: Option[LangOperation], isOptional: Boolean) extends LangExpression[LangVal] with AstContext {
+case class LangVal(context: Option[ContextContent], var annots: Option[List[LangAnnotation]] = None, var props: Option[LangProp] = None, var name: TmplID, var `type`: Option[LangType], var value: Option[LangOperation], isOptional: Boolean) extends LangExpression[LangVal] with AstContext {
   override def deepCopy(): LangVal = LangVal(context,
     if (annots.isDefined) Some(annots.get.map(_.deepCopy())) else None,
     if (props.isDefined) Some(props.get.deepCopy()) else None,
-    name.deepCopy().asInstanceOf[LangID],
+    name.deepCopy().asInstanceOf[TmplID],
     if (`type`.isDefined) Some(`type`.get.deepCopy()) else None,
     if (value.isDefined) Some(value.get.deepCopy()) else None,
     isOptional
@@ -60,7 +61,7 @@ object LangVal {
   val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
     ModelSetAttribute(None, Some("annots"), ModelSetType(None, NullValue.name)),
     ModelSetAttribute(None, Some("props"), ModelSetType(None, NullValue.name)),
-    ModelSetAttribute(None, Some("name"), ModelSetType(None, LangID.name)),
+    ModelSetAttribute(None, Some("name"), ModelSetType(None, TmplID.name)),
     ModelSetAttribute(None, Some("tType"), ModelSetType(None, NullValue.name)),
     ModelSetAttribute(None, Some("value"), ModelSetType(None, NullValue.name)),
     ModelSetAttribute(None, Some("isOptional"), ModelSetType(None, TLangBool.getType)),

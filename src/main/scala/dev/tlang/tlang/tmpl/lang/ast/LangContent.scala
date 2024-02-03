@@ -2,8 +2,9 @@ package dev.tlang.tlang.tmpl.lang.ast
 
 import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
+import dev.tlang.tlang.tmpl.TmplNode
 
-trait LangContent[TYPE] extends LangNode[TYPE]
+trait LangContent[TYPE] extends TmplNode[TYPE]
 
 
 object LangContent {

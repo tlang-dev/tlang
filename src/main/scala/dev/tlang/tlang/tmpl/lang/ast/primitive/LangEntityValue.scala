@@ -5,14 +5,16 @@ import dev.tlang.tlang.ast.common.value.{EntityValue, NullValue}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
+import dev.tlang.tlang.tmpl.common.ast.{TmplID, TmplStringID}
+import dev.tlang.tlang.tmpl.TmplNode
 import dev.tlang.tlang.tmpl.lang.ast._
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 
-case class LangEntityValue(context: Option[ContextContent], var name: Option[LangID], var params: Option[List[LangNode[_]]], var attrs: Option[List[LangNode[_]]]) extends LangPrimitiveValue[LangEntityValue] {
+case class LangEntityValue(context: Option[ContextContent], var name: Option[TmplID], var params: Option[List[TmplNode[_]]], var attrs: Option[List[TmplNode[_]]]) extends LangPrimitiveValue[LangEntityValue] {
   override def deepCopy(): LangEntityValue = LangEntityValue(context,
-    if (name.isDefined) Some(name.get.deepCopy().asInstanceOf[LangID]) else None,
-    if (params.isDefined) Some(params.get.map(_.deepCopy().asInstanceOf[LangNode[_]])) else None,
-    if (attrs.isDefined) Some(attrs.get.map(_.deepCopy().asInstanceOf[LangNode[_]])) else None
+    if (name.isDefined) Some(name.get.deepCopy().asInstanceOf[TmplID]) else None,
+    if (params.isDefined) Some(params.get.map(_.deepCopy().asInstanceOf[TmplNode[_]])) else None,
+    if (attrs.isDefined) Some(attrs.get.map(_.deepCopy().asInstanceOf[TmplNode[_]])) else None
   )
 
   override def compareTo(value: Value[LangEntityValue]): Int = 0
@@ -26,7 +28,7 @@ case class LangEntityValue(context: Option[ContextContent], var name: Option[Lan
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, LangEntityValue.name)),
     Some(List(
-      BuildLang.createAttrEntity(context, "name", if (name.isDefined) name.get.toEntity else LangStringID(context, "").toEntity),
+      BuildLang.createAttrEntity(context, "name", if (name.isDefined) name.get.toEntity else TmplStringID(context, "").toEntity),
       BuildLang.createArray(context, "params", params.map(_.map(_.toEntity)).getOrElse(List())),
       BuildLang.createArray(context, "attrs", attrs.map(_.map(_.toEntity)).getOrElse(List())),
     ))

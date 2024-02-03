@@ -5,10 +5,11 @@ import dev.tlang.tlang.ast.common.value.{ArrayValue, EntityValue}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
 import dev.tlang.tlang.interpreter.Value
+import dev.tlang.tlang.tmpl.TmplNode
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 
-case class LangExprBlock(context: Option[ContextContent], var exprs: List[LangNode[_]]) extends LangExprContent[LangExprBlock] with AstContext {
-  override def deepCopy(): LangExprBlock = LangExprBlock(context, exprs.map(_.deepCopy().asInstanceOf[LangNode[_]]))
+case class LangExprBlock(context: Option[ContextContent], var exprs: List[TmplNode[_]]) extends LangExprContent[LangExprBlock] with AstContext {
+  override def deepCopy(): LangExprBlock = LangExprBlock(context, exprs.map(_.deepCopy().asInstanceOf[TmplNode[_]]))
 
   override def getContext: Option[ContextContent] = context
 

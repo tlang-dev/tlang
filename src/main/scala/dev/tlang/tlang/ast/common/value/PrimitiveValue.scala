@@ -3,9 +3,9 @@ package dev.tlang.tlang.ast.common.value
 import dev.tlang.tlang.ast.common.call.ComplexValueStatement
 import dev.tlang.tlang.ast.model.set.ModelSetValueType
 import dev.tlang.tlang.interpreter.ExecError
-import dev.tlang.tlang.tmpl.lang.ast.LangNode
+import dev.tlang.tlang.tmpl.TmplNode
 
-abstract class PrimitiveValue[TYPE] extends ComplexValueStatement[TYPE] with ModelSetValueType[TYPE] with LangNode[TYPE] {
+abstract class PrimitiveValue[TYPE] extends ComplexValueStatement[TYPE] with ModelSetValueType[TYPE] with TmplNode[TYPE] {
 
   def add(value: PrimitiveValue[TYPE]): Either[ExecError, PrimitiveValue[TYPE]]
 

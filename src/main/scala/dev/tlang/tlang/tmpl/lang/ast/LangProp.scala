@@ -5,10 +5,12 @@ import dev.tlang.tlang.ast.common.value.{ArrayValue, EntityValue}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
 import dev.tlang.tlang.interpreter.Value
+import dev.tlang.tlang.tmpl.common.ast.TmplID
+import dev.tlang.tlang.tmpl.{DeepCopy, TmplNode}
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 
-case class LangProp(context: Option[ContextContent], var props: List[LangID]) extends DeepCopy with AstContext with LangNode[LangProp] {
-  override def deepCopy(): LangProp = LangProp(context, props.map(_.deepCopy().asInstanceOf[LangID]))
+case class LangProp(context: Option[ContextContent], var props: List[TmplID]) extends DeepCopy with AstContext with TmplNode[LangProp] {
+  override def deepCopy(): LangProp = LangProp(context, props.map(_.deepCopy().asInstanceOf[TmplID]))
 
   override def getContext: Option[ContextContent] = context
 

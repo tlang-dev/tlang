@@ -5,9 +5,10 @@ import dev.tlang.tlang.ast.common.value.{ArrayValue, EntityValue, NullValue}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
 import dev.tlang.tlang.interpreter.Value
+import dev.tlang.tlang.tmpl.TmplNode
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 
-case class LangImplFor(context: Option[ContextContent], var props: Option[LangProp] = None, var types: List[LangType]) extends LangNode[LangImplFor] with AstContext {
+case class LangImplFor(context: Option[ContextContent], var props: Option[LangProp] = None, var types: List[LangType]) extends TmplNode[LangImplFor] with AstContext {
   override def deepCopy(): LangImplFor = LangImplFor(context,
     if (props.isDefined) Some(props.get.deepCopy()) else None,
     types.map(_.deepCopy()))

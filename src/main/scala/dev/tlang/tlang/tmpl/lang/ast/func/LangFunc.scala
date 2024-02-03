@@ -6,16 +6,17 @@ import dev.tlang.tlang.ast.common.value.{ArrayValue, ComplexAttribute, EntityVal
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
 import dev.tlang.tlang.interpreter.Value
+import dev.tlang.tlang.tmpl.common.ast.TmplID
 import dev.tlang.tlang.tmpl.lang.ast._
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 
-case class LangFunc(context: Option[ContextContent], var annots: Option[List[LangAnnotation]] = None, var props: Option[LangProp] = None, var preNames: Option[List[LangID]] = None, var name: LangID, var curries: Option[List[LangFuncParam]], var content: Option[LangExprContent[_]],
+case class LangFunc(context: Option[ContextContent], var annots: Option[List[LangAnnotation]] = None, var props: Option[LangProp] = None, var preNames: Option[List[TmplID]] = None, var name: TmplID, var curries: Option[List[LangFuncParam]], var content: Option[LangExprContent[_]],
                     var ret: Option[List[LangType]] = None, postPros: Option[LangProp] = None) extends LangExpression[LangFunc] with LangContent[LangFunc] with AstContext {
   override def deepCopy(): LangFunc = LangFunc(context,
     if (annots.isDefined) Some(annots.get.map(_.deepCopy())) else None,
     if (props.isDefined) Some(props.get.deepCopy()) else None,
-    if (preNames.isDefined) Some(preNames.get.map(_.deepCopy().asInstanceOf[LangID])) else None,
-    name.deepCopy().asInstanceOf[LangID],
+    if (preNames.isDefined) Some(preNames.get.map(_.deepCopy().asInstanceOf[TmplID])) else None,
+    name.deepCopy().asInstanceOf[TmplID],
     if (curries.isDefined) Some(curries.get.map(_.deepCopy())) else None,
     if (content.isDefined) Some(content.get.deepCopy().asInstanceOf[LangExprContent[_]]) else None,
     if (ret.isDefined) Some(ret.get.map(_.deepCopy())) else None,
@@ -64,7 +65,7 @@ object LangFunc {
     ModelSetAttribute(None, Some("annots"), ModelSetType(None, NullValue.name)),
     ModelSetAttribute(None, Some("props"), ModelSetType(None, NullValue.name)),
     ModelSetAttribute(None, Some("preNames"), ModelSetType(None, NullValue.name)),
-    ModelSetAttribute(None, Some("name"), ModelSetType(None, LangID.name)),
+    ModelSetAttribute(None, Some("name"), ModelSetType(None, TmplID.name)),
     ModelSetAttribute(None, Some("curries"), ModelSetType(None, NullValue.name)),
     ModelSetAttribute(None, Some("content"), ModelSetType(None, NullValue.name)),
   )))

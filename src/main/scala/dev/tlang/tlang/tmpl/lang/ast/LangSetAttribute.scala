@@ -5,12 +5,14 @@ import dev.tlang.tlang.ast.common.value.{EntityValue, NullValue}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
+import dev.tlang.tlang.tmpl.TmplNode
+import dev.tlang.tlang.tmpl.common.ast.TmplID
 import dev.tlang.tlang.tmpl.lang.ast.condition.LangOperation
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 
-case class LangSetAttribute(context: Option[ContextContent], var name: Option[LangID], var value: LangOperation) extends LangNode[LangSetAttribute] {
+case class LangSetAttribute(context: Option[ContextContent], var name: Option[TmplID], var value: LangOperation) extends TmplNode[LangSetAttribute] {
   override def deepCopy(): LangSetAttribute = LangSetAttribute(context,
-    if (name.isDefined) Some(name.get.deepCopy().asInstanceOf[LangID]) else None, value.deepCopy())
+    if (name.isDefined) Some(name.get.deepCopy().asInstanceOf[TmplID]) else None, value.deepCopy())
 
   override def getContext: Option[ContextContent] = context
 

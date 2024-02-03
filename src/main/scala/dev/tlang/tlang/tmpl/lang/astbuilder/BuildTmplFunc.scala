@@ -4,6 +4,7 @@ import dev.tlang.tlang.TLang
 import dev.tlang.tlang.TLang.{TmplCurryingContext, TmplFuncContext}
 import dev.tlang.tlang.astbuilder.BuildAst.addContext
 import dev.tlang.tlang.astbuilder.context.ContextResource
+import dev.tlang.tlang.tmpl.common.astbuilder.BuildCommonTmpl
 import dev.tlang.tlang.tmpl.lang.ast.LangParam
 import dev.tlang.tlang.tmpl.lang.ast.func.{LangFunc, LangFuncParam}
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildTmplBlock._
@@ -17,11 +18,11 @@ object BuildTmplFunc {
       if (func.curries != null && !func.curries.isEmpty) buildFuncCurries(resource, func.curries.asScala.toList)
       else None
 
-    val preNames = if (!func.preNames.isEmpty) Some(func.preNames.asScala.toList.map(preName => buildId(resource, preName))) else None
+    val preNames = if (!func.preNames.isEmpty) Some(func.preNames.asScala.toList.map(preName => BuildCommonTmpl.buildId(resource, preName))) else None
 
     LangFunc(addContext(resource, func), buildAnnotations(resource, func.annots.asScala.toList), buildProps(resource, func.props),
       preNames = preNames,
-      buildId(resource, func.name), curries,
+      BuildCommonTmpl.buildId(resource, func.name), curries,
       if (func.content != null) Some(buildExprContent(resource, func.content)) else None,
       if (func.types != null && !func.types.isEmpty) Some(func.types.asScala.toList.map(t => buildType(resource, t))) else None, buildProps(resource, func.postProps))
   }

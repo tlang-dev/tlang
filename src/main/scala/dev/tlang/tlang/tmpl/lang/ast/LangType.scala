@@ -5,11 +5,13 @@ import dev.tlang.tlang.ast.common.value.{EntityValue, NullValue}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
+import dev.tlang.tlang.tmpl.TmplNode
+import dev.tlang.tlang.tmpl.common.ast.TmplID
 import dev.tlang.tlang.tmpl.lang.ast.call.LangCallFuncParam
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 
-case class LangType(context: Option[ContextContent], var name: LangID, var generic: Option[LangGeneric] = None, isArray: Boolean = false, var currying: Option[List[LangCallFuncParam]] = None) extends LangNode[LangType] {
-  override def deepCopy(): LangType = LangType(context, name.deepCopy().asInstanceOf[LangID],
+case class LangType(context: Option[ContextContent], var name: TmplID, var generic: Option[LangGeneric] = None, isArray: Boolean = false, var currying: Option[List[LangCallFuncParam]] = None) extends TmplNode[LangType] {
+  override def deepCopy(): LangType = LangType(context, name.deepCopy().asInstanceOf[TmplID],
     if (generic.isDefined) Some(generic.get.deepCopy()) else None,
     if (isArray) true else false,
     if (currying.isDefined) Some(currying.get.map(_.deepCopy())) else None,
@@ -41,7 +43,7 @@ object LangType {
   val name: String = this.getClass.getSimpleName.replace("$", "")
 
   val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
-    ModelSetAttribute(None, Some("name"), ModelSetType(None, LangID.name)),
+    ModelSetAttribute(None, Some("name"), ModelSetType(None, TmplID.name)),
     ModelSetAttribute(None, Some("generic"), ModelSetType(None, NullValue.name)),
   )))
 }
