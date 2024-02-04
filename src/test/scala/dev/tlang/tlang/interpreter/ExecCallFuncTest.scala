@@ -6,7 +6,7 @@ import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value.{LazyValue, TLangString}
 import dev.tlang.tlang.ast.helper._
 import dev.tlang.tlang.interpreter.context.{Context, Scope}
-import dev.tlang.tlang.tmpl.common.ast.TmplStringID
+import dev.tlang.tlang.tmpl.common.ast.{NativeType, TmplStringID}
 import dev.tlang.tlang.tmpl.lang.ast._
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -26,7 +26,7 @@ class ExecCallFuncTest extends AnyFunSuite {
   }
 
   test("Call template without parameters") {
-    val block = LangBlock(None, "myBlock", "scala", None, LangFullBlock(None, "", "Scala", None, Some(LangPkg(None, List(TmplStringID(None, "myPackage"))))))
+    val block = LangBlock(None, "myBlock", List("scala"), None, LangFullBlock(None, Some(LangPkg(None, List(TmplStringID(None, "myPackage"))))))
     val tmplCaller = CallFuncObject(None, Some("myTmpl"), None)
     val context = Context(List(Scope(templates = mutable.Map("myTmpl" -> block))))
     val res = ExecCallFunc.run(tmplCaller, context).toOption.get.get.head.asInstanceOf[LangBlockAsValue]
@@ -34,7 +34,7 @@ class ExecCallFuncTest extends AnyFunSuite {
   }
 
   test("Call template with parameters") {
-    val block = LangBlock(None, "myBlock", "scala", Some(List(HelperParam(None, Some("var1"), ObjType(None, None, "String")))), LangFullBlock(None, "", "", None, Some(LangPkg(None, List(TmplStringID(None, "myPackage"))))))
+    val block = LangBlock(None, "myBlock", List("scala"), Some(List(NativeType(None, HelperParam(None, Some("var1"), ObjType(None, None, "String"))))), LangFullBlock(None, Some(LangPkg(None, List(TmplStringID(None, "myPackage"))))))
     val caller = SetAttribute(None, value = Operation(None, None, Right(CallObject(None, List(CallVarObject(None, "var1"))))))
     val tmplCaller = CallFuncObject(None, Some("myTmpl"), Some(List(CallFuncParam(None, Some(List(caller))))))
     val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangString(None, "MyValue")), templates = mutable.Map("myTmpl" -> block))))

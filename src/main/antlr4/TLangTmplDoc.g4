@@ -7,7 +7,7 @@ options {
 }
 
 
-tmplDoc: DOC LSQUARE langs+=ID (',' langs+=ID) RSQUARE name=ID LPARENT (params += helperParam (',' params += helperParam)*)?RPARENT  LBRACE (content = tmplDocBlock) RBRACE;
+tmplDoc: DOC LSQUARE (langs+=ID (',' langs+=ID)*) RSQUARE name=ID LPARENT (params += helperParam (',' params += helperParam)*)?RPARENT  LBRACE (content = tmplDocBlock) RBRACE;
 
 tmplDocBlock: DOC_LBRACE tmplDocContent DOC_RBRACE;
 

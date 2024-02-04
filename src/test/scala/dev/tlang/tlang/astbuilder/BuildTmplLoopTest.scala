@@ -17,12 +17,12 @@ class BuildTmplLoopTest extends AnyFunSuite {
 
   test("While with expression") {
     val lexer = new CommonLexer(CharStreams.fromString(
-      """tmpl[scala] myTmpl {
+      """lang[scala] myTmpl() {
         |while(1==1) callMyFunc()
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val loop = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock()).content.content.get.head.asInstanceOf[LangWhile]
+    val loop = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock().tmplLang()).content.content.get.head.asInstanceOf[LangWhile]
     val cond = loop.cond
     assert(Operator.EQUAL == cond.next.get._1)
     assert(1 == cond.content.toOption.get.asInstanceOf[LangLongValue].value)
@@ -32,7 +32,7 @@ class BuildTmplLoopTest extends AnyFunSuite {
 
   test("While with expression block") {
     val lexer = new CommonLexer(CharStreams.fromString(
-      """tmpl[scala] myTmpl {
+      """lang[scala] myTmpl() {
         |while(1==1) {
         | callMyFunc1()
         | callMyFunc2()
@@ -40,7 +40,7 @@ class BuildTmplLoopTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val loop = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock()).content.content.get.head.asInstanceOf[LangWhile]
+    val loop = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock().tmplLang()).content.content.get.head.asInstanceOf[LangWhile]
     val cond = loop.cond
     val block = loop.content.asInstanceOf[LangExprBlock]
     assert(Operator.EQUAL == cond.next.get._1)
@@ -52,13 +52,13 @@ class BuildTmplLoopTest extends AnyFunSuite {
 
   test("Do while with expression") {
     val lexer = new CommonLexer(CharStreams.fromString(
-      """tmpl[scala] myTmpl {
+      """lang[scala] myTmpl() {
         |do callMyFunc()
         |while(1==1)
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val loop = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock()).content.content.get.head.asInstanceOf[LangDoWhile]
+    val loop = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock().tmplLang()).content.content.get.head.asInstanceOf[LangDoWhile]
     val cond = loop.cond
     assert(Operator.EQUAL == cond.next.get._1)
     assert(1 == cond.content.toOption.get.asInstanceOf[LangLongValue].value)
@@ -68,7 +68,7 @@ class BuildTmplLoopTest extends AnyFunSuite {
 
   test("Do while with expression block") {
     val lexer = new CommonLexer(CharStreams.fromString(
-      """tmpl[scala] myTmpl {
+      """lang[scala] myTmpl() {
         |do {
         | callMyFunc1()
         | callMyFunc2()
@@ -76,7 +76,7 @@ class BuildTmplLoopTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val loop = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock()).content.content.get.head.asInstanceOf[LangDoWhile]
+    val loop = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock().tmplLang()).content.content.get.head.asInstanceOf[LangDoWhile]
     val cond = loop.cond
     val block = loop.content.asInstanceOf[LangExprBlock]
     assert(Operator.EQUAL == cond.next.get._1)

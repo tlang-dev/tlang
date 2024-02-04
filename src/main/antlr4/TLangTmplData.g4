@@ -6,7 +6,7 @@ options {
   tokenVocab = CommonLexer;
 }
 
-tmplData: DATA LSQUARE langs+=ID (',' langs+=ID) RSQUARE name=ID LPARENT (params += helperParam (',' params += helperParam)*)?RPARENT  LBRACE content = tmplDataBloc RBRACE;
+tmplData: DATA LSQUARE (langs+=ID (',' langs+=ID)*) RSQUARE name=ID LPARENT (params += helperParam (',' params += helperParam)*)?RPARENT  LBRACE content = tmplDataBloc RBRACE;
 
 tmplDataBloc: (name=tmplID)? (LPARENT ((params+=tmplDataAttribute) (',' params+=tmplDataAttribute)*)? RPARENT)?
               	(LBRACE ((attrs+=tmplDataAttribute) (',' attrs+=tmplDataAttribute)*)? RBRACE)?;

@@ -6,10 +6,10 @@ options {
   tokenVocab = CommonLexer;
 }
 
-tmplStyle: STYLE LSQUARE langs+=ID (',' langs+=ID) RSQUARE name=ID LPARENT (params += helperParam (',' params += helperParam)*)?RPARENT  LBRACE content=styleStruct RBRACE;
+tmplStyle: STYLE LSQUARE (langs+=ID (',' langs+=ID)*) RSQUARE name=ID LPARENT (params += helperParam (',' params += helperParam)*)?RPARENT  LBRACE content=styleStruct RBRACE;
 
 styleStruct: (name=tmplID)? (LSQUARE ((params+=styleAttribute) (',' params+=styleAttribute)*)? RSQUARE)?
-              	(LBRACE ((attrs+=styleAttribute) (',' attrs+=styleAttribute)*)? RBRACE)?;
+              	(LBRACE ((attrs+=styleAttribute) (',' attrs+=styleAttribute)*)? RBRACE);
 
 styleAttribute: styleInclude | styleSetAttribute;
 
@@ -32,6 +32,3 @@ styleArrayValue: LSQUARE (params+=styleAttribute)? (',' params+=styleAttribute)*
 //tmplIntprText: 's"""' (pre=.)? INTEPRETED callObj RBRACE (pos=.)? '"""';
 
 //styleBoolValue: value= True | False;
-
-
-

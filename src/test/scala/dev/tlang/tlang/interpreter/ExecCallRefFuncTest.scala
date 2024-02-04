@@ -6,7 +6,7 @@ import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value.TLangString
 import dev.tlang.tlang.ast.helper._
 import dev.tlang.tlang.interpreter.context.Context
-import dev.tlang.tlang.tmpl.common.ast.TmplStringID
+import dev.tlang.tlang.tmpl.common.ast.{NativeType, TmplStringID}
 import dev.tlang.tlang.tmpl.lang.ast._
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -29,7 +29,7 @@ class ExecCallRefFuncTest extends AnyFunSuite {
   }
 
   test("Call tmpl") {
-    val calledTmpl = LangBlock(None, "myTmpl", "scala", Some(List(HelperParam(None, Some("param1"), ObjType(None, None, TLangString.getType)))), LangFullBlock(None, "", "", None, Some(LangPkg(None, List(TmplStringID(None, "myPackage"))))))
+    val calledTmpl = LangBlock(None, "myTmpl", List("scala"), Some(List(NativeType(None, HelperParam(None, Some("param1"), ObjType(None, None, TLangString.getType))))), LangFullBlock(None, Some(LangPkg(None, List(TmplStringID(None, "myPackage"))))))
     val call = CallRefFuncObject(None, None, Some(List(CallFuncParam(None, Some(List(SetAttribute(None, value = Operation(None, None, Right(new TLangString(None, "myValue"))))))))), Some(Right(calledTmpl)))
 
     val res = ExecCallRefFunc.run(call, Context()).toOption.get.get.head.asInstanceOf[LangBlockAsValue]

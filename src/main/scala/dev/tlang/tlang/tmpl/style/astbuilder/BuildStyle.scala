@@ -19,28 +19,28 @@ object BuildStyle {
       buildStyleStruct(resource, style.content))
   }
 
-  private def buildStyleStruct(resource: ContextResource, struct: StyleStructContext): StyleStruct = {
+  def buildStyleStruct(resource: ContextResource, struct: StyleStructContext): StyleStruct = {
     StyleStruct(addContext(resource, struct), BuildCommonTmpl.buildOptionId(resource, struct.name), if (struct.params != null && !struct.params.isEmpty) Some(struct.params.asScala.map(BuildStyle.buildStyleAttribute(resource, _)).toList) else None,
       if (struct.attrs != null && !struct.attrs.isEmpty) Some(struct.attrs.asScala.map(BuildStyle.buildStyleAttribute(resource, _)).toList) else None)
   }
 
-  private def buildStyleAttribute(resource: ContextResource, attr: StyleAttributeContext): StyleAttribute[_] = {
+  def buildStyleAttribute(resource: ContextResource, attr: StyleAttributeContext): StyleAttribute[_] = {
     attr match {
       case attr@_ if attr.styleSetAttribute() != null => buildSetAttribute(resource, attr.styleSetAttribute())
       case incl@_ if incl.styleInclude() != null => buildInclude(resource, incl.styleInclude())
     }
   }
 
-  private def buildSetAttribute(resource: ContextResource, attr: StyleSetAttributeContext): StyleSetAttribute = {
+  def buildSetAttribute(resource: ContextResource, attr: StyleSetAttributeContext): StyleSetAttribute = {
     StyleSetAttribute(addContext(resource, attr), BuildCommonTmpl.buildIdOrString(resource, attr.name), buildStyleValue(resource, attr.value))
   }
 
-  private def buildInclude(resource: ContextResource, incl: StyleIncludeContext): StyleInclude = {
+  def buildInclude(resource: ContextResource, incl: StyleIncludeContext): StyleInclude = {
     val context = addContext(resource, incl)
     StyleInclude(context, NativeType(context, BuildHelperStatement.buildCallObject(resource, incl.callObj())))
   }
 
-  private def buildStyleValue(resource: ContextResource, attr: StyleValueContext): TmplNode[_] = {
+  def buildStyleValue(resource: ContextResource, attr: StyleValueContext): TmplNode[_] = {
     attr match {
       case array@_ if array.styleArrayValue() != null => buildArray(resource, attr.styleArrayValue())
       case number@_ if number.tmplNumberValue() != null => BuildCommonTmpl.buildNumber(resource, number.tmplNumberValue())
@@ -49,7 +49,7 @@ object BuildStyle {
     }
   }
 
-  private def buildArray(resource: ContextResource, array: StyleArrayValueContext): StyleArray = {
+  def buildArray(resource: ContextResource, array: StyleArrayValueContext): StyleArray = {
     StyleArray(addContext(resource, array), array.params.asScala.map(buildStyleAttribute(resource, _)).toList)
   }
 

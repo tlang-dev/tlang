@@ -6,7 +6,7 @@ options {
   tokenVocab = CommonLexer;
 }
 
-tmplCmd: CMD LSQUARE langs+=ID (',' langs+=ID) RSQUARE name=ID LPARENT (params += helperParam (',' params += helperParam)*)?RPARENT  LBRACE  content = tmplCmdBlock RBRACE;
+tmplCmd: CMD LSQUARE (langs+=ID (',' langs+=ID)*) RSQUARE name=ID LPARENT (params += helperParam (',' params += helperParam)*)?RPARENT  LBRACE  content = tmplCmdBlock RBRACE;
 
 tmplCmdBlock: cmd = tmplCmdName | tmplCmdCallFunc;
 

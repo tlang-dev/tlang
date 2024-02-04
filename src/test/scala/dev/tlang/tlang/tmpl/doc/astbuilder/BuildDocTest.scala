@@ -15,44 +15,44 @@ class BuildDocTest extends AnyFunSuiteLike {
 
   test("testBuildDocLink") {
     val lexer = new CommonLexer(CharStreams.fromString(
-      """tmpl[HtmlDoc] myTmpl() doc {
+      """doc[HtmlDoc] myTmpl()  {
         |[link "https://tlang.dev" "TLang Dev"]
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val impl = BuildDoc.buildDocLink(fakeContext, parser.tmplBlock().block.tmplDoc().tmplDocBlock().tmplDocContent().contents.asScala.toList.head.tmplDocText().tmplDocLink())
+    val impl = BuildDoc.buildDocLink(fakeContext, parser.tmplBlock().tmplDoc().tmplDocBlock().tmplDocContent().contents.asScala.toList.head.tmplDocText().tmplDocLink())
     assert("https://tlang.dev".equals(impl.getElement.src))
     assert("TLang Dev".equals(impl.getElement.name))
   }
 
   test("testBuildCodeBlock") {
     val lexer = new CommonLexer(CharStreams.fromString(
-      "tmpl[HtmlDoc] myTmpl() doc {" + "\n" +
+      "doc[HtmlDoc] myTmpl() {" + "\n" +
         "[code \"scala\" \n" +
         "\"\"\"class MyClass {}\"\"\"" + "]\n" +
         "}".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val impl = BuildDoc.buildCodeBlock(fakeContext, parser.tmplBlock().block.tmplDoc().tmplDocBlock().tmplDocContent().contents.asScala.toList.head.tmplDocText().tmplDocCodeBlock())
+    val impl = BuildDoc.buildCodeBlock(fakeContext, parser.tmplBlock().tmplDoc().tmplDocBlock().tmplDocContent().contents.asScala.toList.head.tmplDocText().tmplDocCodeBlock())
     assert("scala".equals(impl.getElement.lang))
     assert("class MyClass {}".equals(impl.getElement.code))
   }
 
   test("testBuildDocImg") {
     val lexer = new CommonLexer(CharStreams.fromString(
-      """tmpl[HtmlDoc] myTmpl() doc {
+      """doc[HtmlDoc] myTmpl() {
         |[img "https://tlang.dev/logo.png" "TLang Dev Icon"]
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val impl = BuildDoc.buildDocImg(fakeContext, parser.tmplBlock().block.tmplDoc().tmplDocBlock().tmplDocContent().contents.asScala.toList.head.tmplDocText().tmplDocImg())
+    val impl = BuildDoc.buildDocImg(fakeContext, parser.tmplBlock().tmplDoc().tmplDocBlock().tmplDocContent().contents.asScala.toList.head.tmplDocText().tmplDocImg())
     assert("https://tlang.dev/logo.png".equals(impl.getElement.src))
     assert("TLang Dev Icon".equals(impl.getElement.alt.get))
   }
 
   test("testBuildDocList") {
     val lexer = new CommonLexer(CharStreams.fromString(
-      """tmpl[HtmlDoc] myTmpl() doc {
+      """doc[HtmlDoc] myTmpl() {
         |[list "number"
         | * Some text
         | * # A title
@@ -61,7 +61,7 @@ class BuildDocTest extends AnyFunSuiteLike {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val impl = BuildDoc.buildDocList(fakeContext, parser.tmplBlock().block.tmplDoc().tmplDocBlock().tmplDocContent().contents.asScala.toList.head.tmplDocText().tmplDocList())
+    val impl = BuildDoc.buildDocList(fakeContext, parser.tmplBlock().tmplDoc().tmplDocBlock().tmplDocContent().contents.asScala.toList.head.tmplDocText().tmplDocList())
     assert("number".equals(impl.getElement.order))
     assert("Some text".equals(impl.getElement.contents.head.contents.head.asInstanceOf[DocText].text.asInstanceOf[DocPlainText].text))
     assert("A title".equals(impl.getElement.contents(1).contents.head.asInstanceOf[DocStruct].title))
@@ -78,14 +78,14 @@ class BuildDocTest extends AnyFunSuiteLike {
 
   test("testBuildDocSec") {
     val lexer = new CommonLexer(CharStreams.fromString(
-      """tmpl[HtmlDoc] myTmpl() doc {
+      """doc[HtmlDoc] myTmpl() {
         |[section "section1"
         |This is the content
         |]
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val impl = BuildDoc.buildDocSec(fakeContext, parser.tmplBlock().block.tmplDoc().tmplDocBlock().tmplDocContent().contents.asScala.toList.head.tmplDocSec())
+    val impl = BuildDoc.buildDocSec(fakeContext, parser.tmplBlock().tmplDoc().tmplDocBlock().tmplDocContent().contents.asScala.toList.head.tmplDocSec())
     assert("section1".equals(impl.getElement.title))
     assert("This is the content".equals(impl.getElement.content.contents.head.asInstanceOf[DocText].text.asInstanceOf[DocPlainText].text))
   }
@@ -96,12 +96,12 @@ class BuildDocTest extends AnyFunSuiteLike {
 
   test("testBuildDocInclude") {
     val lexer = new CommonLexer(CharStreams.fromString(
-      """tmpl[HtmlDoc] myTmpl() doc {
+      """doc[HtmlDoc] myTmpl() {
         |[include]test1.test2.test3[/include]
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val impl = BuildDoc.buildDocInclude(fakeContext, parser.tmplBlock().block.tmplDoc().tmplDocBlock().tmplDocContent().contents.asScala.toList.head.tmplDocText().tmplDocInclude())
+    val impl = BuildDoc.buildDocInclude(fakeContext, parser.tmplBlock().tmplDoc().tmplDocBlock().tmplDocContent().contents.asScala.toList.head.tmplDocText().tmplDocInclude())
     assert("test1".equals(impl.getElement.call.statements.head.asInstanceOf[CallVarObject].name))
     assert("test2".equals(impl.getElement.call.statements(1).asInstanceOf[CallVarObject].name))
     assert("test3".equals(impl.getElement.call.statements.last.asInstanceOf[CallVarObject].name))
@@ -109,13 +109,13 @@ class BuildDocTest extends AnyFunSuiteLike {
 
   test("testBuildDocStruct") {
     val lexer = new CommonLexer(CharStreams.fromString(
-      """tmpl[HtmlDoc] myTmpl() doc {
+      """doc[HtmlDoc] myTmpl() {
         |# This is some text
         |This is the content
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val impl = BuildDoc.buildDocStruct(fakeContext, parser.tmplBlock().block.tmplDoc().tmplDocBlock().tmplDocContent().contents.asScala.toList.head.tmplDocStruct())
+    val impl = BuildDoc.buildDocStruct(fakeContext, parser.tmplBlock().tmplDoc().tmplDocBlock().tmplDocContent().contents.asScala.toList.head.tmplDocStruct())
     assert(impl.level == 1)
     assert("This is some text".equals(impl.getElement.title))
     assert("This is the content".equals(impl.getElement.content.get.contents.head.asInstanceOf[DocText].text.asInstanceOf[DocPlainText].text))
@@ -123,13 +123,13 @@ class BuildDocTest extends AnyFunSuiteLike {
 
   test("testBuildDocStruct Level 2") {
     val lexer = new CommonLexer(CharStreams.fromString(
-      """tmpl[HtmlDoc] myTmpl() doc {
+      """doc[HtmlDoc] myTmpl() {
         |## This is some text
         |This is the content
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val impl = BuildDoc.buildDocStruct(fakeContext, parser.tmplBlock().block.tmplDoc().tmplDocBlock().tmplDocContent().contents.asScala.toList.head.tmplDocStruct())
+    val impl = BuildDoc.buildDocStruct(fakeContext, parser.tmplBlock().tmplDoc().tmplDocBlock().tmplDocContent().contents.asScala.toList.head.tmplDocStruct())
     assert(impl.level == 2)
     assert("This is some text".equals(impl.getElement.title))
     assert("This is the content".equals(impl.getElement.content.get.contents.head.asInstanceOf[DocText].text.asInstanceOf[DocPlainText].text))
@@ -137,24 +137,24 @@ class BuildDocTest extends AnyFunSuiteLike {
 
   test("testBuildDocPlainText") {
     val lexer = new CommonLexer(CharStreams.fromString(
-      """tmpl[HtmlDoc] myTmpl() doc {
+      """doc[HtmlDoc] myTmpl() {
         |This is some text
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val impl = BuildDoc.buildDocPlainText(fakeContext, parser.tmplBlock().block.tmplDoc().tmplDocBlock().tmplDocContent().contents.asScala.toList.head.tmplDocText().tmplDocPlainText())
+    val impl = BuildDoc.buildDocPlainText(fakeContext, parser.tmplBlock().tmplDoc().tmplDocBlock().tmplDocContent().contents.asScala.toList.head.tmplDocText().tmplDocPlainText())
     assert("This is some text".equals(impl.getElement.text))
   }
 
   test("testBuildAsIs") {
     val lexer = new CommonLexer(CharStreams.fromString(
-      "tmpl[HtmlDoc] myTmpl() doc {" + "\n" +
+      "doc[HtmlDoc] myTmpl() {" + "\n" +
         "[asis " +
         "\"\"\"<html><header></header></html>\"\"\"" + "]\n" +
         "}".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val impl = BuildDoc.buildDocAsIs(fakeContext, parser.tmplBlock().block.tmplDoc().tmplDocBlock().tmplDocContent().contents.asScala.toList.head.tmplDocAsIs())
+    val impl = BuildDoc.buildDocAsIs(fakeContext, parser.tmplBlock().tmplDoc().tmplDocBlock().tmplDocContent().contents.asScala.toList.head.tmplDocAsIs())
     assert("<html><header></header></html>".equals(impl.getElement.content))
   }
 
