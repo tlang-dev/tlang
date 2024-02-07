@@ -11,4 +11,6 @@ public class Type<T> {
     public T get() {
         return value;
     }
+
+    public static Type<Void> VOID = new Type<>(Void.VOID);
 }

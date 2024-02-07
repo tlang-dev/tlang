@@ -16,8 +16,14 @@ object BuildStyle {
   def buildStyle(resource: ContextResource, style: TmplStyleContext): StyleBlock = {
     StyleBlock(addContext(resource, style), style.name.getText, style.langs.asScala.map(_.getText).toList,
       if (style.params != null && !style.params.isEmpty) Some(BuildHelperBlock.buildParams(resource, style.params.asScala.toList).map(param => NativeType(param.context, param))) else None,
-      buildStyleStruct(resource, style.content))
+      style.content.blocks.asScala.map(buildStyleStruct(resource, _)).toList)
   }
+
+//  def buildStyleBlock(resource: ContextResource, block: StyleSetAttribute): List[StyleStruct] = {
+//    StyleStruct(addContext(resource, block), block.name.getText, block.langs.asScala.map(_.getText).toList,
+//      if (block.params != null && !block.params.isEmpty) Some(BuildHelperBlock.buildParams(resource, block.params.asScala.toList).map(param => NativeType(param.context, param))) else None,
+//      buildStyleStruct(resource, block.content))
+//  }
 
   def buildStyleStruct(resource: ContextResource, struct: StyleStructContext): StyleStruct = {
     StyleStruct(addContext(resource, struct), BuildCommonTmpl.buildOptionId(resource, struct.name), if (struct.params != null && !struct.params.isEmpty) Some(struct.params.asScala.map(BuildStyle.buildStyleAttribute(resource, _)).toList) else None,

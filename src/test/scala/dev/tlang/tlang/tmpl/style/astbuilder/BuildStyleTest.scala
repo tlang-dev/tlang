@@ -2,7 +2,7 @@ package dev.tlang.tlang.tmpl.style.astbuilder
 
 import dev.tlang.tlang.ast.common.call.{CallFuncObject, CallVarObject}
 import dev.tlang.tlang.astbuilder.context.ContextResource
-import dev.tlang.tlang.tmpl.common.ast.{TmplID, TmplInterpretedID}
+import dev.tlang.tlang.tmpl.common.ast.TmplInterpretedID
 import dev.tlang.tlang.tmpl.lang.ast.primitive.LangLongValue
 import dev.tlang.tlang.tmpl.style.ast.{StyleArray, StyleInclude, StyleSetAttribute}
 import dev.tlang.tlang.{CommonLexer, TLang}
@@ -21,7 +21,7 @@ class BuildStyleTest extends AnyFunSuiteLike {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val impl = BuildStyle.buildStyleStruct(fakeContext, parser.tmplBlock().tmplStyle().styleStruct())
+    val impl = BuildStyle.buildStyleStruct(fakeContext, parser.tmplBlock().tmplStyle().styleBlocks().styleStruct(0))
     assert("h1".equals(impl.name.get.toString))
   }
 
@@ -33,7 +33,7 @@ class BuildStyleTest extends AnyFunSuiteLike {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val impl = BuildStyle.buildStyleStruct(fakeContext, parser.tmplBlock().tmplStyle().styleStruct())
+    val impl = BuildStyle.buildStyleStruct(fakeContext, parser.tmplBlock().tmplStyle().styleBlocks().styleStruct(0))
     val params = impl.params.get
     assert("h1".equals(impl.name.get.toString))
     assert("test1".equals(params.head.asInstanceOf[StyleSetAttribute].value.toString))
@@ -60,7 +60,7 @@ class BuildStyleTest extends AnyFunSuiteLike {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val impl = BuildStyle.buildStyleStruct(fakeContext, parser.tmplBlock().tmplStyle().styleStruct())
+    val impl = BuildStyle.buildStyleStruct(fakeContext, parser.tmplBlock().tmplStyle().styleBlocks().styleStruct(0))
     val attrs = impl.attrs.get
     assert("h1".equals(impl.name.get.toString))
     assert("attr1".equals(attrs.head.asInstanceOf[StyleSetAttribute].value.toString))

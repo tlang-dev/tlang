@@ -3,15 +3,17 @@ package dev.tlang.tlang.ast.common.value
 import dev.tlang.tlang.ast.common.{ObjType, ValueType}
 import dev.tlang.tlang.ast.model.set.{ModelSetEntity, ModelSetRefValue}
 import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
-import dev.tlang.tlang.interpreter.context.Scope
-import dev.tlang.tlang.interpreter.{ExecError, NotImplemented, Value}
+import dev.tlang.tlang.interpreter.context.{Context, Scope}
+import dev.tlang.tlang.interpreter.{ExecError, ExecOperation, NotImplemented, Value}
 import dev.tlang.tlang.tmpl.lang.ast.LangModel
+import tlang.core.{Bool, Null}
+import tlang.{Entity, core}
 
 case class EntityValue(context: Option[ContextContent],
                        var `type`: Option[ValueType],
                        attrs: Option[List[ComplexAttribute]] = None,
                        scope: Scope = Scope())
-  extends PrimitiveValue[EntityValue] with ModelSetRefValue with AstContext {
+  extends PrimitiveValue[EntityValue] with Entity with ModelSetRefValue with AstContext {
 
   override def getElement: EntityValue = this
 
@@ -40,6 +42,32 @@ case class EntityValue(context: Option[ContextContent],
 
   override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
   )))
+
+  override def getAttr(name: core.String): Null[core.Value[_]] = {
+    if (attrs.isEmpty) Null.empty()
+    else {
+      val attr = attrs.get.find(attr => new core.String(attr.attr.orNull).isEqual(name).get())
+      if (attr.isEmpty) Null.empty()
+      else {
+        val op = attr.get.value
+        ExecOperation.run(op, Context(List(scope))) match {
+          case Left(value) => Null.empty()
+          case Right(value) => Null.of(value.get.head)
+        }
+      }
+    }
+  }
+
+  override def exists(name: core.String): Bool = {
+    if (attrs.isEmpty) Bool.FALSE
+    else {
+      val attr = attrs.get.find(attr => new core.String(attr.attr.orNull).isEqual(name).get())
+      if (attr.isEmpty) Bool.FALSE
+      else Bool.TRUE
+    }
+  }
+
+  override def hasAttrs: Bool = if (attrs.isEmpty) Bool.FALSE else Bool.TRUE
 }
 
 object EntityValue {
@@ -47,4 +75,5 @@ object EntityValue {
 
   val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
   )))
+
 }

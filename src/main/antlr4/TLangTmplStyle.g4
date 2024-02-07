@@ -6,7 +6,9 @@ options {
   tokenVocab = CommonLexer;
 }
 
-tmplStyle: STYLE LSQUARE (langs+=ID (',' langs+=ID)*) RSQUARE name=ID LPARENT (params += helperParam (',' params += helperParam)*)?RPARENT  LBRACE content=styleStruct RBRACE;
+tmplStyle: STYLE LSQUARE (langs+=ID (',' langs+=ID)*) RSQUARE name=ID LPARENT (params += helperParam (',' params += helperParam)*)?RPARENT  LBRACE content=styleBlocks RBRACE;
+
+styleBlocks: blocks+=styleStruct*;
 
 styleStruct: (name=tmplID)? (LSQUARE ((params+=styleAttribute) (',' params+=styleAttribute)*)? RSQUARE)?
               	(LBRACE ((attrs+=styleAttribute) (',' attrs+=styleAttribute)*)? RBRACE);

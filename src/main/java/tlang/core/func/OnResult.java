@@ -1,8 +1,8 @@
 package tlang.core.func;
 
-import tlang.core.Type;
+import tlang.core.Value;
 
-public interface OnResult {
+public interface OnResult<T> {
 
-    void onResult(Type<?>... args);
+    void onResult(Value<T> args);
 }

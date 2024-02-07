@@ -4,7 +4,7 @@ import tlang.core.func.Apply;
 import tlang.core.func.ApplyFunc;
 import tlang.core.func.MapFunc;
 
-public class Null<T> {
+public class Null<T> implements Value<Null<T>> {
 
     private final T value;
 
@@ -22,6 +22,10 @@ public class Null<T> {
 
     public boolean isNull() {
         return value == null;
+    }
+
+    public boolean isNotNull() {
+        return value != null;
     }
 
     public <B> B map(MapFunc<T, B> func) {
