@@ -4,6 +4,7 @@ import tlang.core.Error;
 import tlang.core.Long;
 import tlang.core.String;
 import tlang.core.*;
+import tlang.core.Void;
 import tlang.core.func.FuncRet;
 import tlang.core.func.MapFunc;
 import tlang.core.func.MapFuncWithIndex;
@@ -29,7 +30,7 @@ public class List<T> {
         this.size = records.length;
     }
 
-    public FuncRet add(T record) {
+    public FuncRet<Void> add(T record) {
         if (size == records.length) {
             var newRecords = (T[]) new Object[records.length * 2];
             System.arraycopy(records, 0, newRecords, 0, records.length);
@@ -39,14 +40,14 @@ public class List<T> {
         return FuncRet.VOID;
     }
 
-    public FuncRet get(int index) {
+    public FuncRet<T> get(int index) {
         if (index < 0 || index >= size) {
             return FuncRet.error(new Error(new String("Index out of bound: " + index)));
         }
         return FuncRet.of(records[index]);
     }
 
-    public <B> FuncRet map(MapFunc<T, B> func) {
+    public <B> FuncRet<B> map(MapFunc<T, B> func) {
         var list = new List<B>(new Long(size));
         for (int i = 0; i < size; i++) {
             list.add(func.apply(records[i]));
@@ -66,7 +67,7 @@ public class List<T> {
         return records;
     }
 
-    public FuncRet toArray() {
+    public FuncRet<Array<T>> toArray() {
         List<Set<T>> list = (List<Set<T>>) mapWithIndex((record, index) -> new Set<>(index.toStringValue(), record)).getFirst().get();
         return FuncRet.ofOneValue(new SetArray<>(list.getRecords()));
     }

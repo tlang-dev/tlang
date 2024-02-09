@@ -1,16 +1,10 @@
 package tlang.core;
 
-public class Type<T> {
+public interface Type {
 
-    private final T value;
+    String getType();
 
-    public Type(T value) {
-        this.value = value;
-    }
+    String getSimpleType();
 
-    public T get() {
-        return value;
-    }
-
-    public static Type<Void> VOID = new Type<>(Void.VOID);
+    String getPkg();
 }

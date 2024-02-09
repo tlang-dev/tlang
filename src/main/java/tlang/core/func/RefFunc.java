@@ -1,8 +1,8 @@
 package tlang.core.func;
 
-import tlang.core.Type;
+import tlang.core.Value;
 
 public interface RefFunc {
 
-    FuncRet call(Type<?>... args);
+    FuncRet<?> call(Value<?>... args);
 }

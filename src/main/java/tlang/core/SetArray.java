@@ -1,6 +1,6 @@
 package tlang.core;
 
-import tlang.core.func.ApplyFunc;
+import tlang.core.func.ApplyVoidFunc;
 import tlang.core.func.MapFunc;
 import tlang.mutable.ArrayBuilder;
 
@@ -62,7 +62,7 @@ public class SetArray<T> implements ImplicitMatch<SetArray<T>, Void, Void> {
     }
 
     @Override
-    public void match(ApplyFunc<SetArray<T>> first, Null<ApplyFunc<Void>> second, Null<ApplyFunc<Void>> last) {
+    public void match(ApplyVoidFunc<SetArray<T>> first, Null<ApplyVoidFunc<Void>> second, Null<ApplyVoidFunc<Void>> last) {
         if (records.length > 0) {
             first.apply(this);
         } else {

@@ -1,6 +1,8 @@
 package tlang.core.func;
 
-public interface ApplyFunc<T> {
+import tlang.core.Value;
 
-    void apply(T value);
+public interface ApplyFunc<T, U> {
+
+    FuncRet<T> apply(Value<U> value);
 }

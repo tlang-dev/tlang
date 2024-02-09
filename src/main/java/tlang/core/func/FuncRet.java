@@ -34,9 +34,7 @@ public class FuncRet<T> implements Value<FuncRet<T>>, ImplicitMatch<Value<?>, Er
     }
 
     public FuncRet<T> onResult(OnResult<T> onResult) {
-        if (!error.isNull()) {
-            onResult.onResult(ret.get());
-        }
+        ret.ifNotNull(onResult::onResult);
         return this;
     }
 
@@ -45,17 +43,17 @@ public class FuncRet<T> implements Value<FuncRet<T>>, ImplicitMatch<Value<?>, Er
         return this;
     }
 
-    public Bool isError() {
-        return error.isNull() ? Bool.FALSE : Bool.TRUE;
+    public FuncRet<Bool> isError() {
+        return FuncRet.of(error.isNull().get() ? Bool.FALSE : Bool.TRUE);
     }
 
-    public FuncRet<Void> inAllCase(ApplyFunc<Value<T>> func) {
+    public FuncRet<Void> inAllCase(ApplyVoidFunc<Value<T>> func) {
         func.apply(ret.get());
         return FuncRet.VOID;
     }
 
-    public boolean isVoid() {
-        return ret.isNull() && error.isNull();
+    public FuncRet<Bool> isVoid() {
+        return FuncRet.of(new Bool(ret.isNull().get() && error.isNull().get()));
     }
 
     public static <T> FuncRet<T> of(Value<T> args) {
@@ -82,13 +80,27 @@ public class FuncRet<T> implements Value<FuncRet<T>>, ImplicitMatch<Value<?>, Er
         return new FuncRet<>(new Error(new tlang.core.String(e.getClass().getSimpleName()), Null.of(new tlang.core.String(e.getMessage()))));
     }
 
+    public static <T> FuncRet<Null<T>> ofNull() {
+        return new FuncRet<>(Null.empty());
+    }
+
+    public static <T> FuncRet<Null<T>> ofNull(T value) {
+        return new FuncRet<>(Null.of(value));
+    }
+
     @Override
-    public void match(ApplyFunc<Value<?>> first, Null<ApplyFunc<Error>> second, Null<ApplyFunc<Void>> last) {
-        if (error.isNull()) {
+    public FuncRet<Void> match(ApplyVoidFunc<Value<?>> first, Null<ApplyVoidFunc<Error>> second, Null<ApplyVoidFunc<Void>> last) {
+        if (error.isNull().get()) {
             first.apply(ret.get());
         } else {
             second.ifNotNull(func -> func.apply(error.get()));
         }
         last.ifNotNull(func -> func.apply(tlang.core.Void.VOID));
+        return FuncRet.VOID;
+    }
+
+    @Override
+    public FuncRet<T> value() {
+        return this;
     }
 }

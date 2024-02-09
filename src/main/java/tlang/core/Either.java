@@ -1,6 +1,6 @@
 package tlang.core;
 
-import tlang.core.func.ApplyFunc;
+import tlang.core.func.ApplyVoidFunc;
 import tlang.core.func.MapFunc;
 
 public class Either<T, U> {
@@ -51,13 +51,13 @@ public class Either<T, U> {
         return Either.left(getLeft());
     }
 
-    public void applyLeft(ApplyFunc<T> func) {
+    public void applyLeft(ApplyVoidFunc<T> func) {
         if (isLeft()) {
             func.apply(getLeft());
         }
     }
 
-    public void applyRight(ApplyFunc<U> func) {
+    public void applyRight(ApplyVoidFunc<U> func) {
         if (isRight()) {
             func.apply(getRight());
         }

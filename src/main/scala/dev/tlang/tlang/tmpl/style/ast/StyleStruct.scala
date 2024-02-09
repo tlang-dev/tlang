@@ -9,9 +9,8 @@ import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.tmpl.TmplNode
 import dev.tlang.tlang.tmpl.common.ast.TmplID
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
-import tlang.core
 
-case class StyleStruct(context: Option[ContextContent], name: Option[TmplID], params: Option[List[StyleAttribute[_]]], attrs: Option[List[StyleAttribute[_]]]) extends TmplNode[StyleStruct] with tlang.tmpl.style.StyleStruct {
+case class StyleStruct(context: Option[ContextContent], name: Option[TmplID], params: Option[List[StyleAttribute[_]]], attrs: Option[List[StyleAttribute[_]]]) extends TmplNode[StyleStruct] {
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, toModel.name)),
     Some(List(
@@ -45,7 +44,6 @@ case class StyleStruct(context: Option[ContextContent], name: Option[TmplID], pa
 
   override def getContext: Option[ContextContent] = context
 
-  override def getName: core.Null[String] = if (name.isDefined) core.Null.of(name.get.toString) else core.Null.empty()
 }
 
 object StyleStruct {

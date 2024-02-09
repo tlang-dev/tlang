@@ -1,7 +1,8 @@
 package tlang.core;
 
 import tlang.core.func.Apply;
-import tlang.core.func.ApplyFunc;
+import tlang.core.func.ApplyVoidFunc;
+import tlang.core.func.FuncRet;
 import tlang.core.func.MapFunc;
 
 public class Null<T> implements Value<Null<T>> {
@@ -20,12 +21,12 @@ public class Null<T> implements Value<Null<T>> {
         return value;
     }
 
-    public boolean isNull() {
-        return value == null;
+    public Bool isNull() {
+        return new Bool(value == null);
     }
 
-    public boolean isNotNull() {
-        return value != null;
+    public Bool isNotNull() {
+        return new Bool(value != null);
     }
 
     public <B> B map(MapFunc<T, B> func) {
@@ -39,7 +40,7 @@ public class Null<T> implements Value<Null<T>> {
         return this;
     }
 
-    public Null<T> ifNotNull(ApplyFunc<T> func) {
+    public Null<T> ifNotNull(ApplyVoidFunc<T> func) {
         if (value != null) {
             func.apply(value);
         }
@@ -52,5 +53,10 @@ public class Null<T> implements Value<Null<T>> {
 
     public static <T> Null<T> empty() {
         return new Null<>();
+    }
+
+    @Override
+    public Null<T> value() {
+        return this;
     }
 }

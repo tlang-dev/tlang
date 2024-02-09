@@ -1,9 +1,7 @@
 package tlang;
 
-import tlang.core.Bool;
-import tlang.core.Null;
 import tlang.core.String;
-import tlang.core.Value;
+import tlang.core.*;
 
 public interface Entity {
     Null<Value<?>> getAttr(String name);
@@ -11,4 +9,8 @@ public interface Entity {
     Bool hasAttrs();
 
     Bool exists(String name);
+
+    Type getType();
+
+    Null<Model> getModel();
 }

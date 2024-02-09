@@ -1,8 +1,9 @@
 package tlang.core;
 
-import tlang.core.func.ApplyFunc;
+import tlang.core.func.ApplyVoidFunc;
+import tlang.core.func.FuncRet;
 
 public interface ImplicitMatch<T, U, V> {
 
-    void match(ApplyFunc<T> first, Null<ApplyFunc<U>> second, Null<ApplyFunc<V>> last);
+    FuncRet<Void> match(ApplyVoidFunc<T> first, Null<ApplyVoidFunc<U>> second, Null<ApplyVoidFunc<V>> last);
 }
