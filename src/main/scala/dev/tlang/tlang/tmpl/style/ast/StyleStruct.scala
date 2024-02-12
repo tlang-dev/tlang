@@ -9,8 +9,10 @@ import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.tmpl.TmplNode
 import dev.tlang.tlang.tmpl.common.ast.TmplID
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
+import tlang.core.Null
+import tlang.internal
 
-case class StyleStruct(context: Option[ContextContent], name: Option[TmplID], params: Option[List[StyleAttribute[_]]], attrs: Option[List[StyleAttribute[_]]]) extends TmplNode[StyleStruct] {
+case class StyleStruct(context: Null[internal.ContextContent], name: Option[TmplID], params: Option[List[StyleAttribute[_]]], attrs: Option[List[StyleAttribute[_]]]) extends TmplNode[StyleStruct] {
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, toModel.name)),
     Some(List(
@@ -23,15 +25,13 @@ case class StyleStruct(context: Option[ContextContent], name: Option[TmplID], pa
         None
       ),
       BuildLang.createAttrNull(context, "attrs",
-        if (attrs.isDefined) Some(ArrayValue(context, Some(attrs.get.map(value => ComplexAttribute(context, None, None, Operation(context, None, Right(value.toEntity))))))) else None,
+        if (attrs.isDefined) Null.of(ArrayValue(context, Some(attrs.get.map(value => ComplexAttribute(context, None, None, Operation(context, None, Right(value.toEntity))))))) else None,
         None
       )
     ))
   )
 
   override def toModel: ModelSetEntity = StyleStruct.model
-
-  override def compareTo(value: Value[StyleStruct]): Int = 0
 
   override def getElement: StyleStruct = this
 

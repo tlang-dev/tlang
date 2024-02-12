@@ -1,22 +1,23 @@
 package dev.tlang.tlang.tmpl.lang.ast.call
 
 import dev.tlang.tlang.ast.common.ObjType
+import dev.tlang.tlang.ast.common.call.CallRefFuncObject
 import dev.tlang.tlang.ast.common.value.{ArrayValue, EntityValue, NullValue}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.tmpl.lang.ast._
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
+import tlang.core
+import tlang.core.{Int, Null}
 
-case class LangCallObj(context: Option[ContextContent], var props: Option[LangProp] = None, var firstCall: LangCallObjType[_], var calls: List[LangCallObjectLink]) extends LangSimpleValueType[LangCallObj] with LangExpression[LangCallObj] {
+case class LangCallObj(context: Null[ContextContent], var props: Option[LangProp] = None, var firstCall: LangCallObjType[_], var calls: List[LangCallObjectLink]) extends LangSimpleValueType[LangCallObj] with LangExpression[LangCallObj] {
   override def deepCopy(): LangCallObj = LangCallObj(context,
     if (props.isDefined) Some(props.get.deepCopy()) else None,
     firstCall.deepCopy().asInstanceOf[LangCallObjType[_]],
     calls.map(_.deepCopy()))
 
-  override def getContext: Option[ContextContent] = context
-
-  override def compareTo(value: Value[LangCallObj]): Int = 0
+  override def compareTo(value: core.Value[LangCallObj]): Int = new Int(0)
 
   override def getElement: LangCallObj = this
 

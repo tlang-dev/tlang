@@ -9,7 +9,7 @@ import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSe
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.ExecCallFunc.manageTmplParameters
 import dev.tlang.tlang.interpreter.context.{Context, ContextUtils, Scope}
-import dev.tlang.tlang.tmpl.AnyTmplBlock
+import dev.tlang.tlang.tmpl.AnyTmplInterpretedBlock
 import dev.tlang.tlang.tmpl.lang.ast.LangBlockAsValue
 
 import scala.annotation.tailrec
@@ -53,7 +53,7 @@ object ExecCallObject extends Executor {
           case Some(_) => ExecCallFunc.run(CallFuncObject(None, Some(name), func.currying), context)
           case None => ContextUtils.findTmpl(context, name) match {
             case Some(tmpl) =>
-              val tmplCopy = tmpl.deepCopy().asInstanceOf[AnyTmplBlock[_]]
+              val tmplCopy = tmpl.deepCopy().asInstanceOf[AnyTmplInterpretedBlock[_]]
               val newContext = manageTmplParameters(func, tmplCopy, context)
               Right(Some(List(LangBlockAsValue(tmplCopy.getContext, tmplCopy, Context(newContext.scopes :+ tmplCopy.getScope)))))
             case None => Left(CallableNotFound(name, func.context))

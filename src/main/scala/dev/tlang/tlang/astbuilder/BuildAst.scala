@@ -5,6 +5,8 @@ import dev.tlang.tlang.ast._
 import dev.tlang.tlang.astbuilder.context.{ContextContent, ContextResource}
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildTmplBlock
 import org.antlr.v4.runtime.ParserRuleContext
+import tlang.core.Null
+import tlang.internal
 
 import scala.jdk.CollectionConverters._
 
@@ -37,8 +39,8 @@ object BuildAst {
     DomainUse(addContext(resource, use), use.uses.asScala.toList.map(_.getText), AstBuilderUtils.getText(use.alias))
   }
 
-  def addContext(resource: ContextResource, parser: ParserRuleContext): Option[ContextContent] = {
-    Some(ContextContent(resource, parser.getStart.getLine, parser.getStart.getCharPositionInLine))
+  def addContext(resource: ContextResource, parser: ParserRuleContext): Null[internal.ContextContent] = {
+    Null.of(ContextContent(resource, parser.getStart.getLine, parser.getStart.getCharPositionInLine))
   }
 
 }

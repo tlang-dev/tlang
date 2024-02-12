@@ -3,18 +3,19 @@ package dev.tlang.tlang.tmpl.style.ast
 import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.value.{EntityValue, NullValue}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
-import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.tmpl.TmplNode
 import dev.tlang.tlang.tmpl.common.ast.TmplID
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
+import tlang.core.Null
+import tlang.internal.ContextContent
 
-case class StyleSetAttribute(context: Option[ContextContent], name: Option[TmplID], value: TmplNode[_]) extends StyleAttribute[StyleSetAttribute] {
+case class StyleSetAttribute(context: Null[ContextContent], name: Option[TmplID], value: TmplNode[_]) extends StyleAttribute[StyleSetAttribute] {
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, toModel.name)),
     Some(List(
       BuildLang.createAttrNull(context, "name",
-        if (name.isDefined) Some(name.get.toEntity) else None,
+        if (name.isDefined) Null.of(name.get.toEntity) else Null.empty(),
         None
       ),
       BuildLang.createAttrEntity(context, "value", value.toEntity)

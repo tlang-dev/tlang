@@ -1,6 +1,6 @@
 package tlang.core;
 
-public class String {
+public class String implements Value<String> {
 
     private final java.lang.String value;
 
@@ -18,5 +18,15 @@ public class String {
 
     public Bool isEqual(String obj) {
         return new Bool(value.equals(obj.get()));
+    }
+
+    @Override
+    public String getElement() {
+        return this;
+    }
+
+    @Override
+    public String getType() {
+        return null;
     }
 }

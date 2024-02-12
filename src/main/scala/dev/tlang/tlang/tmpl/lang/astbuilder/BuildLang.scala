@@ -1,9 +1,10 @@
 package dev.tlang.tlang.tmpl.lang.astbuilder
 
 import dev.tlang.tlang.ast.common.operation.Operation
-import dev.tlang.tlang.ast.common.value._
-import dev.tlang.tlang.astbuilder.context.ContextContent
-import dev.tlang.tlang.interpreter.Value
+import dev.tlang.tlang.ast.common.value.{ComplexAttribute, TLangBool, TLangDouble, TLangLong, TLangString}
+import tlang.core
+import tlang.core.{Bool, Null}
+import tlang.internal.ContextContent
 
 object BuildLang {
 
@@ -58,13 +59,13 @@ object BuildLang {
         ))
     }*/
 
-  def createAttrStr(context: Option[ContextContent], name: String, value: String): ComplexAttribute = {
+  def createAttrStr(context: Null[ContextContent], name: String, value: String): ComplexAttribute = {
     ComplexAttribute(context, Some(name), None, Operation(
       context, None, Right(new TLangString(context, value))
     ))
   }
 
-  def createAttrInt(context: Option[ContextContent], name: String, value: Int): ComplexAttribute = {
+  def createAttrInt(context: Null[ContextContent], name: String, value: Int): ComplexAttribute = {
     ComplexAttribute(context, Some(name), None, Operation(
       context, None, Right(new TLangLong(context, value))
     ))
@@ -76,31 +77,31 @@ object BuildLang {
     ))
   }
 
-  def createAttrDouble(context: Option[ContextContent], name: String, value: Double): ComplexAttribute = {
+  def createAttrDouble(context: Null[ContextContent], name: String, value: Double): ComplexAttribute = {
     ComplexAttribute(context, Some(name), None, Operation(
-      context, None, Right(new TLangDouble(context, value))
+      context, None, Right(new TLangDouble(context, new core.Double(value)))
     ))
   }
 
-  def createAttrBool(context: Option[ContextContent], name: String, value: Boolean): ComplexAttribute = {
+  def createAttrBool(context: Null[ContextContent], name: String, value: Boolean): ComplexAttribute = {
     ComplexAttribute(context, Some(name), None, Operation(
-      context, None, Right(new TLangBool(context, value))
+      context, None, Right(new TLangBool(context, new Bool(value)))
     ))
   }
 
-  def createAttrNull(context: Option[ContextContent], name: String, value: Option[Value[_]], valueType: Option[TLangType]): ComplexAttribute = {
+  def createAttrNull(context: Null[ContextContent], name: String, value: Null[Value[_]], valueType: Option[TLangType]): ComplexAttribute = {
     ComplexAttribute(context, Some(name), None, Operation(
       context, None, Right(new NullValue[Value[_]](context, value, valueType))
     ))
   }
 
-  def createAttrEntity(context: Option[ContextContent], name: String, value: EntityValue): ComplexAttribute = {
+  def createAttrEntity(context: Null[ContextContent], name: String, value: EntityValue): ComplexAttribute = {
     ComplexAttribute(context, Some(name), None, Operation(
       context, None, Right(value)
     ))
   }
 
-  def createArray(context: Option[ContextContent], name: String, values: List[EntityValue]): ComplexAttribute = {
+  def createArray(context: Null[ContextContent], name: String, values: List[EntityValue]): ComplexAttribute = {
     ComplexAttribute(context, Some(name),
       None, Operation(context, None, Right(ArrayValue(context, Some(values.map(value => ComplexAttribute(context, None, None, Operation(context, None, Right(value))))))))
     )

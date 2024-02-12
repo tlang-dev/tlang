@@ -6,11 +6,11 @@ import tlang.core.*;
 
 import java.lang.String;
 
-public class FuncRet<T> implements Value<FuncRet<T>>, ImplicitMatch<Value<?>, Error, Void> {
+public class FuncRet<T extends Value<T>> implements Value<FuncRet<T>> {
 
     public static final FuncRet<Void> VOID = new FuncRet<>();
 
-    private final Null<Value<T>> ret;
+    private final Null<T> ret;
 
     private final Null<Error> error;
 
@@ -19,7 +19,7 @@ public class FuncRet<T> implements Value<FuncRet<T>>, ImplicitMatch<Value<?>, Er
         this.error = Null.empty();
     }
 
-    public FuncRet(Value<T> ret) {
+    public FuncRet(T ret) {
         this.ret = Null.of(ret);
         this.error = Null.empty();
     }
@@ -29,7 +29,7 @@ public class FuncRet<T> implements Value<FuncRet<T>>, ImplicitMatch<Value<?>, Er
         this.error = Null.of(error);
     }
 
-    public Null<Value<T>> get() {
+    public Null<T> get() {
         return ret;
     }
 
@@ -47,7 +47,7 @@ public class FuncRet<T> implements Value<FuncRet<T>>, ImplicitMatch<Value<?>, Er
         return FuncRet.of(error.isNull().get() ? Bool.FALSE : Bool.TRUE);
     }
 
-    public FuncRet<Void> inAllCase(ApplyVoidFunc<Value<T>> func) {
+    public FuncRet<Void> inAllCase(ApplyVoidFunc<T> func) {
         func.apply(ret.get());
         return FuncRet.VOID;
     }
@@ -56,7 +56,7 @@ public class FuncRet<T> implements Value<FuncRet<T>>, ImplicitMatch<Value<?>, Er
         return FuncRet.of(new Bool(ret.isNull().get() && error.isNull().get()));
     }
 
-    public static <T> FuncRet<T> of(Value<T> args) {
+    public static <T extends Value<T>> FuncRet<T> of(Value<T> args) {
         return new FuncRet<>(args);
     }
 
@@ -69,38 +69,34 @@ public class FuncRet<T> implements Value<FuncRet<T>>, ImplicitMatch<Value<?>, Er
     }
 
     public static FuncRet<Error> error(String code, String message) {
-        return new FuncRet<Error>(new Error(new tlang.core.String(code), Null.of(new tlang.core.String(message))));
+        return new FuncRet<>(new Error(new tlang.core.String(code), Null.of(new tlang.core.String(message))));
     }
 
     public static FuncRet<Error> error(String code) {
-        return new FuncRet<Error>(new Error(new tlang.core.String(code), Null.empty()));
+        return new FuncRet<>(new Error(new tlang.core.String(code), Null.empty()));
     }
 
     public static <T extends Throwable> FuncRet<Error> error(T e) {
         return new FuncRet<>(new Error(new tlang.core.String(e.getClass().getSimpleName()), Null.of(new tlang.core.String(e.getMessage()))));
     }
 
-    public static <T> FuncRet<Null<T>> ofNull() {
+    public static <T extends Value<T>> FuncRet<Null<T>> ofNull() {
         return new FuncRet<>(Null.empty());
     }
 
-    public static <T> FuncRet<Null<T>> ofNull(T value) {
+    public static <T extends Value<T>> FuncRet<Null<T>> ofNull(T value) {
         return new FuncRet<>(Null.of(value));
     }
 
     @Override
-    public FuncRet<Void> match(ApplyVoidFunc<Value<?>> first, Null<ApplyVoidFunc<Error>> second, Null<ApplyVoidFunc<Void>> last) {
-        if (error.isNull().get()) {
-            first.apply(ret.get());
-        } else {
-            second.ifNotNull(func -> func.apply(error.get()));
-        }
-        last.ifNotNull(func -> func.apply(tlang.core.Void.VOID));
-        return FuncRet.VOID;
+    public FuncRet<T> getElement() {
+        return this;
     }
 
     @Override
-    public FuncRet<T> value() {
-        return this;
+    public tlang.core.String getType() {
+        return null;
     }
+
+
 }

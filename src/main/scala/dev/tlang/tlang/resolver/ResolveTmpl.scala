@@ -19,7 +19,7 @@ import scala.collection.mutable.ListBuffer
 
 object ResolveTmpl {
 
-  def resolveTmpl(block: AnyTmplBlock[_], module: Module, uses: List[DomainUse], currentResource: Resource): Either[List[ResolverError], Unit] = {
+  def resolveTmpl(block: AnyTmplInterpretedBlock[_], module: Module, uses: List[DomainUse], currentResource: Resource): Either[List[ResolverError], Unit] = {
     block match {
       case lang: LangBlock => resolveLangBlock(lang, module, uses, currentResource)
       case doc: DocBlock => resolveDocBlock(doc, module, uses, currentResource)
@@ -58,7 +58,7 @@ object ResolveTmpl {
     else Right(())
   }
 
-  def resolveLangs(block: AnyTmplBlock[_], module: Module, uses: List[DomainUse], currentResource: Resource): Either[List[ResolverError], Unit] = {
+  def resolveLangs(block: AnyTmplInterpretedBlock[_], module: Module, uses: List[DomainUse], currentResource: Resource): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
     block.getLangs.foreach(lang =>
       resolveLang(block, lang, module, uses, currentResource) match {
@@ -70,7 +70,7 @@ object ResolveTmpl {
     else Right(())
   }
 
-  private def resolveLang(block: AnyTmplBlock[_], lang: String, module: Module, uses: List[DomainUse], currentResource: Resource): Either[List[ResolverError], Unit] = {
+  private def resolveLang(block: AnyTmplInterpretedBlock[_], lang: String, module: Module, uses: List[DomainUse], currentResource: Resource): Either[List[ResolverError], Unit] = {
     uses.find(use => use.parts.last.equals(lang) || use.alias.getOrElse("").equals(lang)) match {
       case None => Left(List(ResourceNotFound(block.getContext, lang)))
       case Some(use) =>

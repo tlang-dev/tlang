@@ -18,8 +18,6 @@ case class LangCallObjectLink(context: Option[ContextContent], var link: String 
 
   override def getType: String = getClass.getSimpleName
 
-  override def getContext: Option[ContextContent] = context
-
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, LangCallObjectLink.name)),
     Some(List(

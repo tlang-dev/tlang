@@ -1,10 +1,10 @@
 package dev.tlang.tlang.tmpl
 
-import dev.tlang.tlang.ast.DomainBlock
 import dev.tlang.tlang.ast.helper.HelperParam
 import dev.tlang.tlang.interpreter.context.Scope
+import tlang.internal.AnyTmplBlock
 
-trait AnyTmplBlock[T] extends TmplNode[T] with DomainBlock {
+trait AnyTmplInterpretedBlock[T] extends AnyTmplBlock[T] {
 
   def getParams: Option[List[HelperParam]]
 
@@ -16,7 +16,7 @@ trait AnyTmplBlock[T] extends TmplNode[T] with DomainBlock {
 
 }
 
-object AnyTmplBlock {
+object AnyTmplInterpretedBlock {
 
   val name: String = this.getClass.getSimpleName.replace("$", "")
 }

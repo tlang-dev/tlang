@@ -1,17 +1,14 @@
 package dev.tlang.tlang.ast.common.value
 
 import dev.tlang.tlang.ast.common.call.ComplexValueStatement
-import dev.tlang.tlang.astbuilder.context.ContextContent
-import dev.tlang.tlang.interpreter.Value
+import tlang.core.Null
+import tlang.internal.ContextContent
 
-case class NullValue[T](context: Option[ContextContent], var value: Option[T], valueType: Option[TLangType]) extends ComplexValueStatement[Option[T]] {
-  override def getElement: Option[T] = value
+case class NullValue[T](context: Null[ContextContent], var value: Null[T], valueType: Option[TLangType]) extends ComplexValueStatement[Null[T]] {
+  override def getElement: Null[T] = value
 
-  override def getType: String = if (valueType.isDefined) valueType.get.getType else "LazyValue"
+  override def getType: String = if (valueType.isDefined) valueType.get.getType else "NullValue"
 
-  override def compareTo(comparedVal: Value[Option[T]]): Int = if (this.value.equals(comparedVal.getElement)) 0 else -1
-
-  override def getContext: Option[ContextContent] = context
 }
 
 object NullValue {

@@ -6,7 +6,7 @@ import tlang.mutable.List;
 
 public class Match {
 
-    public static <T> FuncRet<Null<Value<?>>> match(Value<T> value, Case<T>[] cases) {
+    /*public static <T> FuncRet<Null<Value<?>>> match(Value<T> value, Case<T>[] cases) {
         for (Case<T> c : cases) {
             if (Case.isApplicable(c, value).get().get().value().get()) {
                 return FuncRet.ofNull(c.func().apply(c.value()));
@@ -33,6 +33,6 @@ public class Match {
             }
         }
         return result.toArray();
-    }
+    }*/
 
 }

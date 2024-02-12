@@ -5,7 +5,7 @@ import tlang.core.func.ApplyVoidFunc;
 import tlang.core.func.FuncRet;
 import tlang.core.func.MapFunc;
 
-public class Null<T> implements Value<Null<T>> {
+public class Null<T extends Value<T>> implements Value<Null<T>> {
 
     private final T value;
 
@@ -33,6 +33,10 @@ public class Null<T> implements Value<Null<T>> {
         return func.apply(value);
     }
 
+    public FuncRet<T> orElse(T orElse) {
+        return new FuncRet<T>((this.get() == null ? orElse : this.get()));
+    }
+
     public Null<T> ifNull(Apply func) {
         if (value == null) {
             func.apply();
@@ -47,16 +51,25 @@ public class Null<T> implements Value<Null<T>> {
         return this;
     }
 
-    public static <T> Null<T> of(T value) {
+    public static <T extends Value<T>> Null<T> of(T value) {
         return new Null<>(value);
     }
 
-    public static <T> Null<T> empty() {
+    public static <T extends Value<T>> Null<T> empty() {
         return new Null<>();
     }
 
+    public static <T extends Value<T>> FuncRet<T> orElse(Null<T> that, T orElse) {
+        return new FuncRet<>((that.get() == null ? orElse : that.get()));
+    }
+
     @Override
-    public Null<T> value() {
+    public Null<T> getElement() {
         return this;
+    }
+
+    @Override
+    public String getType() {
+        return null;
     }
 }

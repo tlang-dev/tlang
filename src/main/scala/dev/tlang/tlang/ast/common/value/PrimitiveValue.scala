@@ -3,7 +3,7 @@ package dev.tlang.tlang.ast.common.value
 import dev.tlang.tlang.ast.common.call.ComplexValueStatement
 import dev.tlang.tlang.ast.model.set.ModelSetValueType
 import dev.tlang.tlang.interpreter.ExecError
-import dev.tlang.tlang.tmpl.TmplNode
+import tlang.internal.TmplNode
 
 abstract class PrimitiveValue[TYPE] extends ComplexValueStatement[TYPE] with ModelSetValueType[TYPE] with TmplNode[TYPE] {
 

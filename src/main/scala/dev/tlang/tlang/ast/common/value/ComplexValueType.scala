@@ -1,5 +1,5 @@
 package dev.tlang.tlang.ast.common.value
 
-import dev.tlang.tlang.interpreter.Value
+import tlang.core
 
-trait ComplexValueType[T] extends Value[T]
+trait ComplexValueType[T] extends core.Value[T]

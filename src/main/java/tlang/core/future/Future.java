@@ -14,7 +14,7 @@ public class Future<T> implements Value<Future<T>> {
 
     private final ApplyVoidFunc<Error> funcOnError;
 
-    private final Null<Apply> funcFinally;
+    private final Null<ApplyVoidFunc<Void>> funcFinally;
 
     public Future(ApplyVoidFunc<Value<T>> funcOnComplete, ApplyVoidFunc<Error> funcOnError, Null<ApplyVoidFunc<Void>> funcFinally) {
         this.funcOnComplete = funcOnComplete;
@@ -31,7 +31,7 @@ public class Future<T> implements Value<Future<T>> {
     }
 
     public FuncRet<Void> finallyFunc() {
-        funcFinally.ifNotNull(Apply::apply);
+        //funcFinally.ifNotNull(Apply::apply);
         return FuncRet.VOID;
     }
 

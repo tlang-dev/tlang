@@ -35,7 +35,12 @@ public class Array<T> implements ImplicitMatch<Array<T>, Void, Void>, Value<Arra
     }
 
     @Override
-    public Array<T> value() {
+    public Array<T> getElement() {
         return this;
+    }
+
+    @Override
+    public String getType() {
+        return null;
     }
 }

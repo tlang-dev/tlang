@@ -1,6 +1,6 @@
 package tlang.core;
 
-public class Error {
+public class Error implements Value<Error> {
 
     private final String code;
 
@@ -42,5 +42,15 @@ public class Error {
 
     public Error[] getStackTrace() {
         return stackTrace;
+    }
+
+    @Override
+    public Error getElement() {
+        return this;
+    }
+
+    @Override
+    public String getType() {
+        return null;
     }
 }

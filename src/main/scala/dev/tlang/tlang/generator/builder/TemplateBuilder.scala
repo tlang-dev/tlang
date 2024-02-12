@@ -6,7 +6,7 @@ import dev.tlang.tlang.interpreter.context.Context
 import dev.tlang.tlang.interpreter.{ExecCallObject, ExecError, NoValue, Value}
 import dev.tlang.tlang.tmpl.common.ast
 import dev.tlang.tlang.tmpl.common.ast.{LangBlockID, TmplID, TmplInterpretedID, TmplReplacedId}
-import dev.tlang.tlang.tmpl.{AnyTmplBlock, TmplNode}
+import dev.tlang.tlang.tmpl.{AnyTmplInterpretedBlock, TmplNode}
 import dev.tlang.tlang.tmpl.doc.ast.DocBlock
 import dev.tlang.tlang.tmpl.lang.ast._
 import dev.tlang.tlang.tmpl.lang.ast.call._
@@ -28,7 +28,7 @@ object TemplateBuilder {
     }
   }
 
-  def buildBlock(block: AnyTmplBlock[_], context: Context): Either[ExecError, AnyTmplBlock[_]] = {
+  def buildBlock(block: AnyTmplInterpretedBlock[_], context: Context): Either[ExecError, AnyTmplInterpretedBlock[_]] = {
     block match {
       case doc: DocBlock => buildDocBlock(doc, context)
       case lang: LangBlock => buildLangBlock(lang, context)

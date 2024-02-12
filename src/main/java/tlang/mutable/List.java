@@ -3,13 +3,13 @@ package tlang.mutable;
 import tlang.core.Error;
 import tlang.core.Long;
 import tlang.core.String;
-import tlang.core.*;
 import tlang.core.Void;
+import tlang.core.*;
 import tlang.core.func.FuncRet;
 import tlang.core.func.MapFunc;
 import tlang.core.func.MapFuncWithIndex;
 
-public class List<T> {
+public class List<T extends Value<T>> implements Value<List<T>> {
 
     private T[] records;
 
@@ -47,7 +47,7 @@ public class List<T> {
         return FuncRet.of(records[index]);
     }
 
-    public <B> FuncRet<B> map(MapFunc<T, B> func) {
+    public <B extends Value<B>> FuncRet<List<B>> map(MapFunc<T, B> func) {
         var list = new List<B>(new Long(size));
         for (int i = 0; i < size; i++) {
             list.add(func.apply(records[i]));
@@ -70,5 +70,15 @@ public class List<T> {
     public FuncRet<Array<T>> toArray() {
         List<Set<T>> list = (List<Set<T>>) mapWithIndex((record, index) -> new Set<>(index.toStringValue(), record)).getFirst().get();
         return FuncRet.ofOneValue(new SetArray<>(list.getRecords()));
+    }
+
+    @Override
+    public List<T> getElement() {
+        return this;
+    }
+
+    @Override
+    public String getType() {
+        return null;
     }
 }

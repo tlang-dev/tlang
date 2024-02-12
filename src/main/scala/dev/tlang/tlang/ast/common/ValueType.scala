@@ -1,8 +1,8 @@
 package dev.tlang.tlang.ast.common
 
-import dev.tlang.tlang.astbuilder.context.AstContext
+import tlang.internal
 
-abstract class ValueType extends AstContext {
+abstract class ValueType extends internal.AstContext {
   def getContextType: String
 
   def getType: String

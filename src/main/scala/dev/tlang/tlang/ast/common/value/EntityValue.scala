@@ -2,14 +2,14 @@ package dev.tlang.tlang.ast.common.value
 
 import dev.tlang.tlang.ast.common.{ObjType, ValueType}
 import dev.tlang.tlang.ast.model.set.{ModelSetEntity, ModelSetRefValue}
-import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
 import dev.tlang.tlang.interpreter.context.{Context, Scope}
-import dev.tlang.tlang.interpreter.{ExecError, ExecOperation, NotImplemented, Value}
+import dev.tlang.tlang.interpreter.{ExecError, ExecOperation, NotImplemented}
 import dev.tlang.tlang.tmpl.lang.ast.LangModel
-import tlang.core.{Bool, Null}
+import tlang.core.{Bool, Model, Null}
+import tlang.internal.{AstContext, ContextContent}
 import tlang.{Entity, core}
 
-case class EntityValue(context: Option[ContextContent],
+case class EntityValue(context: Null[ContextContent],
                        var `type`: Option[ValueType],
                        attrs: Option[List[ComplexAttribute]] = None,
                        scope: Scope = Scope())
@@ -18,8 +18,6 @@ case class EntityValue(context: Option[ContextContent],
   override def getElement: EntityValue = this
 
   override def getType: String = if (`type`.isDefined) `type`.get.getContextType else getClass.getSimpleName
-
-  override def compareTo(value: Value[EntityValue]): Int = 0
 
   override def add(value: PrimitiveValue[EntityValue]): Either[ExecError, EntityValue] = Left(NotImplemented(context = context))
 
@@ -31,8 +29,6 @@ case class EntityValue(context: Option[ContextContent],
 
   override def modulo(value: PrimitiveValue[EntityValue]): Either[ExecError, EntityValue] = Left(NotImplemented(context = context))
 
-  override def getContext: Option[ContextContent] = context
-
   override def deepCopy(): EntityValue = EntityValue(context, `type`, attrs, scope)
 
   override def toEntity: EntityValue = EntityValue(context,
@@ -40,7 +36,7 @@ case class EntityValue(context: Option[ContextContent],
     Some(List())
   )
 
-  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
+  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
   )))
 
   override def getAttr(name: core.String): Null[core.Value[_]] = {
@@ -68,12 +64,16 @@ case class EntityValue(context: Option[ContextContent],
   }
 
   override def hasAttrs: Bool = if (attrs.isEmpty) Bool.FALSE else Bool.TRUE
+
+  override def getModel: Null[Model] = Null.empty()
+
+  override def getContext: Null[ContextContent] = context
 }
 
 object EntityValue {
   val name: String = this.getClass.getSimpleName.replace("$", "")
 
-  val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
+  val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
   )))
 
 }

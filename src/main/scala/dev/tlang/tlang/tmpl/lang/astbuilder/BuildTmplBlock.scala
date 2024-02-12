@@ -15,13 +15,13 @@ import dev.tlang.tlang.tmpl.lang.ast.loop.ForType.ForType
 import dev.tlang.tlang.tmpl.lang.ast.loop.{ForType, LangFor}
 import dev.tlang.tlang.tmpl.lang.ast.primitive._
 import dev.tlang.tlang.tmpl.style.astbuilder.BuildStyle
-import dev.tlang.tlang.tmpl.{AnyTmplBlock, TmplNode}
+import dev.tlang.tlang.tmpl.{AnyTmplInterpretedBlock, TmplNode}
 
 import scala.jdk.CollectionConverters._
 
 object BuildTmplBlock {
 
-  def build(resource: ContextResource, tmpl: TmplBlockContext): AnyTmplBlock[_] = {
+  def build(resource: ContextResource, tmpl: TmplBlockContext): AnyTmplInterpretedBlock[_] = {
 
     tmpl match {
       case lang@_ if lang.tmplLang() != null => buildLangBlock(resource, tmpl.tmplLang())

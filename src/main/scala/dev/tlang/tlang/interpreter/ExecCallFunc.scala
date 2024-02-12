@@ -4,7 +4,7 @@ import dev.tlang.tlang.ast.common.call.{CallFuncObject, CallFuncParam, CallRefFu
 import dev.tlang.tlang.ast.common.value.LazyValue
 import dev.tlang.tlang.ast.helper.{HelperFunc, HelperStatement}
 import dev.tlang.tlang.interpreter.context.{Context, ContextUtils, MutableContext, Scope}
-import dev.tlang.tlang.tmpl.AnyTmplBlock
+import dev.tlang.tlang.tmpl.AnyTmplInterpretedBlock
 import dev.tlang.tlang.tmpl.lang.ast.LangBlockAsValue
 
 import scala.collection.mutable
@@ -20,7 +20,7 @@ object ExecCallFunc extends Executor {
         ExecFunc.run(func, newContext)
       case None => ContextUtils.findTmpl(context, caller.name.get) match {
         case Some(tmpl) =>
-          val tmplCopy = tmpl.deepCopy().asInstanceOf[AnyTmplBlock[_]]
+          val tmplCopy = tmpl.deepCopy().asInstanceOf[AnyTmplInterpretedBlock[_]]
           val newContext = manageTmplParameters(caller, tmplCopy, MutableContext.toMutable(context).removeLocalScopes().toContext())
           Right(Some(List(LangBlockAsValue(tmplCopy.getContext, tmplCopy, Context(newContext.scopes :+ tmplCopy.getScope)))))
         case None => //Left(CallableNotFound(caller.name.get))
@@ -73,7 +73,7 @@ object ExecCallFunc extends Executor {
     helperFunc.currying.get(curryPos).params(paramPos).param.getOrElse(paramPos.toString)
   }
 
-  def manageTmplParameters(caller: CallFuncObject, tmpl: AnyTmplBlock[_], context: Context): Context = {
+  def manageTmplParameters(caller: CallFuncObject, tmpl: AnyTmplInterpretedBlock[_], context: Context): Context = {
     val vars: mutable.Map[String, Value[_]] = mutable.Map()
     val funcs: mutable.Map[String, HelperFunc] = mutable.Map()
     if (tmpl.getParams.isDefined) {
@@ -90,7 +90,7 @@ object ExecCallFunc extends Executor {
     Context(context.scopes :+ Scope(variables = vars, functions = funcs) :+ tmpl.getScope)
   }
 
-  def findTmplParamName(paramPos: Int, tmplBlock: AnyTmplBlock[_]): String = {
+  def findTmplParamName(paramPos: Int, tmplBlock: AnyTmplInterpretedBlock[_]): String = {
     tmplBlock.getParams.get(paramPos).param.getOrElse(paramPos.toString)
   }
 

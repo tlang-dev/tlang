@@ -1,6 +1,6 @@
 package tlang.core;
 
-public class Set<T> {
+public class Set<T> implements Value<Set<T>> {
     private final String key;
     private final T value;
 
@@ -15,5 +15,15 @@ public class Set<T> {
 
     public T getValue() {
         return value;
+    }
+
+    @Override
+    public Set<T> getElement() {
+        return this;
+    }
+
+    @Override
+    public String getType() {
+        return null;
     }
 }

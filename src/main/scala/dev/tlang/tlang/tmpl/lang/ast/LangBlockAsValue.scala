@@ -6,17 +6,17 @@ import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSe
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.interpreter.context.Context
-import dev.tlang.tlang.tmpl.{AnyTmplBlock, TmplNode}
+import dev.tlang.tlang.tmpl.{AnyTmplInterpretedBlock, TmplNode}
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 
-case class LangBlockAsValue(astContext: Option[ContextContent], var block: AnyTmplBlock[_], context: Context) extends TmplNode[AnyTmplBlock[_]] {
-  override def getElement: AnyTmplBlock[_] = this.block
+case class LangBlockAsValue(astContext: Option[ContextContent], var block: AnyTmplInterpretedBlock[_], context: Context) extends TmplNode[AnyTmplInterpretedBlock[_]] {
+  override def getElement: AnyTmplInterpretedBlock[_] = this.block
 
   override def getType: String = LangBlockAsValue.getType
 
-  override def compareTo(value: Value[AnyTmplBlock[_]]): Int = 0
+  override def compareTo(value: Value[AnyTmplInterpretedBlock[_]]): Int = 0
 
-  override def deepCopy(): LangBlockAsValue = new LangBlockAsValue(astContext, block.deepCopy().asInstanceOf[AnyTmplBlock[_]], context)
+  override def deepCopy(): LangBlockAsValue = new LangBlockAsValue(astContext, block.deepCopy().asInstanceOf[AnyTmplInterpretedBlock[_]], context)
 
   override def getContext: Option[ContextContent] = astContext
 
@@ -38,6 +38,6 @@ object LangBlockAsValue extends TLangType {
   val name: String = getType
 
   val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
-    ModelSetAttribute(None, Some("block"), ModelSetType(None, AnyTmplBlock.name)),
+    ModelSetAttribute(None, Some("block"), ModelSetType(None, AnyTmplInterpretedBlock.name)),
   )))
 }

@@ -19,9 +19,12 @@ public class Bool implements Value<Bool> {
         return value;
     }
 
-    @Override
-    public Bool value() {
-        return this;
+    public FuncRet<Void> ifTrue(ApplyVoidFunc<Void> func) {
+        return Bool.ifTrue(this, func);
+    }
+
+    public FuncRet<Void> ifFalse(ApplyVoidFunc<Void> func) {
+        return Bool.ifFalse(this, func);
     }
 
     public static FuncRet<Bool> isEqual(Bool that, Bool other) {
@@ -61,5 +64,15 @@ public class Bool implements Value<Bool> {
             ifFalse.apply(Void.VOID);
         }
         return FuncRet.VOID;
+    }
+
+    @Override
+    public Bool getElement() {
+        return null;
+    }
+
+    @Override
+    public String getType() {
+        return new String(getClass().getSimpleName());
     }
 }
