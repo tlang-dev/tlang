@@ -1,9 +1,9 @@
 package dev.tlang.tlang.ast.model.set
 
-import dev.tlang.tlang.astbuilder.context.ContextContent
+import tlang.core.Null
+import tlang.internal.ContextContent
 
-case class ModelSetArray(context: Option[ContextContent], array: String) extends ModelSetValueType[ModelSetArray] {
-  override def getContext: Option[ContextContent] = context
+case class ModelSetArray(context: Null[ContextContent], array: String) extends ModelSetValueType[ModelSetArray] {
 
   override def getElement: ModelSetArray = this
 

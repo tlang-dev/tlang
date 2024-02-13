@@ -1,14 +1,14 @@
 package tlang.core;
 
-public interface Model {
+public interface Model extends Value<Model> {
 
-    Null<Value<?>> getAttr(String name);
+    <T extends Value<T>> Null<T> getAttr(String name);
 
     Bool hasAttrs();
 
     Bool attrExists(String name);
 
-    Null<Value<?>> getParam(String name);
+    <T extends Value<T>> Null<T> getParam(String name);
 
     Bool hasParams();
 

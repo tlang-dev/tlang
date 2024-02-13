@@ -3,7 +3,7 @@ package tlang.core;
 import tlang.core.func.ApplyVoidFunc;
 import tlang.core.func.MapFunc;
 
-public class Either<T, U> {
+public class Either<T extends Value<T>, U extends Value<U>> {
 
     private final T left;
     private final U right;
@@ -13,11 +13,11 @@ public class Either<T, U> {
         this.right = right;
     }
 
-    public static <T, U> Either<T, U> left(T value) {
+    public static <T extends Value<T>, U extends Value<U>> Either<T, U> left(T value) {
         return new Either<>(value, null);
     }
 
-    public static <T, U> Either<T, U> right(U value) {
+    public static <T extends Value<T>, U extends Value<U>> Either<T, U> right(U value) {
         return new Either<>(null, value);
     }
 
@@ -37,14 +37,14 @@ public class Either<T, U> {
         return right;
     }
 
-    public <B> Either<B, U> mapLeft(MapFunc<T, B> func) {
+    public <B extends Value<B>> Either<B, U> mapLeft(MapFunc<T, B> func) {
         if (isLeft()) {
             return Either.left(func.apply(getLeft()));
         }
         return Either.right(getRight());
     }
 
-    public <B> Either<T, B> mapRight(MapFunc<U, B> func) {
+    public <B extends Value<B>> Either<T, B> mapRight(MapFunc<U, B> func) {
         if (isRight()) {
             return Either.right(func.apply(getRight()));
         }

@@ -3,14 +3,13 @@ package dev.tlang.tlang.tmpl.lang.ast.primitive
 import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.value.{EntityValue, NullValue}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
-import dev.tlang.tlang.astbuilder.context.ContextContent
-import dev.tlang.tlang.interpreter.Value
-import dev.tlang.tlang.tmpl.common.ast.{TmplID, TmplStringID}
 import dev.tlang.tlang.tmpl.TmplNode
 import dev.tlang.tlang.tmpl.lang.ast._
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
+import tlang.core.{Null, Value}
+import tlang.internal.{ContextContent, TmplID, TmplStringId}
 
-case class LangEntityValue(context: Option[ContextContent], var name: Option[TmplID], var params: Option[List[TmplNode[_]]], var attrs: Option[List[TmplNode[_]]]) extends LangPrimitiveValue[LangEntityValue] {
+case class LangEntityValue(context: Null[ContextContent], var name: Option[TmplID], var params: Option[List[TmplNode[_]]], var attrs: Option[List[TmplNode[_]]]) extends LangPrimitiveValue[LangEntityValue] {
   override def deepCopy(): LangEntityValue = LangEntityValue(context,
     if (name.isDefined) Some(name.get.deepCopy().asInstanceOf[TmplID]) else None,
     if (params.isDefined) Some(params.get.map(_.deepCopy().asInstanceOf[TmplNode[_]])) else None,
@@ -23,12 +22,10 @@ case class LangEntityValue(context: Option[ContextContent], var name: Option[Tmp
 
   override def getType: String = getClass.getSimpleName
 
-  override def getContext: Option[ContextContent] = context
-
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, LangEntityValue.name)),
     Some(List(
-      BuildLang.createAttrEntity(context, "name", if (name.isDefined) name.get.toEntity else TmplStringID(context, "").toEntity),
+      BuildLang.createAttrEntity(context, "name", if (name.isDefined) name.get.toEntity else new TmplStringId(context, "").toEntity),
       BuildLang.createArray(context, "params", params.map(_.map(_.toEntity)).getOrElse(List())),
       BuildLang.createArray(context, "attrs", attrs.map(_.map(_.toEntity)).getOrElse(List())),
     ))
@@ -41,9 +38,9 @@ object LangEntityValue {
 
   val name: String = "LangEntity"
 
-  val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
-    ModelSetAttribute(None, Some("name"), ModelSetType(None, NullValue.name)),
-    ModelSetAttribute(None, Some("params"), ModelSetType(None, NullValue.name)),
-    ModelSetAttribute(None, Some("attrs"), ModelSetType(None, NullValue.name)),
+  val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
+    ModelSetAttribute(Null.empty(), Some("name"), ModelSetType(Null.empty(), NullValue.name)),
+    ModelSetAttribute(Null.empty(), Some("params"), ModelSetType(Null.empty(), NullValue.name)),
+    ModelSetAttribute(Null.empty(), Some("attrs"), ModelSetType(Null.empty(), NullValue.name)),
   )))
 }

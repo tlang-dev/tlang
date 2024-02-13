@@ -4,12 +4,11 @@ import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value.{ArrayValue, ComplexAttribute, EntityValue, TLangString}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
-import dev.tlang.tlang.astbuilder.context.ContextContent
-import dev.tlang.tlang.interpreter.Value
-import dev.tlang.tlang.tmpl.common.ast.TmplID
 import dev.tlang.tlang.tmpl.{DeepCopy, TmplNode}
+import tlang.core.{Null, Value}
+import tlang.internal.{ContextContent, TmplID}
 
-case class LangPkg(context: Option[ContextContent], var parts: List[TmplID]) extends DeepCopy with TmplNode[LangPkg] {
+case class LangPkg(context: Null[ContextContent], var parts: List[TmplID]) extends DeepCopy with TmplNode[LangPkg] {
   override def deepCopy(): LangPkg = {
     LangPkg(context, parts.map(_.deepCopy().asInstanceOf[TmplID]))
   }
@@ -20,7 +19,6 @@ case class LangPkg(context: Option[ContextContent], var parts: List[TmplID]) ext
 
   override def getType: String = getClass.getSimpleName
 
-  override def getContext: Option[ContextContent] = context
 
   override def toEntity: EntityValue = {
     EntityValue(context,
@@ -39,7 +37,8 @@ object LangPkg {
 
   val name: String = this.getClass.getSimpleName.replace("$", "")
 
-  val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
-    ModelSetAttribute(None, Some("parts"), ModelSetType(None, ArrayValue.getType)),
+  val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
   )))
+  ModelSetAttribute(Null.empty(), Some("parts"), ModelSetType(Null.empty(), ArrayValue.getType))
+
 }

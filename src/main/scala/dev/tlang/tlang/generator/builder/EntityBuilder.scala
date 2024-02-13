@@ -1,10 +1,10 @@
 package dev.tlang.tlang.generator.builder
 
-import dev.tlang.tlang.tmpl.lang.ast.primitive.LangEntityValue
 import dev.tlang.tlang.generator.builder.TemplateBuilder.{buildInclAttributes, includeTmplId}
 import dev.tlang.tlang.interpreter.ExecError
 import dev.tlang.tlang.interpreter.context.Context
-import dev.tlang.tlang.tmpl.common.ast.TmplID
+import dev.tlang.tlang.tmpl.lang.ast.primitive.LangEntityValue
+import tlang.internal.TmplID
 
 object EntityBuilder {
 

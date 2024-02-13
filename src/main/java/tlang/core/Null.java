@@ -69,7 +69,7 @@ public class Null<T extends Value<T>> implements Value<Null<T>> {
     }
 
     @Override
-    public String getType() {
+    public Type getType() {
         return null;
     }
 }

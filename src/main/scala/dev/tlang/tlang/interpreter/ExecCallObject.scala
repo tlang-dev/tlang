@@ -6,11 +6,12 @@ import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value._
 import dev.tlang.tlang.ast.helper.{HelperFunc, HelperStatement}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetRef}
-import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.ExecCallFunc.manageTmplParameters
 import dev.tlang.tlang.interpreter.context.{Context, ContextUtils, Scope}
 import dev.tlang.tlang.tmpl.AnyTmplInterpretedBlock
 import dev.tlang.tlang.tmpl.lang.ast.LangBlockAsValue
+import tlang.core.{Null, Value}
+import tlang.internal.ContextContent
 
 import scala.annotation.tailrec
 import scala.collection.mutable
@@ -73,7 +74,7 @@ object ExecCallObject extends Executor {
       case caller: CallFuncObject => ExecCallFunc.run(caller, context)
       case refFunc: CallRefFuncObject => Right(Some(List(refFunc)))
       case CallVarObject(_, name) => findVar(name, context)
-      case _ => Left(NotImplemented(context = None))
+      case _ => Left(NotImplemented(context = Null.empty()))
     }
   }
 
@@ -84,7 +85,7 @@ object ExecCallObject extends Executor {
           case operation: Operation => ExecOperation.run(operation, context)
           case _ => Right(Some(List(value)))
         }
-      case None => Left(CallableNotFound(name, None))
+      case None => Left(CallableNotFound(name, Null.empty()))
     }
   }
 
@@ -94,7 +95,7 @@ object ExecCallObject extends Executor {
       case caller: CallFuncObject => resolveFunc(caller, callable, context)
       case refFunc: CallRefFuncObject => Right(Some(List(refFunc)))
       case CallVarObject(_, name) => resolveCallVar(name, callable, context, statement)
-      case _ => Left(NotImplemented(context = None))
+      case _ => Left(NotImplemented(context = Null.empty()))
     }
   }
 
@@ -175,12 +176,12 @@ object ExecCallObject extends Executor {
         case Some(value) => Right(Some(value))
         case None =>
           if (name == "type")
-            Right(Some(List(new TLangString(None, entity.getType))))
+            Right(Some(List(new TLangString(Null.empty(), entity.getType))))
           else findModelInEntity(name, entity, context, caller)
       }
     }
     else if (name == "type")
-      Right(Some(List(new TLangString(None, entity.getType))))
+      Right(Some(List(new TLangString(Null.empty(), entity.getType))))
     else findModelInEntity(name, entity, context, caller)
   }
 
@@ -224,7 +225,7 @@ object ExecCallObject extends Executor {
     else Right(None)
   }
 
-  def findInSetAttrs(name: String, attrs: List[ModelSetAttribute], context: Context, contextContent: Option[ContextContent], caller: CallObjectType): Either[ExecError, Option[List[Value[_]]]] = {
+  def findInSetAttrs(name: String, attrs: List[ModelSetAttribute], context: Context, contextContent: Null[ContextContent], caller: CallObjectType): Either[ExecError, Option[List[Value[_]]]] = {
     attrs.find(_.attr.getOrElse(false).equals(name)) match {
       case Some(value) => value.value match {
         case ref: ModelSetRef =>
@@ -296,7 +297,7 @@ object ExecCallObject extends Executor {
 
   private def pickFirst(callable: Option[List[Value[_]]]): Either[ExecError, Value[_]] = {
     if (callable.isDefined && callable.get.nonEmpty) Right(callable.get.head)
-    else Left(CallableNotFound("It's empty", None))
+    else Left(CallableNotFound("It's empty", Null.empty()))
   }
 
   private def runIfOperation(result: Either[ExecError, Option[List[Value[_]]]], context: Context): Either[ExecError, Option[List[Value[_]]]] = {

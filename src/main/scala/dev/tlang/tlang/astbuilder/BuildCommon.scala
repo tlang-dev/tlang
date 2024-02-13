@@ -6,7 +6,8 @@ import dev.tlang.tlang.ast.common.operation.{Operation, Operator}
 import dev.tlang.tlang.ast.common.value._
 import dev.tlang.tlang.ast.common.{ArrayType, ObjType, ValueType}
 import dev.tlang.tlang.astbuilder.BuildAst.addContext
-import dev.tlang.tlang.astbuilder.context.ContextResource
+import tlang.core.{Bool, Double, Long, Null}
+import tlang.internal.ContextResource
 
 import scala.jdk.CollectionConverters._
 
@@ -33,7 +34,7 @@ object BuildCommon {
     val next =
       if (operation.op != null && !operation.op.isEmpty) Some((buildOperator(operation.op.getText), buildOperation(resource, expectedType, operation.next)))
       else None
-    Operation(None, expectedType, content, next)
+    Operation(Null.empty(), expectedType, content, next)
   }
 
   def buildOperator(opType: String): Operator.operator = {
@@ -69,10 +70,10 @@ object BuildCommon {
       case string@_ if string.stringValue() != null => new TLangString(addContext(resource, string.stringValue()), AstBuilderUtils.extraString(string.stringValue().value.getText))
       case number@_ if number.numberValue() != null =>
         val numbVal = number.numberValue().value.getText
-        if (numbVal.contains(".")) new TLangDouble(addContext(resource, number.numberValue()), numbVal.toDouble) else new TLangLong(addContext(resource, number.numberValue()), numbVal.toLong)
+        if (numbVal.contains(".")) new TLangDouble(addContext(resource, number.numberValue()), new Double(numbVal.toDouble)) else new TLangLong(addContext(resource, number.numberValue()), new Long(numbVal.toLong))
       case text@_ if text.textValue() != null => new TLangString(addContext(resource, text.textValue()), AstBuilderUtils.extraText(text.textValue().value.getText))
       case entity@_ if entity.entityValue() != null => buildEntityValue(resource, `type`, entity.entityValue())
-      case bool@_ if bool.boolValue() != null => new TLangBool(addContext(resource, bool.boolValue()), bool.boolValue().getText == "true")
+      case bool@_ if bool.boolValue() != null => new TLangBool(addContext(resource, bool.boolValue()), new Bool(bool.boolValue().getText == "true"))
       case array@_ if array.arrayValue() != null => buildArray(resource, array.arrayValue())
     }
   }

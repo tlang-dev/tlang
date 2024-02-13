@@ -2,12 +2,12 @@ package dev.tlang.tlang.astbuilder
 
 import dev.tlang.tlang.TLang._
 import dev.tlang.tlang.ast.common.call
-import dev.tlang.tlang.ast.common.call.{SetAttribute, _}
+import dev.tlang.tlang.ast.common.call._
 import dev.tlang.tlang.ast.common.value.{ArrayValue, TLangBool, TLangLong}
 import dev.tlang.tlang.ast.helper._
 import dev.tlang.tlang.astbuilder.BuildAst.addContext
-import dev.tlang.tlang.astbuilder.context.ContextResource
 import org.antlr.v4.runtime.Token
+import tlang.internal.ContextResource
 
 import scala.jdk.CollectionConverters._
 

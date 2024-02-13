@@ -3,19 +3,17 @@ package dev.tlang.tlang.ast.common.call
 import dev.tlang.tlang.ast.common.value.{ArrayValue, EntityValue, TLangType}
 import dev.tlang.tlang.ast.common.{ObjType, ValueType}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
-import dev.tlang.tlang.astbuilder.context.ContextContent
-import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.tmpl.TmplNode
 import dev.tlang.tlang.tmpl.lang.ast.LangModel
+import tlang.core.{Null, Value}
+import tlang.internal.ContextContent
 
-case class CallObject(context: Option[ContextContent], statements: List[CallObjectType]) extends ComplexValueStatement[CallObject] with TmplNode[CallObject] {
+case class CallObject(context: Null[ContextContent], statements: List[CallObjectType]) extends ComplexValueStatement[CallObject] with TmplNode[CallObject] {
   override def getElement: CallObject = this
 
   override def getType: String = CallObject.getType
 
   override def compareTo(value: Value[CallObject]): Int = 0
-
-  override def getContext: Option[ContextContent] = context
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, CallObject.name)),
@@ -31,11 +29,11 @@ case class CallObject(context: Option[ContextContent], statements: List[CallObje
 object CallObject extends TLangType {
   override def getType: String = "CallObject"
 
-  override def getValueType: ValueType = ObjType(None, Some("TLang"), getType)
+  override def getValueType: ValueType = ObjType(Null.empty(), Some("TLang"), getType)
 
   val name: String = this.getClass.getSimpleName.replace("$", "")
 
-  val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
+  val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
     ModelSetAttribute(None, Some("calls"), ModelSetType(None, ArrayValue.getType)),
   )))
 }

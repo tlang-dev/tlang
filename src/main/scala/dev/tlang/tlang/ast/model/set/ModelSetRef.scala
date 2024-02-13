@@ -1,15 +1,15 @@
 package dev.tlang.tlang.ast.model.set
 
 import dev.tlang.tlang.ast.helper.{HelperFunc, HelperStatement}
-import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
 import dev.tlang.tlang.interpreter.context.Scope
 import dev.tlang.tlang.tmpl.AnyTmplInterpretedBlock
-import dev.tlang.tlang.tmpl.lang.ast.LangBlock
+import tlang.core.Null
+import tlang.internal.{AstContext, ContextContent}
 
-case class ModelSetRef(context: Option[ContextContent], refs: List[String], currying: Option[List[ModelSetRefCurrying]],
+case class ModelSetRef(context: Null[ContextContent], refs: List[String], currying: Option[List[ModelSetRefCurrying]],
                        var func: Option[Either[HelperFunc, AnyTmplInterpretedBlock[_]]] = None, scope: Scope = Scope())
   extends ModelSetValueType[ModelSetRef] with ModelSetRefValue with HelperStatement with AstContext {
-  override def getContext: Option[ContextContent] = context
+  override def getContext: Null[ContextContent] = context
 
   override def getElement: ModelSetRef = this
 

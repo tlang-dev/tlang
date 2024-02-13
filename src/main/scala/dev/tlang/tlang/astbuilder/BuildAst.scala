@@ -2,11 +2,11 @@ package dev.tlang.tlang.astbuilder
 
 import dev.tlang.tlang.TLang._
 import dev.tlang.tlang.ast._
-import dev.tlang.tlang.astbuilder.context.{ContextContent, ContextResource}
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildTmplBlock
 import org.antlr.v4.runtime.ParserRuleContext
-import tlang.core.Null
+import tlang.core.{Int, Null}
 import tlang.internal
+import tlang.internal.{ContextContent, ContextResource}
 
 import scala.jdk.CollectionConverters._
 
@@ -40,7 +40,7 @@ object BuildAst {
   }
 
   def addContext(resource: ContextResource, parser: ParserRuleContext): Null[internal.ContextContent] = {
-    Null.of(ContextContent(resource, parser.getStart.getLine, parser.getStart.getCharPositionInLine))
+    Null.of(new ContextContent(resource, new Int(parser.getStart.getLine), new Int(parser.getStart.getCharPositionInLine)))
   }
 
 }

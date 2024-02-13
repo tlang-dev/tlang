@@ -13,6 +13,8 @@ import dev.tlang.tlang.tmpl.lang.ast.call._
 import dev.tlang.tlang.tmpl.lang.ast.condition.LangOperation
 import dev.tlang.tlang.tmpl.lang.ast.func.LangFunc
 import dev.tlang.tlang.tmpl.lang.ast.primitive.{LangArrayValue, LangEntityValue, LangStringValue, LangTextValue}
+import tlang.core.Value
+import tlang.internal.{TmplID, TmplInterpretedId, TmplReplacedId}
 
 import scala.collection.mutable.ListBuffer
 
@@ -289,14 +291,14 @@ object TemplateBuilder {
 
   def includeTmplId(tmplID: TmplID, context: Context): Either[ExecError, List[TmplNode[_]]] = {
     tmplID match {
-      case inter: TmplInterpretedID => ExecCallObject.run(inter.call, context) match {
+      case inter: TmplInterpretedId => ExecCallObject.run(inter.call, context) match {
         case Left(error) => Left(error)
         case Right(value) => value match {
           case Some(value) =>
             if (value.length == 1) {
               buildValue(value.head) match {
                 case Left(error) => Left(error)
-                case Right(value) => Right(List(ast.TmplReplacedId(tmplID.getContext, inter.pre, value, inter.post)))
+                case Right(value) => Right(List(new TmplReplacedId(tmplID.getContext, inter.pre, value, inter.post)))
               }
             } else buildValues(value)
           case None => Left(NoValue("No value returned", tmplID.getContext))

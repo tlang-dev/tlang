@@ -2,7 +2,7 @@ package tlang.internal;
 
 import tlang.core.String;
 
-public abstract class TmplId implements TmplNode<TmplId> {
+public abstract class TmplID implements TmplNode<TmplID> {
 
     public String toStr() {
         if (this instanceof TmplStringId) {

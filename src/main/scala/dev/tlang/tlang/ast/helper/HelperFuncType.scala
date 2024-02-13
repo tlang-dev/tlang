@@ -1,12 +1,13 @@
 package dev.tlang.tlang.ast.helper
 
 import dev.tlang.tlang.ast.common.ValueType
-import dev.tlang.tlang.astbuilder.context.ContextContent
+import tlang.core.Null
+import tlang.internal.ContextContent
 
-case class HelperFuncType(context: Option[ContextContent], params: Option[List[HelperCurrying]], returns: Option[List[ValueType]]) extends ValueType {
+case class HelperFuncType(context: Null[ContextContent], params: Option[List[HelperCurrying]], returns: Option[List[ValueType]]) extends ValueType {
   override def getContextType: String = getType
 
   override def getType: String = getClass.getSimpleName
 
-  override def getContext: Option[ContextContent] = context
+  override def getContext: Null[ContextContent] = context
 }

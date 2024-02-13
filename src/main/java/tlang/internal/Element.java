@@ -1,10 +1,10 @@
 package tlang.internal;
 
-import tlang.core.String;
+import tlang.core.Type;
 
 public interface Element<T> {
 
     T getElement();
 
-    String getType();
+    Type getType();
 }

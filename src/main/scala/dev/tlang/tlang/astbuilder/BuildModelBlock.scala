@@ -4,7 +4,7 @@ import dev.tlang.tlang.TLang._
 import dev.tlang.tlang.ast.model._
 import dev.tlang.tlang.ast.model.set._
 import dev.tlang.tlang.astbuilder.BuildAst.addContext
-import dev.tlang.tlang.astbuilder.context.ContextResource
+import tlang.internal.ContextResource
 
 import scala.jdk.CollectionConverters._
 

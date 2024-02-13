@@ -4,6 +4,7 @@ import dev.tlang.tlang.ast.common.operation.{Operation, Operator}
 import dev.tlang.tlang.ast.common.value.{PrimitiveValue, TLangBool}
 import dev.tlang.tlang.ast.helper.HelperStatement
 import dev.tlang.tlang.interpreter.context.Context
+import tlang.core.{Bool, Null, Value}
 
 import scala.annotation.tailrec
 import scala.collection.mutable.ListBuffer
@@ -91,17 +92,17 @@ object ExecOperation extends Executor {
         val val2 = value2.asInstanceOf[Value[Any]]
         operator match {
           case Operator.EQUAL =>
-            Right(new TLangBool(None, val1.compareTo(val2) == 0))
-          case Operator.GREATER => Right(new TLangBool(None, val1.compareTo(val2) > 0))
-          case Operator.LESSER => Right(new TLangBool(None, val1.compareTo(val2) < 0))
-          case Operator.GREATER_OR_EQUAL => Right(new TLangBool(None, val1.compareTo(val2) >= 0))
-          case Operator.LESSER_OR_EQUAL => Right(new TLangBool(None, val1.compareTo(val2) <= 0))
-          case Operator.NOT_EQUAL => Right(new TLangBool(None, val1.compareTo(val2) != 0))
+            Right(new TLangBool(Null.empty(), new Bool(val1.compareTo(val2).get() == 0)))
+          case Operator.GREATER => Right(new TLangBool(Null.empty(), new Bool(val1.compareTo(val2).get() > 0)))
+          case Operator.LESSER => Right(new TLangBool(Null.empty(), new Bool(val1.compareTo(val2).get() < 0)))
+          case Operator.GREATER_OR_EQUAL => Right(new TLangBool(Null.empty(), new Bool(val1.compareTo(val2).get() >= 0)))
+          case Operator.LESSER_OR_EQUAL => Right(new TLangBool(Null.empty(), new Bool(val1.compareTo(val2).get() <= 0)))
+          case Operator.NOT_EQUAL => Right(new TLangBool(Null.empty(), new Bool(val1.compareTo(val2).get() != 0)))
         }
       case 3 =>
         operator match {
-          case Operator.AND => Right(new TLangBool(None, value1.asInstanceOf[TLangBool].getElement && value2.asInstanceOf[TLangBool].getElement))
-          case Operator.OR => Right(new TLangBool(None, value1.asInstanceOf[TLangBool].getElement || value2.asInstanceOf[TLangBool].getElement))
+          case Operator.AND => Right(new TLangBool(Null.empty(), new Bool(value1.asInstanceOf[TLangBool].getElement.get() && value2.asInstanceOf[TLangBool].getElement.get())))
+          case Operator.OR => Right(new TLangBool(Null.empty(), new Bool(value1.asInstanceOf[TLangBool].getElement.get() || value2.asInstanceOf[TLangBool].getElement.get())))
         }
     }
   }

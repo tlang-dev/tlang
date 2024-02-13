@@ -1,9 +1,9 @@
 package dev.tlang.tlang.tmpl.lang.astbuilder
 
 import dev.tlang.tlang.ast.common.operation.Operation
-import dev.tlang.tlang.ast.common.value.{ComplexAttribute, TLangBool, TLangDouble, TLangLong, TLangString}
-import tlang.core
-import tlang.core.{Bool, Null}
+import dev.tlang.tlang.ast.common.value.{ComplexAttribute, NullValue, TLangBool, TLangDouble, TLangLong, TLangString}
+import tlang.{Entity, core}
+import tlang.core.{Bool, Null, Value}
 import tlang.internal.ContextContent
 
 object BuildLang {
@@ -95,13 +95,13 @@ object BuildLang {
     ))
   }
 
-  def createAttrEntity(context: Null[ContextContent], name: String, value: EntityValue): ComplexAttribute = {
+  def createAttrEntity(context: Null[ContextContent], name: String, value: Entity): ComplexAttribute = {
     ComplexAttribute(context, Some(name), None, Operation(
       context, None, Right(value)
     ))
   }
 
-  def createArray(context: Null[ContextContent], name: String, values: List[EntityValue]): ComplexAttribute = {
+  def createArray(context: Null[ContextContent], name: String, values: List[Entity]): ComplexAttribute = {
     ComplexAttribute(context, Some(name),
       None, Operation(context, None, Right(ArrayValue(context, Some(values.map(value => ComplexAttribute(context, None, None, Operation(context, None, Right(value))))))))
     )

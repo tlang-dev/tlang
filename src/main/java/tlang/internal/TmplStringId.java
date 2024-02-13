@@ -6,7 +6,7 @@ import tlang.core.Null;
 import tlang.core.String;
 import tlang.core.Value;
 
-public class TmplStringId extends TmplId {
+public class TmplStringId extends TmplID {
 
     private final Null<ContextContent> context;
 
@@ -31,7 +31,7 @@ public class TmplStringId extends TmplId {
     }
 
     @Override
-    public TmplId getElement() {
+    public TmplID getElement() {
         return this;
     }
 

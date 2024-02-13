@@ -1,7 +1,8 @@
 package dev.tlang.tlang.ast
 
-import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
+import tlang.core.Null
+import tlang.internal.{AstContext, ContextContent}
 
-case class DomainHeader(context: Option[ContextContent], exposes: Option[List[DomainExpose]], uses: Option[List[DomainUse]]) extends AstContext {
-  override def getContext: Option[ContextContent] = context
+case class DomainHeader(context: Null[ContextContent], exposes: Option[List[DomainExpose]], uses: Option[List[DomainUse]]) extends AstContext {
+  override def getContext: Null[ContextContent] = context
 }

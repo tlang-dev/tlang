@@ -4,7 +4,7 @@ import tlang.core.String;
 import tlang.core.*;
 
 public interface Entity {
-    Null<Value<?>> getAttr(String name);
+    <T extends Value<T>> Null<T> getAttr(String name);
 
     Bool hasAttrs();
 

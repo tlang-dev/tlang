@@ -2,10 +2,10 @@ package dev.tlang.tlang.ast.common.value
 
 import dev.tlang.tlang.ast.common.{ObjType, ValueType}
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
-import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
-import dev.tlang.tlang.interpreter.{ExecError, NotImplemented, Value}
+import dev.tlang.tlang.interpreter.{ExecError, NotImplemented}
 import dev.tlang.tlang.tmpl.lang.ast.LangModel
 import tlang.core.Null
+import tlang.internal.{AstContext, ContextContent}
 
 class TLangString(context: Null[ContextContent], value: String) extends PrimitiveValue[String] with AstContext {
   override def getElement: String = value
@@ -14,7 +14,7 @@ class TLangString(context: Null[ContextContent], value: String) extends Primitiv
 
   override def toString: String = getElement
 
-  override def add(value: PrimitiveValue[String]): Either[ExecError, TLangString] = Right(new TLangString(None, this.value + value.getElement))
+  override def add(value: PrimitiveValue[String]): Either[ExecError, TLangString] = Right(new TLangString(Null.empty(), this.value + value.getElement))
 
   override def subtract(value: PrimitiveValue[String]): Either[ExecError, TLangString] = Left(NotImplemented(context = context))
 
@@ -31,7 +31,7 @@ class TLangString(context: Null[ContextContent], value: String) extends Primitiv
     Some(List())
   )
 
-  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
+  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
   )))
 }
 
@@ -39,5 +39,5 @@ object TLangString extends TLangType {
 
   override def getType: String = "String"
 
-  override def getValueType: ValueType = ObjType(None, Some("TLang"), getType)
+  override def getValueType: ValueType = ObjType(Null.empty(), Some("TLang"), getType)
 }
