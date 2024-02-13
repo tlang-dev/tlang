@@ -6,13 +6,13 @@ import dev.tlang.tlang.generator.langs.BlockGenerator
 import dev.tlang.tlang.generator.langs.common.GenParameter
 import dev.tlang.tlang.generator.langs.dart.DartFormatter.END_OF_STATEMENT
 import dev.tlang.tlang.generator.langs.dart.DartGenerator.includeKeyword
-import dev.tlang.tlang.tmpl.common.ast.{TmplID, TmplStringID}
 import dev.tlang.tlang.tmpl.TmplNode
+import dev.tlang.tlang.tmpl.lang.ast._
 import dev.tlang.tlang.tmpl.lang.ast.call._
 import dev.tlang.tlang.tmpl.lang.ast.condition.LangOperation
 import dev.tlang.tlang.tmpl.lang.ast.func.LangAnnotationParam
 import dev.tlang.tlang.tmpl.lang.ast.primitive._
-import dev.tlang.tlang.tmpl.lang.ast._
+import tlang.internal.{TmplID, TmplStringId}
 
 object GenericGenerator {
 
@@ -132,7 +132,7 @@ object GenericGenerator {
       _ind = followUp(tmpl.`type`.get, str, _ind, rules, params)
       str ++= " "
     }
-    str ++= tmpl.name.toString
+//    str ++= tmpl.name.toString
     _ind
   }
 
@@ -190,7 +190,7 @@ object GenericGenerator {
   def genCallVar: BlockGenerator = (node: TmplNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (TmplNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
     var _ind = indent
     val tmpl = node.asInstanceOf[LangCallVar]
-    str ++= tmpl.name.toString
+//    str ++= tmpl.name.toString
     _ind
   }
 
@@ -402,7 +402,7 @@ object GenericGenerator {
 
   def genTmplID(tmplId: TmplID): String = {
     tmplId match {
-      case str: TmplStringID =>
+      case str: TmplStringId =>
         var seq = "\""
         seq += str.toString
         seq += "\""

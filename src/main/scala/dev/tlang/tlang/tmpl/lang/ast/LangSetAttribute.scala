@@ -3,18 +3,16 @@ package dev.tlang.tlang.tmpl.lang.ast
 import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.value.{EntityValue, NullValue}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
-import dev.tlang.tlang.astbuilder.context.ContextContent
-import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.tmpl.TmplNode
-import dev.tlang.tlang.tmpl.common.ast.TmplID
 import dev.tlang.tlang.tmpl.lang.ast.condition.LangOperation
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
+import tlang.core.{Null, Value}
+import tlang.internal.{ContextContent, TmplID}
 
-case class LangSetAttribute(context: Option[ContextContent], var name: Option[TmplID], var value: LangOperation) extends TmplNode[LangSetAttribute] {
+case class LangSetAttribute(context: Null[ContextContent], var name: Option[TmplID], var value: LangOperation) extends TmplNode[LangSetAttribute] {
   override def deepCopy(): LangSetAttribute = LangSetAttribute(context,
     if (name.isDefined) Some(name.get.deepCopy().asInstanceOf[TmplID]) else None, value.deepCopy())
 
-  override def getContext: Option[ContextContent] = context
 
   override def compareTo(value: Value[LangSetAttribute]): Int = 0
 
@@ -39,8 +37,8 @@ object LangSetAttribute {
 
   val name: String = this.getClass.getSimpleName.replace("$", "")
 
-  val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
-    ModelSetAttribute(None, Some("name"), ModelSetType(None, NullValue.name)),
-    ModelSetAttribute(None, Some("value"), ModelSetType(None, LangOperation.name)),
+  val model: ModelSetEntity = ModelSetEntity(Null.empty(), name, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
+    ModelSetAttribute(Null.empty(), Some("name"), ModelSetType(Null.empty(), NullValue.name)),
+    ModelSetAttribute(Null.empty(), Some("value"), ModelSetType(Null.empty(), LangOperation.name)),
   )))
 }

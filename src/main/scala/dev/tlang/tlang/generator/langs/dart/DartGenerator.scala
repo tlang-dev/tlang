@@ -1,18 +1,16 @@
 package dev.tlang.tlang.generator.langs.dart
 
 import dev.tlang.tlang.ast.common.operation.Operator
+import dev.tlang.tlang.generator.formatter.Formatter
+import dev.tlang.tlang.generator.langs.kotlin.KotlinGenerator.{mkSeq, mkSeqFromSeq}
+import dev.tlang.tlang.generator.{CodeGenerator, Seq, SeqBuilder}
 import dev.tlang.tlang.tmpl._
 import dev.tlang.tlang.tmpl.lang.ast.call._
 import dev.tlang.tlang.tmpl.lang.ast.condition.LangOperation
 import dev.tlang.tlang.tmpl.lang.ast.func.{LangAnnotationParam, LangAnonFunc, LangFunc}
-import dev.tlang.tlang.tmpl.lang.ast.loop.ForType.ForType
 import dev.tlang.tlang.tmpl.lang.ast.loop.{LangDoWhile, LangFor, LangWhile}
 import dev.tlang.tlang.tmpl.lang.ast.primitive._
-import dev.tlang.tlang.generator.formatter.Formatter
-import dev.tlang.tlang.generator.langs.kotlin.KotlinGenerator.{mkSeq, mkSeqFromSeq}
-import dev.tlang.tlang.generator.{CodeGenerator, Seq, SeqBuilder}
-import dev.tlang.tlang.tmpl.common.ast.{TmplID, TmplStringID}
-import dev.tlang.tlang.tmpl.lang.ast.{LangAffect, LangAnnotation, LangAttribute, LangBlock, LangExprBlock, LangExprContent, LangExpression, LangIf, LangImpl, LangInclude, LangParam, LangPkg, LangProp, LangReturn, LangSetAttribute, LangSimpleValueType, LangUse, LangValueType, LangVar}
+import dev.tlang.tlang.tmpl.lang.ast._
 
 class DartGenerator extends CodeGenerator {
   override def generate(tmpl: LangBlock): String = {
@@ -96,7 +94,7 @@ object DartGenerator {
 
     val header = new SeqBuilder()
 //    func.ret.foreach(ret => header += SeqBuilder.build(genType(ret.head), Seq(" ")))
-    header += (Seq(func.name.toString))
+  //  header += (Seq(func.name.toString))
     //    str += func.ret.fold(Seq("void"))(ret => genType(ret.head)) += " "
 //    header += (genCurrying(func.curries))
     header += (func.postPros.fold(Seq())(prop => SeqBuilder.build(genProps(prop), Seq(" "))))
@@ -169,7 +167,7 @@ object DartGenerator {
     val str = new SeqBuilder()
     str += genAnnotations(param.annots, sep = " ")
 //    if (param.`type`.isDefined) str += genType(param.`type`.get) += " "
-    str += param.name.toString
+//    str += param.name.toString
     str.build()
   }
 
@@ -280,7 +278,7 @@ object DartGenerator {
     str.setBlockName("for")
     str.setSeq("for")
     str += "("
-    str += forLoop.variable.toString
+//    str += forLoop.variable.toString
 //    str += " " += genForType(forLoop.forType) += " "
     str += genOperation(forLoop.cond)
     str += ")"
@@ -328,20 +326,20 @@ object DartGenerator {
     objType match {
       case array: LangCallArray => genCallArray(array)
       case func: LangCallFunc => genCallFunc(func)
-      case variable: LangCallVar => genCallVar(variable)
+//      case variable: LangCallVar => genCallVar(variable)
     }
   }
 
   def genCallArray(array: LangCallArray): Seq = {
     val str = new SeqBuilder()
-    str += array.name.toString += "[" += genOperation(array.elem) += "]"
+//    str += array.name.toString += "[" += genOperation(array.elem) += "]"
     str.build()
   }
 
   def genCallFunc(func: LangCallFunc): Seq = {
     val str = new SeqBuilder()
     str.setBlockName("callFunc")
-    str += func.name.toString
+//    str += func.name.toString
     if (func.currying.isDefined) {
       func.currying.foreach(_.foreach(curry => {
         str += Seq("(")
@@ -352,7 +350,7 @@ object DartGenerator {
     str.build()
   }
 
-  def genCallVar(variable: LangCallVar): Seq = Seq(variable.name.toString)
+//  def genCallVar(variable: LangCallVar): Seq = Seq(variable.name.toString)
 
   def genVar(variable: LangVar): Seq = {
     val str = new SeqBuilder()
@@ -504,26 +502,26 @@ object DartGenerator {
 
   def genSetAttribute(attr: LangSetAttribute): Seq = {
     val str = Seq()
-    if (attr.name.isDefined) str += genOptTmplID(attr.name) += ":"
+//    if (attr.name.isDefined) str += genOptTmplID(attr.name) += ":"
     str += genOperation(attr.value)
     str
   }
 
-  def genOptTmplID(tmplId: Option[TmplID]): Seq = {
-    if (tmplId.isDefined) genTmplID(tmplId.get)
-    else Seq()
-  }
+//  def genOptTmplID(tmplId: Option[TmplID]): Seq = {
+//    if (tmplId.isDefined) genTmplID(tmplId.get)
+//    else Seq()
+//  }
 
-  def genTmplID(tmplId: TmplID): Seq = {
-    tmplId match {
-      case str: TmplStringID =>
-        val seq = Seq("\"")
-        seq += str.toString
-        seq += "\""
-        seq
-      case _ => Seq(tmplId.toString)
-    }
-  }
+//  def genTmplID(tmplId: TmplID): Seq = {
+//    tmplId match {
+//      case str: TmplStringID =>
+//        val seq = Seq("\"")
+//        seq += str.toString
+//        seq += "\""
+//        seq
+//      case _ => Seq(tmplId.toString)
+//    }
+//  }
 
 
   //  override def genArrayValue(array: TmplArrayValue): String = {

@@ -3,12 +3,12 @@ package dev.tlang.tlang.tmpl.lang.ast
 import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.value.{ArrayValue, EntityValue, NullValue}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
-import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
-import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.tmpl.TmplNode
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
+import tlang.core.{Null, Value}
+import tlang.internal.{AstContext, ContextContent}
 
-case class LangImplWith(context: Option[ContextContent], var props: Option[LangProp] = None, var types: List[LangType]) extends TmplNode[LangImplWith] with AstContext {
+case class LangImplWith(context: Null[ContextContent], var props: Option[LangProp] = None, var types: List[LangType]) extends TmplNode[LangImplWith] with AstContext {
   override def deepCopy(): LangImplWith = LangImplWith(context,
     if (props.isDefined) Some(props.get.deepCopy()) else None,
     types.map(_.deepCopy()))
@@ -17,7 +17,7 @@ case class LangImplWith(context: Option[ContextContent], var props: Option[LangP
     Some(ObjType(context, None, LangImplFor.name)),
     Some(List(
       BuildLang.createAttrNull(context, "props",
-        if (props.isDefined) Some(props.get.toEntity) else None,
+        if (props.isDefined) Null.of(props.get.toEntity) else Null.empty(),
         None
       ),
       BuildLang.createArray(context, "types", types.map(_.toEntity))
@@ -26,7 +26,7 @@ case class LangImplWith(context: Option[ContextContent], var props: Option[LangP
 
   override def toModel: ModelSetEntity = LangImplWith.model
 
-  override def getContext: Option[ContextContent] = context
+  override def getContext: Null[ContextContent] = context
 
   override def compareTo(value: Value[LangImplWith]): Int = 0
 
@@ -38,8 +38,8 @@ case class LangImplWith(context: Option[ContextContent], var props: Option[LangP
 object LangImplWith {
   val name: String = this.getClass.getSimpleName.replace("$", "")
 
-  val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
-    ModelSetAttribute(None, Some("props"), ModelSetType(None, NullValue.name)),
-    ModelSetAttribute(None, Some("types"), ModelSetType(None, ArrayValue.getType)),
+  val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
+    ModelSetAttribute(Null.empty(), Some("props"), ModelSetType(Null.empty(), NullValue.name)),
+    ModelSetAttribute(Null.empty(), Some("types"), ModelSetType(Null.empty(), ArrayValue.getType)),
   )))
 }

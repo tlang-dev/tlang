@@ -2,6 +2,7 @@ package dev.tlang.tlang.interpreter
 
 import dev.tlang.tlang.ast.helper.{HelperFunc, HelperStatement}
 import dev.tlang.tlang.interpreter.context.Context
+import tlang.core.Value
 
 object ExecFunc extends Executor {
   override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value[_]]]] = {

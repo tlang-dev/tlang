@@ -2,19 +2,17 @@ package dev.tlang.tlang.tmpl.lang.ast.call
 
 import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.operation.Operation
-import dev.tlang.tlang.ast.common.value.{ArrayValue, ComplexAttribute, EntityValue, NullValue}
+import dev.tlang.tlang.ast.common.value.{ComplexAttribute, EntityValue, NullValue}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
-import dev.tlang.tlang.astbuilder.context.ContextContent
-import dev.tlang.tlang.interpreter.Value
-import dev.tlang.tlang.tmpl.common.ast.TmplID
 import dev.tlang.tlang.tmpl.lang.ast.LangModel
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
+import tlang.core.{Null, Value}
+import tlang.internal.{ContextContent, TmplID}
 
-case class LangCallFunc(context: Option[ContextContent], var name: TmplID, var currying: Option[List[LangCallFuncParam]]) extends LangCallObjType[LangCallFunc] {
+case class LangCallFunc(context: Null[ContextContent], var name: TmplID, var currying: Option[List[LangCallFuncParam]]) extends LangCallObjType[LangCallFunc] {
   override def deepCopy(): LangCallFunc = LangCallFunc(context, name.deepCopy().asInstanceOf[TmplID],
     if (currying.isDefined) Some(currying.get.map(_.deepCopy())) else None)
 
-  override def getContext: Option[ContextContent] = context
 
   override def compareTo(value: Value[LangCallFunc]): Int = 0
 
@@ -41,7 +39,7 @@ object LangCallFunc {
   val name: String = this.getClass.getSimpleName.replace("$", "")
 
   val model: ModelSetEntity = ModelSetEntity(None, "LangCallFunc", Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
-    ModelSetAttribute(None, Some("name"), ModelSetType(None, TmplID.name)),
-    ModelSetAttribute(None, Some("currying"), ModelSetType(None, NullValue.name)),
+    ModelSetAttribute(Null.empty(), Some("name"), ModelSetType(Null.empty(), TmplID.name)),
+    ModelSetAttribute(Null.empty(), Some("currying"), ModelSetType(Null.empty(), NullValue.name)),
   )))
 }

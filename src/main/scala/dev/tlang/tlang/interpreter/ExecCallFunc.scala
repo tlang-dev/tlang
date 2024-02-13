@@ -6,6 +6,7 @@ import dev.tlang.tlang.ast.helper.{HelperFunc, HelperStatement}
 import dev.tlang.tlang.interpreter.context.{Context, ContextUtils, MutableContext, Scope}
 import dev.tlang.tlang.tmpl.AnyTmplInterpretedBlock
 import dev.tlang.tlang.tmpl.lang.ast.LangBlockAsValue
+import tlang.core.{Null, Value}
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
@@ -110,12 +111,12 @@ object ExecCallFunc extends Executor {
                 params.addOne(param)
               }
             }
-            newCurry.addOne(CallFuncParam(None, Some(params.toList)))
-          } else newCurry.addOne(CallFuncParam(None, None))
+            newCurry.addOne(CallFuncParam(Null.empty(), Some(params.toList)))
+          } else newCurry.addOne(CallFuncParam(Null.empty(), None))
         }
       }
-      CallRefFuncObject(None, refFuncCaller.name, Some(newCurry.toList), refFuncCaller.func)
-    } else CallRefFuncObject(None, refFuncCaller.name, None, refFuncCaller.func)
+      CallRefFuncObject(Null.empty(), refFuncCaller.name, Some(newCurry.toList), refFuncCaller.func)
+    } else CallRefFuncObject(Null.empty(), refFuncCaller.name, None, refFuncCaller.func)
   }
 
 }

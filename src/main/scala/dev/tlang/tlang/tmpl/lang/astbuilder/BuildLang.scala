@@ -1,10 +1,10 @@
 package dev.tlang.tlang.tmpl.lang.astbuilder
 
 import dev.tlang.tlang.ast.common.operation.Operation
-import dev.tlang.tlang.ast.common.value.{ComplexAttribute, NullValue, TLangBool, TLangDouble, TLangLong, TLangString}
-import tlang.{Entity, core}
+import dev.tlang.tlang.ast.common.value._
 import tlang.core.{Bool, Null, Value}
 import tlang.internal.ContextContent
+import tlang.{Entity, core}
 
 object BuildLang {
 
@@ -71,7 +71,7 @@ object BuildLang {
     ))
   }
 
-  def createAttrLong(context: Option[ContextContent], name: String, value: Long): ComplexAttribute = {
+  def createAttrLong(context: Null[ContextContent], name: String, value: Long): ComplexAttribute = {
     ComplexAttribute(context, Some(name), None, Operation(
       context, None, Right(new TLangLong(context, value))
     ))

@@ -4,18 +4,17 @@ import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value.{ArrayValue, ComplexAttribute, EntityValue, NullValue}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
-import dev.tlang.tlang.astbuilder.context.ContextContent
-import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.tmpl.TmplNode
 import dev.tlang.tlang.tmpl.lang.ast.{LangModel, LangType}
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
+import tlang.core.{Null, Value}
+import tlang.internal.ContextContent
 
-case class LangArrayValue(context: Option[ContextContent], var `type`: Option[LangType] = None, var params: Option[List[TmplNode[_]]]) extends LangPrimitiveValue[LangArrayValue] {
+case class LangArrayValue(context: Null[ContextContent], var `type`: Option[LangType] = None, var params: Option[List[TmplNode[_]]]) extends LangPrimitiveValue[LangArrayValue] {
   override def deepCopy(): LangArrayValue = LangArrayValue(context,
     if (`type`.isDefined) Some(`type`.get.deepCopy()) else None,
     if (params.isDefined) Some(params.get.map(_.deepCopy().asInstanceOf[TmplNode[_]])) else None)
 
-  override def getContext: Option[ContextContent] = context
 
   override def compareTo(value: Value[LangArrayValue]): Int = 0
 
@@ -43,8 +42,8 @@ case class LangArrayValue(context: Option[ContextContent], var `type`: Option[La
 object LangArrayValue {
   val name: String = this.getClass.getSimpleName.replace("$", "")
 
-  val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
-    ModelSetAttribute(None, Some("tType"), ModelSetType(None, NullValue.name)),
-    ModelSetAttribute(None, Some("params"), ModelSetType(None, NullValue.name)),
+  val model: ModelSetEntity = ModelSetEntity(Null.empty(), name, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
+    ModelSetAttribute(Null.empty(), Some("tType"), ModelSetType(Null.empty(), NullValue.name)),
+    ModelSetAttribute(Null.empty(), Some("params"), ModelSetType(Null.empty(), NullValue.name)),
   )))
 }

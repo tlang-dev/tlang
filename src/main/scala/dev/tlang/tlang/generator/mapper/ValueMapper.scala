@@ -4,7 +4,6 @@ import dev.tlang.tlang.ast.common.value.TLangString
 import dev.tlang.tlang.interpreter.ExecCallObject
 import dev.tlang.tlang.interpreter.context.Context
 import dev.tlang.tlang.libraries.generator.Generator
-import dev.tlang.tlang.tmpl.common.ast.{LangBlockID, TmplID, TmplInterpretedID, TmplReplacedId, TmplStringID}
 import dev.tlang.tlang.tmpl.TmplNode
 import dev.tlang.tlang.tmpl.doc.ast.DocBlock
 import dev.tlang.tlang.tmpl.lang.ast._
@@ -13,6 +12,7 @@ import dev.tlang.tlang.tmpl.lang.ast.condition.LangOperation
 import dev.tlang.tlang.tmpl.lang.ast.func.{LangAnnotationParam, LangAnonFunc, LangFunc}
 import dev.tlang.tlang.tmpl.lang.ast.loop.LangFor
 import dev.tlang.tlang.tmpl.lang.ast.primitive._
+import tlang.internal._
 
 import scala.collection.mutable.ListBuffer
 
@@ -399,26 +399,26 @@ object ValueMapper {
     } else None
   }
 
-  def mapOptID(id: Option[TmplID], context: Context): Option[TmplStringID] = {
+  def mapOptID(id: Option[TmplID], context: Context): Option[TmplStringId] = {
     if (id.isDefined) Some(mapID(id.get, context))
     else None
   }
 
-  def mapID(id: TmplID, context: Context): TmplStringID = {
+  def mapID(id: TmplID, context: Context): TmplStringId = {
     id match {
-      case interId: TmplInterpretedID => ExecCallObject.run(interId.call, context) match {
-        case Left(error) => TmplStringID(interId.context, error.message)
+      case interId: TmplInterpretedId => ExecCallObject.run(interId.call, context) match {
+        case Left(error) =>new TmplStringId(interId.context, error.message)
         case Right(value) => if (value.isDefined) {
           value.get.head match {
-            case str: TLangString => TmplStringID(interId.context, interId.pre.getOrElse("") + str.getElement + interId.post.getOrElse(""))
-            case block: LangBlockAsValue => TmplStringID(interId.context, interId.pre.getOrElse("") + Generator.generate(block, context) + interId.post.getOrElse(""))
-            case _ => TmplStringID(interId.context, interId.pre.getOrElse("") + value.get.head.toString + interId.post.getOrElse(""))
+            case str: TLangString =>new TmplStringId(interId.context, interId.pre.getOrElse("") + str.getElement + interId.post.getOrElse(""))
+            case block: LangBlockAsValue => new TmplStringId(interId.context, interId.pre.getOrElse("") + Generator.generate(block, context) + interId.post.getOrElse(""))
+            case _ => new TmplStringId(interId.context, interId.pre.getOrElse("") + value.get.head.toString + interId.post.getOrElse(""))
           }
-        } else TmplStringID(interId.context, "Undefined")
+        } else new TmplStringId(interId.context, "Undefined")
       }
-      case replacedId: TmplReplacedId => TmplStringID(replacedId.context, replacedId.pre.getOrElse("") + replacedId.node.toString + replacedId.post.getOrElse(""))
-      case str: TmplStringID => TmplStringID(str.context, str.id)
-      case block: LangBlockID => TmplStringID(block.context, "Undefined")
+      case replacedId: TmplReplacedId => new TmplStringId(replacedId.context, replacedId.pre.getOrElse("") + replacedId.node.toString + replacedId.post.getOrElse(""))
+      case str: TmplStringId => new TmplStringId(str.getContext, str.id)
+      case block: TmplBlockId => new TmplBlockId(block.context, "Undefined")
     }
     //      var pos = str.indexOf("${")
     //      val ret = new StringBuilder(str)

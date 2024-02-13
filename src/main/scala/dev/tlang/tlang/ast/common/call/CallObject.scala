@@ -33,7 +33,7 @@ object CallObject extends TLangType {
 
   val name: String = this.getClass.getSimpleName.replace("$", "")
 
-  val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
-    ModelSetAttribute(None, Some("calls"), ModelSetType(None, ArrayValue.getType)),
+  val model: ModelSetEntity = ModelSetEntity(Null.empty(), name, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
+    ModelSetAttribute(Null.empty(), Some("calls"), ModelSetType(Null.empty(), ArrayValue.getType)),
   )))
 }

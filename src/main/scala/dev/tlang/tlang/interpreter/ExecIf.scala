@@ -3,6 +3,7 @@ package dev.tlang.tlang.interpreter
 import dev.tlang.tlang.ast.common.value.TLangBool
 import dev.tlang.tlang.ast.helper.{HelperIf, HelperStatement}
 import dev.tlang.tlang.interpreter.context.Context
+import tlang.core.{Null, Value}
 
 object ExecIf extends Executor {
 
@@ -12,9 +13,9 @@ object ExecIf extends Executor {
       case Left(value) => Left(value)
       case Right(value) => value match {
         case Some(valType) => if (valType.size == 1) valType.head match {
-          case bool: TLangBool => if (bool.getElement) execIfTrue(ifStatement, context) else execIfFalse(ifStatement, context)
-        } else Left(WrongNumberOfArguments("expected 1 got " + valType.size, None))
-        case None => Left(NotACondition(None))
+          case bool: TLangBool => if (bool.getElement.get()) execIfTrue(ifStatement, context) else execIfFalse(ifStatement, context)
+        } else Left(WrongNumberOfArguments("expected 1 got " + valType.size, Null.empty()))
+        case None => Left(NotACondition(Null.empty()))
       }
     }
   }

@@ -8,6 +8,7 @@ import dev.tlang.tlang.tmpl.TmplNode
 import dev.tlang.tlang.tmpl.common.ast.NativeType
 import dev.tlang.tlang.tmpl.common.astbuilder.BuildCommonTmpl
 import dev.tlang.tlang.tmpl.style.ast._
+import tlang.internal.ContextResource
 
 import scala.jdk.CollectionConverters._
 

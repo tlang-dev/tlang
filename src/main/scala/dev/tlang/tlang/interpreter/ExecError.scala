@@ -6,7 +6,7 @@ import tlang.internal.ContextContent
 class ExecError(val code: String, val message: String = "", context: Null[ContextContent]) {
   override def toString: String = {
     var msg = ""
-    if (context.isDefined) msg += context.get.getResource.toString + "[line:" + context.get.getLine + ", pos:" + context.get.charPos + "]\n"
+    if (context.isNotNull.get()) msg += context.get.getResource.toString + "[line:" + context.get.getLine + ", pos:" + context.get.getCharPos + "]\n"
     msg += "[" + code + "] " + message
     msg
   }

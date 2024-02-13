@@ -1,7 +1,8 @@
 package dev.tlang.tlang.ast.common.call
 
-import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
+import tlang.core.Null
+import tlang.internal.{AstContext, ContextContent}
 
-case class CallFuncParam(context: Option[ContextContent], params: Option[List[SetAttribute]]) extends AstContext {
-  override def getContext: Option[ContextContent] = context
+case class CallFuncParam(context: Null[ContextContent], params: Option[List[SetAttribute]]) extends AstContext {
+  override def getContext: Null[ContextContent] = context
 }

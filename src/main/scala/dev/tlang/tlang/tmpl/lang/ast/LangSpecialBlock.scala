@@ -4,13 +4,13 @@ import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value._
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
-import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
-import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.tmpl.lang.ast.func.LangFuncParam
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
+import tlang.core.{Null, Value}
+import tlang.internal.{AstContext, ContextContent}
 
-case class LangSpecialBlock(context: Option[ContextContent], var `type`: String, var curries: Option[List[LangFuncParam]], var content: Option[LangExprContent[_]]) extends LangExpression[LangSpecialBlock] with LangContent[LangSpecialBlock] with AstContext {
-  override def getContext: Option[ContextContent] = context
+case class LangSpecialBlock(context: Null[ContextContent], var `type`: String, var curries: Option[List[LangFuncParam]], var content: Option[LangExprContent[_]]) extends LangExpression[LangSpecialBlock] with LangContent[LangSpecialBlock] with AstContext {
+  override def getContext: Null[ContextContent] = context
 
   override def compareTo(value: Value[LangSpecialBlock]): Int = 0
 
@@ -44,9 +44,9 @@ case class LangSpecialBlock(context: Option[ContextContent], var `type`: String,
 object LangSpecialBlock {
   val name: String = this.getClass.getSimpleName.replace("$", "")
 
-  val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
-    ModelSetAttribute(None, Some("tType"), ModelSetType(None, TLangString.getType)),
-    ModelSetAttribute(None, Some("curries"), ModelSetType(None, NullValue.name)),
-    ModelSetAttribute(None, Some("content"), ModelSetType(None, NullValue.name)),
+  val model: ModelSetEntity = ModelSetEntity(Null.empty(), name, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
+    ModelSetAttribute(Null.empty(), Some("tType"), ModelSetType(Null.empty(), TLangString.getType)),
+    ModelSetAttribute(Null.empty(), Some("curries"), ModelSetType(Null.empty(), NullValue.name)),
+    ModelSetAttribute(Null.empty(), Some("content"), ModelSetType(Null.empty(), NullValue.name)),
   )))
 }

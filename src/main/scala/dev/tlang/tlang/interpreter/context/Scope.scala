@@ -3,8 +3,8 @@ package dev.tlang.tlang.interpreter.context
 import dev.tlang.tlang.ast.common.call.CallRefFuncObject
 import dev.tlang.tlang.ast.helper.HelperFunc
 import dev.tlang.tlang.ast.model.set.ModelSetValueType
-import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.tmpl.AnyTmplInterpretedBlock
+import tlang.core.Value
 
 import scala.collection.mutable
 

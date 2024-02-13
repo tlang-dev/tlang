@@ -4,13 +4,12 @@ import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value.{ArrayValue, ComplexAttribute, EntityValue, NullValue}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
-import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
-import dev.tlang.tlang.interpreter.Value
-import dev.tlang.tlang.tmpl.common.ast.TmplID
 import dev.tlang.tlang.tmpl.lang.ast._
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
+import tlang.core.{Null, Value}
+import tlang.internal.{ContextContent, TmplID}
 
-case class LangFunc(context: Option[ContextContent], var annots: Option[List[LangAnnotation]] = None, var props: Option[LangProp] = None, var preNames: Option[List[TmplID]] = None, var name: TmplID, var curries: Option[List[LangFuncParam]], var content: Option[LangExprContent[_]],
+case class LangFunc(context: Null[ContextContent], var annots: Option[List[LangAnnotation]] = None, var props: Option[LangProp] = None, var preNames: Option[List[TmplID]] = None, var name: TmplID, var curries: Option[List[LangFuncParam]], var content: Option[LangExprContent[_]],
                     var ret: Option[List[LangType]] = None, postPros: Option[LangProp] = None) extends LangExpression[LangFunc] with LangContent[LangFunc] with AstContext {
   override def deepCopy(): LangFunc = LangFunc(context,
     if (annots.isDefined) Some(annots.get.map(_.deepCopy())) else None,
@@ -21,8 +20,6 @@ case class LangFunc(context: Option[ContextContent], var annots: Option[List[Lan
     if (content.isDefined) Some(content.get.deepCopy().asInstanceOf[LangExprContent[_]]) else None,
     if (ret.isDefined) Some(ret.get.map(_.deepCopy())) else None,
     if (postPros.isDefined) Some(postPros.get.deepCopy()) else None)
-
-  override def getContext: Option[ContextContent] = context
 
   override def compareTo(value: Value[LangFunc]): Int = 0
 
@@ -61,12 +58,12 @@ object LangFunc {
 
   val name: String = this.getClass.getSimpleName.replace("$", "")
 
-  val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
-    ModelSetAttribute(None, Some("annots"), ModelSetType(None, NullValue.name)),
-    ModelSetAttribute(None, Some("props"), ModelSetType(None, NullValue.name)),
-    ModelSetAttribute(None, Some("preNames"), ModelSetType(None, NullValue.name)),
-    ModelSetAttribute(None, Some("name"), ModelSetType(None, TmplID.name)),
-    ModelSetAttribute(None, Some("curries"), ModelSetType(None, NullValue.name)),
-    ModelSetAttribute(None, Some("content"), ModelSetType(None, NullValue.name)),
+  val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
+    ModelSetAttribute(Null.empty(), Some("annots"), ModelSetType(Null.empty(), NullValue.name)),
+    ModelSetAttribute(Null.empty(), Some("props"), ModelSetType(Null.empty(), NullValue.name)),
+    ModelSetAttribute(Null.empty(), Some("preNames"), ModelSetType(Null.empty(), NullValue.name)),
+    ModelSetAttribute(Null.empty(), Some("name"), ModelSetType(Null.empty(), TmplID.name)),
+    ModelSetAttribute(Null.empty(), Some("curries"), ModelSetType(Null.empty(), NullValue.name)),
+    ModelSetAttribute(Null.empty(), Some("content"), ModelSetType(Null.empty(), NullValue.name)),
   )))
 }

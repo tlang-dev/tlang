@@ -4,17 +4,16 @@ import dev.tlang.tlang.ast.common.call.CallRefFuncObject
 import dev.tlang.tlang.ast.common.value.{TLangBool, TLangDouble, TLangLong, TLangString}
 import dev.tlang.tlang.ast.helper.HelperFunc
 import dev.tlang.tlang.ast.model.set.ModelSetValueType
-import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.tmpl.AnyTmplInterpretedBlock
-import dev.tlang.tlang.tmpl.lang.ast.LangBlock
+import tlang.core.{Bool, Double, Long, Null, Value}
 
 object ContextUtils {
 
   val nativeModels: Map[String, ModelSetValueType[_]] = Map(
-    TLangString.getType -> new TLangString(None, ""),
-    TLangBool.getType -> new TLangBool(None, false),
-    TLangDouble.getType -> new TLangDouble(None, 0),
-    TLangLong.getType -> new TLangLong(None, 0)
+    TLangString.getType -> new TLangString(Null.empty(), ""),
+    TLangBool.getType -> new TLangBool(Null.empty(), new Bool(false)),
+    TLangDouble.getType -> new TLangDouble(Null.empty(), new Double(0) ),
+    TLangLong.getType -> new TLangLong(Null.empty(), new Long(0))
   )
 
   def findVar(context: Context, name: String): Option[Value[_]] = {

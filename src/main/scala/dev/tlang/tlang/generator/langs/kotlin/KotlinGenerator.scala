@@ -1,17 +1,15 @@
 package dev.tlang.tlang.generator.langs.kotlin
 
 import dev.tlang.tlang.ast.common.operation.Operator
+import dev.tlang.tlang.generator.formatter.Formatter
+import dev.tlang.tlang.generator.{CodeGenerator, Seq}
 import dev.tlang.tlang.tmpl._
 import dev.tlang.tlang.tmpl.lang.ast.call._
 import dev.tlang.tlang.tmpl.lang.ast.condition.LangOperation
 import dev.tlang.tlang.tmpl.lang.ast.func.{LangAnnotationParam, LangAnonFunc, LangFunc}
-import dev.tlang.tlang.tmpl.lang.ast.loop.ForType.ForType
 import dev.tlang.tlang.tmpl.lang.ast.loop.{LangDoWhile, LangFor, LangWhile}
 import dev.tlang.tlang.tmpl.lang.ast.primitive._
-import dev.tlang.tlang.generator.formatter.Formatter
-import dev.tlang.tlang.generator.{CodeGenerator, Seq}
-import dev.tlang.tlang.tmpl.common.ast.{TmplID, TmplStringID}
-import dev.tlang.tlang.tmpl.lang.ast.{LangAffect, LangAnnotation, LangAttribute, LangBlock, LangExprBlock, LangExprContent, LangExpression, LangGeneric, LangIf, LangImpl, LangInclude, LangParam, LangPkg, LangProp, LangReturn, LangSetAttribute, LangSimpleValueType, LangType, LangUse, LangValueType, LangVar}
+import dev.tlang.tlang.tmpl.lang.ast._
 
 import scala.language.postfixOps
 
@@ -156,7 +154,7 @@ object KotlinGenerator {
   def genParam(param: LangParam): String = {
     val str = Seq()
     str += genAnnotations(param.annots, sep = " ")
-    str += param.name.toString
+//    str += param.name.toString
     str += ":"
     if (param.`type`.isDefined) str += genType(param.`type`.get)
     str.toString()
@@ -307,13 +305,13 @@ object KotlinGenerator {
     objType match {
       case array: LangCallArray => genCallArray(array)
       case func: LangCallFunc => genCallFunc(func)
-      case variable: LangCallVar => genCallVar(variable)
+//      case variable: LangCallVar => genCallVar(variable)
     }
   }
 
   def genCallArray(array: LangCallArray): Seq = {
     val str = Seq()
-    str += array.name.toString += "[" += genOperation(array.elem) += "]"
+//    str += array.name.toString += "[" += genOperation(array.elem) += "]"
     str
   }
 
@@ -330,7 +328,7 @@ object KotlinGenerator {
     str
   }
 
-  def genCallVar(variable: LangCallVar): Seq = Seq(variable.name.toString)
+//  def genCallVar(variable: LangCallVar): Seq = Seq(variable.name.toString)
 
   def genVar(variable: LangVar): Seq = {
     val str = Seq()
@@ -480,26 +478,26 @@ object KotlinGenerator {
 
   def genSetAttribute(attr: LangSetAttribute): Seq = {
     val str = Seq()
-    if (attr.name.isDefined) str += genOptTmplID(attr.name) += ":"
+//    if (attr.name.isDefined) str += genOptTmplID(attr.name) += ":"
     str += genOperation(attr.value)
     str
   }
 
-  def genOptTmplID(tmplId: Option[TmplID]): Seq = {
-    if (tmplId.isDefined) genTmplID(tmplId.get)
-    else Seq()
-  }
-
-  def genTmplID(tmplId: TmplID): Seq = {
-    tmplId match {
-      case str: TmplStringID =>
-        val seq = Seq("\"")
-        seq += str.toString
-        seq += "\""
-        seq
-      case _ => Seq(tmplId.toString)
-    }
-  }
+//  def genOptTmplID(tmplId: Option[TmplID]): Seq = {
+//    if (tmplId.isDefined) genTmplID(tmplId.get)
+//    else Seq()
+//  }
+//
+//  def genTmplID(tmplId: TmplID): Seq = {
+//    tmplId match {
+//      case str: TmplStringID =>
+//        val seq = Seq("\"")
+//        seq += str.toString
+//        seq += "\""
+//        seq
+//      case _ => Seq(tmplId.toString)
+//    }
+//  }
 
   def mkSeq[T](list: List[T], sep: String): Seq = {
     if (list.isEmpty) Seq()

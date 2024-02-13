@@ -3,19 +3,19 @@ package dev.tlang.tlang.tmpl.lang.astbuilder
 import dev.tlang.tlang.TLang._
 import dev.tlang.tlang.astbuilder.BuildAst.addContext
 import dev.tlang.tlang.astbuilder._
-import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.tmpl.common.ast.NativeType
 import dev.tlang.tlang.tmpl.common.astbuilder.BuildCommonTmpl
 import dev.tlang.tlang.tmpl.doc.astbuilder.BuildDoc
 import dev.tlang.tlang.tmpl.lang.ast
 import dev.tlang.tlang.tmpl.lang.ast._
 import dev.tlang.tlang.tmpl.lang.ast.condition.LangOperation
-import dev.tlang.tlang.tmpl.lang.ast.func.{LangAnnotationParam, LangAnonFunc}
+import dev.tlang.tlang.tmpl.lang.ast.func.LangAnonFunc
 import dev.tlang.tlang.tmpl.lang.ast.loop.ForType.ForType
 import dev.tlang.tlang.tmpl.lang.ast.loop.{ForType, LangFor}
 import dev.tlang.tlang.tmpl.lang.ast.primitive._
 import dev.tlang.tlang.tmpl.style.astbuilder.BuildStyle
 import dev.tlang.tlang.tmpl.{AnyTmplInterpretedBlock, TmplNode}
+import tlang.internal.ContextResource
 
 import scala.jdk.CollectionConverters._
 

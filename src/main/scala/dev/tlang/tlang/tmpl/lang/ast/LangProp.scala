@@ -3,16 +3,15 @@ package dev.tlang.tlang.tmpl.lang.ast
 import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.value.{ArrayValue, EntityValue}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
-import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
-import dev.tlang.tlang.interpreter.Value
-import dev.tlang.tlang.tmpl.common.ast.TmplID
-import dev.tlang.tlang.tmpl.{DeepCopy, TmplNode}
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
+import dev.tlang.tlang.tmpl.{DeepCopy, TmplNode}
+import tlang.core.{Null, Value}
+import tlang.internal.{AstContext, ContextContent, TmplID}
 
-case class LangProp(context: Option[ContextContent], var props: List[TmplID]) extends DeepCopy with AstContext with TmplNode[LangProp] {
+case class LangProp(context: Null[ContextContent], var props: List[TmplID]) extends DeepCopy with AstContext with TmplNode[LangProp] {
   override def deepCopy(): LangProp = LangProp(context, props.map(_.deepCopy().asInstanceOf[TmplID]))
 
-  override def getContext: Option[ContextContent] = context
+  override def getContext: Null[ContextContent] = context
 
   override def compareTo(value: Value[LangProp]): Int = 0
 
@@ -34,7 +33,7 @@ object LangProp {
 
   val name: String = this.getClass.getSimpleName.replace("$", "")
 
-  val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
-    ModelSetAttribute(None, Some("props"), ModelSetType(None, ArrayValue.getType)),
+  val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
+    ModelSetAttribute(Null.empty(), Some("props"), ModelSetType(Null.empty(), ArrayValue.getType)),
   )))
 }

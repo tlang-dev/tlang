@@ -4,19 +4,17 @@ import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value.{ArrayValue, ComplexAttribute, EntityValue, NullValue}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
-import dev.tlang.tlang.astbuilder.context.ContextContent
-import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.tmpl.TmplNode
-import dev.tlang.tlang.tmpl.common.ast.TmplID
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
+import tlang.core.{Null, Value}
+import tlang.internal.{ContextContent, TmplID}
 
-case class LangParam(context: Option[ContextContent], var annots: Option[List[LangAnnotation]] = None, var name: TmplID, var `type`: Option[LangType]) extends TmplNode[LangParam] {
+case class LangParam(context: Null[ContextContent], var annots: Option[List[LangAnnotation]] = None, var name: TmplID, var `type`: Option[LangType]) extends TmplNode[LangParam] {
   override def deepCopy(): LangParam = LangParam(context,
     if (annots.isDefined) Some(annots.get.map(_.deepCopy())) else None,
     name.deepCopy().asInstanceOf[TmplID],
     if (`type`.isDefined) Some(`type`.get.deepCopy()) else None)
 
-  override def getContext: Option[ContextContent] = context
 
   override def compareTo(value: Value[LangParam]): Int = 0
 
@@ -46,9 +44,9 @@ object LangParam {
 
   val name: String = this.getClass.getSimpleName.replace("$", "")
 
-  val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
-    ModelSetAttribute(None, Some("annots"), ModelSetType(None, NullValue.name)),
-    ModelSetAttribute(None, Some("name"), ModelSetType(None, TmplID.name)),
-    ModelSetAttribute(None, Some("tType"), ModelSetType(None, NullValue.name)),
+  val model: ModelSetEntity = ModelSetEntity(Null.empty(), name, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
+    ModelSetAttribute(Null.empty(), Some("annots"), ModelSetType(Null.empty(), NullValue.name)),
+    ModelSetAttribute(Null.empty(), Some("name"), ModelSetType(Null.empty(), TmplID.name)),
+    ModelSetAttribute(Null.empty(), Some("tType"), ModelSetType(Null.empty(), NullValue.name)),
   )))
 }

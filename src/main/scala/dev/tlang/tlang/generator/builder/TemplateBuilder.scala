@@ -14,7 +14,7 @@ import dev.tlang.tlang.tmpl.lang.ast.condition.LangOperation
 import dev.tlang.tlang.tmpl.lang.ast.func.LangFunc
 import dev.tlang.tlang.tmpl.lang.ast.primitive.{LangArrayValue, LangEntityValue, LangStringValue, LangTextValue}
 import tlang.core.Value
-import tlang.internal.{TmplID, TmplInterpretedId, TmplReplacedId}
+import tlang.internal.{TmplBlockId, TmplID, TmplInterpretedId, TmplReplacedId}
 
 import scala.collection.mutable.ListBuffer
 
@@ -304,7 +304,7 @@ object TemplateBuilder {
           case None => Left(NoValue("No value returned", tmplID.getContext))
         }
       }
-      case block: LangBlockID => buildBlock(block.block, Context(List(block.block.scope))) match {
+      case block: TmplBlockId => buildBlock(block.block, Context(List(block.block.scope))) match {
         case Left(error) => Left(error)
         case Right(value) => Right(List(value))
       }

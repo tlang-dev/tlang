@@ -3,21 +3,19 @@ package dev.tlang.tlang.tmpl.lang.ast
 import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.value.{EntityValue, NullValue}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
-import dev.tlang.tlang.astbuilder.context.ContextContent
-import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.tmpl.TmplNode
-import dev.tlang.tlang.tmpl.common.ast.TmplID
 import dev.tlang.tlang.tmpl.lang.ast.condition.LangOperation
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
+import tlang.core.{Null, Value}
+import tlang.internal.{ContextContent, TmplID}
 
-case class LangAttribute(context: Option[ContextContent], var attr: Option[TmplID], var `type`: Option[LangType], var value: LangOperation) extends TmplNode[LangAttribute] {
+case class LangAttribute(context: Null[ContextContent], var attr: Option[TmplID], var `type`: Option[LangType], var value: LangOperation) extends TmplNode[LangAttribute] {
   override def deepCopy(): LangAttribute = LangAttribute(context,
     if (attr.isDefined) Some(attr.get.deepCopy().asInstanceOf[TmplID]) else None,
     if (`type`.isDefined) Some(`type`.get.deepCopy()) else None,
     value.deepCopy()
   )
 
-  override def getContext: Option[ContextContent] = context
 
   override def compareTo(value: Value[LangAttribute]): Int = 0
 
@@ -29,11 +27,11 @@ case class LangAttribute(context: Option[ContextContent], var attr: Option[TmplI
     Some(ObjType(context, None, LangAttribute.name)),
     Some(List(
       BuildLang.createAttrNull(context, "attr",
-        if (attr.isDefined) Some(attr.get.toEntity) else None,
+        if (attr.isDefined) Null.of(attr.get.toEntity) else Null.empty(),
         None
       ),
       BuildLang.createAttrNull(context, "tType",
-        if (`type`.isDefined) Some(`type`.get.toEntity) else None,
+        if (`type`.isDefined) Null.of(`type`.get.toEntity) else Null.empty(),
         None
       ),
       BuildLang.createAttrEntity(context, "value", value.toEntity),
@@ -46,9 +44,9 @@ case class LangAttribute(context: Option[ContextContent], var attr: Option[TmplI
 object LangAttribute {
   val name: String = this.getClass.getSimpleName.replace("$", "")
 
-  val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
-    ModelSetAttribute(None, Some("attr"), ModelSetType(None, NullValue.name)),
-    ModelSetAttribute(None, Some("tType"), ModelSetType(None, NullValue.name)),
-    ModelSetAttribute(None, Some("value"), ModelSetType(None, LangOperation.name)),
+  val model: ModelSetEntity = ModelSetEntity(Null.empty(), name, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
+    ModelSetAttribute(Null.empty(), Some("attr"), ModelSetType(Null.empty(), NullValue.name)),
+    ModelSetAttribute(Null.empty(), Some("tType"), ModelSetType(Null.empty(), NullValue.name)),
+    ModelSetAttribute(Null.empty(), Some("value"), ModelSetType(Null.empty(), LangOperation.name)),
   )))
 }

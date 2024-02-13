@@ -13,7 +13,8 @@ import dev.tlang.tlang.tmpl.lang.ast.{LangAffect, LangAnnotation, LangAttribute,
 
 class DartGeneratorGen3 extends CodeGenerator {
   override def generate(tmpl: LangBlock): String = {
-    DartGeneratorGen3.generateBlock(tmpl)
+//    DartGeneratorGen3.generateBlock(tmpl)
+    ""
   }
 }
 
@@ -59,17 +60,17 @@ object DartGeneratorGen3 {
     //    "dev.tlang.tlang.tmpl.lang.ast.TmplID" -> GenericGenerator.genTmplID,
   )
 
-  private def generateBlock(tmpl: LangBlock): String = {
-    val str = new StringBuilder()
-    generate(tmpl, str, Indent(), DartFormatter.rules, GenParameter.default())
-    str.toString()
-  }
-
-  def generate(node: TmplNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter): Indent = {
-    var _ind = indent
-    blocks.get(node.getClass.getTypeName).foreach(block => _ind = block.generate(node, str, indent, rules, params, this.generate))
-    _ind
-  }
+//  private def generateBlock(tmpl: LangBlock): String = {
+//    val str = new StringBuilder()
+//    generate(tmpl, str, Indent(), DartFormatter.rules, GenParameter.default())
+//    str.toString()
+//  }
+//
+//  def generate(node: TmplNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter): Indent = {
+//    var _ind = indent
+//    blocks.get(node.getClass.getTypeName).foreach(block => _ind = block.generate(node, str, indent, rules, params, this.generate))
+//    _ind
+//  }
 
   def clean(clazz: String): String = clazz.replace("$", "")
 }

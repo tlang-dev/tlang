@@ -4,6 +4,7 @@ import dev.tlang.tlang.ast.common.call.ComplexValueStatement
 import dev.tlang.tlang.ast.common.value.MultiValue
 import dev.tlang.tlang.ast.helper.HelperStatement
 import dev.tlang.tlang.interpreter.context.Context
+import tlang.core.{Null, Value}
 
 import scala.collection.mutable.ListBuffer
 
@@ -33,10 +34,10 @@ object ExecMultiValue extends Executor {
 
   private def convertValues(value: Option[List[Value[_]]]): Either[ExecError, Value[_]] = {
     value match {
-      case Some(v) => if (v.isEmpty) Left(NoValue("No value found", None))
+      case Some(v) => if (v.isEmpty) Left(NoValue("No value found", Null.empty()))
       else if (v.size == 1) Right(v.head)
-      else Right(MultiValue(None, v))
-      case None => Left(NoValue("No value found", None))
+      else Right(MultiValue(Null.empty(), v))
+      case None => Left(NoValue("No value found", Null.empty()))
     }
   }
 

@@ -3,6 +3,7 @@ package dev.tlang.tlang.interpreter
 import dev.tlang.tlang.ast.common.value.{AssignVar, MultiValue}
 import dev.tlang.tlang.ast.helper.HelperStatement
 import dev.tlang.tlang.interpreter.context.Context
+import tlang.core.Null
 
 object ExecAssignVar extends Executor {
 
@@ -20,7 +21,7 @@ object ExecAssignVar extends Executor {
             context.scopes.last.variables.addOne(varStatement.name -> value.head)
             Right(Some(List(value.head)))
           } else {
-            val values = MultiValue(None, value)
+            val values = MultiValue(Null.empty(), value)
             context.scopes.last.variables.addOne(varStatement.name -> values)
             Right(Some(value))
           }

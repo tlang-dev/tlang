@@ -3,15 +3,15 @@ package dev.tlang.tlang.tmpl.lang.ast.primitive
 import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.value.{EntityValue, TLangLong}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
-import dev.tlang.tlang.astbuilder.context.{AstContext, ContextContent}
-import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.tmpl.lang.ast.LangModel
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
+import tlang.core.{Null, Value}
+import tlang.internal.{AstContext, ContextContent}
 
-case class LangLongValue(context: Option[ContextContent], value: Long) extends LangPrimitiveValue[LangLongValue] with AstContext {
+case class LangLongValue(context: Null[ContextContent], value: Long) extends LangPrimitiveValue[LangLongValue] with AstContext {
   override def deepCopy(): LangLongValue = LangLongValue(context, value)
 
-  override def getContext: Option[ContextContent] = context
+  override def getContext: Null[ContextContent] = context
 
   override def compareTo(value: Value[LangLongValue]): Int = this.value.compareTo(value.getElement.value)
 
@@ -32,7 +32,7 @@ case class LangLongValue(context: Option[ContextContent], value: Long) extends L
 object LangLongValue {
   val name: String = this.getClass.getSimpleName.replace("$", "")
 
-  val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
-    ModelSetAttribute(None, Some("value"), ModelSetType(None, TLangLong.getType)),
+  val model: ModelSetEntity = ModelSetEntity(Null.empty(), name, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
+    ModelSetAttribute(Null.empty(), Some("value"), ModelSetType(Null.empty(), TLangLong.getType)),
   )))
 }
