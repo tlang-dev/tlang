@@ -1,6 +1,8 @@
 package dev.tlang.tlang.astbuilder
 
 import org.antlr.v4.runtime.Token
+import tlang.core
+import tlang.core.Null
 
 object AstBuilderUtils {
 
@@ -26,8 +28,8 @@ object AstBuilderUtils {
     }
   }
 
-  def getText(token: Token): Option[String] = {
-    if (token != null) Some(token.getText) else None
+  def getText(token: Token): Null[core.String] = {
+    if (token != null) Null.of(new core.String(token.getText)) else Null.empty()
   }
 
   private def removeEscapedQuotes(str: String): String = {

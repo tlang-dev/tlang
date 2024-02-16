@@ -3,7 +3,7 @@ package dev.tlang.tlang.ast.common.call
 import dev.tlang.tlang.ast.common.value.{ArrayValue, EntityValue, TLangType}
 import dev.tlang.tlang.ast.common.{ObjType, ValueType}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
-import dev.tlang.tlang.tmpl.TmplNode
+import tlang.internal.TmplNode
 import dev.tlang.tlang.tmpl.lang.ast.LangModel
 import tlang.core.{Null, Value}
 import tlang.internal.ContextContent

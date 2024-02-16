@@ -5,6 +5,7 @@ import dev.tlang.tlang.ast.common.value.TLangString
 import dev.tlang.tlang.ast.helper._
 import dev.tlang.tlang.interpreter.context.{Context, ContextUtils}
 import dev.tlang.tlang.libraries.ModulePattern
+import tlang.core.Null
 import tlang.core.func.FuncRet
 
 import java.lang.reflect.Method
@@ -45,16 +46,16 @@ object BuiltInModule {
     val name: String = method.getName
     val returnType: String = method.getReturnType.getSimpleName
     val parameters: Array[Class[_]] = method.getParameterTypes
-    HelperFunc(None, name,
-      if (parameters.isEmpty) None else Some(List(HelperCurrying(None, parameters.zipWithIndex.map(param => HelperParam(None, None, ObjType(None, Some("arg" + (param._2 + 1).toString), param._1.getSimpleName))).toList))),
-      Some(List(ObjType(None, None, classOf[FuncRet].getSimpleName))),
+    HelperFunc(Null.empty(), name,
+      if (parameters.isEmpty) None else Some(List(HelperCurrying(Null.empty(), parameters.zipWithIndex.map(param => HelperParam(Null.empty(), None, ObjType(Null.empty(), Some("arg" + (param._2 + 1).toString), param._1.getSimpleName))).toList))),
+      Null.of(List(ObjType(Null.empty(), None, classOf[FuncRet[_]].getSimpleName))),
 
-      HelperContent(None, Some(List(
+      HelperContent(Null.empty(), Some(List(
         HelperInternalFunc((context: Context) => {
 
           val args = parameters.zipWithIndex.map(param => ContextUtils.findVar(context, "arg" + (param._2 + 1).toString) match {
             case Some(arg1) => arg1
-            case None => new TLangString(None, "Not found")
+            case None => new TLangString(Null.empty(), "Not found")
           })
 
           val ret = method.invoke(null, args: _*).asInstanceOf[FuncRet]

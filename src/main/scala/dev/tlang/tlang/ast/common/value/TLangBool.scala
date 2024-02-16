@@ -33,7 +33,7 @@ class TLangBool(context: Null[ContextContent], value: Bool) extends PrimitiveVal
     Some(List())
   )
 
-  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
+  override def toModel: ModelSetEntity = ModelSetEntity(Null.empty(), getType, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
   )))
 }
 

@@ -3,13 +3,12 @@ package dev.tlang.tlang.tmpl.lang.ast.call
 import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.value.{EntityValue, TLangString}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
-import dev.tlang.tlang.astbuilder.context.ContextContent
-import dev.tlang.tlang.interpreter.Value
-import dev.tlang.tlang.tmpl.{DeepCopy, TmplNode}
 import dev.tlang.tlang.tmpl.lang.ast.LangModel
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
+import tlang.core.{Null, Value}
+import tlang.internal.{ContextContent, DeepCopy, TmplNode}
 
-case class LangCallObjectLink(context: Option[ContextContent], var link: String = ".", var call: LangCallObjType[_]) extends DeepCopy with TmplNode[LangCallObjectLink] {
+case class LangCallObjectLink(context: Null[ContextContent], var link: String = ".", var call: LangCallObjType[_]) extends DeepCopy with TmplNode[LangCallObjectLink] {
   override def deepCopy(): LangCallObjectLink = LangCallObjectLink(context, link, call.deepCopy().asInstanceOf[LangCallObjType[_]])
 
   override def compareTo(value: Value[LangCallObjectLink]): Int = 0
@@ -27,13 +26,15 @@ case class LangCallObjectLink(context: Option[ContextContent], var link: String 
   )
 
   override def toModel: ModelSetEntity = LangCallObjectLink.model
+
+  override def getContext: Null[ContextContent] = context
 }
 
 object LangCallObjectLink {
   val name: String = this.getClass.getSimpleName.replace("$", "")
 
-  val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
-    ModelSetAttribute(None, Some("link"), ModelSetType(None, TLangString.getType)),
-    ModelSetAttribute(None, Some("call"), ModelSetType(None, LangCallObjType.name)),
+  val model: ModelSetEntity = ModelSetEntity(Null.empty(), name, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
+    ModelSetAttribute(Null.empty(), Some("link"), ModelSetType(Null.empty(), TLangString.getType)),
+    ModelSetAttribute(Null.empty(), Some("call"), ModelSetType(Null.empty(), LangCallObjType.name)),
   )))
 }

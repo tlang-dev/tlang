@@ -2,10 +2,11 @@ package dev.tlang.tlang.runner
 
 import dev.tlang.tlang.ast.helper.{HelperBlock, HelperFunc}
 import dev.tlang.tlang.interpreter.context.{Context, Scope}
-import dev.tlang.tlang.interpreter.{ExecError, ExecFunc, Value}
+import dev.tlang.tlang.interpreter.{ExecError, ExecFunc}
 import dev.tlang.tlang.loader.remote.RemoteLoader
 import dev.tlang.tlang.loader.{BuildModuleTree, FileResourceLoader, Module, TBagManager}
 import dev.tlang.tlang.resolver.ResolveContext
+import tlang.core.{Null, Value}
 
 import java.io.File
 import java.util.UUID.randomUUID
@@ -44,22 +45,23 @@ object RunMain {
             ResolveContext.resolveContext(module) match {
               case Left(errors) =>
                 errors.foreach(error => println(error.code + ">> " + error.message))
-                Left(new ExecError("RESOLVER_ERROR", "Error while resolving the module", None))
+                Left(new ExecError("RESOLVER_ERROR", "Error while resolving the module", Null.empty()))
               case Right(_) => ExecFunc.run(main, Context(List(main.scope, Scope(variables = if (args.isDefined) mutable.Map("args" -> args.get) else mutable.Map()))))
             }
           case None =>
             println("No main func found in Main file")
-            Left(new ExecError("NO_MAIN_FUNC", "No main func found in Main file", None))
+            Left(new ExecError("NO_MAIN_FUNC", "No main func found in Main file", Null.empty()))
         }
       case None => println("Non main file found in " + module.rootDir)
-        Left(new ExecError("NO_MAIN_FILE", "No main file found", None))
+        Left(new ExecError("NO_MAIN_FILE", "No main file found", Null.empty()))
     }
   }
 
   def findMainInHelper(helper: HelperBlock): Option[HelperFunc] = {
-    helper.funcs match {
-      case Some(func) => func.find(_.name == "main")
-      case None => None
+    if (helper.funcs.isNotNull.get()) {
+      helper.funcs.get().getRecords.find(_.name == "main")
+    } else {
+      None
     }
   }
 

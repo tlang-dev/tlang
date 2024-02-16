@@ -3,13 +3,13 @@ package dev.tlang.tlang.tmpl.doc.ast
 import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.value.EntityValue
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
-import dev.tlang.tlang.astbuilder.context.ContextContent
-import dev.tlang.tlang.interpreter.Value
+import tlang.core.{Null, Value}
+import tlang.internal.ContextContent
 
-case class DocSpan(context: Option[ContextContent]) extends DocTextType[DocSpan] {
+case class DocSpan(context: Null[ContextContent]) extends DocTextType[DocSpan] {
   override def deepCopy(): DocSpan = DocSpan(context)
 
-  override def getContext: Option[ContextContent] = context
+  override def getContext: Null[ContextContent] = context
 
   override def compareTo(value: Value[DocSpan]): Int = 0
 
@@ -26,6 +26,6 @@ case class DocSpan(context: Option[ContextContent]) extends DocTextType[DocSpan]
 }
 
 object DocSpan {
-  val model: ModelSetEntity = ModelSetEntity(None, "DocSpan", Some(ObjType(None, None, DocModel.docModel.name)), None, Some(List(
+  val model: ModelSetEntity = ModelSetEntity(Null.empty(), "DocSpan", Some(ObjType(Null.empty(), None, DocModel.docModel.name)), None, Some(List(
   )))
 }

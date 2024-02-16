@@ -6,7 +6,6 @@ import dev.tlang.tlang.interpreter.context.Scope
 import dev.tlang.tlang.libraries.builtin.BuiltIntLibs
 import dev.tlang.tlang.loader.{Module, Resource}
 import dev.tlang.tlang.tmpl._
-import dev.tlang.tlang.tmpl.common.ast.{LangBlockID, TmplID, TmplInterpretedID}
 import dev.tlang.tlang.tmpl.doc.ast.DocBlock
 import dev.tlang.tlang.tmpl.lang.ast._
 import dev.tlang.tlang.tmpl.lang.ast.call._
@@ -14,6 +13,7 @@ import dev.tlang.tlang.tmpl.lang.ast.condition.LangOperation
 import dev.tlang.tlang.tmpl.lang.ast.func.{LangAnonFunc, LangFunc}
 import dev.tlang.tlang.tmpl.lang.ast.loop.{LangDoWhile, LangFor, LangWhile}
 import dev.tlang.tlang.tmpl.lang.ast.primitive._
+import tlang.internal.{TmplBlockId, TmplID, TmplInterpretedId, TmplNode}
 
 import scala.collection.mutable.ListBuffer
 
@@ -480,8 +480,8 @@ object ResolveTmpl {
   def resolveTmplId(tmplID: TmplID, module: Module, uses: List[DomainUse], currentResource: Resource, scope: Scope): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
     tmplID match {
-      case TmplInterpretedID(_, _, call, _) => resolveCallObj(call, module, uses, currentResource, scope)
-      case LangBlockID(_, block) => resolveTmpl(block, module, uses, currentResource)
+      case intr:TmplInterpretedId=> resolveCallObj(intr.call, module, uses, currentResource, scope)
+      case block:TmplBlockId => resolveTmpl(block.getBlock, module, uses, currentResource)
       case _ =>
     }
     if (errors.nonEmpty) Left(errors.toList)

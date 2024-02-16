@@ -7,4 +7,5 @@ public interface Type {
     String getSimpleType();
 
     String getPkg();
+
 }

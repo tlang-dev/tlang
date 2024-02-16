@@ -4,7 +4,7 @@ import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value.{ArrayValue, ComplexAttribute, EntityValue, NullValue}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
-import dev.tlang.tlang.tmpl.TmplNode
+import tlang.internal.TmplNode
 import dev.tlang.tlang.tmpl.lang.ast.{LangModel, LangType}
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core.{Null, Value}

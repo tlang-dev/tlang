@@ -6,7 +6,7 @@ import dev.tlang.tlang.generator.langs.BlockGenerator
 import dev.tlang.tlang.generator.langs.common.GenParameter
 import dev.tlang.tlang.generator.langs.dart.DartFormatter.END_OF_STATEMENT
 import dev.tlang.tlang.generator.langs.dart.DartGenerator.includeKeyword
-import dev.tlang.tlang.tmpl.TmplNode
+import tlang.internal.TmplNode
 import dev.tlang.tlang.tmpl.lang.ast._
 import dev.tlang.tlang.tmpl.lang.ast.call._
 import dev.tlang.tlang.tmpl.lang.ast.condition.LangOperation
@@ -78,7 +78,7 @@ object GenericGenerator {
     val tmpl = node.asInstanceOf[LangReturn]
     _ind = Formatter.indent(str, indent)
     str ++= "return" ++= " "
-    _ind = followUp(tmpl.operation, str, _ind, rules, params.copy(addEOS = false))
+//    _ind = followUp(tmpl.operation, str, _ind, rules, params.copy(addEOS = false))
     if (params.addEOS) str ++= DartFormatter.END_OF_STATEMENT
     _ind
   }
@@ -91,7 +91,7 @@ object GenericGenerator {
     _ind = Formatter.indent(str, indent)
     if (tmpl.annots.isDefined) tmpl.annots.get.foreach(annot => _ind = followUp(annot, str, _ind, rules, noEOS))
     if (tmpl.props.isDefined) {
-      _ind = followUp(tmpl.props.get, str, _ind, rules, noEOS)
+//      _ind = followUp(tmpl.props.get, str, _ind, rules, noEOS)
       str ++= " "
     }
     if (tmpl.props.isEmpty && tmpl.`type`.isEmpty) {
@@ -105,7 +105,7 @@ object GenericGenerator {
     str ++= tmpl.name.toString
     if (tmpl.value.isDefined) {
       _ind = FormatManager.applyRules(str, varRules, "=", _ind)
-      _ind = followUp(tmpl.value.get, str, _ind, rules, noEOS)
+//      _ind = followUp(tmpl.value.get, str, _ind, rules, noEOS)
     }
     if (params.addEOS) _ind = FormatManager.applyRules(str, varRules, END_OF_STATEMENT, _ind)
     _ind
@@ -153,14 +153,14 @@ object GenericGenerator {
     tmpl.content match {
       case Left(block) => {
         str ++= "("
-        _ind = followUp(block, str, _ind, rules, params)
+//        _ind = followUp(block, str, _ind, rules, params)
         str ++= ")"
       }
       case Right(cond) => _ind = followUp(cond, str, _ind, rules, params)
     }
     if (tmpl.next.isDefined) {
       str ++= genOperator(tmpl.next.get._1)
-      _ind = followUp(tmpl.next.get._2, str, _ind, rules, params)
+//      _ind = followUp(tmpl.next.get._2, str, _ind, rules, params)
     }
     _ind
   }
@@ -177,12 +177,12 @@ object GenericGenerator {
     var _ind = indent
     val tmpl = node.asInstanceOf[LangCallObj]
     tmpl.props.foreach(prop => {
-      followUp(prop, str, _ind, rules, params)
+//      followUp(prop, str, _ind, rules, params)
       str ++= " "
     })
     _ind = followUp(tmpl.firstCall, str, _ind, rules, params)
     val noEOS = params.copy(addEOS = false)
-    tmpl.calls.foreach(link => _ind = followUp(link, str, _ind, rules, noEOS))
+//    tmpl.calls.foreach(link => _ind = followUp(link, str, _ind, rules, noEOS))
     if (params.addEOS) str ++= DartFormatter.END_OF_STATEMENT
     _ind
   }
@@ -199,7 +199,7 @@ object GenericGenerator {
     val tmpl = node.asInstanceOf[LangCallArray]
     str ++= tmpl.name.toString
     str ++= "["
-    _ind = followUp(tmpl.elem, str, _ind, rules, params)
+//    _ind = followUp(tmpl.elem, str, _ind, rules, params)
     str ++= "]"
     _ind
   }
@@ -209,7 +209,7 @@ object GenericGenerator {
     val tmpl = node.asInstanceOf[LangAffect]
     _ind = followUp(tmpl.variable, str, _ind, rules, params)
     str ++= "="
-    _ind = followUp(tmpl.value, str, _ind, rules, params)
+//    _ind = followUp(tmpl.value, str, _ind, rules, params)
     _ind
   }
 
@@ -221,7 +221,7 @@ object GenericGenerator {
     if (tmpl.values.isDefined) {
       str ++= "("
       tmpl.values.get.zipWithIndex.foreach { case (value, i) =>
-        _ind = followUp(value, str, _ind, rules, params)
+//        _ind = followUp(value, str, _ind, rules, params)
         if (i != tmpl.values.get.size - 1) str ++= ","
       }
       str ++= ")"
@@ -304,7 +304,7 @@ object GenericGenerator {
       str ++= tmpl.name.get.toString
       str ++= ":"
     }
-    _ind = followUp(tmpl.value, str, _ind, rules, params)
+//    _ind = followUp(tmpl.value, str, _ind, rules, params)
     _ind
   }
 
@@ -344,7 +344,7 @@ object GenericGenerator {
       str ++= tmpl.attr.get.toString
       str ++= ":"
     }
-    _ind = followUp(tmpl.value, str, _ind, rules, params)
+//    _ind = followUp(tmpl.value, str, _ind, rules, params)
     _ind
   }
 

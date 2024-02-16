@@ -4,11 +4,10 @@ import dev.tlang.tlang.ast.common.value.AssignVar
 import dev.tlang.tlang.ast.helper.{HelperBlock, HelperFunc}
 import dev.tlang.tlang.ast.model.ModelBlock
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
-import dev.tlang.tlang.astbuilder.context.AstContext
 import dev.tlang.tlang.loader.Resource
 import dev.tlang.tlang.resolver.{NameAlreadyUsed, ResolverError}
 import dev.tlang.tlang.tmpl.AnyTmplInterpretedBlock
-import dev.tlang.tlang.tmpl.lang.ast.LangBlock
+import tlang.internal.AstContext
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer

@@ -3,14 +3,14 @@ package dev.tlang.tlang.tmpl.doc.ast
 import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.value.EntityValue
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
-import dev.tlang.tlang.astbuilder.context.ContextContent
-import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
+import tlang.core.{Null, Value}
+import tlang.internal.ContextContent
 
-case class DocImg(context: Option[ContextContent], src: String, alt: Option[String]) extends DocTextType[DocImg] {
+case class DocImg(context: Null[ContextContent], src: String, alt: Option[String]) extends DocTextType[DocImg] {
   override def deepCopy(): DocImg = DocImg(context, new String(src), if (alt.isDefined) Some(new String(alt.get)) else None)
 
-  override def getContext: Option[ContextContent] = context
+  override def getContext: Null[ContextContent] = context
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, toModel.name)),
@@ -30,6 +30,6 @@ case class DocImg(context: Option[ContextContent], src: String, alt: Option[Stri
 }
 
 object DocImg {
-  val model: ModelSetEntity = ModelSetEntity(None, "DocImg", Some(ObjType(None, None, DocModel.docModel.name)), None, Some(List(
+  val model: ModelSetEntity = ModelSetEntity(Null.empty(), "DocImg", Some(ObjType(Null.empty(), None, DocModel.docModel.name)), None, Some(List(
   )))
 }

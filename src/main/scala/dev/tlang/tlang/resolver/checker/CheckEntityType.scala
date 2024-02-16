@@ -2,8 +2,8 @@ package dev.tlang.tlang.resolver.checker
 
 import dev.tlang.tlang.ast.common.value.EntityValue
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
-import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.resolver.{ResolverError, TypeError}
+import tlang.core.Value
 
 import scala.collection.mutable.ListBuffer
 

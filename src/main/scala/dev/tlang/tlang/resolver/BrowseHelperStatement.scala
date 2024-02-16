@@ -6,12 +6,13 @@ import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value.{ArrayValue, AssignVar, EntityValue, MultiValue}
 import dev.tlang.tlang.ast.common.{ObjType, ValueType}
 import dev.tlang.tlang.ast.helper.{HelperFor, HelperFunc, HelperIf, HelperStatement}
+import dev.tlang.tlang.interpreter.ExecCallFunc
 import dev.tlang.tlang.interpreter.context.Scope
-import dev.tlang.tlang.interpreter.{ExecCallFunc, Value}
 import dev.tlang.tlang.loader
 import dev.tlang.tlang.loader.Resource
 import dev.tlang.tlang.resolver.ResolveContext.extractErrors
 import dev.tlang.tlang.tmpl.lang.ast.LangBlockAsValue
+import tlang.core.Value
 
 import scala.collection.mutable.ListBuffer
 

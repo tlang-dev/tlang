@@ -7,21 +7,22 @@ import dev.tlang.tlang.generator.builder.TemplateBuilder
 import dev.tlang.tlang.interpreter._
 import dev.tlang.tlang.interpreter.context.{Context, ContextUtils, Scope}
 import dev.tlang.tlang.tmpl.lang.ast.LangBlockAsValue
+import tlang.core.Null
 
 import scala.collection.mutable
 
 object Generator {
 
-  def generateFunc: HelperFunc = HelperFunc(None, "generate", Some(List(HelperCurrying(None, List(HelperParam(None, Some("block"), ObjType(None, None, LangBlockAsValue.getType)))))),
-    Some(List(ObjType(None, None, TLangString.getType))), HelperContent(None, Some(List(
+  def generateFunc: HelperFunc = HelperFunc(Null.empty(), "generate", Some(List(HelperCurrying(Null.empty(), List(HelperParam(Null.empty(), Some("block"), ObjType(Null.empty(), None, LangBlockAsValue.getType)))))),
+    Null.of(List(ObjType(Null.empty(), None, TLangString.getType))), HelperContent(Null.empty(), Some(List(
       HelperInternalFunc((context: Context) => {
         ContextUtils.findVar(context, "block") match {
           case Some(block) => generate(block.asInstanceOf[LangBlockAsValue], context) match {
             case Left(error) =>
-              Right(Some(List(new TLangString(None, error.toString))))
+              Right(Some(List(new TLangString(Null.empty(), error.toString))))
             case Right(value) => Right(Some(List(value)))
           }
-          case None => Right(Some(List(new TLangString(None, ""))))
+          case None => Right(Some(List(new TLangString(Null.empty(), ""))))
         }
       })
     ))))

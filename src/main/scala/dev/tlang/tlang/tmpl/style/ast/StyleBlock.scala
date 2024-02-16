@@ -5,13 +5,13 @@ import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value._
 import dev.tlang.tlang.ast.helper.HelperParam
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
-import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.interpreter.context.Scope
 import dev.tlang.tlang.tmpl.AnyTmplInterpretedBlock
-import dev.tlang.tlang.tmpl.common.ast.{NativeType, TmplStringID}
+import dev.tlang.tlang.tmpl.common.ast.NativeType
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
+import tlang.core
 import tlang.core.Null
-import tlang.internal.ContextContent
+import tlang.internal.{ContextContent, TmplStringId}
 
 case class StyleBlock(context: Null[ContextContent], name: String, langs: List[String],
                       var params: Option[List[NativeType[HelperParam]]], contents: List[StyleStruct], scope: Scope = Scope()) extends AnyTmplInterpretedBlock[StyleBlock] {
@@ -19,7 +19,7 @@ case class StyleBlock(context: Null[ContextContent], name: String, langs: List[S
     Some(ObjType(context, None, toModel.name)),
     Some(List(
       BuildLang.createAttrStr(context, "name", name),
-      BuildLang.createArray(context, "langs", langs.map(value => TmplStringID(context, value).toEntity)),
+      BuildLang.createArray(context, "langs", langs.map(value => new TmplStringId(context, new core.String(value)).toEntity)),
       BuildLang.createAttrNull(context, "params",
         if (params.isDefined) Some(ArrayValue(context, Some(params.get.map(value => ComplexAttribute(context, None, None, Operation(context, None, Right(value.toEntity))))))) else None,
         None
@@ -50,10 +50,10 @@ object StyleBlock {
 
   val name: String = this.getClass.getSimpleName.replace("$", "")
 
-  val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(Null.empty(), None, StyleModel.styleModel.name)), None, Some(List(
-    ModelSetAttribute(None, Some("name"), ModelSetType(None, TLangString.getType)),
-    ModelSetAttribute(None, Some("langs"), ModelSetType(None, TLangString.getType)),
-    ModelSetAttribute(None, Some("params"), ModelSetType(None, NullValue.name)),
-    ModelSetAttribute(None, Some("contents"), ModelSetType(None, ArrayValue.getType)),
+  val model: ModelSetEntity = ModelSetEntity(Null.empty(), name, Some(ObjType(Null.empty(), None, StyleModel.styleModel.name)), None, Some(List(
+    ModelSetAttribute(Null.empty(), Some("name"), ModelSetType(Null.empty(), TLangString.getType)),
+    ModelSetAttribute(Null.empty(), Some("langs"), ModelSetType(Null.empty(), TLangString.getType)),
+    ModelSetAttribute(Null.empty(), Some("params"), ModelSetType(Null.empty(), NullValue.name)),
+    ModelSetAttribute(Null.empty(), Some("contents"), ModelSetType(Null.empty(), ArrayValue.getType)),
   )))
 }

@@ -1,12 +1,13 @@
 package dev.tlang.tlang.loader
 
 import dev.tlang.tlang.astbuilder.BuildAst
-import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.libraries.Modules
 import dev.tlang.tlang.loader.manifest.{Manifest, ManifestLoader}
 import dev.tlang.tlang.loader.remote.RemoteLoader
 import dev.tlang.tlang.{CommonLexer, TLang}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
+import tlang.core
+import tlang.internal.ContextResource
 
 import java.nio.file.Path
 import java.util.UUID.randomUUID
@@ -26,7 +27,7 @@ object BuildModuleTree {
             val fromRoot = if (parts.length > 2) {
               parts.slice(0, parts.length - 2).mkString("/")
             } else ""
-            val pkg = if(parts.length >1) parts(parts.length - 1) else ""
+            val pkg = if (parts.length > 1) parts(parts.length - 1) else ""
             val name = parts.last
             (fromRoot, pkg, name)
           case None => ("", "", "Main")
@@ -85,7 +86,7 @@ object BuildModuleTree {
 
   def buildResourceAST(root: String, fromRoot: String, pkg: String, name: String, content: String): Resource = {
     val parser = new TLang(new CommonTokenStream(new CommonLexer(CharStreams.fromString(content))))
-    Resource(root, fromRoot, pkg, name, BuildAst.build(ContextResource(root, fromRoot, pkg, name), parser.domainModel()))
+    Resource(root, fromRoot, pkg, name, BuildAst.build(new ContextResource(new core.String(root), new core.String(fromRoot), new core.String(pkg), new core.String(name)), parser.domainModel()))
   }
 
   def createPkg(parts: String*): String = {

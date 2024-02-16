@@ -3,7 +3,7 @@ package dev.tlang.tlang.interpreter
 import dev.tlang.tlang.ast.common.value.{AssignVar, MultiValue}
 import dev.tlang.tlang.ast.helper.HelperStatement
 import dev.tlang.tlang.interpreter.context.Context
-import tlang.core.Null
+import tlang.core.{Null, Value}
 
 object ExecAssignVar extends Executor {
 

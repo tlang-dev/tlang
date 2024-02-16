@@ -25,13 +25,14 @@ case class StyleInclude(context: Null[ContextContent], call: NativeType[CallObje
 
   override def deepCopy(): StyleInclude = StyleInclude(context, call.deepCopy().asInstanceOf[NativeType[CallObject]])
 
+  override def getContext: Null[ContextContent] = context
 }
 
 object StyleInclude {
 
   val name: String = this.getClass.getSimpleName.replace("$", "")
 
-  val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(Null.empty(), None, StyleModel.styleModel.name)), None, Some(List(
-    ModelSetAttribute(None, Some("call"), ModelSetType(None, NativeType.name)),
+  val model: ModelSetEntity = ModelSetEntity(Null.empty(), name, Some(ObjType(Null.empty(), None, StyleModel.styleModel.name)), None, Some(List(
+    ModelSetAttribute(Null.empty(), Some("call"), ModelSetType(Null.empty(), NativeType.name)),
   )))
 }

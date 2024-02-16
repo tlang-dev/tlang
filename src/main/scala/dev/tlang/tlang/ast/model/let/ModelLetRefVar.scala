@@ -2,7 +2,7 @@ package dev.tlang.tlang.ast.model.let
 
 import dev.tlang.tlang.ast.common.value.TLangType
 import dev.tlang.tlang.ast.common.{ManualType, ObjType, ValueType}
-import tlang.core.{Null, Type, Value}
+import tlang.core.{Int, Null, Type, Value}
 import tlang.internal.ContextContent
 
 case class ModelLetRefVar(context: Null[ContextContent], variable: Value[_]) extends ModelLetRefType[ModelLetRefVar] {
@@ -12,7 +12,7 @@ case class ModelLetRefVar(context: Null[ContextContent], variable: Value[_]) ext
 
   override def compareTo(value: Value[ModelLetRefVar]): Int = {
     if (variable.getType == value.getType) variable.asInstanceOf[Value[ModelLetRefVar]].compareTo(value.getElement)
-    else -1
+    else new Int(-1)
   }
 
 }

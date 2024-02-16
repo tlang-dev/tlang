@@ -3,7 +3,7 @@ package dev.tlang.tlang.generator.langs.dart
 import dev.tlang.tlang.generator.formatter.{FormatManager, FormatRule, Indent}
 import dev.tlang.tlang.generator.langs.BlockGenerator
 import dev.tlang.tlang.generator.langs.common.GenParameter
-import dev.tlang.tlang.tmpl.TmplNode
+import tlang.internal.TmplNode
 import dev.tlang.tlang.tmpl.lang.ast.LangBlock
 
 object GenericBlock extends BlockGenerator {

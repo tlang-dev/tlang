@@ -36,18 +36,18 @@ case class EntityValue(context: Null[ContextContent],
     Some(List())
   )
 
-  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
+  override def toModel: ModelSetEntity = ModelSetEntity(Null.empty(), getType, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
   )))
 
   override def getAttr(name: core.String): Null[core.Value[_]] = {
-    if (attrs.isEmpty) Null.empty()
+    if (attrs.isEmpty) Null.empty().asInstanceOf[Null[core.Value[_]]]
     else {
       val attr = attrs.get.find(attr => new core.String(attr.attr.orNull).isEqual(name).get())
-      if (attr.isEmpty) Null.empty()
+      if (attr.isEmpty) Null.empty().asInstanceOf[Null[core.Value[_]]]
       else {
         val op = attr.get.value
         ExecOperation.run(op, Context(List(scope))) match {
-          case Left(value) => Null.empty()
+          case Left(value) => Null.empty().asInstanceOf[Null[core.Value[_]]]
           case Right(value) => Null.of(value.get.head)
         }
       }

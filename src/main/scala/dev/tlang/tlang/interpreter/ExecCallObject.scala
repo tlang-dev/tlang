@@ -51,7 +51,7 @@ object ExecCallObject extends Executor {
       case func: CallFuncObject =>
         val name = callVar.name + "/" + func.name.get
         ContextUtils.findFunc(context, name) match {
-          case Some(_) => ExecCallFunc.run(CallFuncObject(None, Some(name), func.currying), context)
+          case Some(_) => ExecCallFunc.run(CallFuncObject(Null.empty(), Some(name), func.currying), context)
           case None => ContextUtils.findTmpl(context, name) match {
             case Some(tmpl) =>
               val tmplCopy = tmpl.deepCopy().asInstanceOf[AnyTmplInterpretedBlock[_]]
@@ -115,7 +115,7 @@ object ExecCallObject extends Executor {
     def resolve(posValue: Value[_]): Either[ExecError, Option[List[Value[_]]]] = {
       array.tbl match {
         case Some(array) => posValue match {
-          case long: TLangLong => Right(Some(List(array(long.getElement.toInt).value)))
+          case long: TLangLong => Right(Some(List(array(long.getElement.intValue()).value)))
           case str: TLangString =>
             val callRes = array.find(elem => elem.attr.isDefined && elem.attr.get.equals(str.getElement))
             if (callRes.isDefined) Right(Some(List(callRes.get.value)))
@@ -264,7 +264,7 @@ object ExecCallObject extends Executor {
             case Right(tmplBlock) => Left(NotImplemented("The execution of TmplBloc is not yet implemented in a ref func in an array or entity", ref.context))
           }
 
-        case _ => Left(NotImplemented(value.getType, value.getContext))
+        case _ => Left(NotImplemented(value.getType.toString, value.getContext))
       }
     }
   }
@@ -289,7 +289,7 @@ object ExecCallObject extends Executor {
         else {
           value.get.head match {
             case refFunc: CallRefFuncObject => execRefFuncWithCaller(caller, refFunc, context)
-            case _ => Left(NotImplemented(value.get.head.getType, value.get.head.getContext))
+            case _ => Left(NotImplemented(value.get.head.getType.toString, value.get.head.getContext))
           }
         }
     }

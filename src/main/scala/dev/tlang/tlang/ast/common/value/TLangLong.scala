@@ -15,15 +15,15 @@ class TLangLong(context: Null[ContextContent], value: core.Long) extends Primiti
 
   override def toString: String = getElement.toString
 
-  override def add(value: PrimitiveValue[core.Long]): Either[ExecError, TLangLong] = Right(new TLangLong(Null.empty(), new core.Long(this.value.get().toLong + value.getElement)))
+  override def add(value: PrimitiveValue[core.Long]): Either[ExecError, TLangLong] = Right(new TLangLong(Null.empty(), new core.Long(this.value.get() + value.getElement.get())))
 
-  override def subtract(value: PrimitiveValue[core.Long]): Either[ExecError, TLangLong] = Right(new TLangLong(Null.empty(), new core.Long(this.value.get().toLong - value.getElement)))
+  override def subtract(value: PrimitiveValue[core.Long]): Either[ExecError, TLangLong] = Right(new TLangLong(Null.empty(), new core.Long(this.value.get() - value.getElement.get())))
 
-  override def multiply(value: PrimitiveValue[core.Long]): Either[ExecError, TLangLong] = Right(new TLangLong(Null.empty(), new core.Long(this.value.get().toLong * value.getElement)))
+  override def multiply(value: PrimitiveValue[core.Long]): Either[ExecError, TLangLong] = Right(new TLangLong(Null.empty(), new core.Long(this.value.get() * value.getElement.get())))
 
-  override def divide(value: PrimitiveValue[core.Long]): Either[ExecError, TLangLong] = Right(new TLangLong(Null.empty(), new core.Long(this.value.get().toLong / value.getElement)))
+  override def divide(value: PrimitiveValue[core.Long]): Either[ExecError, TLangLong] = Right(new TLangLong(Null.empty(), new core.Long(this.value.get() / value.getElement.get())))
 
-  override def modulo(value: PrimitiveValue[core.Long]): Either[ExecError, TLangLong] = Right(new TLangLong(Null.empty(), new core.Long(this.value.get().toLong % value.getElement)))
+  override def modulo(value: PrimitiveValue[core.Long]): Either[ExecError, TLangLong] = Right(new TLangLong(Null.empty(), new core.Long(this.value.get() % value.getElement.get())))
 
   override def deepCopy(): TLangLong = new TLangLong(context, value)
 

@@ -4,7 +4,7 @@ import dev.tlang.tlang.TLang._
 import dev.tlang.tlang.astbuilder.BuildAst.addContext
 import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.astbuilder.{BuildHelperBlock, BuildHelperStatement}
-import dev.tlang.tlang.tmpl.TmplNode
+import tlang.internal.TmplNode
 import dev.tlang.tlang.tmpl.common.ast.NativeType
 import dev.tlang.tlang.tmpl.common.astbuilder.BuildCommonTmpl
 import dev.tlang.tlang.tmpl.style.ast._

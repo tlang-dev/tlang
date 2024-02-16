@@ -5,9 +5,8 @@ import dev.tlang.tlang.ast.common.value.{ArrayValue, EntityValue, NullValue}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang.createArray
-import dev.tlang.tlang.tmpl.{DeepCopy, TmplNode}
 import tlang.core.{Null, Value}
-import tlang.internal.{ContextContent, TmplID}
+import tlang.internal.{ContextContent, DeepCopy, TmplID, TmplNode}
 
 case class LangUse(context: Null[ContextContent], var parts: List[TmplID], var alias: Option[TmplID] = None) extends TmplNode[LangUse] with DeepCopy {
   override def deepCopy(): LangUse = LangUse(context, parts.map(_.deepCopy().asInstanceOf[TmplID]),
@@ -40,7 +39,7 @@ object LangUse {
 
   val name: String = this.getClass.getSimpleName.replace("$", "")
 
-  val model: ModelSetEntity = ModelSetEntity(None, "LangUse", Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
+  val model: ModelSetEntity = ModelSetEntity(Null.empty(), "LangUse", Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
     ModelSetAttribute(Null.empty(), Some("parts"), ModelSetType(Null.empty(), ArrayValue.getType)),
     ModelSetAttribute(Null.empty(), Some("alias"), ModelSetType(Null.empty(), NullValue.name)),
   )))

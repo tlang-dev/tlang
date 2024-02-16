@@ -11,6 +11,7 @@ import dev.tlang.tlang.tmpl.lang.ast.func.{LangAnnotationParam, LangAnonFunc, La
 import dev.tlang.tlang.tmpl.lang.ast.loop.{LangDoWhile, LangFor, LangWhile}
 import dev.tlang.tlang.tmpl.lang.ast.primitive._
 import dev.tlang.tlang.tmpl.lang.ast._
+import tlang.internal.TmplNode
 
 class DartGenerator extends CodeGenerator {
   override def generate(tmpl: LangBlock): String = {

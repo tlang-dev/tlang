@@ -3,7 +3,7 @@ package dev.tlang.tlang.generator.langs.dart
 import dev.tlang.tlang.generator.formatter.{FormatRule, Formatter, Indent}
 import dev.tlang.tlang.generator.langs.BlockGenerator
 import dev.tlang.tlang.generator.langs.common.GenParameter
-import dev.tlang.tlang.tmpl.TmplNode
+import tlang.internal.TmplNode
 import dev.tlang.tlang.tmpl.lang.ast.LangIf
 
 object GenericIf extends BlockGenerator {
@@ -13,7 +13,7 @@ object GenericIf extends BlockGenerator {
     _ind = Formatter.indent(str, indent)
     str ++= "if"
     str ++= "("
-    _ind = followUp(tmpl.cond, str, _ind, rules, params)
+//    _ind = followUp(tmpl.cond, str, _ind, rules, params)
     str ++= ")"
     _ind = followUp(tmpl.content, str, _ind, rules, params)
     if (tmpl.elseBlock.isDefined) {

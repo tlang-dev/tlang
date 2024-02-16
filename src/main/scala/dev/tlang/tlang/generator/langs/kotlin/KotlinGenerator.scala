@@ -10,6 +10,7 @@ import dev.tlang.tlang.tmpl.lang.ast.func.{LangAnnotationParam, LangAnonFunc, La
 import dev.tlang.tlang.tmpl.lang.ast.loop.{LangDoWhile, LangFor, LangWhile}
 import dev.tlang.tlang.tmpl.lang.ast.primitive._
 import dev.tlang.tlang.tmpl.lang.ast._
+import tlang.internal.TmplNode
 
 import scala.language.postfixOps
 

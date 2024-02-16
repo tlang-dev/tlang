@@ -4,13 +4,13 @@ import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.call.CallObject
 import dev.tlang.tlang.ast.common.value.EntityValue
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
-import dev.tlang.tlang.astbuilder.context.ContextContent
-import dev.tlang.tlang.interpreter.Value
+import tlang.core.{Null, Value}
+import tlang.internal.ContextContent
 
-case class DocInclude(context: Option[ContextContent], call: CallObject) extends DocTextType[DocInclude] {
+case class DocInclude(context: Null[ContextContent], call: CallObject) extends DocTextType[DocInclude] {
   override def deepCopy(): DocInclude = DocInclude(context, call)
 
-  override def getContext: Option[ContextContent] = context
+  override def getContext: Null[ContextContent] = context
 
   override def compareTo(value: Value[DocInclude]): Int = 0
 
@@ -27,6 +27,6 @@ case class DocInclude(context: Option[ContextContent], call: CallObject) extends
 }
 
 object DocInclude {
-  val model: ModelSetEntity = ModelSetEntity(None, "DocInclude", Some(ObjType(None, None, DocModel.docModel.name)), None, Some(List(
+  val model: ModelSetEntity = ModelSetEntity(Null.empty(), "DocInclude", Some(ObjType(Null.empty(), None, DocModel.docModel.name)), None, Some(List(
   )))
 }

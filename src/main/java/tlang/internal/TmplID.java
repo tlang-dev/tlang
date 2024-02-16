@@ -20,4 +20,6 @@ public abstract class TmplID implements TmplNode<TmplID> {
         }
         return new String("TmplId type not found");
     }
+
+    public static final String name = new String(TmplID.class.getSimpleName());
 }

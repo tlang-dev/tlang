@@ -4,10 +4,11 @@ import dev.tlang.tlang.ast.DomainUse
 import dev.tlang.tlang.ast.common.{ArrayType, ObjType, ValueType}
 import dev.tlang.tlang.ast.model.ModelBlock
 import dev.tlang.tlang.ast.model.set.{ModelSetEntity, ModelSetValueType}
-import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.context.Scope
 import dev.tlang.tlang.loader.{BuildModuleTree, Module, Resource}
 import dev.tlang.tlang.resolver.ResolveContext.extractErrors
+import tlang.core.Null
+import tlang.internal.ContextContent
 
 import scala.collection.mutable.ListBuffer
 
@@ -24,7 +25,7 @@ object FollowType {
     else Right(())
   }
 
-  def findInside(context: Option[ContextContent], preType: Option[String], name: String, addPreType: Option[String] = None)(module: Module, uses: List[DomainUse], scope: Scope, currentResource: Resource): Either[List[ResolverError], Unit] = {
+  def findInside(context: Null[ContextContent], preType: Option[String], name: String, addPreType: Option[String] = None)(module: Module, uses: List[DomainUse], scope: Scope, currentResource: Resource): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
     if (preType.isEmpty) {
       browseModel(name, currentResource) match {
@@ -41,7 +42,7 @@ object FollowType {
     else Right(())
   }
 
-  def findOutside(context: Option[ContextContent], preType: String, name: String)(module: Module, uses: List[DomainUse], scope: Scope): Either[List[ResolverError], Unit] = {
+  def findOutside(context: Null[ContextContent], preType: String, name: String)(module: Module, uses: List[DomainUse], scope: Scope): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
     uses.foreach(use => {
       if (use.parts.last == preType) {

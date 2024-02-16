@@ -2,7 +2,7 @@ package dev.tlang.tlang.generator.langs
 
 import dev.tlang.tlang.generator.formatter.{FormatRule, Indent}
 import dev.tlang.tlang.generator.langs.common.GenParameter
-import dev.tlang.tlang.tmpl.TmplNode
+import tlang.internal.TmplNode
 
 trait BlockGenerator {
 

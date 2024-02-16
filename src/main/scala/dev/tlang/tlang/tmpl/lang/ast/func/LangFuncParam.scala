@@ -6,7 +6,7 @@ import dev.tlang.tlang.ast.common.value.{ArrayValue, ComplexAttribute, EntityVal
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
-import dev.tlang.tlang.tmpl.TmplNode
+import tlang.internal.TmplNode
 import dev.tlang.tlang.tmpl.lang.ast.{LangModel, LangParam}
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 

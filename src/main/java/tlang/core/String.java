@@ -1,5 +1,7 @@
 package tlang.core;
 
+import tlang.internal.ContextContent;
+
 public class String implements Value<String> {
 
     private final java.lang.String value;
@@ -26,7 +28,12 @@ public class String implements Value<String> {
     }
 
     @Override
-    public String getType() {
+    public Type getType() {
+        return null;
+    }
+
+    @Override
+    public Null<ContextContent> getContext() {
         return null;
     }
 }

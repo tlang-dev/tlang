@@ -34,8 +34,10 @@ case class ArrayValue(context: Null[ContextContent], tbl: Option[List[ComplexAtt
     Some(List())
   )
 
-  override def toModel: ModelSetEntity = ModelSetEntity(None, getType, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
+  override def toModel: ModelSetEntity = ModelSetEntity(Null.empty(), getType, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
   )))
+
+  override def getContext: Null[ContextContent] = context
 }
 
 object ArrayValue extends TLangType {

@@ -6,6 +6,7 @@ import dev.tlang.tlang.ast.model.{ModelBlock, ModelContent}
 import dev.tlang.tlang.ast.{DomainExpose, DomainHeader, DomainModel}
 import dev.tlang.tlang.loader.manifest.{Dependency, Manifest}
 import dev.tlang.tlang.loader.{Module, Resource}
+import tlang.core.{Array, Null}
 
 import scala.collection.mutable.ListBuffer
 
@@ -15,7 +16,7 @@ abstract class ModulePattern {
 
   def getName: String
 
-  def getFunctions: List[HelperFunc]
+  def getFunctions: Array[HelperFunc]
 
   def getMain: String = "Main"
 
@@ -27,9 +28,9 @@ abstract class ModulePattern {
 
 
   protected def getMainResource: Resource = {
-    Resource("", "", "", getMain, DomainModel(None, Some(DomainHeader(None, Some(exposeFunctions), None)), List(
-      HelperBlock(None, Some(getFunctions)),
-      ModelBlock(None, getModelContent)
+    Resource("", "", "", getMain, DomainModel(Null.empty(), Some(DomainHeader(Null.empty(), Some(exposeFunctions), None)), List(
+      HelperBlock(Null.empty(), Null.of(getFunctions)),
+      ModelBlock(Null.empty(), getModelContent)
     )))
   }
 
@@ -42,8 +43,8 @@ abstract class ModulePattern {
 
   private def exposeFunctions: List[DomainExpose] = {
     val exposes = ListBuffer.empty[DomainExpose]
-    exposes ++= getFunctions.map(func => DomainExpose(None, func.name))
-    if (getModelContent.isDefined) exposes ++= getModelContent.get.filter(_.isInstanceOf[ModelSetEntity]).map(entity => DomainExpose(None, entity.asInstanceOf[ModelSetEntity].name))
+    exposes ++= getFunctions.map(func => DomainExpose(Null.empty(), func.name)).get().get().getRecords
+    if (getModelContent.isDefined) exposes ++= getModelContent.get.filter(_.isInstanceOf[ModelSetEntity]).map(entity => DomainExpose(Null.empty(), entity.asInstanceOf[ModelSetEntity].name))
     exposes.toList
   }
 

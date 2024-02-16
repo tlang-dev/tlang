@@ -4,10 +4,10 @@ import dev.tlang.tlang.ast.common.value.{EntityValue, TLangType}
 import dev.tlang.tlang.ast.common.{ObjType, ValueType}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.interpreter.context.Context
+import dev.tlang.tlang.tmpl.AnyTmplInterpretedBlock
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
-import dev.tlang.tlang.tmpl.{AnyTmplInterpretedBlock, TmplNode}
 import tlang.core.{Null, Value}
-import tlang.internal.ContextContent
+import tlang.internal.{ContextContent, TmplNode}
 
 case class LangBlockAsValue(astContext: Null[ContextContent], var block: AnyTmplInterpretedBlock[_], context: Context) extends TmplNode[AnyTmplInterpretedBlock[_]] {
   override def getElement: AnyTmplInterpretedBlock[_] = this.block
@@ -26,6 +26,8 @@ case class LangBlockAsValue(astContext: Null[ContextContent], var block: AnyTmpl
   )
 
   override def toModel: ModelSetEntity = LangBlockAsValue.model
+
+  override def getContext: Null[ContextContent] = astContext
 }
 
 object LangBlockAsValue extends TLangType {

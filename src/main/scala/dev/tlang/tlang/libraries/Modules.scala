@@ -2,7 +2,6 @@ package dev.tlang.tlang.libraries
 
 import dev.tlang.tlang.libraries.generator.GenModule
 import dev.tlang.tlang.libraries.std.entity.StdEntityModule
-import dev.tlang.tlang.libraries.std.str_builder.StdBuilderModule
 import dev.tlang.tlang.libraries.tio.file.IOFileModule
 import dev.tlang.tlang.libraries.tio.terminal.TerminalModule
 import dev.tlang.tlang.libraries.tmpl._
@@ -20,7 +19,7 @@ object Modules {
     TerminalModule.getModuleName -> TerminalModule.getModule,
     GenModule.getModuleName -> GenModule.getModule,
     IOFileModule.getModuleName -> IOFileModule.getModule,
-    StdBuilderModule.getModuleName -> StdBuilderModule.getModule,
+//    StdBuilderModule.getModuleName -> StdBuilderModule.getModule,
     StdEntityModule.getModuleName -> StdEntityModule.getModule,
     LangModule.getModuleName -> LangModule.getModule,
     CmdModule.getModuleName -> CmdModule.getModule,

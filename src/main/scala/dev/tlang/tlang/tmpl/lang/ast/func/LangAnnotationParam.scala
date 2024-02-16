@@ -5,9 +5,8 @@ import dev.tlang.tlang.ast.common.value.{EntityValue, NullValue}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.tmpl.lang.ast._
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
-import dev.tlang.tlang.tmpl.{DeepCopy, TmplNode}
 import tlang.core.{Null, Value}
-import tlang.internal.{AstContext, ContextContent, TmplID}
+import tlang.internal._
 
 case class LangAnnotationParam(context: Null[ContextContent], var name: Option[TmplID], var value: LangValueType[_]) extends DeepCopy with TmplNode[LangAnnotationParam] with AstContext {
   override def deepCopy(): LangAnnotationParam =
@@ -39,7 +38,7 @@ case class LangAnnotationParam(context: Null[ContextContent], var name: Option[T
 object LangAnnotationParam {
   val name: String = this.getClass.getSimpleName.replace("$", "")
 
-  val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
+  val model: ModelSetEntity = ModelSetEntity(Null.empty(), name, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
     ModelSetAttribute(Null.empty(), Some("name"), ModelSetType(Null.empty(), NullValue.name)),
   )))
 }

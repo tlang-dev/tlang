@@ -1,21 +1,22 @@
 package dev.tlang.tlang.resolver.checker
 
-import dev.tlang.tlang.ast.common.{ArrayType, ObjType, ValueType}
 import dev.tlang.tlang.ast.common.call._
 import dev.tlang.tlang.ast.common.value.EntityValue
+import dev.tlang.tlang.ast.common.{ArrayType, ObjType, ValueType}
 import dev.tlang.tlang.ast.helper._
 import dev.tlang.tlang.ast.model.set._
-import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.context.{Context, ContextUtils}
-import dev.tlang.tlang.resolver.{DoesNotExist, Element, ResolverError, ResourceNotFound}
+import dev.tlang.tlang.resolver.{DoesNotExist, ResolverError, ResourceNotFound}
+import tlang.core.{Array, Null}
+import tlang.internal.{ContextContent, Element}
 
 object FollowCallToTheEnd {
 
-  def followCallToTheEnd(call: CallObject, context: Context): Either[ResolverError, Option[Element[_]]] = {
+  def followCallToTheEnd(call: CallObject, context: Context): Either[ResolverError, Null[Element[_]]] = {
     followCall(call, context)
   }
 
-  def followCall(callObject: CallObject, context: Context, callIndex: Int = 0): Either[ResolverError, Option[Element[_]]] = {
+  def followCall(callObject: CallObject, context: Context, callIndex: Int = 0): Either[ResolverError, Null[Element[_]]] = {
     callObject.statements(callIndex) match {
       case array: CallArrayObject => followCallArray(array, callObject, context, callIndex)
       case callFunc: CallFuncObject => followCallFunc(callFunc, callObject, context, callIndex)
@@ -25,40 +26,40 @@ object FollowCallToTheEnd {
 
   }
 
-  def followCallVar(callVar: CallVarObject, callObject: CallObject, context: Context, callIndex: Int): Either[ResolverError, Option[Element[_]]] = {
+  def followCallVar(callVar: CallVarObject, callObject: CallObject, context: Context, callIndex: Int): Either[ResolverError, Null[Element[_]]] = {
     ContextUtils.findModel(context, callVar.name) match {
       case Some(value) =>
-        if (callIndex >= callObject.statements.length - 1) Right(Some(value))
+        if (callIndex >= callObject.statements.length - 1) Right(Null.of(value).asInstanceOf[Null[Element[_]]])
         else followModel(value, callObject, context, callIndex + 1)
       case None => Left(ResourceNotFound(callVar.context, callVar.name))
     }
   }
 
-  def followCallArray(callArray: CallArrayObject, callObject: CallObject, context: Context, callIndex: Int): Either[ResolverError, Option[Element[_]]] = {
-    Right(None)
+  def followCallArray(callArray: CallArrayObject, callObject: CallObject, context: Context, callIndex: Int): Either[ResolverError, Null[Element[_]]] = {
+    Right(Null.empty().asInstanceOf[Null[Element[_]]])
   }
 
-  def followCallRefFunc(callRefFunc: CallRefFuncObject, callObject: CallObject, context: Context, callIndex: Int): Either[ResolverError, Option[Element[_]]] = {
-    Right(None)
+  def followCallRefFunc(callRefFunc: CallRefFuncObject, callObject: CallObject, context: Context, callIndex: Int): Either[ResolverError, Null[Element[_]]] = {
+    Right(Null.empty().asInstanceOf[Null[Element[_]]])
   }
 
-  def followCallFunc(callFunc: CallFuncObject, callObject: CallObject, context: Context, callIndex: Int): Either[ResolverError, Option[Element[_]]] = {
+  def followCallFunc(callFunc: CallFuncObject, callObject: CallObject, context: Context, callIndex: Int): Either[ResolverError, Null[Element[_]]] = {
     ContextUtils.findFunc(context, callFunc.name.getOrElse("")) match {
       case Some(func) => followFuncReturnType(func.returns, callObject, context, callIndex)
       case None => Left(ResourceNotFound(callFunc.context, callFunc.name.getOrElse("")))
     }
   }
 
-  def followFuncReturnType(params: Option[List[ValueType]], callObject: CallObject, context: Context, callIndex: Int): Either[ResolverError, Option[Element[_]]] = {
-    params match {
-      case Some(value) =>
-        if (value.length == 1) followParamType(value.head, callObject, context, callIndex)
-        else Right(None)
-      case None => Right(None)
+  def followFuncReturnType(params: Null[Array[ValueType]], callObject: CallObject, context: Context, callIndex: Int): Either[ResolverError, Null[Element[_]]] = {
+   if(params.isNotNull.get()) {
+        if (params.get().length().get() == 1) followParamType(params.get().getRecords[0], callObject, context, callIndex)
+        else Right(Null.empty().asInstanceOf[Null[Element[_]]])
+   } else{
+     Right(Null.empty().asInstanceOf[Null[Element[_]]])
     }
   }
 
-  def followModel(model: ModelSetValueType[_], callObject: CallObject, context: Context, callIndex: Int): Either[ResolverError, Option[Element[_]]] = {
+  def followModel(model: ModelSetValueType[_], callObject: CallObject, context: Context, callIndex: Int): Either[ResolverError, Null[Element[_]]] = {
     model match {
       case array: ModelSetArray => followSetArray(array, callObject, context, callIndex)
       case attr: ModelSetAttribute => followSetAttribute(attr, callObject, context, callIndex)
@@ -90,31 +91,31 @@ object FollowCallToTheEnd {
   //    }
   //  }
 
-  def followParamType(paramType: ValueType, callObject: CallObject, context: Context, callIndex: Int): Either[ResolverError, Option[Element[_]]] = {
+  def followParamType(paramType: ValueType, callObject: CallObject, context: Context, callIndex: Int): Either[ResolverError, Null[Element[_]]] = {
     paramType match {
-      case arrayType: ArrayType => Right(None)
-      case funcType: HelperFuncType => Right(None)
+      case arrayType: ArrayType =>Right(Null.empty().asInstanceOf[Null[Element[_]]])
+      case funcType: HelperFuncType => Right(Null.empty().asInstanceOf[Null[Element[_]]])
       case objType: ObjType => ContextUtils.findModel(context, objType.name) match {
-        case Some(value) => followNextCall(objType.getContext, Some(value), callObject, context, callIndex)
+        case Some(value) => followNextCall(objType.getContext, Null.of(value).asInstanceOf[Null[Element[_]]], callObject, context, callIndex)
         case None => Left(ResourceNotFound(objType.context, objType.name))
       }
     }
 
   }
 
-  def followSetArray(arrayType: ModelSetArray, callObject: CallObject, context: Context, callIndex: Int): Either[ResolverError, Option[Element[_]]] = {
-    Right(None)
+  def followSetArray(arrayType: ModelSetArray, callObject: CallObject, context: Context, callIndex: Int): Either[ResolverError, Null[Element[_]]] = {
+    Right(Null.empty().asInstanceOf[Null[Element[_]]])
   }
 
-  def followSetAttribute(attr: ModelSetAttribute, callObject: CallObject, context: Context, callIndex: Int): Either[ResolverError, Option[Element[_]]] = {
-    Right(None)
+  def followSetAttribute(attr: ModelSetAttribute, callObject: CallObject, context: Context, callIndex: Int): Either[ResolverError, Null[Element[_]]] = {
+    Right(Null.empty().asInstanceOf[Null[Element[_]]])
   }
 
-  def followSetFunc(funcDef: ModelSetFuncDef, callObject: CallObject, context: Context, callIndex: Int): Either[ResolverError, Option[Element[_]]] = {
-    Right(None)
+  def followSetFunc(funcDef: ModelSetFuncDef, callObject: CallObject, context: Context, callIndex: Int): Either[ResolverError, Null[Element[_]]] = {
+    Right(Null.empty().asInstanceOf[Null[Element[_]]])
   }
 
-  def followSetEntity(entity: ModelSetEntity, callObject: CallObject, context: Context, callIndex: Int): Either[ResolverError, Option[Element[_]]] = {
+  def followSetEntity(entity: ModelSetEntity, callObject: CallObject, context: Context, callIndex: Int): Either[ResolverError, Null[Element[_]]] = {
 
     def findInEntity(name: String, entity: ModelSetEntity): Either[ResolverError, Option[Element[_]]] = {
       findInAttrs(name, entity.params) match {
@@ -159,29 +160,29 @@ object FollowCallToTheEnd {
 
   }
 
-  def followSetRef(refFunc: ModelSetRef, callObject: CallObject, context: Context, callIndex: Int): Either[ResolverError, Option[Element[_]]] = {
+  def followSetRef(refFunc: ModelSetRef, callObject: CallObject, context: Context, callIndex: Int): Either[ResolverError, Null[Element[_]]] = {
     val name = refFunc.refs.mkString("/")
     ContextUtils.findFunc(context, name) match {
       case Some(func) => followFuncReturnType(func.returns, callObject, context, callIndex)
       case None =>
         ContextUtils.findRefFunc(context, name) match {
-          case Some(value) => Right(None)
+          case Some(value) => Right(Null.empty().asInstanceOf[Null[Element[_]]])
           case None => ContextUtils.findVar(context, name) match {
-            case Some(value) => Right(None)
+            case Some(value) => Right(Null.empty().asInstanceOf[Null[Element[_]]])
             case None => Left(ResourceNotFound(refFunc.getContext, name))
           }
         }
     }
   }
 
-  def followSetType(setType: ModelSetType, callObject: CallObject, context: Context, callIndex: Int): Either[ResolverError, Option[Element[_]]] = {
-    if (callIndex == callObject.statements.length - 1) Right(Some(setType))
-    else Right(None)
+  def followSetType(setType: ModelSetType, callObject: CallObject, context: Context, callIndex: Int): Either[ResolverError, Null[Element[_]]] = {
+    if (callIndex == callObject.statements.length - 1) Right(Null.of(setType).asInstanceOf[Null[Element[_]]])
+    else Right(Null.empty().asInstanceOf[Null[Element[_]]])
   }
 
-  def followNextCall(previousContext: Option[ContextContent], nextElement: Option[Element[_]], callObject: CallObject, context: Context, callIndex: Int): Either[ResolverError, Option[Element[_]]] = {
+  def followNextCall(previousContext: Null[ContextContent], nextElement: Null[Element[_]], callObject: CallObject, context: Context, callIndex: Int): Either[ResolverError, Null[Element[_]]] = {
     if (callIndex >= callObject.statements.length - 1) Right(nextElement)
-    else if (nextElement.isDefined) {
+    else if (nextElement.isNotNull.get()) {
       nextElement.get match {
         case entity: EntityValue => followEntity(entity, callObject, context, callIndex + 1)
         case setEntity: ModelSetEntity => followSetEntity(setEntity, callObject, context, callIndex + 1)
@@ -190,8 +191,8 @@ object FollowCallToTheEnd {
     } else Left(DoesNotExist(previousContext, callObject.statements(callIndex).toString))
   }
 
-  def followEntity(entity: EntityValue, callObject: CallObject, context: Context, callIndex: Int): Either[ResolverError, Option[Element[_]]] = {
-    Right(None)
+  def followEntity(entity: EntityValue, callObject: CallObject, context: Context, callIndex: Int): Either[ResolverError, Null[Element[_]]] = {
+    Right(Null.empty().asInstanceOf[Null[Element[_]]])
   }
 
 }

@@ -4,13 +4,12 @@ import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.operation.Operator
 import dev.tlang.tlang.ast.common.value.EntityValue
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
-import dev.tlang.tlang.astbuilder.context.ContextContent
-import dev.tlang.tlang.interpreter.Value
-import dev.tlang.tlang.tmpl.{DeepCopy, TmplNode}
 import dev.tlang.tlang.tmpl.lang.ast._
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
+import tlang.core.{Null, Value}
+import tlang.internal.{ContextContent, DeepCopy, TmplNode}
 
-case class LangOperation(context: Option[ContextContent], var content: Either[LangOperation, LangExpression[_]], var next: Option[(Operator.operator, LangOperation)] = None) extends DeepCopy with TmplNode[LangOperation] {
+case class LangOperation(context: Null[ContextContent], var content: Either[LangOperation, LangExpression[_]], var next: Option[(Operator.operator, LangOperation)] = None) extends DeepCopy with TmplNode[LangOperation] {
   override def deepCopy(): LangOperation = LangOperation(context,
     content match {
       case Left(value) => Left(value.deepCopy())
@@ -18,7 +17,7 @@ case class LangOperation(context: Option[ContextContent], var content: Either[La
     },
     if (next.isDefined) Some((next.get._1, next.get._2.deepCopy())) else None)
 
-  override def getContext: Option[ContextContent] = context
+  override def getContext: Null[ContextContent] = context
 
   override def compareTo(value: Value[LangOperation]): Int = 0
 
@@ -43,6 +42,6 @@ object LangOperation {
 
   val name: String = this.getClass.getSimpleName.replace("$", "")
 
-  val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
+  val model: ModelSetEntity = ModelSetEntity(Null.empty(), name, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
   )))
 }

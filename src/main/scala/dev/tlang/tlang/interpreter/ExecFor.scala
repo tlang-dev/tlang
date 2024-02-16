@@ -3,6 +3,7 @@ package dev.tlang.tlang.interpreter
 import dev.tlang.tlang.ast.common.value.{ArrayValue, TLangLong}
 import dev.tlang.tlang.ast.helper.{ForType, HelperFor, HelperStatement}
 import dev.tlang.tlang.interpreter.context.{Context, MutableContext, Scope}
+import tlang.core.{Long, Null, Value}
 
 object ExecFor extends Executor {
 
@@ -31,7 +32,7 @@ object ExecFor extends Executor {
       ExecOperation.run(array(i).value, context) match {
         case Left(err) => error = Some(err)
         case Right(elem) =>
-          newLocalScope.variables.update("_i", new TLangLong(None, i))
+          newLocalScope.variables.update("_i", new TLangLong(Null.empty(), new Long(i)))
           newScope.variables.update(forStatement.variable, elem.get.head)
           ExecContent.run(forStatement.body, newContext)
       }
@@ -45,13 +46,13 @@ object ExecFor extends Executor {
     val start = ExecOperation.run(forStatement.start.get, context).toOption.get.get.head.asInstanceOf[TLangLong].getElement
     val end = ExecOperation.run(forStatement.array, context).toOption.get.get.head.asInstanceOf[TLangLong].getElement
     val realEnd = forStatement.forType match {
-      case dev.tlang.tlang.ast.helper.ForType.TO => end
-      case dev.tlang.tlang.ast.helper.ForType.UNTIL => end - 1
+      case dev.tlang.tlang.ast.helper.ForType.TO => end.get()
+      case dev.tlang.tlang.ast.helper.ForType.UNTIL => end.get() - 1
     }
     val newScope = Scope()
     val newContext = Context(context.scopes :+ newScope)
-    for (i <- start to realEnd) {
-      newScope.variables.update(forStatement.variable, new TLangLong(None, i))
+    for (i <- start.get() to realEnd) {
+      newScope.variables.update(forStatement.variable, new TLangLong(Null.empty(), new Long(i)))
       ExecContent.run(forStatement.body, newContext)
     }
   }

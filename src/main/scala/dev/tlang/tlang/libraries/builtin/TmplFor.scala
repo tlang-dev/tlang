@@ -5,13 +5,14 @@ import dev.tlang.tlang.ast.common.call.{CallFuncObject, CallFuncParam, CallRefFu
 import dev.tlang.tlang.ast.common.value.{ArrayValue, TLangLong}
 import dev.tlang.tlang.ast.helper._
 import dev.tlang.tlang.interpreter.context.{Context, ContextUtils, Scope}
-import dev.tlang.tlang.interpreter.{ExecCallFunc, ExecError, Value}
+import dev.tlang.tlang.interpreter.{ExecCallFunc, ExecError}
+import tlang.core.{Long, Null, Value}
 
 import scala.collection.mutable.ListBuffer
 
 object TmplFor {
 
-  def tmplForFunc: HelperFunc = HelperFunc(None, "forEach", Some(List(HelperCurrying(None, List(HelperParam(None, Some("array"), ObjType(None, None, ArrayValue.getType)), HelperParam(None, Some("refFunc"), ObjType(None, None, CallRefFuncObject.getType)))))), None, HelperContent(None, Some(List(
+  def tmplForFunc: HelperFunc = HelperFunc(Null.empty(), "forEach", Some(List(HelperCurrying(Null.empty(), List(HelperParam(Null.empty(), Some("array"), ObjType(Null.empty(), None, ArrayValue.getType)), HelperParam(Null.empty(), Some("refFunc"), ObjType(Null.empty(), None, CallRefFuncObject.getType)))))), Null.empty(), HelperContent(Null.empty(), Some(List(
     HelperInternalFunc((context: Context) => {
       ContextUtils.findVar(context, "array") match {
         case Some(arrayVar) => ContextUtils.findRefFunc(context, "refFunc") match {
@@ -33,8 +34,8 @@ object TmplFor {
       val rets = ListBuffer.empty[Value[_]]
       var error: Option[ExecError] = None
       for (i <- array.indices) {
-        newScope.variables.update("_i", new TLangLong(None, i))
-        val newCaller = CallFuncObject(None, Some("refFunc"), Some(List(CallFuncParam(None, Some(List(SetAttribute(None, Some("_"), array(i).value)))))))
+        newScope.variables.update("_i", new TLangLong(Null.empty(), new Long(i)))
+        val newCaller = CallFuncObject(Null.empty(), Some("refFunc"), Some(List(CallFuncParam(Null.empty(), Some(List(SetAttribute(Null.empty(), Some("_"), array(i).value)))))))
         ExecCallFunc.run(newCaller, newContext) match {
           case Left(err) => error = Some(err)
           case Right(value) => value match {

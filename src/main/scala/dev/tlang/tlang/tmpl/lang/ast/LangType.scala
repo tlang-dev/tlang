@@ -3,7 +3,7 @@ package dev.tlang.tlang.tmpl.lang.ast
 import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.value.{EntityValue, NullValue}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
-import dev.tlang.tlang.tmpl.TmplNode
+import tlang.internal.TmplNode
 import dev.tlang.tlang.tmpl.lang.ast.call.LangCallFuncParam
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core.{Null, Value}

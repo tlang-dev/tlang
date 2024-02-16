@@ -3,14 +3,14 @@ package dev.tlang.tlang.tmpl.doc.ast
 import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.value.EntityValue
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
-import dev.tlang.tlang.astbuilder.context.ContextContent
-import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
+import tlang.core.{Null, Value}
+import tlang.internal.ContextContent
 
-case class DocText(context: Option[ContextContent], text: DocTextType[_]) extends DocContentType[DocText] {
+case class DocText(context: Null[ContextContent], text: DocTextType[_]) extends DocContentType[DocText] {
   override def deepCopy(): DocText = DocText(context, text.deepCopy().asInstanceOf[DocTextType[_]])
 
-  override def getContext: Option[ContextContent] = context
+  override def getContext: Null[ContextContent] = context
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, toModel.name)),
@@ -29,6 +29,6 @@ case class DocText(context: Option[ContextContent], text: DocTextType[_]) extend
 }
 
 object DocText {
-  val model: ModelSetEntity = ModelSetEntity(None, "DocText", Some(ObjType(None, None, DocModel.docModel.name)), None, Some(List(
+  val model: ModelSetEntity = ModelSetEntity(Null.empty(), "DocText", Some(ObjType(Null.empty(), None, DocModel.docModel.name)), None, Some(List(
   )))
 }

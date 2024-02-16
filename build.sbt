@@ -24,3 +24,7 @@ enablePlugins(Antlr4Plugin)
 coverageMinimum := 80
 coverageFailOnMinimum := false
 coverageHighlighting := true
+
+Compile / scalacOptions ++= Seq("-Xmaxerrs", "10000")
+
+

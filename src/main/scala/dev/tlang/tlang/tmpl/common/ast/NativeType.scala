@@ -2,7 +2,7 @@ package dev.tlang.tlang.tmpl.common.ast
 
 import dev.tlang.tlang.ast.common.value.EntityValue
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
-import dev.tlang.tlang.tmpl.TmplNode
+import tlang.internal.TmplNode
 import tlang.core.Null
 import tlang.internal.ContextContent
 
@@ -17,11 +17,12 @@ case class NativeType[T](context: Null[ContextContent], statement: T) extends Tm
 
   override def deepCopy(): NativeType[_] = NativeType(context, statement)
 
+  override def getContext: Null[ContextContent] = context
 }
 
 object NativeType {
 
   val name: String = this.getClass.getSimpleName.replace("$", "")
 
-  val model: ModelSetEntity = ModelSetEntity(None, name, None, None, None)
+  val model: ModelSetEntity = ModelSetEntity(Null.empty(), name, None, None, None)
 }

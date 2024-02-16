@@ -1,11 +1,6 @@
 package dev.tlang.tlang.tmpl.style.ast
 
-import dev.tlang.tlang.ast.common.ObjType
-import dev.tlang.tlang.ast.common.value.EntityValue
-import dev.tlang.tlang.ast.model.set.ModelSetEntity
-import dev.tlang.tlang.astbuilder.context.ContextContent
-import dev.tlang.tlang.interpreter.Value
-import dev.tlang.tlang.tmpl.TmplNode
+import tlang.internal.TmplNode
 
 trait StyleAttribute[T] extends TmplNode[T] {
 

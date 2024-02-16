@@ -1,6 +1,7 @@
 package dev.tlang.tlang.tmpl.lang.ast.call
 
-import dev.tlang.tlang.tmpl.TmplNode
+import tlang.internal.TmplNode
+import tlang.internal.TmplNode
 
 trait LangCallObjType[TYPE] extends TmplNode[TYPE]
 

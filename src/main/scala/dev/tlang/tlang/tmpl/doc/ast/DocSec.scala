@@ -3,13 +3,13 @@ package dev.tlang.tlang.tmpl.doc.ast
 import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.value.EntityValue
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
-import dev.tlang.tlang.astbuilder.context.ContextContent
-import dev.tlang.tlang.interpreter.Value
+import tlang.core.{Null, Value}
+import tlang.internal.ContextContent
 
-case class DocSec(context: Option[ContextContent], title: String, content: DocContent) extends DocContentType[DocSec] {
+case class DocSec(context: Null[ContextContent], title: String, content: DocContent) extends DocContentType[DocSec] {
   override def deepCopy(): DocSec = DocSec(context, new String(title), content.deepCopy())
 
-  override def getContext: Option[ContextContent] = context
+  override def getContext: Null[ContextContent] = context
 
   override def compareTo(value: Value[DocSec]): Int = 0
 
@@ -26,6 +26,6 @@ case class DocSec(context: Option[ContextContent], title: String, content: DocCo
 }
 
 object DocSec {
-  val model: ModelSetEntity = ModelSetEntity(None, "DocSec", Some(ObjType(None, None, DocModel.docModel.name)), None, Some(List(
+  val model: ModelSetEntity = ModelSetEntity(Null.empty(), "DocSec", Some(ObjType(Null.empty(), None, DocModel.docModel.name)), None, Some(List(
   )))
 }

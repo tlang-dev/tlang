@@ -4,7 +4,7 @@ import dev.tlang.tlang.tmpl.lang.ast.func.LangFunc
 import dev.tlang.tlang.generator.formatter.{FormatRule, Formatter, Indent}
 import dev.tlang.tlang.generator.langs.BlockGenerator
 import dev.tlang.tlang.generator.langs.common.GenParameter
-import dev.tlang.tlang.tmpl.TmplNode
+import tlang.internal.TmplNode
 
 object GenericFunc extends BlockGenerator {
 
@@ -15,7 +15,7 @@ object GenericFunc extends BlockGenerator {
     if (tmpl.annots.isDefined) tmpl.annots.get.foreach(annot => _ind = followUp(annot, str, _ind, rules, params))
     if (tmpl.props.isDefined) {
       str ++= " "
-      _ind = followUp(tmpl.props.get, str, _ind, rules, params)
+//      _ind = followUp(tmpl.props.get, str, _ind, rules, params)
     }
     if (tmpl.ret.isDefined) tmpl.ret.get.foreach(ret => {
       _ind = followUp(ret, str, _ind, rules, params)
@@ -29,7 +29,7 @@ object GenericFunc extends BlockGenerator {
     if (tmpl.curries.isDefined) tmpl.curries.get.foreach(curry => _ind = followUp(curry, str, _ind, rules, params))
     if (tmpl.postPros.isDefined) {
       str ++= " "
-      _ind = followUp(tmpl.postPros.get, str, _ind, rules, params)
+//      _ind = followUp(tmpl.postPros.get, str, _ind, rules, params)
     }
     if (tmpl.content.isDefined) _ind = followUp(tmpl.content.get, str, _ind, rules, params)
     _ind

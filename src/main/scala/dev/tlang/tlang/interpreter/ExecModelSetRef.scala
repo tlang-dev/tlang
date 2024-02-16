@@ -5,6 +5,7 @@ import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.helper.HelperStatement
 import dev.tlang.tlang.ast.model.set.{ModelSetRef, ModelSetRefCurrying, ModelSetRefValue}
 import dev.tlang.tlang.interpreter.context.{Context, ContextUtils}
+import tlang.core.{Null, Value}
 
 import scala.collection.mutable.ListBuffer
 
@@ -69,7 +70,7 @@ object ExecModelSetRef extends Executor {
           else Right(SetAttribute(setRef.context, None, Operation(setRef.context, None, Right(EmbeddedValue(setRef.context, value.get.head)))))
       }
       case operation: Operation => Right(SetAttribute(operation.context, None, operation))
-      case _ => Left(NotImplemented("Should be a ref or an operation", None))
+      case _ => Left(NotImplemented("Should be a ref or an operation", Null.empty()))
     }
   }
 }

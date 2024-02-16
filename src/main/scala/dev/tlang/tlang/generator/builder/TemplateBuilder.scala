@@ -3,10 +3,8 @@ package dev.tlang.tlang.generator.builder
 import dev.tlang.tlang.ast.common.call.CallObject
 import dev.tlang.tlang.generator.mapper.ValueMapper
 import dev.tlang.tlang.interpreter.context.Context
-import dev.tlang.tlang.interpreter.{ExecCallObject, ExecError, NoValue, Value}
-import dev.tlang.tlang.tmpl.common.ast
-import dev.tlang.tlang.tmpl.common.ast.{LangBlockID, TmplID, TmplInterpretedID, TmplReplacedId}
-import dev.tlang.tlang.tmpl.{AnyTmplInterpretedBlock, TmplNode}
+import dev.tlang.tlang.interpreter.{ExecCallObject, ExecError, NoValue}
+import dev.tlang.tlang.tmpl.AnyTmplInterpretedBlock
 import dev.tlang.tlang.tmpl.doc.ast.DocBlock
 import dev.tlang.tlang.tmpl.lang.ast._
 import dev.tlang.tlang.tmpl.lang.ast.call._
@@ -14,7 +12,7 @@ import dev.tlang.tlang.tmpl.lang.ast.condition.LangOperation
 import dev.tlang.tlang.tmpl.lang.ast.func.LangFunc
 import dev.tlang.tlang.tmpl.lang.ast.primitive.{LangArrayValue, LangEntityValue, LangStringValue, LangTextValue}
 import tlang.core.Value
-import tlang.internal.{TmplBlockId, TmplID, TmplInterpretedId, TmplReplacedId}
+import tlang.internal._
 
 import scala.collection.mutable.ListBuffer
 
@@ -298,7 +296,7 @@ object TemplateBuilder {
             if (value.length == 1) {
               buildValue(value.head) match {
                 case Left(error) => Left(error)
-                case Right(value) => Right(List(new TmplReplacedId(tmplID.getContext, inter.pre, value, inter.post)))
+                case Right(value) => Right(List(new TmplReplacedId(tmplID.getContext, inter.getPre, value, inter.getPost)))
               }
             } else buildValues(value)
           case None => Left(NoValue("No value returned", tmplID.getContext))
