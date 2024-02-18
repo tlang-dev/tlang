@@ -12,10 +12,10 @@ public class TmplReplacedId extends TmplID {
 
     private final Null<String> pre;
 
-    private final TmplNode<?> node;
+    private final TmplNode node;
     private final Null<String> post;
 
-    public TmplReplacedId(Null<ContextContent> context, Null<String> pre, TmplNode<?> node, Null<String> post) {
+    public TmplReplacedId(Null<ContextContent> context, Null<String> pre, TmplNode node, Null<String> post) {
         this.context = context;
         this.pre = pre;
         this.node = node;
@@ -24,16 +24,6 @@ public class TmplReplacedId extends TmplID {
 
     @Override
     public Value<?> deepCopy() {
-        return null;
-    }
-
-    @Override
-    public TmplID getElement() {
-        return null;
-    }
-
-    @Override
-    public String getType() {
         return null;
     }
 
@@ -55,7 +45,7 @@ public class TmplReplacedId extends TmplID {
         return pre;
     }
 
-    public TmplNode<?> getNode() {
+    public TmplNode getNode() {
         return node;
     }
 

@@ -1,5 +1,7 @@
 package tlang.core;
 
+import tlang.internal.ContextContent;
+
 public class Error implements Value<Error> {
 
     private final String code;
@@ -50,7 +52,12 @@ public class Error implements Value<Error> {
     }
 
     @Override
-    public String getType() {
+    public Type getType() {
+        return null;
+    }
+
+    @Override
+    public Null<ContextContent> getContext() {
         return null;
     }
 }

@@ -16,12 +16,6 @@ case class LangParam(context: Null[ContextContent], var annots: Option[List[Lang
     if (`type`.isDefined) Some(`type`.get.deepCopy()) else None)
 
 
-  override def compareTo(value: Value[LangParam]): Int = 0
-
-  override def getElement: LangParam = this
-
-  override def getType: String = getClass.getSimpleName
-
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, LangParam.name)),
     Some(List(
@@ -38,6 +32,8 @@ case class LangParam(context: Null[ContextContent], var annots: Option[List[Lang
   )
 
   override def toModel: ModelSetEntity = LangParam.model
+
+  override def getContext: Null[ContextContent] = context
 }
 
 object LangParam {

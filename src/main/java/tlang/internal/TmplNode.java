@@ -2,9 +2,8 @@ package tlang.internal;
 
 import tlang.Entity;
 import tlang.core.Model;
-import tlang.core.Value;
 
-public interface TmplNode<T> extends Value<T>, DeepCopy, AstContext {
+public interface TmplNode<T> extends DeepCopy, AstContext {
 
     String name = TmplNode.class.getSimpleName();
 

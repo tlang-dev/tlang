@@ -3,7 +3,7 @@ package dev.tlang.tlang.tmpl.lang.astbuilder
 import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value._
 import tlang.core.{Bool, Null, Value}
-import tlang.internal.ContextContent
+import tlang.internal.{ContextContent, TmplNode}
 import tlang.{Entity, core}
 
 object BuildLang {
@@ -67,13 +67,13 @@ object BuildLang {
 
   def createAttrInt(context: Null[ContextContent], name: String, value: Int): ComplexAttribute = {
     ComplexAttribute(context, Some(name), None, Operation(
-      context, None, Right(new TLangLong(context, value))
+      context, None, Right(new TLangLong(context, new core.Long(value)))
     ))
   }
 
   def createAttrLong(context: Null[ContextContent], name: String, value: Long): ComplexAttribute = {
     ComplexAttribute(context, Some(name), None, Operation(
-      context, None, Right(new TLangLong(context, value))
+      context, None, Right(new TLangLong(context, new core.Long(value)))
     ))
   }
 
@@ -89,9 +89,11 @@ object BuildLang {
     ))
   }
 
-  def createAttrNull(context: Null[ContextContent], name: String, value: Null[Value[_]], valueType: Option[TLangType]): ComplexAttribute = {
+  def createAttrNull(context: Null[ContextContent], name: String, value: Option[TmplNode], valueType: Option[TLangType]): ComplexAttribute = {
     ComplexAttribute(context, Some(name), None, Operation(
-      context, None, Right(new NullValue[Value[_]](context, value, valueType))
+      context, None, Right(new NullValue[Value[_]](context,
+        if(value.isDefined) Null.of(value.get.toEntity) else Null.empty(),
+        valueType))
     ))
   }
 

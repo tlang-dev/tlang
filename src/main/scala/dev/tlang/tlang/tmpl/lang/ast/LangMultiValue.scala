@@ -12,12 +12,6 @@ case class LangMultiValue(context: Null[ContextContent], var values: List[LangVa
 
   override def getContext: Null[ContextContent] = context
 
-  override def compareTo(value: Value[LangMultiValue]): Int = 0
-
-  override def getElement: LangMultiValue = this
-
-  override def getType: String = getClass.getSimpleName
-
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, LangMultiValue.name)),
     Some(List(
@@ -31,7 +25,7 @@ case class LangMultiValue(context: Null[ContextContent], var values: List[LangVa
 object LangMultiValue {
   val name: String = this.getClass.getSimpleName.replace("$", "")
 
-  val model: ModelSetEntity = ModelSetEntity(Null.empty(), name, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
+  val model: ModelSetEntity = ModelSetEntity(Null.empty(), name, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
     ModelSetAttribute(Null.empty(), Some("values"), ModelSetType(Null.empty(), ArrayValue.getType)),
   )))
 }

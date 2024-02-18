@@ -1,7 +1,8 @@
 package tlang.internal;
 
 import tlang.core.Int;
-import tlang.core.String;
+import tlang.core.Null;
+import tlang.core.Type;
 import tlang.core.Value;
 
 public class ContextContent implements Value<ContextContent>, DeepCopy{
@@ -42,7 +43,12 @@ public class ContextContent implements Value<ContextContent>, DeepCopy{
     }
 
     @Override
-    public String getType() {
+    public Type getType() {
+        return null;
+    }
+
+    @Override
+    public Null<ContextContent> getContext() {
         return null;
     }
 }

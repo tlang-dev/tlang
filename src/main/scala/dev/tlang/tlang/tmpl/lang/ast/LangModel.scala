@@ -7,25 +7,26 @@ import dev.tlang.tlang.tmpl.lang.ast.condition.LangOperation
 import dev.tlang.tlang.tmpl.lang.ast.func.{LangAnnotationParam, LangAnonFunc, LangFunc, LangFuncParam}
 import dev.tlang.tlang.tmpl.lang.ast.loop.{LangDoWhile, LangFor, LangWhile}
 import dev.tlang.tlang.tmpl.lang.ast.primitive._
+import tlang.core.Null
 
 object LangModel {
 
-  val langResource: ModelSetEntity = ModelSetEntity(None, "LangResource", None, None, Some(List(
-    ModelSetAttribute(None, Some("rootDir"), ModelSetType(None, TLangString.getType)),
-    ModelSetAttribute(None, Some("fromRoot"), ModelSetType(None, TLangString.getType)),
-    ModelSetAttribute(None, Some("pkg"), ModelSetType(None, TLangString.getType)),
-    ModelSetAttribute(None, Some("name"), ModelSetType(None, TLangString.getType)),
+  val langResource: ModelSetEntity = ModelSetEntity(Null.empty(), "LangResource", None, None, Some(List(
+    ModelSetAttribute(Null.empty(), Some("rootDir"), ModelSetType(Null.empty(), TLangString.getType)),
+    ModelSetAttribute(Null.empty(), Some("fromRoot"), ModelSetType(Null.empty(), TLangString.getType)),
+    ModelSetAttribute(Null.empty(), Some("pkg"), ModelSetType(Null.empty(), TLangString.getType)),
+    ModelSetAttribute(Null.empty(), Some("name"), ModelSetType(Null.empty(), TLangString.getType)),
   )))
 
-  val langContext: ModelSetEntity = ModelSetEntity(None, "LangContext", None, None, Some(List(
-    ModelSetAttribute(None, Some("resource"), langResource),
-    ModelSetAttribute(None, Some("line"), ModelSetType(None, TLangDouble.getType)),
-    ModelSetAttribute(None, Some("charPos"), ModelSetType(None, TLangDouble.getType)),
+  val langContext: ModelSetEntity = ModelSetEntity(Null.empty(), "LangContext", None, None, Some(List(
+    ModelSetAttribute(Null.empty(), Some("resource"), langResource),
+    ModelSetAttribute(Null.empty(), Some("line"), ModelSetType(Null.empty(), TLangDouble.getType)),
+    ModelSetAttribute(Null.empty(), Some("charPos"), ModelSetType(Null.empty(), TLangDouble.getType)),
 
   )))
 
-  val langNode: ModelSetEntity = ModelSetEntity(None, "LangNode", None, None, Some(List(
-    ModelSetAttribute(None, Some("context"), langContext)
+  val langNode: ModelSetEntity = ModelSetEntity(Null.empty(), "LangNode", None, None, Some(List(
+    ModelSetAttribute(Null.empty(), Some("context"), langContext)
   )))
 
   val getAll: List[ModelSetEntity] = List(

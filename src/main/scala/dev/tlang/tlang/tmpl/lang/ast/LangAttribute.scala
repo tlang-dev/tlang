@@ -3,11 +3,10 @@ package dev.tlang.tlang.tmpl.lang.ast
 import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.value.{EntityValue, NullValue}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
-import tlang.internal.TmplNode
 import dev.tlang.tlang.tmpl.lang.ast.condition.LangOperation
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
-import tlang.core.{Null, Value}
-import tlang.internal.{ContextContent, TmplID}
+import tlang.core.Null
+import tlang.internal.{ContextContent, TmplID, TmplNode}
 
 case class LangAttribute(context: Null[ContextContent], var attr: Option[TmplID], var `type`: Option[LangType], var value: LangOperation) extends TmplNode[LangAttribute] {
   override def deepCopy(): LangAttribute = LangAttribute(context,
@@ -16,22 +15,15 @@ case class LangAttribute(context: Null[ContextContent], var attr: Option[TmplID]
     value.deepCopy()
   )
 
-
-  override def compareTo(value: Value[LangAttribute]): Int = 0
-
-  override def getElement: LangAttribute = this
-
-  override def getType: String = getClass.getSimpleName
-
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, LangAttribute.name)),
     Some(List(
       BuildLang.createAttrNull(context, "attr",
-        if (attr.isDefined) Null.of(attr.get.toEntity) else Null.empty(),
+        attr,
         None
       ),
       BuildLang.createAttrNull(context, "tType",
-        if (`type`.isDefined) Null.of(`type`.get.toEntity) else Null.empty(),
+        `type`,
         None
       ),
       BuildLang.createAttrEntity(context, "value", value.toEntity),

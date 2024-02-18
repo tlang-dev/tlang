@@ -12,12 +12,6 @@ case class LangReturn(context: Option[ContextContent], var operation: LangOperat
   override def deepCopy(): LangReturn = LangReturn(context, operation.deepCopy())
 
 
-  override def compareTo(value: Value[LangReturn]): Int = 0
-
-  override def getElement: LangReturn = this
-
-  override def getType: String = getClass.getSimpleName
-
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, LangReturn.name)),
     Some(List(
@@ -32,7 +26,7 @@ object LangReturn {
 
   val name: String = this.getClass.getSimpleName.replace("$", "")
 
-  val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
+  val model: ModelSetEntity = ModelSetEntity(Null.empty(), name, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
     ModelSetAttribute(Null.empty(), Some("operation"), ModelSetType(Null.empty(), LangOperation.name)),
   )))
 

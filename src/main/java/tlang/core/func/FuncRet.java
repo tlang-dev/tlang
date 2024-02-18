@@ -3,10 +3,11 @@ package tlang.core.func;
 import tlang.core.Error;
 import tlang.core.Void;
 import tlang.core.*;
+import tlang.internal.ContextContent;
 
 import java.lang.String;
 
-public class FuncRet<T extends Value<T>> implements Value<FuncRet<T>> {
+public class FuncRet<T> implements Value<FuncRet<T>> {
 
     public static final FuncRet<Void> VOID = new FuncRet<>();
 
@@ -19,7 +20,7 @@ public class FuncRet<T extends Value<T>> implements Value<FuncRet<T>> {
         this.error = Null.empty();
     }
 
-    public FuncRet(T ret) {
+    public FuncRet(Value<T> ret) {
         this.ret = Null.of(ret);
         this.error = Null.empty();
     }
@@ -39,7 +40,7 @@ public class FuncRet<T extends Value<T>> implements Value<FuncRet<T>> {
     }
 
     public FuncRet<T> onError(OnError onError) {
-        error.ifNotNull(onError::onError);
+        error.ifNotNull(value -> onError.onError(value.getElement()));
         return this;
     }
 
@@ -94,9 +95,13 @@ public class FuncRet<T extends Value<T>> implements Value<FuncRet<T>> {
     }
 
     @Override
-    public tlang.core.String getType() {
+    public Type getType() {
         return null;
     }
 
 
+    @Override
+    public Null<ContextContent> getContext() {
+        return null;
+    }
 }

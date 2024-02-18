@@ -6,19 +6,19 @@ import tlang.core.func.FuncRet;
 import tlang.core.func.MapFunc;
 import tlang.internal.ContextContent;
 
-public class Null<T extends Value<T>> implements Value<Null<T>> {
+public class Null<T> implements Value<Null<T>> {
 
-    private final T value;
+    private final Value<T> value;
 
     public Null() {
-        this.value = null;
+        this.value = new None<>();
     }
 
-    public Null(T value) {
+    public Null(Value<T> value) {
         this.value = value;
     }
 
-    public T get() {
+    public Value<T> get() {
         return value;
     }
 
@@ -30,11 +30,11 @@ public class Null<T extends Value<T>> implements Value<Null<T>> {
         return new Bool(value != null);
     }
 
-    public <B> B map(MapFunc<T, B> func) {
+    public <B> Value<B> map(MapFunc<T, B> func) {
         return func.apply(value);
     }
 
-    public FuncRet<T> orElse(T orElse) {
+    public FuncRet<T> orElse(Value<T> orElse) {
         return new FuncRet<T>((this.get() == null ? orElse : this.get()));
     }
 
@@ -52,15 +52,15 @@ public class Null<T extends Value<T>> implements Value<Null<T>> {
         return this;
     }
 
-    public static <T extends Value<T>> Null<T> of(T value) {
+    public static <T> Null<T> of(Value<T> value) {
         return new Null<>(value);
     }
 
-    public static <T extends Value<T>> Null<T> empty() {
+    public static <T> Null<T> empty() {
         return new Null<>();
     }
 
-    public static <T extends Value<T>> FuncRet<T> orElse(Null<T> that, T orElse) {
+    public static <T> FuncRet<T> orElse(Null<T> that, Value<T> orElse) {
         return new FuncRet<>((that.get() == null ? orElse : that.get()));
     }
 

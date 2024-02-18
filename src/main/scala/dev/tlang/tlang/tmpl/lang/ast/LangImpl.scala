@@ -3,10 +3,9 @@ package dev.tlang.tlang.tmpl.lang.ast
 import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.value.{EntityValue, NullValue}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
-import tlang.internal.TmplNode
+import tlang.internal.{AstContext, ContextContent, TmplID, TmplNode}
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core.{Null, Value}
-import tlang.internal.{ContextContent, TmplID}
 
 case class LangImpl(context: Null[ContextContent], var annots: Option[List[LangAnnotation]] = None, var props: Option[LangProp] = None, var name: TmplID, var fors: Option[LangImplFor], var withs: Option[LangImplWith], var content: Option[List[TmplNode[_]]] = None) extends LangContent[LangImpl] with AstContext {
   override def deepCopy(): LangImpl = LangImpl(context,
@@ -17,12 +16,6 @@ case class LangImpl(context: Null[ContextContent], var annots: Option[List[LangA
     if (withs.isDefined) Some(withs.get.deepCopy()) else None,
     if (content.isDefined) Some(content.get.map(_.deepCopy().asInstanceOf[LangContent[_]])) else None
   )
-
-  override def compareTo(value: Value[LangImpl]): Int = 0
-
-  override def getElement: LangImpl = this
-
-  override def getType: String = getClass.getSimpleName
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, LangImpl.name)),

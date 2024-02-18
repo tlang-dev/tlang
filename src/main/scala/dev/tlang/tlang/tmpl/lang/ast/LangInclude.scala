@@ -4,20 +4,14 @@ import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.call.CallObject
 import dev.tlang.tlang.ast.common.value.{ArrayValue, EntityValue}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
-import dev.tlang.tlang.astbuilder.context.ContextContent
-import dev.tlang.tlang.interpreter.Value
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
+import tlang.core.Null
+import tlang.internal.ContextContent
 
-case class LangInclude(context: Option[ContextContent], calls: List[CallObject]) extends LangExpression[LangInclude] {
+case class LangInclude(context: Null[ContextContent], calls: List[CallObject]) extends LangExpression[LangInclude] {
   override def deepCopy(): LangInclude = LangInclude(context, calls)
 
-  override def getContext: Option[ContextContent] = context
-
-  override def compareTo(value: Value[LangInclude]): Int = 0
-
-  override def getElement: LangInclude = this
-
-  override def getType: String = getClass.getSimpleName
+  override def getContext: Null[ContextContent] = context
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, LangInclude.name)),
@@ -32,7 +26,7 @@ case class LangInclude(context: Option[ContextContent], calls: List[CallObject])
 object LangInclude {
   val name: String = this.getClass.getSimpleName.replace("$", "")
 
-  val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
-    ModelSetAttribute(None, Some("calls"), ModelSetType(None, ArrayValue.getType)),
+  val model: ModelSetEntity = ModelSetEntity(Null.empty(), name, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
+    ModelSetAttribute(Null.empty(), Some("calls"), ModelSetType(Null.empty(), ArrayValue.getType)),
   )))
 }

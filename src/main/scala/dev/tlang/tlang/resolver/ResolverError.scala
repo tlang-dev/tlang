@@ -7,7 +7,7 @@ class ResolverError(val code: String, val message: String = "")
 
 object ResolverError {
   def genMessage(context: Null[ContextContent]): String = {
-    if (context.isNotNull.get()) "[" + context.get.getResource.getFromRoot + "/" + context.get.getResource.getPkg + "/" + context.get.getResource.getName + "(" + context.get.getLine + ":" + context.get.getCharPos + ")] "
+    if (context.isNotNull.get()) "[" + context.get.asInstanceOf[ContextContent].getResource.getFromRoot + "/" + context.get.asInstanceOf[ContextContent].getResource.getPkg + "/" + context.get.asInstanceOf[ContextContent].getResource.getName + "(" + context.get.asInstanceOf[ContextContent].getLine + ":" + context.get.asInstanceOf[ContextContent].getCharPos + ")] "
     else ""
   }
 }
