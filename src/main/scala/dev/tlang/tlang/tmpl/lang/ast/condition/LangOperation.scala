@@ -1,12 +1,12 @@
 package dev.tlang.tlang.tmpl.lang.ast.condition
 
-import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.operation.Operator
 import dev.tlang.tlang.ast.common.value.EntityValue
+import dev.tlang.tlang.ast.common.{ManualType, ObjType}
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.tmpl.lang.ast._
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
-import tlang.core.{Null, Value}
+import tlang.core.{Null, Type, Value}
 import tlang.internal.{ContextContent, DeepCopy, TmplNode}
 
 case class LangOperation(context: Null[ContextContent], var content: Either[LangOperation, LangExpression[_]], var next: Option[(Operator.operator, LangOperation)] = None) extends DeepCopy with TmplNode[LangOperation] {
@@ -26,7 +26,7 @@ case class LangOperation(context: Null[ContextContent], var content: Either[Lang
   override def getType: String = getClass.getSimpleName
 
   override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, LangOperation.name)),
+    Some(ObjType(context, None, LangOperation.modelType)),
     Some(List(
       BuildLang.createAttrEntity(context, "content", content match {
         case Left(value) => value.toEntity
@@ -40,8 +40,8 @@ case class LangOperation(context: Null[ContextContent], var content: Either[Lang
 
 object LangOperation {
 
-  val name: String = this.getClass.getSimpleName.replace("$", "")
+  val modelType: Type = ManualType(LangModel.pkg, this.getClass.getSimpleName.replace("$", ""))
 
-  val model: ModelSetEntity = ModelSetEntity(Null.empty(), name, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
+  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelType, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
   )))
 }

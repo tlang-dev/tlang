@@ -9,19 +9,18 @@ import dev.tlang.tlang.tmpl.doc.astbuilder.BuildDoc
 import dev.tlang.tlang.tmpl.lang.ast
 import dev.tlang.tlang.tmpl.lang.ast._
 import dev.tlang.tlang.tmpl.lang.ast.condition.LangOperation
-import dev.tlang.tlang.tmpl.lang.ast.func.LangAnonFunc
+import dev.tlang.tlang.tmpl.lang.ast.func.{LangAnnotationParam, LangAnonFunc}
 import dev.tlang.tlang.tmpl.lang.ast.loop.ForType.ForType
 import dev.tlang.tlang.tmpl.lang.ast.loop.{ForType, LangFor}
 import dev.tlang.tlang.tmpl.lang.ast.primitive._
 import dev.tlang.tlang.tmpl.style.astbuilder.BuildStyle
-import dev.tlang.tlang.tmpl.{AnyTmplInterpretedBlock, TmplNode}
-import tlang.internal.ContextResource
+import tlang.internal.{AnyTmplBlock, ContextResource, TmplNode}
 
 import scala.jdk.CollectionConverters._
 
 object BuildTmplBlock {
 
-  def build(resource: ContextResource, tmpl: TmplBlockContext): AnyTmplInterpretedBlock[_] = {
+  def build(resource: ContextResource, tmpl: TmplBlockContext): AnyTmplBlock[_] = {
 
     tmpl match {
       case lang@_ if lang.tmplLang() != null => buildLangBlock(resource, tmpl.tmplLang())

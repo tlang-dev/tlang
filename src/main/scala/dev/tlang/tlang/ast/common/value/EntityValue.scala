@@ -1,23 +1,23 @@
 package dev.tlang.tlang.ast.common.value
 
-import dev.tlang.tlang.ast.common.{ObjType, ValueType}
+import dev.tlang.tlang.ast.common.{ManualType, ObjType, ValueType}
 import dev.tlang.tlang.ast.model.set.{ModelSetEntity, ModelSetRefValue}
 import dev.tlang.tlang.interpreter.context.{Context, Scope}
 import dev.tlang.tlang.interpreter.{ExecError, ExecOperation, NotImplemented}
 import dev.tlang.tlang.tmpl.lang.ast.LangModel
-import tlang.core.{Bool, Model, Null}
-import tlang.internal.{AstContext, ContextContent}
+import tlang.core.{Bool, Model, Null, Type}
+import tlang.internal.{AstContext, ContextContent, Element}
 import tlang.{Entity, core}
 
 case class EntityValue(context: Null[ContextContent],
                        var `type`: Option[ValueType],
                        attrs: Option[List[ComplexAttribute]] = None,
                        scope: Scope = Scope())
-  extends PrimitiveValue[EntityValue] with Entity with ModelSetRefValue with AstContext {
+  extends PrimitiveValue[EntityValue] with Entity with ModelSetRefValue with Element[EntityValue] with AstContext {
 
   override def getElement: EntityValue = this
 
-  override def getType: String = if (`type`.isDefined) `type`.get.getContextType else getClass.getSimpleName
+  override def getType: Type = if (`type`.isDefined) `type`.get.getContextType else getClass.getSimpleName
 
   override def add(value: PrimitiveValue[EntityValue]): Either[ExecError, EntityValue] = Left(NotImplemented(context = context))
 
@@ -32,7 +32,7 @@ case class EntityValue(context: Null[ContextContent],
   override def deepCopy(): EntityValue = EntityValue(context, `type`, attrs, scope)
 
   override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, EntityValue.name)),
+    Some(ObjType(context, None, EntityValue.modelName)),
     Some(List())
   )
 
@@ -71,9 +71,12 @@ case class EntityValue(context: Null[ContextContent],
 }
 
 object EntityValue {
+
   val name: String = this.getClass.getSimpleName.replace("$", "")
 
-  val model: ModelSetEntity = ModelSetEntity(Null.empty(), name, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
+  val modelName: Type = ManualType(getClass.getPackageName, name)
+
+  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
   )))
 
 }

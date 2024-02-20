@@ -1,5 +1,6 @@
 package dev.tlang.tlang.tmpl.lang.astbuilder
 
+import dev.tlang.tlang.ast.common.call.ComplexValueStatement
 import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value._
 import tlang.core.{Bool, Null, Value}
@@ -89,23 +90,23 @@ object BuildLang {
     ))
   }
 
-  def createAttrNull(context: Null[ContextContent], name: String, value: Option[TmplNode], valueType: Option[TLangType]): ComplexAttribute = {
+  def createAttrNull(context: Null[ContextContent], name: String, value: Null[TmplNode[_]], valueType: Option[TLangType]): ComplexAttribute = {
     ComplexAttribute(context, Some(name), None, Operation(
       context, None, Right(new NullValue[Value[_]](context,
-        if(value.isDefined) Null.of(value.get.toEntity) else Null.empty(),
+        if (value.isNotNull.get()) Null.of(value.get.getElement.toEntity) else Null.empty(),
         valueType))
     ))
   }
 
   def createAttrEntity(context: Null[ContextContent], name: String, value: Entity): ComplexAttribute = {
     ComplexAttribute(context, Some(name), None, Operation(
-      context, None, Right(value)
-    ))
+      context, None, Right(value.asInstanceOf[ComplexValueStatement[_]]
+      )))
   }
 
   def createArray(context: Null[ContextContent], name: String, values: List[Entity]): ComplexAttribute = {
     ComplexAttribute(context, Some(name),
-      None, Operation(context, None, Right(ArrayValue(context, Some(values.map(value => ComplexAttribute(context, None, None, Operation(context, None, Right(value))))))))
+      None, Operation(context, None, Right(ArrayValue(context, Some(values.map(value => ComplexAttribute(context, None, None, Operation(context, None, Right(value.asInstanceOf[ComplexValueStatement[_]]))))))))
     )
   }
 

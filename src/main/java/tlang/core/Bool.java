@@ -2,8 +2,12 @@ package tlang.core;
 
 import tlang.core.func.ApplyVoidFunc;
 import tlang.core.func.FuncRet;
+import tlang.internal.ClassType;
+import tlang.internal.ContextContent;
 
 public class Bool implements Value<Bool> {
+
+    public static final Type TYPE = ClassType.of(Bool.class);
 
     public static final Bool TRUE = new Bool(true);
 
@@ -72,7 +76,12 @@ public class Bool implements Value<Bool> {
     }
 
     @Override
-    public String getType() {
-        return new String(getClass().getSimpleName());
+    public Type getType() {
+        return TYPE;
+    }
+
+    @Override
+    public Null<ContextContent> getContext() {
+        return null;
     }
 }

@@ -1,11 +1,10 @@
 package dev.tlang.tlang.tmpl.data.ast
 
-import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.value.EntityValue
+import dev.tlang.tlang.ast.common.{ManualType, ObjType}
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
-import tlang.internal.TmplNode
-import tlang.core.{Null, Value}
-import tlang.internal.ContextContent
+import tlang.core.{Null, Type}
+import tlang.internal.{ContextContent, TmplNode}
 
 case class DataAttribute(context: Null[ContextContent]) extends TmplNode[DataAttribute] {
   override def toEntity: EntityValue = EntityValue(context,
@@ -16,10 +15,6 @@ case class DataAttribute(context: Null[ContextContent]) extends TmplNode[DataAtt
 
   override def toModel: ModelSetEntity = DataBlock.model
 
-  override def compareTo(value: Value[DataAttribute]): Int = 0
-
-  override def getElement: DataAttribute = this
-
   override def getType: String = getClass.getSimpleName
 
   override def deepCopy(): DataBlock = DataBlock(context)
@@ -27,7 +22,13 @@ case class DataAttribute(context: Null[ContextContent]) extends TmplNode[DataAtt
   override def getContext: Null[ContextContent] = context
 }
 
-object DataAttribute{
-  val model: ModelSetEntity = ModelSetEntity(Null.empty(), "DataAttribute", Some(ObjType(Null.empty(), None, DataModel.dataModel.name)), None, Some(List(
+object DataAttribute {
+
+  val name: String = this.getClass.getSimpleName.replace("$", "")
+
+  val modelName: Type = ManualType(getClass.getPackageName, name)
+
+
+  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, Some(ObjType(Null.empty(), None, DataModel.dataModel.name)), None, Some(List(
   )))
 }

@@ -1,9 +1,6 @@
 package dev.tlang.tlang.libraries
 
 import dev.tlang.tlang.libraries.generator.GenModule
-import dev.tlang.tlang.libraries.std.entity.StdEntityModule
-import dev.tlang.tlang.libraries.tio.file.IOFileModule
-import dev.tlang.tlang.libraries.tio.terminal.TerminalModule
 import dev.tlang.tlang.libraries.tmpl._
 import dev.tlang.tlang.loader.Module
 import dev.tlang.tlang.loader.manifest.{Dependency, Stability}
@@ -16,11 +13,11 @@ object Modules {
   val releaseNumber = 1
 
   private val tLangModules: Map[String, Module] = Map(
-    TerminalModule.getModuleName -> TerminalModule.getModule,
+//    TerminalModule.getModuleName -> TerminalModule.getModule,
     GenModule.getModuleName -> GenModule.getModule,
-    IOFileModule.getModuleName -> IOFileModule.getModule,
+//    IOFileModule.getModuleName -> IOFileModule.getModule,
 //    StdBuilderModule.getModuleName -> StdBuilderModule.getModule,
-    StdEntityModule.getModuleName -> StdEntityModule.getModule,
+//    StdEntityModule.getModuleName -> StdEntityModule.getModule,
     LangModule.getModuleName -> LangModule.getModule,
     CmdModule.getModuleName -> CmdModule.getModule,
     DataModule.getModuleName -> DataModule.getModule,

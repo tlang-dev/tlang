@@ -1,5 +1,5 @@
 package dev.tlang.tlang.ast.model.set
 
-import tlang.internal.Element
+import tlang.core.Value
 
-trait ModelSetValueType[T] extends Element[T]
+trait ModelSetValueType[T] extends Value[ModelSetValueType[T]]

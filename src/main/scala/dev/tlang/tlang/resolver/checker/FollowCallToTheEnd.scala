@@ -51,11 +51,11 @@ object FollowCallToTheEnd {
   }
 
   def followFuncReturnType(params: Null[Array[ValueType]], callObject: CallObject, context: Context, callIndex: Int): Either[ResolverError, Null[Element[_]]] = {
-   if(params.isNotNull.get()) {
-        if (params.get().length().get() == 1) followParamType(params.get().getRecords[0], callObject, context, callIndex)
-        else Right(Null.empty().asInstanceOf[Null[Element[_]]])
-   } else{
-     Right(Null.empty().asInstanceOf[Null[Element[_]]])
+    if (params.isNotNull.get()) {
+      if (params.get().getElement.length().get() == 1) followParamType(params.get().getElement.getRecords[0], callObject, context, callIndex)
+      else Right(Null.empty().asInstanceOf[Null[Element[_]]])
+    } else {
+      Right(Null.empty().asInstanceOf[Null[Element[_]]])
     }
   }
 
@@ -93,11 +93,11 @@ object FollowCallToTheEnd {
 
   def followParamType(paramType: ValueType, callObject: CallObject, context: Context, callIndex: Int): Either[ResolverError, Null[Element[_]]] = {
     paramType match {
-      case arrayType: ArrayType =>Right(Null.empty().asInstanceOf[Null[Element[_]]])
+      case arrayType: ArrayType => Right(Null.empty().asInstanceOf[Null[Element[_]]])
       case funcType: HelperFuncType => Right(Null.empty().asInstanceOf[Null[Element[_]]])
-      case objType: ObjType => ContextUtils.findModel(context, objType.name) match {
+      case objType: ObjType => ContextUtils.findModel(context, objType.name.getSimpleType.toString) match {
         case Some(value) => followNextCall(objType.getContext, Null.of(value).asInstanceOf[Null[Element[_]]], callObject, context, callIndex)
-        case None => Left(ResourceNotFound(objType.context, objType.name))
+        case None => Left(ResourceNotFound(objType.context, objType.name.getSimpleType.toString))
       }
     }
 

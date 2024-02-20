@@ -1,8 +1,9 @@
 package dev.tlang.tlang.tmpl
 
+import dev.tlang.tlang.ast.common.ManualType
 import dev.tlang.tlang.ast.helper.HelperParam
 import dev.tlang.tlang.interpreter.context.Scope
-import tlang.internal.AnyTmplBlock
+import tlang.internal.{AnyTmplBlock, ClassType}
 
 trait AnyTmplInterpretedBlock[T] extends AnyTmplBlock[T] {
 
@@ -19,4 +20,6 @@ trait AnyTmplInterpretedBlock[T] extends AnyTmplBlock[T] {
 object AnyTmplInterpretedBlock {
 
   val name: String = this.getClass.getSimpleName.replace("$", "")
+
+  val modelType: ManualType = ManualType(this.getClass.getPackageName, this.name)
 }

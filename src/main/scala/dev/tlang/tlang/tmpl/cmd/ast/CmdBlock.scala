@@ -1,11 +1,10 @@
 package dev.tlang.tlang.tmpl.cmd.ast
 
-import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.value.EntityValue
+import dev.tlang.tlang.ast.common.{ManualType, ObjType}
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
-import tlang.internal.TmplNode
-import tlang.core.{Null, Value}
-import tlang.internal.ContextContent
+import tlang.core.Null
+import tlang.internal.{ContextContent, TmplNode}
 
 case class CmdBlock(context: Null[ContextContent]) extends TmplNode[CmdBlock] {
   override def toEntity: EntityValue = EntityValue(context,
@@ -15,10 +14,6 @@ case class CmdBlock(context: Null[ContextContent]) extends TmplNode[CmdBlock] {
 
   override def toModel: ModelSetEntity = CmdBlock.model
 
-  override def compareTo(value: Value[CmdBlock]): Int = 0
-
-  override def getElement: CmdBlock = this
-
   override def getType: String = getClass.getSimpleName
 
   override def getContext: Null[ContextContent] = context
@@ -27,6 +22,10 @@ case class CmdBlock(context: Null[ContextContent]) extends TmplNode[CmdBlock] {
 }
 
 object CmdBlock {
-  val model: ModelSetEntity = ModelSetEntity(Null.empty(), "CmdBlock", Some(ObjType(Null.empty(), None, CmdModel.cmdModel.name)), None, Some(List(
+  val name: String = this.getClass.getSimpleName.replace("$", "")
+
+  val modelName: ManualType = ManualType(getClass.getPackageName, name)
+
+  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, Some(ObjType(Null.empty(), None, CmdModel.cmdModel.name)), None, Some(List(
   )))
 }

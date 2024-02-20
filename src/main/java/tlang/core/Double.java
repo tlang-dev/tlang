@@ -1,6 +1,11 @@
 package tlang.core;
 
-public class Double {
+import tlang.internal.ClassType;
+import tlang.internal.ContextContent;
+
+public class Double implements Value<Double> {
+
+    public static final Type TYPE = ClassType.of(Double.class);
 
     private final double value;
 
@@ -10,5 +15,20 @@ public class Double {
 
     public double get() {
         return value;
+    }
+
+    @Override
+    public Null<ContextContent> getContext() {
+        return null;
+    }
+
+    @Override
+    public Double getElement() {
+        return this;
+    }
+
+    @Override
+    public Type getType() {
+        return TYPE;
     }
 }

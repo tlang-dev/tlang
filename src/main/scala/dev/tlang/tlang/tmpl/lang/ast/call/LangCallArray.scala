@@ -35,6 +35,6 @@ object LangCallArray {
 
   val model: ModelSetEntity = ModelSetEntity(Null.empty(), name, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
     ModelSetAttribute(Null.empty(), Some("name"), ModelSetType(Null.empty(), TmplID.name)),
-    ModelSetAttribute(Null.empty(), Some("operation"), ModelSetType(Null.empty(), LangOperation.name)),
+    ModelSetAttribute(Null.empty(), Some("operation"), ModelSetType(Null.empty(), LangOperation.modelType)),
   )))
 }

@@ -8,6 +8,7 @@ import dev.tlang.tlang.tmpl.common.astbuilder.BuildCommonTmpl
 import dev.tlang.tlang.tmpl.lang.ast.LangParam
 import dev.tlang.tlang.tmpl.lang.ast.func.{LangFunc, LangFuncParam}
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildTmplBlock._
+import tlang.internal.ContextResource
 
 import scala.jdk.CollectionConverters._
 

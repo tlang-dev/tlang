@@ -1,12 +1,12 @@
 package dev.tlang.tlang.tmpl.lang.ast
 
-import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.operation.Operation
-import dev.tlang.tlang.ast.common.value.{ArrayValue, ComplexAttribute, EntityValue, NullValue}
+import dev.tlang.tlang.ast.common.value.{ArrayValue, ComplexAttribute, EntityValue}
+import dev.tlang.tlang.ast.common.{ManualType, ObjType}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.tmpl.lang.ast.func.LangAnnotationParam
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
-import tlang.core.{Null, Value}
+import tlang.core.{Null, Type}
 import tlang.internal.{AstContext, ContextContent, TmplID}
 
 case class LangAnnotation(context: Null[ContextContent], var name: TmplID, var values: Option[List[LangAnnotationParam]]) extends LangContent[LangAnnotation] with AstContext {
@@ -15,14 +15,12 @@ case class LangAnnotation(context: Null[ContextContent], var name: TmplID, var v
 
   override def getContext: Null[ContextContent] = context
 
-  override def compareTo(value: Value[LangAnnotation]): Int = 0
-
   override def getElement: LangAnnotation = this
 
   override def getType: String = getClass.getSimpleName
 
   override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, LangAnnotation.name)),
+    Some(ObjType(context, None, LangAnnotation.modelName)),
     Some(List(
       BuildLang.createAttrEntity(context, "name", name.toEntity),
       BuildLang.createAttrNull(context, "values",
@@ -36,10 +34,13 @@ case class LangAnnotation(context: Null[ContextContent], var name: TmplID, var v
 }
 
 object LangAnnotation {
+
   val name: String = this.getClass.getSimpleName.replace("$", "")
 
-  val model: ModelSetEntity = ModelSetEntity(Null.empty(), name, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
-    ModelSetAttribute(Null.empty(), Some("name"), ModelSetType(Null.empty(), TmplID.name.toString)),
-    ModelSetAttribute(Null.empty(), Some("values"), ModelSetType(Null.empty(), NullValue.name)),
+  val modelName: Type = ManualType(getClass.getPackageName, name)
+
+  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
+    ModelSetAttribute(Null.empty(), Some("name"), ModelSetType(Null.empty(), TmplID.TYPE)),
+    ModelSetAttribute(Null.empty(), Some("values"), ModelSetType(Null.empty(), Null.TYPE)),
   )))
 }

@@ -3,7 +3,7 @@ package tlang.internal;
 import tlang.Entity;
 import tlang.core.Model;
 import tlang.core.Null;
-import tlang.core.String;
+import tlang.core.Type;
 import tlang.core.Value;
 
 public class TmplBlockId extends TmplID {
@@ -28,8 +28,8 @@ public class TmplBlockId extends TmplID {
     }
 
     @Override
-    public String getType() {
-        return new String(getClass().getSimpleName());
+    public Type getType() {
+        return ClassType.of(TmplBlockId.class);
     }
 
     @Override
@@ -40,5 +40,14 @@ public class TmplBlockId extends TmplID {
     @Override
     public Model toModel() {
         return null;
+    }
+
+    public AnyTmplBlock<?> getBlock() {
+        return block;
+    }
+
+    @Override
+    public Null<ContextContent> getContext() {
+        return context;
     }
 }

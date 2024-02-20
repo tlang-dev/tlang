@@ -1,5 +1,6 @@
 package dev.tlang.tlang.tmpl.lang.ast
 
+import dev.tlang.tlang.ast.common.ManualType
 import dev.tlang.tlang.ast.common.value.{TLangDouble, TLangString}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.tmpl.lang.ast.call._
@@ -11,21 +12,23 @@ import tlang.core.Null
 
 object LangModel {
 
-  val langResource: ModelSetEntity = ModelSetEntity(Null.empty(), "LangResource", None, None, Some(List(
+  val pkg = "tlang.tmpl.lang"
+
+  val langResource: ModelSetEntity = ModelSetEntity(Null.empty(), ManualType(pkg, "LangResource"), None, None, Some(List(
     ModelSetAttribute(Null.empty(), Some("rootDir"), ModelSetType(Null.empty(), TLangString.getType)),
     ModelSetAttribute(Null.empty(), Some("fromRoot"), ModelSetType(Null.empty(), TLangString.getType)),
     ModelSetAttribute(Null.empty(), Some("pkg"), ModelSetType(Null.empty(), TLangString.getType)),
     ModelSetAttribute(Null.empty(), Some("name"), ModelSetType(Null.empty(), TLangString.getType)),
   )))
 
-  val langContext: ModelSetEntity = ModelSetEntity(Null.empty(), "LangContext", None, None, Some(List(
+  val langContext: ModelSetEntity = ModelSetEntity(Null.empty(), ManualType(pkg, "LangContext"), None, None, Some(List(
     ModelSetAttribute(Null.empty(), Some("resource"), langResource),
     ModelSetAttribute(Null.empty(), Some("line"), ModelSetType(Null.empty(), TLangDouble.getType)),
     ModelSetAttribute(Null.empty(), Some("charPos"), ModelSetType(Null.empty(), TLangDouble.getType)),
 
   )))
 
-  val langNode: ModelSetEntity = ModelSetEntity(Null.empty(), "LangNode", None, None, Some(List(
+  val langNode: ModelSetEntity = ModelSetEntity(Null.empty(), ManualType(pkg, "LangNode"), None, None, Some(List(
     ModelSetAttribute(Null.empty(), Some("context"), langContext)
   )))
 

@@ -1,17 +1,17 @@
 package dev.tlang.tlang.ast.common.value
 
 import dev.tlang.tlang.ast.common.{ObjType, ValueType}
-import dev.tlang.tlang.ast.model.set.ModelSetEntity
+import dev.tlang.tlang.ast.model.set.{ModelSetEntity, ModelSetValueType}
 import dev.tlang.tlang.interpreter.ExecError
 import dev.tlang.tlang.tmpl.lang.ast.LangModel
 import tlang.core
-import tlang.core.Null
+import tlang.core.{Null, Type, Value}
 import tlang.internal.{AstContext, ContextContent}
 
 class TLangLong(context: Null[ContextContent], value: core.Long) extends PrimitiveValue[core.Long] with AstContext {
   override def getElement: core.Long = value
 
-  override def getType: String = TLangLong.getType
+  override def getType: Type = TLangLong.getType
 
   override def toString: String = getElement.toString
 
@@ -27,6 +27,8 @@ class TLangLong(context: Null[ContextContent], value: core.Long) extends Primiti
 
   override def deepCopy(): TLangLong = new TLangLong(context, value)
 
+  override def compareTo(other: Value[ModelSetValueType[core.Long]]): core.Int = super.compareTo(other)
+
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, TLangLong.getType)),
     Some(List())
@@ -39,7 +41,7 @@ class TLangLong(context: Null[ContextContent], value: core.Long) extends Primiti
 }
 
 object TLangLong extends TLangType {
-  override def getType: String = "Long"
+  override def getType: Type = core.Long.TYPE
 
   override def getValueType: ValueType = ObjType(Null.empty(), Some("TLang"), getType)
 }

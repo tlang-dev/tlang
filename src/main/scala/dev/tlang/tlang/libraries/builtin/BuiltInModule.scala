@@ -58,7 +58,7 @@ object BuiltInModule {
             case None => new TLangString(Null.empty(), "Not found")
           })
 
-          val ret = method.invoke(null, args: _*).asInstanceOf[FuncRet]
+          val ret = method.invoke(null, args: _*).asInstanceOf[FuncRet[_]]
           Right(Some(List(ret)))
         })
       )))

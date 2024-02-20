@@ -1,8 +1,12 @@
 package tlang.internal;
 
 import tlang.core.String;
+import tlang.core.Type;
+import tlang.core.Value;
 
-public abstract class TmplID implements TmplNode {
+public abstract class TmplID implements TmplNode<TmplID>, Value<TmplID> {
+
+    public static final Type TYPE = ClassType.of(TmplID.class);
 
     public String toStr() {
         if (this instanceof TmplStringId) {

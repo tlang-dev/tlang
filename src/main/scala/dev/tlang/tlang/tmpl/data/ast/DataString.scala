@@ -1,11 +1,10 @@
 package dev.tlang.tlang.tmpl.data.ast
 
-import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.value.EntityValue
+import dev.tlang.tlang.ast.common.{ManualType, ObjType}
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
-import tlang.internal.TmplNode
-import tlang.core.{Null, Value}
-import tlang.internal.ContextContent
+import tlang.core.{Null, Type}
+import tlang.internal.{ContextContent, TmplNode}
 
 case class DataString(context: Null[ContextContent]) extends TmplNode[DataString] {
 
@@ -17,10 +16,6 @@ case class DataString(context: Null[ContextContent]) extends TmplNode[DataString
 
   override def toModel: ModelSetEntity = DataString.model
 
-  override def compareTo(value: Value[DataString]): Int = 0
-
-  override def getElement: DataString = this
-
   override def getType: String = getClass.getSimpleName
 
   override def deepCopy(): Any = DataString(context)
@@ -29,6 +24,11 @@ case class DataString(context: Null[ContextContent]) extends TmplNode[DataString
 }
 
 object DataString {
-  val model: ModelSetEntity = ModelSetEntity(Null.empty(), "DataString", Some(ObjType(Null.empty(), None, DataModel.dataModel.name)), None, Some(List(
+
+  val name: String = this.getClass.getSimpleName.replace("$", "")
+
+  val modelName: Type = ManualType(getClass.getPackageName, name)
+
+  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, Some(ObjType(Null.empty(), None, DataModel.dataModel.name)), None, Some(List(
   )))
 }

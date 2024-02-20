@@ -4,6 +4,7 @@ import dev.tlang.tlang.ast.helper.HelperFunc
 import dev.tlang.tlang.ast.model.ModelContent
 import dev.tlang.tlang.libraries.ModulePattern
 import dev.tlang.tlang.tmpl.lang.ast.LangModel
+import tlang.core
 
 object LangModule extends ModulePattern {
 
@@ -11,7 +12,7 @@ object LangModule extends ModulePattern {
 
   override def getName: String = "Lang"
 
-  override def getFunctions: List[HelperFunc] = List()
+  override def getFunctions: core.Array[HelperFunc] = core.Array.empty().asInstanceOf[Array[HelperFunc]]
 
   override def getModels: List[ModelContent[_]] = LangModel.getAll
 

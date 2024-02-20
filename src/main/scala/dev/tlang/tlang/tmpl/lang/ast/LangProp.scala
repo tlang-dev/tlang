@@ -1,10 +1,10 @@
 package dev.tlang.tlang.tmpl.lang.ast
 
-import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.value.{ArrayValue, EntityValue}
+import dev.tlang.tlang.ast.common.{ManualType, ObjType}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
-import tlang.core.{Null, Value}
+import tlang.core.{Null, Type}
 import tlang.internal._
 
 case class LangProp(context: Null[ContextContent], var props: List[TmplID]) extends DeepCopy with AstContext with TmplNode[LangProp] {
@@ -12,14 +12,12 @@ case class LangProp(context: Null[ContextContent], var props: List[TmplID]) exte
 
   override def getContext: Null[ContextContent] = context
 
-  override def compareTo(value: Value[LangProp]): Int = 0
-
   override def getElement: LangProp = this
 
   override def getType: String = getClass.getSimpleName
 
   override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, LangProp.name)),
+    Some(ObjType(context, None, LangProp.modelName)),
     Some(List(
       BuildLang.createArray(context, "props", props.map(_.toEntity))
     ))
@@ -32,7 +30,9 @@ object LangProp {
 
   val name: String = this.getClass.getSimpleName.replace("$", "")
 
-  val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
+  val modelName: Type = ManualType(LangModel.pkg, name)
+
+  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
     ModelSetAttribute(Null.empty(), Some("props"), ModelSetType(Null.empty(), ArrayValue.getType)),
   )))
 }

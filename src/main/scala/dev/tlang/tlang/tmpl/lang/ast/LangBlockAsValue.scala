@@ -6,20 +6,18 @@ import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSe
 import dev.tlang.tlang.interpreter.context.Context
 import dev.tlang.tlang.tmpl.AnyTmplInterpretedBlock
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
-import tlang.core.{Null, Value}
+import tlang.core.{Null, Type, Value}
 import tlang.internal.{ContextContent, TmplNode}
 
-case class LangBlockAsValue(astContext: Null[ContextContent], var block: AnyTmplInterpretedBlock[_], context: Context) extends TmplNode[AnyTmplInterpretedBlock[_]] {
+case class LangBlockAsValue(astContext: Null[ContextContent], var block: AnyTmplInterpretedBlock[_], context: Context) extends TmplNode[AnyTmplInterpretedBlock[_]] with Value[LangBlockAsValue] {
   override def getElement: AnyTmplInterpretedBlock[_] = this.block
 
-  override def getType: String = LangBlockAsValue.getType
-
-  override def compareTo(value: Value[AnyTmplInterpretedBlock[_]]): Int = 0
+  override def getType: Type = LangBlockAsValue.getType
 
   override def deepCopy(): LangBlockAsValue = new LangBlockAsValue(astContext, block.deepCopy().asInstanceOf[AnyTmplInterpretedBlock[_]], context)
 
   override def toEntity: EntityValue = EntityValue(astContext,
-    Some(ObjType(astContext, None, LangBlockAsValue.name)),
+    Some(ObjType(astContext, None, LangBlockAsValue.modelType)),
     Some(List(
       BuildLang.createAttrEntity(astContext, "block", block.toEntity),
     ))
@@ -31,13 +29,12 @@ case class LangBlockAsValue(astContext: Null[ContextContent], var block: AnyTmpl
 }
 
 object LangBlockAsValue extends TLangType {
-  override def getType: String = "LangBlock"
 
   override def getValueType: ValueType = ObjType(Null.empty(), Some("TLang"), getType)
 
-  val name: String = getType
+  val modelType: Type = getType
 
-  val model: ModelSetEntity = ModelSetEntity(Null.empty(), name, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
-    ModelSetAttribute(Null.empty(), Some("block"), ModelSetType(Null.empty(), AnyTmplInterpretedBlock.name)),
+  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelType, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
+    ModelSetAttribute(Null.empty(), Some("block"), ModelSetType(Null.empty(), AnyTmplInterpretedBlock.modelType)),
   )))
 }

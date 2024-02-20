@@ -1,12 +1,12 @@
 package dev.tlang.tlang.tmpl.lang.ast
 
-import dev.tlang.tlang.ast.common.ObjType
+import dev.tlang.tlang.ast.common.{ManualType, ObjType}
 import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value._
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.tmpl.lang.ast.condition.LangOperation
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
-import tlang.core.{Null, Value}
+import tlang.core.{Null, Type, Value}
 import tlang.internal.{AstContext, ContextContent, TmplID}
 
 case class LangVar(context: Null[ContextContent], var annots: Option[List[LangAnnotation]] = None, var props: Option[LangProp] = None, var name: TmplID, var `type`: Option[LangType], var value: Option[LangOperation], isOptional: Boolean) extends LangExpression[LangVar] with AstContext {
@@ -21,14 +21,12 @@ case class LangVar(context: Null[ContextContent], var annots: Option[List[LangAn
 
   override def getContext: Null[ContextContent] = context
 
-  override def compareTo(value: Value[LangVar]): Int = 0
-
   override def getElement: LangVar = this
 
   override def getType: String = getClass.getSimpleName
 
   override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, LangVar.name)),
+    Some(ObjType(context, None, LangVar.modelName)),
     Some(List(
       BuildLang.createAttrNull(context, "annots",
         if (annots.isDefined) Some(ArrayValue(context, Some(annots.get.map(value => ComplexAttribute(context, None, None, Operation(context, None, Right(value.toEntity))))))) else None,
@@ -57,12 +55,14 @@ case class LangVar(context: Null[ContextContent], var annots: Option[List[LangAn
 object LangVar {
   val name: String = this.getClass.getSimpleName.replace("$", "")
 
-  val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
-    ModelSetAttribute(Null.empty(), Some("annots"), ModelSetType(Null.empty(), NullValue.name)),
-    ModelSetAttribute(Null.empty(), Some("props"), ModelSetType(Null.empty(), NullValue.name)),
-    ModelSetAttribute(Null.empty(), Some("name"), ModelSetType(Null.empty(), TmplID.name)),
-    ModelSetAttribute(Null.empty(), Some("tType"), ModelSetType(Null.empty(), NullValue.name)),
-    ModelSetAttribute(Null.empty(), Some("value"), ModelSetType(Null.empty(), NullValue.name)),
+  val modelName: Type = ManualType(LangModel.pkg, name)
+
+  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
+    ModelSetAttribute(Null.empty(), Some("annots"), ModelSetType(Null.empty(), Null.TYPE)),
+    ModelSetAttribute(Null.empty(), Some("props"), ModelSetType(Null.empty(), Null.TYPE)),
+    ModelSetAttribute(Null.empty(), Some("name"), ModelSetType(Null.empty(), TmplID.TYPE)),
+    ModelSetAttribute(Null.empty(), Some("tType"), ModelSetType(Null.empty(), Null.TYPE)),
+    ModelSetAttribute(Null.empty(), Some("value"), ModelSetType(Null.empty(), Null.TYPE)),
     ModelSetAttribute(Null.empty(), Some("isOptional"), ModelSetType(Null.empty(), TLangBool.getType)),
   )))
 }

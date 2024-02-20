@@ -13,7 +13,7 @@ import scala.collection.mutable
 
 object Generator {
 
-  def generateFunc: HelperFunc = HelperFunc(Null.empty(), "generate", Some(List(HelperCurrying(Null.empty(), List(HelperParam(Null.empty(), Some("block"), ObjType(Null.empty(), None, LangBlockAsValue.getType)))))),
+  /*def generateFunc: HelperFunc = HelperFunc(Null.empty(), "generate", Some(List(HelperCurrying(Null.empty(), List(HelperParam(Null.empty(), Some("block"), ObjType(Null.empty(), None, LangBlockAsValue.getType)))))),
     Null.of(List(ObjType(Null.empty(), None, TLangString.getType))), HelperContent(Null.empty(), Some(List(
       HelperInternalFunc((context: Context) => {
         ContextUtils.findVar(context, "block") match {
@@ -56,6 +56,6 @@ object Generator {
       }
       case None => Left(ElementNotFound("Could not find a generator for this language: " + block.block.getLangs.head, block.block.getContext))
     }
-  }
+  }*/
 
 }

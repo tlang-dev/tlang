@@ -1,11 +1,12 @@
 package dev.tlang.tlang.tmpl.lang.ast
 
-import dev.tlang.tlang.ast.common.ObjType
-import dev.tlang.tlang.ast.common.value.{EntityValue, NullValue}
+import dev.tlang.tlang.ast.common.value.EntityValue
+import dev.tlang.tlang.ast.common.{ManualType, ObjType}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
+import dev.tlang.tlang.tmpl.doc.ast.DocModel
 import dev.tlang.tlang.tmpl.lang.ast.condition.LangOperation
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
-import tlang.core.{Null, Value}
+import tlang.core.{Null, Type}
 import tlang.internal.{AstContext, ContextContent}
 
 case class LangIf(context: Null[ContextContent], cond: LangOperation, content: LangExprContent[_], elseBlock: Option[Either[LangExprContent[_], LangIf]]) extends LangExpression[LangIf] with AstContext {
@@ -18,14 +19,12 @@ case class LangIf(context: Null[ContextContent], cond: LangOperation, content: L
 
   override def getContext: Null[ContextContent] = context
 
-  override def compareTo(value: Value[LangIf]): Int = 0
-
   override def getElement: LangIf = this
 
   override def getType: String = getClass.getSimpleName
 
   override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, LangIf.name)),
+    Some(ObjType(context, None, LangIf.modelName)),
     Some(List(
       BuildLang.createAttrEntity(context, "cond", cond.toEntity),
       BuildLang.createAttrEntity(context, "content", content.toEntity),
@@ -38,9 +37,11 @@ case class LangIf(context: Null[ContextContent], cond: LangOperation, content: L
 object LangIf {
   val name: String = this.getClass.getSimpleName.replace("$", "")
 
-  val model: ModelSetEntity = ModelSetEntity(Null.empty(), name, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
-    ModelSetAttribute(Null.empty(), Some("cond"), ModelSetType(Null.empty(), LangOperation.name)),
-    ModelSetAttribute(Null.empty(), Some("content"), ModelSetType(Null.empty(), LangExprContent.name)),
-    ModelSetAttribute(Null.empty(), Some("elseBlock"), ModelSetType(Null.empty(), NullValue.name)),
+  val modelName: Type = ManualType(DocModel.pkg, name)
+
+  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
+    ModelSetAttribute(Null.empty(), Some("cond"), ModelSetType(Null.empty(), LangOperation.modelType)),
+    ModelSetAttribute(Null.empty(), Some("content"), ModelSetType(Null.empty(), LangExprContent.modelName)),
+    ModelSetAttribute(Null.empty(), Some("elseBlock"), ModelSetType(Null.empty(), Null.TYPE)),
   )))
 }

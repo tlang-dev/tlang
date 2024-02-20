@@ -1,10 +1,10 @@
 package dev.tlang.tlang.tmpl.lang.ast
 
-import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.value.{ArrayValue, EntityValue}
+import dev.tlang.tlang.ast.common.{ManualType, ObjType}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
-import tlang.core.{Null, Value}
+import tlang.core.{Null, Type}
 import tlang.internal.{AstContext, ContextContent}
 
 case class LangMultiValue(context: Null[ContextContent], var values: List[LangValueType[_]]) extends LangValueType[LangMultiValue] with AstContext {
@@ -13,19 +13,25 @@ case class LangMultiValue(context: Null[ContextContent], var values: List[LangVa
   override def getContext: Null[ContextContent] = context
 
   override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, LangMultiValue.name)),
+    Some(ObjType(context, None, LangMultiValue.modelName)),
     Some(List(
       BuildLang.createArray(context, "values", values.map(_.toEntity))
     ))
   )
 
   override def toModel: ModelSetEntity = LangMultiValue.model
+
+  override def getElement: LangMultiValue = this
+
+  override def getType: Type = LangMultiValue.modelName
 }
 
 object LangMultiValue {
   val name: String = this.getClass.getSimpleName.replace("$", "")
 
-  val model: ModelSetEntity = ModelSetEntity(Null.empty(), name, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
+  val modelName: Type = ManualType(LangModel.pkg, name)
+
+  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
     ModelSetAttribute(Null.empty(), Some("values"), ModelSetType(Null.empty(), ArrayValue.getType)),
   )))
 }

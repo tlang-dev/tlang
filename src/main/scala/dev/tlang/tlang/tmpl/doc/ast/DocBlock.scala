@@ -1,8 +1,7 @@
 package dev.tlang.tlang.tmpl.doc.ast
 
-import dev.tlang.tlang.ast.DomainBlock
-import dev.tlang.tlang.ast.common.ObjType
-import dev.tlang.tlang.ast.common.value.{EntityValue, NullValue, TLangString}
+import dev.tlang.tlang.ast.common.value.{EntityValue, TLangString}
+import dev.tlang.tlang.ast.common.{ManualType, ObjType}
 import dev.tlang.tlang.ast.helper.HelperParam
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.interpreter.context.Scope
@@ -10,8 +9,8 @@ import dev.tlang.tlang.tmpl.AnyTmplInterpretedBlock
 import dev.tlang.tlang.tmpl.common.ast.NativeType
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core
-import tlang.core.{Null, Value}
-import tlang.internal.{ContextContent, TmplStringId}
+import tlang.core.{Null, Type}
+import tlang.internal.{ContextContent, DomainBlock, TmplStringId}
 
 case class DocBlock(context: Null[ContextContent], name: String, langs: List[String],
                     var params: Option[List[NativeType[HelperParam]]], content: DocContent, scope: Scope = Scope()) extends DomainBlock with AnyTmplInterpretedBlock[DocBlock] {
@@ -26,17 +25,13 @@ case class DocBlock(context: Null[ContextContent], name: String, langs: List[Str
 
   override def toModel: ModelSetEntity = DocBlock.model
 
-  override def compareTo(value: Value[DocBlock]): Int = 0
-
-  override def getElement: DocBlock = this
-
   override def getType: String = getClass.getSimpleName
 
   override def getContext: Null[ContextContent] = context
 
   override def deepCopy(): Any = DocBlock(context, new String(name), langs.map(new String(_)), params, content.deepCopy(), scope)
 
-  override def getParams: Option[List[HelperParam]] = params.map(_.map(_.getElement))
+  override def getParams: Option[List[HelperParam]] = params.map(_.map(_.statement))
 
   override def getLangs: List[String] = langs
 
@@ -49,10 +44,13 @@ object DocBlock {
 
   val name: String = this.getClass.getSimpleName.replace("$", "")
 
-  val model: ModelSetEntity = ModelSetEntity(Null.empty(), name, Some(ObjType(Null.empty(), None, DocModel.docModel.name)), None, Some(List(
+  val modelName: Type = ManualType(getClass.getPackageName, name)
+
+
+  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, Some(ObjType(Null.empty(), None, DocModel.docModel.name)), None, Some(List(
     ModelSetAttribute(Null.empty(), Some("name"), ModelSetType(Null.empty(), TLangString.getType)),
     ModelSetAttribute(Null.empty(), Some("langs"), ModelSetType(Null.empty(), TLangString.getType)),
-    ModelSetAttribute(Null.empty(), Some("params"), ModelSetType(Null.empty(), NullValue.name)),
-    ModelSetAttribute(Null.empty(), Some("content"), ModelSetType(Null.empty(), DocContent.name)),
+    ModelSetAttribute(Null.empty(), Some("params"), ModelSetType(Null.empty(), Null.TYPE)),
+    ModelSetAttribute(Null.empty(), Some("content"), ModelSetType(Null.empty(), DocContent.modelName)),
   )))
 }

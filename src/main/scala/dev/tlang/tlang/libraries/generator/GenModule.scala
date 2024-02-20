@@ -11,7 +11,7 @@ object GenModule extends ModulePattern{
   override def getName: String = "Generator"
 
   override def getFunctions: List[HelperFunc] = List(
-    Generator.generateFunc
+//    Generator.generateFunc
   )
 
   override def getModels: List[ModelContent[_]] = List()

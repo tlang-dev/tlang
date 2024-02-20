@@ -11,10 +11,6 @@ import tlang.internal.{ContextContent, DeepCopy, TmplNode}
 case class LangCallObjectLink(context: Null[ContextContent], var link: String = ".", var call: LangCallObjType[_]) extends DeepCopy with TmplNode[LangCallObjectLink] {
   override def deepCopy(): LangCallObjectLink = LangCallObjectLink(context, link, call.deepCopy().asInstanceOf[LangCallObjType[_]])
 
-  override def compareTo(value: Value[LangCallObjectLink]): Int = 0
-
-  override def getElement: LangCallObjectLink = this
-
   override def getType: String = getClass.getSimpleName
 
   override def toEntity: EntityValue = EntityValue(context,

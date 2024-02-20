@@ -17,4 +17,6 @@ abstract class PrimitiveValue[TYPE] extends ComplexValueStatement[TYPE] with Mod
 
   def modulo(value: PrimitiveValue[TYPE]): Either[ExecError, PrimitiveValue[TYPE]]
 
+  def compareTo(value: PrimitiveValue[TYPE]): Either[ExecError, PrimitiveValue[TYPE]]
+
 }

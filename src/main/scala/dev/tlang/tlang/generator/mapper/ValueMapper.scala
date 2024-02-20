@@ -1,5 +1,6 @@
 package dev.tlang.tlang.generator.mapper
 
+import dev.tlang.tlang.ast.common.call.{CallObject, CallObjectType}
 import dev.tlang.tlang.ast.common.value.TLangString
 import dev.tlang.tlang.interpreter.ExecCallObject
 import dev.tlang.tlang.interpreter.context.Context
@@ -407,7 +408,7 @@ object ValueMapper {
 
   def mapID(id: TmplID, context: Context): TmplStringId = {
     id match {
-      case interId: TmplInterpretedId => ExecCallObject.run(interId.call, context) match {
+      case interId: TmplInterpretedId => ExecCallObject.run(interId.getNativeType.getNativeElement.asInstanceOf[CallObject], context) match {
         case Left(error) =>new TmplStringId(interId.getContext, new core.String(error.message))
         case Right(value) => if (value.isDefined) {
           value.get.head match {

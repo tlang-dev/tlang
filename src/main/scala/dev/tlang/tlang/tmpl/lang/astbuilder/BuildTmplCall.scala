@@ -6,6 +6,7 @@ import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.tmpl.common.astbuilder.BuildCommonTmpl
 import dev.tlang.tlang.tmpl.lang.ast.call._
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildTmplBlock._
+import tlang.internal.ContextResource
 
 import scala.jdk.CollectionConverters._
 

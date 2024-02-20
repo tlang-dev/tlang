@@ -1,18 +1,16 @@
 package dev.tlang.tlang.tmpl.doc.ast
 
-import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.call.CallObject
 import dev.tlang.tlang.ast.common.value.EntityValue
+import dev.tlang.tlang.ast.common.{ManualType, ObjType}
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
-import tlang.core.{Null, Value}
+import tlang.core.{Null, Type}
 import tlang.internal.ContextContent
 
 case class DocInclude(context: Null[ContextContent], call: CallObject) extends DocTextType[DocInclude] {
   override def deepCopy(): DocInclude = DocInclude(context, call)
 
   override def getContext: Null[ContextContent] = context
-
-  override def compareTo(value: Value[DocInclude]): Int = 0
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, toModel.name)),
@@ -27,6 +25,11 @@ case class DocInclude(context: Null[ContextContent], call: CallObject) extends D
 }
 
 object DocInclude {
-  val model: ModelSetEntity = ModelSetEntity(Null.empty(), "DocInclude", Some(ObjType(Null.empty(), None, DocModel.docModel.name)), None, Some(List(
+
+  val name: String = this.getClass.getSimpleName.replace("$", "")
+
+  val modelName: Type = ManualType(DocModel.pkg, name)
+
+  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, Some(ObjType(Null.empty(), None, DocModel.docModel.name)), None, Some(List(
   )))
 }

@@ -4,13 +4,13 @@ import dev.tlang.tlang.ast.common.{ObjType, ValueType}
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.interpreter.{ExecError, NotImplemented}
 import dev.tlang.tlang.tmpl.lang.ast.LangModel
-import tlang.core.{Bool, Int, Null, Value}
+import tlang.core.{Bool, Int, Null, Type, Value}
 import tlang.internal.{AstContext, ContextContent}
 
 class TLangBool(context: Null[ContextContent], value: Bool) extends PrimitiveValue[Bool]() with AstContext {
   override def getElement: Bool = value
 
-  override def getType: String = TLangBool.getType
+  override def getType: Type = TLangBool.getType
 
   override def compareTo(value: Value[Bool]): Int = new Int(this.value.get().compareTo(value.getElement.get()))
 
@@ -35,10 +35,12 @@ class TLangBool(context: Null[ContextContent], value: Bool) extends PrimitiveVal
 
   override def toModel: ModelSetEntity = ModelSetEntity(Null.empty(), getType, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
   )))
+
+  override def getContext: Null[ContextContent] = context
 }
 
 object TLangBool extends TLangType {
-  override def getType: String = "Bool"
+  override def getType: Type = Bool.TYPE
 
   override def getValueType: ValueType = ObjType(Null.empty(), Some("TLang"), getType)
 }

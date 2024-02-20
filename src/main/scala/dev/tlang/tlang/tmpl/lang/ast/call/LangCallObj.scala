@@ -1,15 +1,16 @@
 package dev.tlang.tlang.tmpl.lang.ast.call
 
-import dev.tlang.tlang.ast.common.ObjType
+import dev.tlang.tlang.ast.common.{ManualType, ObjType}
 import dev.tlang.tlang.ast.common.call.CallRefFuncObject
 import dev.tlang.tlang.ast.common.value.{ArrayValue, EntityValue, NullValue}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.astbuilder.context.ContextContent
 import dev.tlang.tlang.interpreter.Value
+import dev.tlang.tlang.tmpl.cmd.ast.CmdCallFuncArgs.getClass
 import dev.tlang.tlang.tmpl.lang.ast._
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core
-import tlang.core.{Int, Null}
+import tlang.core.{Int, Null, Type}
 
 case class LangCallObj(context: Null[ContextContent], var props: Option[LangProp] = None, var firstCall: LangCallObjType[_], var calls: List[LangCallObjectLink]) extends LangSimpleValueType[LangCallObj] with LangExpression[LangCallObj] {
   override def deepCopy(): LangCallObj = LangCallObj(context,
@@ -41,6 +42,8 @@ case class LangCallObj(context: Null[ContextContent], var props: Option[LangProp
 object LangCallObj {
 
   val name: String = this.getClass.getSimpleName.replace("$", "")
+
+  val modelName: Type = ManualType(getClass.getPackageName, name)
 
   val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
     ModelSetAttribute(None, Some("props"), ModelSetType(None, NullValue.name)),

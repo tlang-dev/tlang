@@ -1,13 +1,16 @@
 package dev.tlang.tlang.tmpl.lang.ast
 
-import dev.tlang.tlang.ast.common.ObjType
-import dev.tlang.tlang.ast.common.value.{EntityValue, NullValue}
+import dev.tlang.tlang.ast.common.operation.Operation
+import dev.tlang.tlang.ast.common.value.{ArrayValue, ComplexAttribute, EntityValue}
+import dev.tlang.tlang.ast.common.{ManualType, ObjType}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
-import tlang.internal.{AstContext, ContextContent, TmplID, TmplNode}
+import dev.tlang.tlang.tmpl.doc.ast.DocModel
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
-import tlang.core.{Null, Value}
+import tlang.Entity
+import tlang.core.{Null, Type}
+import tlang.internal.{AstContext, ContextContent, TmplID, TmplNode}
 
-case class LangImpl(context: Null[ContextContent], var annots: Option[List[LangAnnotation]] = None, var props: Option[LangProp] = None, var name: TmplID, var fors: Option[LangImplFor], var withs: Option[LangImplWith], var content: Option[List[TmplNode[_]]] = None) extends LangContent[LangImpl] with AstContext {
+case class LangImpl(context: Null[ContextContent], var annots: Null[List[LangAnnotation]] = Null.empty(), var props: Null[LangProp] = Null.empty(), var name: TmplID, var fors: Option[LangImplFor], var withs: Null[LangImplWith], var content: Null[List[TmplNode[_]]] = None) extends LangContent[LangImpl] with AstContext {
   override def deepCopy(): LangImpl = LangImpl(context,
     if (annots.isDefined) Some(annots.get.map(_.deepCopy())) else None,
     if (props.isDefined) Some(props.get.deepCopy()) else None,
@@ -18,7 +21,7 @@ case class LangImpl(context: Null[ContextContent], var annots: Option[List[LangA
   )
 
   override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, LangImpl.name)),
+    Some(ObjType(context, None, LangImpl.modelName)),
     Some(List(
       BuildLang.createAttrNull(context, "annots",
         if (annots.isDefined) Some(ArrayValue(context, Some(annots.get.map(value => ComplexAttribute(context, None, None, Operation(context, None, Right(value.toEntity))))))) else None,
@@ -30,11 +33,11 @@ case class LangImpl(context: Null[ContextContent], var annots: Option[List[LangA
       ),
       BuildLang.createAttrEntity(context, "name", name.toEntity),
       BuildLang.createAttrNull(context, "fors",
-        if (fors.isDefined) Some(fors.get.toEntity) else None,
+        if (fors.isDefined) Null.of(fors.get.toEntity) else Null.empty(),
         None
       ),
       BuildLang.createAttrNull(context, "withs",
-        if (withs.isDefined) Some(withs.get.toEntity) else None,
+        if (withs.isDefined) Null.of(withs.get.toEntity) else Null.empty(),
         None
       ),
       //      BuildLang.createAttrEntity(context, "fors", fors.t),
@@ -52,12 +55,14 @@ object LangImpl {
 
   val name: String = this.getClass.getSimpleName.replace("$", "")
 
-  val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
-    ModelSetAttribute(Null.empty(), Some("annots"), ModelSetType(Null.empty(), NullValue.name)),
-    ModelSetAttribute(Null.empty(), Some("props"), ModelSetType(Null.empty(), NullValue.name)),
-    ModelSetAttribute(Null.empty(), Some("name"), ModelSetType(Null.empty(), TmplID.name)),
-    ModelSetAttribute(Null.empty(), Some("fors"), ModelSetType(Null.empty(), NullValue.name)),
-    ModelSetAttribute(Null.empty(), Some("withs"), ModelSetType(Null.empty(), NullValue.name)),
-    ModelSetAttribute(Null.empty(), Some("content"), ModelSetType(Null.empty(), NullValue.name)),
+  val modelName: Type = ManualType(LangModel.pkg, name)
+
+  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
+    ModelSetAttribute(Null.empty(), Some("annots"), ModelSetType(Null.empty(), Null.TYPE)),
+    ModelSetAttribute(Null.empty(), Some("props"), ModelSetType(Null.empty(), Null.TYPE)),
+    ModelSetAttribute(Null.empty(), Some("name"), ModelSetType(Null.empty(), TmplID.TYPE)),
+    ModelSetAttribute(Null.empty(), Some("fors"), ModelSetType(Null.empty(), Null.TYPE)),
+    ModelSetAttribute(Null.empty(), Some("withs"), ModelSetType(Null.empty(), Null.TYPE)),
+    ModelSetAttribute(Null.empty(), Some("content"), ModelSetType(Null.empty(), Null.TYPE)),
   )))
 }

@@ -4,7 +4,7 @@ import tlang.core
 import tlang.core.Type
 
 case class ManualType(name: String, pkg: String) extends Type {
-  override def getType: core.String = new core.String(pkg + "/" + name)
+  override def getType: core.String = new core.String(pkg + "." + name)
 
   override def getSimpleType: core.String = new core.String(name)
 

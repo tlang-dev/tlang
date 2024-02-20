@@ -4,7 +4,8 @@ import dev.tlang.tlang.ast.common.{ObjType, ValueType}
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.interpreter.{ExecError, NotImplemented}
 import dev.tlang.tlang.tmpl.lang.ast.LangModel
-import tlang.core.Null
+import tlang.core
+import tlang.core.{Null, Type}
 import tlang.internal.{AstContext, ContextContent}
 
 class TLangString(context: Null[ContextContent], value: String) extends PrimitiveValue[String] with AstContext {
@@ -37,7 +38,7 @@ class TLangString(context: Null[ContextContent], value: String) extends Primitiv
 
 object TLangString extends TLangType {
 
-  override def getType: String = "String"
+  override def getType: Type = core.String.TYPE
 
   override def getValueType: ValueType = ObjType(Null.empty(), Some("TLang"), getType)
 }

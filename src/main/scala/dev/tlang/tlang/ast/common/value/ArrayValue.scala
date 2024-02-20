@@ -1,16 +1,16 @@
 package dev.tlang.tlang.ast.common.value
 
-import dev.tlang.tlang.ast.common.{ObjType, ValueType}
+import dev.tlang.tlang.ast.common.{ManualType, ObjType, ValueType}
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.interpreter.{ExecError, NotImplemented}
 import dev.tlang.tlang.tmpl.lang.ast.LangModel
-import tlang.core.{Null, Value}
+import tlang.core.{Null, Type, Value}
 import tlang.internal.ContextContent
 
 case class ArrayValue(context: Null[ContextContent], tbl: Option[List[ComplexAttribute]]) extends PrimitiveValue[ArrayValue] {
   override def getElement: ArrayValue = this
 
-  override def getType: String = ArrayValue.getType
+  override def getType: Type = ArrayValue.getType
 
   override def compareTo(value: Value[ArrayValue]): Int = 0
 
@@ -41,7 +41,10 @@ case class ArrayValue(context: Null[ContextContent], tbl: Option[List[ComplexAtt
 }
 
 object ArrayValue extends TLangType {
-  override def getType: String = "ArrayValue"
+
+  val name: String = this.getClass.getSimpleName.replace("$", "")
+
+  override def getType: Type = ManualType(getClass.getPackageName, name)
 
   override def getValueType: ValueType = ObjType(Null.empty(), Some("TLang"), getType)
 }

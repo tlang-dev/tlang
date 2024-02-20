@@ -1,16 +1,15 @@
 package dev.tlang.tlang.ast.common.value
 
 import dev.tlang.tlang.ast.common.{ObjType, ValueType}
+import dev.tlang.tlang.ast.model.set.ModelSetValueType
 import dev.tlang.tlang.interpreter.ExecError
 import tlang.core
-import tlang.core.{Int, Model, Null, Value}
+import tlang.core.{Int, Model, Null, Type, Value}
 import tlang.internal.ContextContent
 
 class TLangDouble(context: Null[ContextContent], value: core.Double) extends PrimitiveValue[core.Double] {
 
-  override def getType: String = TLangDouble.getType
-
-  override def compareTo(value: Value[core.Double]): Int = new Int(this.value.get().compareTo(value.getElement.get()))
+  override def getType: Type = TLangDouble.getType
 
   override def toString: String = getElement.toString
 
@@ -42,7 +41,7 @@ class TLangDouble(context: Null[ContextContent], value: core.Double) extends Pri
 }
 
 object TLangDouble extends TLangType {
-  override def getType: String = "Double"
+  override def getType: Type = core.Double.TYPE
 
   override def getValueType: ValueType = ObjType(Null.empty(), Some("TLang"), getType)
 }

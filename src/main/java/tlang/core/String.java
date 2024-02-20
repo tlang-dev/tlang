@@ -1,8 +1,11 @@
 package tlang.core;
 
+import tlang.internal.ClassType;
 import tlang.internal.ContextContent;
 
 public class String implements Value<String> {
+
+    public static final Type TYPE = ClassType.of(String.class);
 
     private final java.lang.String value;
 
@@ -29,7 +32,7 @@ public class String implements Value<String> {
 
     @Override
     public Type getType() {
-        return null;
+        return TYPE;
     }
 
     @Override

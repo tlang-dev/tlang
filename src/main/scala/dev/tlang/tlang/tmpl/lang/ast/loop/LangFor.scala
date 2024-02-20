@@ -46,7 +46,7 @@ object LangFor {
     ModelSetAttribute(Null.empty(), Some("variable"), ModelSetType(Null.empty(), TmplID.name)),
     ModelSetAttribute(Null.empty(), Some("start"), ModelSetType(Null.empty(), NullValue.name)),
     ModelSetAttribute(Null.empty(), Some("forType"), ModelSetType(Null.empty(), TLangString.getType)),
-    ModelSetAttribute(Null.empty(), Some("cond"), ModelSetType(Null.empty(), LangOperation.name)),
+    ModelSetAttribute(Null.empty(), Some("cond"), ModelSetType(Null.empty(), LangOperation.modelType)),
     ModelSetAttribute(Null.empty(), Some("content"), ModelSetType(Null.empty(), LangExprContent.name)),
   )))
 }

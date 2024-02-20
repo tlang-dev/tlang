@@ -4,9 +4,12 @@ import tlang.core.func.Apply;
 import tlang.core.func.ApplyVoidFunc;
 import tlang.core.func.FuncRet;
 import tlang.core.func.MapFunc;
+import tlang.internal.ClassType;
 import tlang.internal.ContextContent;
 
 public class Null<T> implements Value<Null<T>> {
+
+    public static final Type TYPE = ClassType.of(Null.class);
 
     private final Value<T> value;
 
@@ -71,7 +74,7 @@ public class Null<T> implements Value<Null<T>> {
 
     @Override
     public Type getType() {
-        return null;
+        return TYPE;
     }
 
     @Override

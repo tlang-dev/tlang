@@ -23,7 +23,7 @@ object BuildAst {
       if (header.uses != null && !header.uses.isEmpty) Some(header.uses.asScala.toList.map(use => buildUse(resource, use))) else None)
   }
 
-  def buildBody(resource: ContextResource, bodies: List[DomainBlockContext]): List[DomainBlock] = {
+  def buildBody(resource: ContextResource, bodies: List[DomainBlockContext]): List[internal.DomainBlock] = {
     bodies.map {
       case body@_ if body.modelBlock() != null => BuildModelBlock.build(resource, body.modelBlock())
       case body@_ if body.helperBlock() != null => BuildHelperBlock.build(resource, body.helperBlock())

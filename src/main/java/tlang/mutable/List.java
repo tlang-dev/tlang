@@ -8,6 +8,7 @@ import tlang.core.*;
 import tlang.core.func.FuncRet;
 import tlang.core.func.MapFunc;
 import tlang.core.func.MapFuncWithIndex;
+import tlang.internal.ContextContent;
 
 public class List<T extends Value<T>> implements Value<List<T>> {
 
@@ -78,7 +79,12 @@ public class List<T extends Value<T>> implements Value<List<T>> {
     }
 
     @Override
-    public String getType() {
+    public Type getType() {
+        return null;
+    }
+
+    @Override
+    public Null<ContextContent> getContext() {
         return null;
     }
 }

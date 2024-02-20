@@ -3,9 +3,13 @@ package tlang.core;
 import tlang.core.func.ApplyVoidFunc;
 import tlang.core.func.FuncRet;
 import tlang.core.func.MapFunc;
+import tlang.internal.ClassType;
+import tlang.internal.ContextContent;
 import tlang.mutable.List;
 
 public class Array<T> implements ImplicitMatch<Array<T>, Void, Void>, Value<Array<T>> {
+
+    public static final Type TYPE = ClassType.of(Array.class);
 
     private final T[] records;
 
@@ -55,6 +59,11 @@ public class Array<T> implements ImplicitMatch<Array<T>, Void, Void>, Value<Arra
     @Override
     public Array<T> getElement() {
         return this;
+    }
+
+    @Override
+    public Null<ContextContent> getContext() {
+        return null;
     }
 
     @Override

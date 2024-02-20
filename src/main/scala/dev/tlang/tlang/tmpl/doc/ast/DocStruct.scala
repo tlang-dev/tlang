@@ -1,10 +1,10 @@
 package dev.tlang.tlang.tmpl.doc.ast
 
-import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.value.{ComplexAttribute, EntityValue}
+import dev.tlang.tlang.ast.common.{ManualType, ObjType}
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
-import tlang.core.{Null, Value}
+import tlang.core.{Null, Type}
 import tlang.internal.ContextContent
 
 import scala.collection.mutable.ListBuffer
@@ -14,8 +14,6 @@ case class DocStruct(context: Null[ContextContent], level: Int, title: String, c
     if (content.isDefined) Some(content.get.deepCopy()) else None)
 
   override def getContext: Null[ContextContent] = context
-
-  override def compareTo(value: Value[DocStruct]): Int = 0
 
   override def getElement: DocStruct = this
 
@@ -37,6 +35,11 @@ case class DocStruct(context: Null[ContextContent], level: Int, title: String, c
 }
 
 object DocStruct {
-  val model: ModelSetEntity = ModelSetEntity(Null.empty(), "DocStruct", Some(ObjType(Null.empty(), None, DocModel.docModel.name)), None, Some(List(
+
+  val name: String = this.getClass.getSimpleName.replace("$", "")
+
+  val modelName: Type = ManualType(DocModel.pkg, name)
+
+  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, Some(ObjType(Null.empty(), None, DocModel.docModel.name)), None, Some(List(
   )))
 }

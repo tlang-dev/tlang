@@ -1,6 +1,11 @@
 package tlang.core;
 
-public class Long {
+import tlang.internal.ClassType;
+import tlang.internal.ContextContent;
+
+public class Long implements Value<Long> {
+
+    public static final Type TYPE = ClassType.of(Long.class);
 
     private final long value;
 
@@ -22,5 +27,20 @@ public class Long {
 
     public String toStringValue() {
         return new String(java.lang.String.valueOf(value));
+    }
+
+    @Override
+    public Null<ContextContent> getContext() {
+        return null;
+    }
+
+    @Override
+    public Long getElement() {
+        return this;
+    }
+
+    @Override
+    public Type getType() {
+        return TYPE;
     }
 }

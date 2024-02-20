@@ -1,8 +1,8 @@
 package tlang.internal;
 
 import tlang.Entity;
-import tlang.core.*;
 import tlang.core.String;
+import tlang.core.*;
 
 public class TmplStringId extends TmplID {
 
@@ -35,7 +35,7 @@ public class TmplStringId extends TmplID {
 
     @Override
     public Type getType() {
-        return new String(getClass().getSimpleName());
+        return ClassType.of(TmplStringId.class);
     }
 
     @Override

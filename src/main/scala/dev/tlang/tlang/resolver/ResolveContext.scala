@@ -35,7 +35,7 @@ object ResolveContext {
             ast.body.foreach {
               case HelperBlock(_, funcs) =>
                 if (funcs.isNotNull.get())
-                  extractErrors(errors, BrowseFunc.resolveFuncs(funcs.get().getRecords.toList, module, uses, resource._2))
+                  extractErrors(errors, BrowseFunc.resolveFuncs(funcs.get().getElement.getRecords.toList, module, uses, resource._2))
               case model: ModelBlock => extractErrors(errors, ResolveModel.resolveModel(model, module, uses, resource._2))
               case tmpl: AnyTmplInterpretedBlock[_] => extractErrors(errors, ResolveTmpl.resolveTmpl(tmpl, module, uses, resource._2))
             }
@@ -92,7 +92,7 @@ object ResolveContext {
     var elem: Null[Value[_]] = Null.empty().asInstanceOf[Null[Value[_]]]
     resource.ast.body.foreach {
       case HelperBlock(_, funcs) => if (funcs.isNotNull.get()) {
-        ResolveUtils.findInFuncs(funcs.get.getRecords.toList, name) match {
+        ResolveUtils.findInFuncs(funcs.get.getElement.getRecords.toList, name) match {
           case Some(func) => elem = Null.of(func)
           case None =>
         }

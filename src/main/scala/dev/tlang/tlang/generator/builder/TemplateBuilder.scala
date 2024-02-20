@@ -302,7 +302,7 @@ object TemplateBuilder {
           case None => Left(NoValue("No value returned", tmplID.getContext))
         }
       }
-      case block: TmplBlockId => buildBlock(block.block, Context(List(block.block.scope))) match {
+      case block: TmplBlockId => buildBlock(block.getBlock, Context(List(block.getBlock.getScope))) match {
         case Left(error) => Left(error)
         case Right(value) => Right(List(value))
       }

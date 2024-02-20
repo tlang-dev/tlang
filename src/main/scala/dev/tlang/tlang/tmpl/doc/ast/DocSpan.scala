@@ -1,17 +1,15 @@
 package dev.tlang.tlang.tmpl.doc.ast
 
-import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.value.EntityValue
+import dev.tlang.tlang.ast.common.{ManualType, ObjType}
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
-import tlang.core.{Null, Value}
+import tlang.core.{Null, Type}
 import tlang.internal.ContextContent
 
 case class DocSpan(context: Null[ContextContent]) extends DocTextType[DocSpan] {
   override def deepCopy(): DocSpan = DocSpan(context)
 
   override def getContext: Null[ContextContent] = context
-
-  override def compareTo(value: Value[DocSpan]): Int = 0
 
   override def getElement: DocSpan = this
 
@@ -26,6 +24,11 @@ case class DocSpan(context: Null[ContextContent]) extends DocTextType[DocSpan] {
 }
 
 object DocSpan {
-  val model: ModelSetEntity = ModelSetEntity(Null.empty(), "DocSpan", Some(ObjType(Null.empty(), None, DocModel.docModel.name)), None, Some(List(
+
+  val name: String = this.getClass.getSimpleName.replace("$", "")
+
+  val modelName: Type = ManualType(DocModel.pkg, name)
+
+  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, Some(ObjType(Null.empty(), None, DocModel.docModel.name)), None, Some(List(
   )))
 }
