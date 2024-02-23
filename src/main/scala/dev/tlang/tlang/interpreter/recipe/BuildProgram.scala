@@ -7,7 +7,7 @@ import dev.tlang.tlang.interpreter.instruction._
 import dev.tlang.tlang.tmpl.lang.ast.LangBlock
 import tlang.internal.{AnyTmplBlock, DomainBlock}
 
-object buildProgram {
+object BuildProgram {
 
   def buildProgram(context: BuilderContext, domain: DomainModel): Unit = {
     context.program.addInstruction(Label(domain.getType.getType.toString))

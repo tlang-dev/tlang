@@ -1,12 +1,10 @@
 package dev.tlang.tlang.generator.formatter
-
-import dev.tlang.tlang.astbuilder.context.ContextResource
 //import dev.tlang.tlang.generator.langs.java.{JavaFormatter, NewJavaGenerator}
 import org.scalatest.funsuite.AnyFunSuite
 
 class FormatterTest extends AnyFunSuite {
 
-  val fakeContext: ContextResource = ContextResource("", "", "", "")
+//  val fakeContext: ContextResource = ContextResource("", "", "", "")
 
   val RET: String = System.lineSeparator()
 

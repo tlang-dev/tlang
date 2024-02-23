@@ -1,12 +1,12 @@
 package dev.tlang.tlang.resolver
 
 import dev.tlang.tlang.ast.DomainModel
-import dev.tlang.tlang.ast.common.value.{TLangBool, TLangString}
+import dev.tlang.tlang.ast.common.ManualType
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetRef}
-import dev.tlang.tlang.interpreter.context.{Context, ContextUtils}
 import dev.tlang.tlang.loader._
 import dev.tlang.tlang.loader.remote.RemoteLoader
 import org.scalatest.funsuite.AnyFunSuite
+import tlang.core.Null
 
 import java.nio.file.Paths
 
@@ -39,10 +39,10 @@ class ResolveModelTest extends AnyFunSuite {
       }
     }
     val module = BuildModuleTree.build(Paths.get("Root"), "").toOption.get
-    val entity = ModelSetEntity(None, "MyEntity",None, Some(List(ModelSetAttribute(None, Some("param1"), ModelSetRef(None, List("Main", "myBool"), None)))), Some(List(ModelSetAttribute(None, Some("attr1"), ModelSetRef(None, List("Main", "myString"), None)))))
-    ResolveModel.resolveSetEntity(entity, module, List(), Resource("Root", "", "", "", DomainModel(None, None, List())))
-//    assert(ContextUtils.findVar(Context(List(entity.scope)), "attr1").get.asInstanceOf[TLangBool].getElement)
-//    assert("myString" == ContextUtils.findVar(Context(List(entity.scope)), "param1").get.asInstanceOf[TLangString].getElement)
+    val entity = ModelSetEntity(Null.empty(), ManualType("", "MyEntity"), None, Some(List(ModelSetAttribute(Null.empty(), Some("param1"), ModelSetRef(Null.empty(), List("Main", "myBool"), None)))), Some(List(ModelSetAttribute(Null.empty(), Some("attr1"), ModelSetRef(Null.empty(), List("Main", "myString"), None)))))
+    ResolveModel.resolveSetEntity(entity, module, List(), Resource("Root", "", "", "", DomainModel(Null.empty(), None, List())))
+    //    assert(ContextUtils.findVar(Context(List(entity.scope)), "attr1").get.asInstanceOf[TLangBool].getElement)
+    //    assert("myString" == ContextUtils.findVar(Context(List(entity.scope)), "param1").get.asInstanceOf[TLangString].getElement)
   }
 
 }

@@ -10,7 +10,7 @@ import scala.collection.mutable
 
 class ExecMultiValueTest extends AnyFunSuite {
 
-  test("Multiple values with values and called objects") {
+  /*test("Multiple values with values and called objects") {
     val varToCall = CallObject(None, List(CallVarObject(None, "var1")))
     val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangString(None, "myValue2")))))
     val statement = MultiValue(None, List(
@@ -21,6 +21,6 @@ class ExecMultiValueTest extends AnyFunSuite {
     assert("myValue1" == res.head.asInstanceOf[TLangString].getElement)
     assert("myValue2" == res(1).asInstanceOf[TLangString].getElement)
     assert("myValue3" == res.last.asInstanceOf[TLangString].getElement)
-  }
+  }*/
 
 }

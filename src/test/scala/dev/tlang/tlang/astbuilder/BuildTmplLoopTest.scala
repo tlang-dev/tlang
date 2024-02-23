@@ -1,7 +1,6 @@
 package dev.tlang.tlang.astbuilder
 
 import dev.tlang.tlang.ast.common.operation.Operator
-import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.tmpl.lang.ast.LangExprBlock
 import dev.tlang.tlang.tmpl.lang.ast.call.{LangCallFunc, LangCallObj}
 import dev.tlang.tlang.tmpl.lang.ast.loop.{LangDoWhile, LangWhile}
@@ -10,10 +9,13 @@ import dev.tlang.tlang.tmpl.lang.astbuilder.BuildTmplBlock
 import dev.tlang.tlang.{CommonLexer, TLang}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
+import tlang.core
+import tlang.internal.ContextResource
 
 class BuildTmplLoopTest extends AnyFunSuite {
 
-  val fakeContext: ContextResource = ContextResource("", "", "", "")
+  val fakeContext: ContextResource = new ContextResource(new core.String(""), new core.String(""), new core.String(""), new core.String(""))
+
 
   test("While with expression") {
     val lexer = new CommonLexer(CharStreams.fromString(

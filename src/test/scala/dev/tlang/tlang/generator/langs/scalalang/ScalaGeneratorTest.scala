@@ -1,11 +1,10 @@
 package dev.tlang.tlang.generator.langs.scalalang
 
-import dev.tlang.tlang.astbuilder.context.ContextResource
 import org.scalatest.funsuite.AnyFunSuite
 
 class ScalaGeneratorTest extends AnyFunSuite {
 
-  val fakeContext: ContextResource = ContextResource("", "", "", "")
+//  val fakeContext: ContextResource = ContextResource("", "", "", "")
 
   /*test("Test impl for") {
     val lexer = new CommonLexer(CharStreams.fromString(

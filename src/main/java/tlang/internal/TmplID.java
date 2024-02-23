@@ -9,8 +9,8 @@ public abstract class TmplID implements TmplNode<TmplID>, Value<TmplID> {
     public static final Type TYPE = ClassType.of(TmplID.class);
 
     public String toStr() {
-        if (this instanceof TmplStringId) {
-            return ((TmplStringId) this).getId();
+        if (this instanceof TmplStringID) {
+            return ((TmplStringID) this).getId();
         } else if (this instanceof TmplInterpretedId interpretedId) {
             java.lang.String pre = interpretedId.getPre().orElse(new String("")).get().get().getElement().get();
             java.lang.String post = interpretedId.getPost().orElse(new String("")).get().get().getElement().get();

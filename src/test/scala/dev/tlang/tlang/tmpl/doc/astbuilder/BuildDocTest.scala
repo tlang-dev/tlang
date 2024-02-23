@@ -1,17 +1,19 @@
 package dev.tlang.tlang.tmpl.doc.astbuilder
 
 import dev.tlang.tlang.ast.common.call.CallVarObject
-import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.tmpl.doc.ast.{DocImg, DocPlainText, DocStruct, DocText}
 import dev.tlang.tlang.{CommonLexer, TLang}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuiteLike
+import tlang.core
+import tlang.internal.ContextResource
 
 import scala.jdk.CollectionConverters._
 
 class BuildDocTest extends AnyFunSuiteLike {
 
-  val fakeContext: ContextResource = ContextResource("", "", "", "")
+  val fakeContext: ContextResource = new ContextResource(new core.String(""), new core.String(""), new core.String(""), new core.String(""))
+
 
   test("testBuildDocLink") {
     val lexer = new CommonLexer(CharStreams.fromString(

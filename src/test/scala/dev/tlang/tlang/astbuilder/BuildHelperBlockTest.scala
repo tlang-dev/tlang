@@ -2,14 +2,15 @@ package dev.tlang.tlang.astbuilder
 
 import dev.tlang.tlang.ast.common.{ArrayType, ObjType}
 import dev.tlang.tlang.ast.helper.HelperFuncType
-import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.{CommonLexer, TLang}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
+import tlang.core
+import tlang.internal.ContextResource
 
 class BuildHelperBlockTest extends AnyFunSuite {
 
-  val fakeContext: ContextResource = ContextResource("", "", "", "")
+  val fakeContext: ContextResource = new ContextResource(new core.String(""), new core.String(""), new core.String(""), new core.String(""))
 
   test("Simple empty func") {
     val lexer = new CommonLexer(CharStreams.fromString(

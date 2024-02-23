@@ -3,14 +3,16 @@ package dev.tlang.tlang.astbuilder
 import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value.{ArrayValue, TLangString}
 import dev.tlang.tlang.ast.model.set._
-import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.{CommonLexer, TLang}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
+import tlang.core
+import tlang.internal.ContextResource
 
 class BuildModelBlockTest extends AnyFunSuite {
 
-  val fakeContext: ContextResource = ContextResource("", "", "", "")
+  val fakeContext: ContextResource = new ContextResource(new core.String(""), new core.String(""), new core.String(""), new core.String(""))
+
 
   test("Test setting model entity") {
     val lexer = new CommonLexer(CharStreams.fromString(

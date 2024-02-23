@@ -10,7 +10,7 @@ import dev.tlang.tlang.tmpl.common.ast.NativeType
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core
 import tlang.core.{Array, Null, Type}
-import tlang.internal.{ContextContent, TmplStringId}
+import tlang.internal.{ContextContent, TmplStringID}
 
 case class StyleBlock(context: Null[ContextContent], name: String, langs: Array[core.String],
                       var params: Option[List[NativeType[HelperParam]]], contents: List[StyleStruct], scope: Scope = Scope()) extends AnyTmplInterpretedBlock[StyleBlock] {

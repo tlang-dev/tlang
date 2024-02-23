@@ -1,14 +1,15 @@
 package dev.tlang.tlang.astbuilder
 
 import dev.tlang.tlang.ast.common.value._
-import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.{CommonLexer, TLang}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
+import tlang.core
+import tlang.internal.ContextResource
 
 class BuildCommonTest extends AnyFunSuite {
 
-  val fakeContext: ContextResource = ContextResource("", "", "", "")
+  val fakeContext: ContextResource = new ContextResource(new core.String(""), new core.String(""), new core.String(""), new core.String(""))
 
   test("Impl in entity") {
     val lexer = new CommonLexer(CharStreams.fromString(
@@ -33,6 +34,6 @@ class BuildCommonTest extends AnyFunSuite {
     assert("elm1" == impl.attrs.get(1).value.content.toOption.get.asInstanceOf[ArrayValue].tbl.get.head.value.content.toOption.get.asInstanceOf[TLangString].getElement)
     assert("elm2" == impl.attrs.get(1).value.content.toOption.get.asInstanceOf[ArrayValue].tbl.get.last.value.content.toOption.get.asInstanceOf[TLangString].getElement)
     assert("newEntity" == impl.attrs.get.last.attr.get)
-    assert("NewEntity" == impl.attrs.get.last.`type`.get.getType)
+    assert("NewEntity" == impl.attrs.get.last.`type`.get.getType.getType.toString)
   }
 }

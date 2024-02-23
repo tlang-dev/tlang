@@ -1,16 +1,17 @@
 package dev.tlang.tlang.resolver.checker
 
 import dev.tlang.tlang.astbuilder.BuildAst
-import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.loader.Resource
 import dev.tlang.tlang.resolver.NameAlreadyUsed
 import dev.tlang.tlang.{CommonLexer, TLang}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
+import tlang.core
+import tlang.internal.ContextResource
 
 class CheckExistingElementTest extends AnyFunSuite {
 
-  val fakeContext: ContextResource = ContextResource("", "", "", "")
+  val fakeContext: ContextResource = new ContextResource(new core.String(""), new core.String(""), new core.String(""), new core.String(""))
 
   test("Check same func name in helper") {
     val lexer = new CommonLexer(CharStreams.fromString(

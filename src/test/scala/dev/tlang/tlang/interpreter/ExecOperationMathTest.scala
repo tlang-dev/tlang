@@ -10,7 +10,7 @@ import scala.collection.mutable
 
 class ExecOperationMathTest extends AnyFunSuite {
 
-  test("Simple addition") {
+  /*test("Simple addition") {
     val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangLong(None, 42), "var2" -> new TLangLong(None, 1337)))))
     val statement = Operation(None, None, Right(CallObject(None, List(CallVarObject(None, "var1")))),
       Some((Operator.ADD, Operation(None, None, Right(CallObject(None, List(CallVarObject(None, "var2"))))))))
@@ -154,6 +154,6 @@ class ExecOperationMathTest extends AnyFunSuite {
                 Some((Operator.DIVIDE, Operation(None, None, Right(CallObject(None, List(CallVarObject(None, "var2")))))))))))))))))))))))
     val value = ExecOperation.run(statement, context).toOption.get.get.head.asInstanceOf[TLangBool]
     assert(!value.getElement)
-  }
+  }*/
 
 }

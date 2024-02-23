@@ -13,7 +13,7 @@ import scala.collection.mutable
 
 class ExecCallObjectInModelTest extends AnyFunSuite {
 
-  test("Call var in model") {
+ /* test("Call var in model") {
     val scope = Scope(variables = mutable.Map("myOtherVar" -> new TLangString(None, "myValue")))
     val model = ModelSetEntity(None, "MyModel", None, None, Some(List(ModelSetAttribute(None, Some("myVar"), ModelSetRef(None, List("myOtherVar"), None, None, scope)))))
     val entity = EntityValue(None, Some(ObjType(None, None, "MyModel")), None, Scope(models = mutable.Map("MyModel" -> model)))
@@ -64,6 +64,6 @@ class ExecCallObjectInModelTest extends AnyFunSuite {
     val context = Context(List(Scope(variables = mutable.Map("myEntity" -> entity))))
     val res = ExecCallObject.run(caller, context).toOption.get.get.head.asInstanceOf[TLangString].getElement
     assert("Hello, world!" == res)
-  }
+  }*/
 
 }

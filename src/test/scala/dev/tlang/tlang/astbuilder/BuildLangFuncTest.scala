@@ -1,18 +1,19 @@
 package dev.tlang.tlang.astbuilder
 
-import dev.tlang.tlang.astbuilder.context.ContextResource
-import dev.tlang.tlang.tmpl.common.ast.TmplStringID
 import dev.tlang.tlang.tmpl.lang.ast.func.LangFunc
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildTmplBlock
 import dev.tlang.tlang.{CommonLexer, TLang}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
+import tlang.core
+import tlang.internal.{ContextResource, TmplStringID}
 
 import scala.jdk.CollectionConverters._
 
 class BuildLangFuncTest extends AnyFunSuite {
 
-  val fakeContext: ContextResource = ContextResource("", "", "", "")
+  val fakeContext: ContextResource = new ContextResource(new core.String(""), new core.String(""), new core.String(""), new core.String(""))
+
 
   test("Test build func") {
     val lexer = new CommonLexer(CharStreams.fromString(
@@ -53,7 +54,7 @@ class BuildLangFuncTest extends AnyFunSuite {
     val func = impl.content.get.head.asInstanceOf[LangFunc]
     val param = func.curries.get.head.params.get.head
     assert("func1".equals(func.name.toString))
-    assert("myParam" == param.name.asInstanceOf[TmplStringID].id)
+    assert("myParam" == param.name.asInstanceOf[TmplStringID].getId.toString)
     assert("MyType" == param.`type`.get.name.toString)
     assert(!param.`type`.get.isArray)
     assert(param.`type`.get.generic.isEmpty)
@@ -72,7 +73,7 @@ class BuildLangFuncTest extends AnyFunSuite {
     val func = impl.content.get.head.asInstanceOf[LangFunc]
     val param = func.curries.get.head.params.get.head
     assert("func1" == func.name.toString)
-    assert("myParam" == param.name.asInstanceOf[TmplStringID].id)
+    assert("myParam" == param.name.asInstanceOf[TmplStringID].getId.toString)
     assert("MyType" == param.`type`.get.name.toString)
     assert(param.`type`.get.isArray)
     assert(param.`type`.get.generic.isEmpty)
@@ -91,7 +92,7 @@ class BuildLangFuncTest extends AnyFunSuite {
     val func = impl.content.get.head.asInstanceOf[LangFunc]
     val param = func.curries.get.head.params.get.head
     assert("func1" == func.name.toString)
-    assert("myParam" == param.name.asInstanceOf[TmplStringID].id)
+    assert("myParam" == param.name.asInstanceOf[TmplStringID].getId.toString)
     assert("MyType" == param.`type`.get.name.toString)
     assert("AnotherType" == param.`type`.get.generic.head.types.head.name.toString)
     assert("YetAnotherType" == param.`type`.get.generic.head.types.last.name.toString)
@@ -115,12 +116,12 @@ class BuildLangFuncTest extends AnyFunSuite {
 
     assert("func1" == func.name.toString)
 
-    assert("myParam" == param1.name.asInstanceOf[TmplStringID].id)
+    assert("myParam" == param1.name.asInstanceOf[TmplStringID].getId.toString)
     assert("MyType" == param1.`type`.get.name.toString)
     assert(!param1.`type`.get.isArray)
     assert(param1.`type`.get.generic.isEmpty)
 
-    assert("myParam2" == param2.name.asInstanceOf[TmplStringID].id)
+    assert("myParam2" == param2.name.asInstanceOf[TmplStringID].getId.toString)
     assert("MyType2" == param2.`type`.get.name.toString)
     assert(param2.`type`.get.isArray)
     assert(param2.`type`.get.generic.isEmpty)

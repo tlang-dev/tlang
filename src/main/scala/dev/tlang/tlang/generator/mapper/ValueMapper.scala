@@ -400,26 +400,26 @@ object ValueMapper {
     } else None
   }
 
-  def mapOptID(id: Option[TmplID], context: Context): Option[TmplStringId] = {
+  def mapOptID(id: Option[TmplID], context: Context): Option[TmplStringID] = {
     if (id.isDefined) Some(mapID(id.get, context))
     else None
   }
 
-  def mapID(id: TmplID, context: Context): TmplStringId = {
+  def mapID(id: TmplID, context: Context): TmplStringID = {
     id match {
       case interId: TmplInterpretedId => ExecCallObject.run(interId.getNativeType.getNativeElement.asInstanceOf[CallObject], context) match {
-        case Left(error) => new TmplStringId(interId.getContext, new core.String(error.message))
+        case Left(error) => new TmplStringID(interId.getContext, new core.String(error.message))
         case Right(value) => if (value.isDefined) {
           value.get.head match {
-            case str: TLangString => new TmplStringId(interId.getContext, new core.String(interId.getPre.orElse(new core.String("")).toString + str.getElement + interId.getPost.orElse(new core.String("")).toString))
-            case block: LangBlockAsValue => new TmplStringId(interId.getContext, new core.String(interId.getPre.orElse(new core.String("")).toString + Generator.generate(block, context).toOption.get.toString + interId.getPost.orElse(new core.String("")).toString))
-            case _ => new TmplStringId(interId.getContext, new core.String(interId.getPre.orElse(new core.String("")).toString + value.get.head.toString + interId.getPost.orElse(new core.String("")).toString))
+            case str: TLangString => new TmplStringID(interId.getContext, new core.String(interId.getPre.orElse(new core.String("")).toString + str.getElement + interId.getPost.orElse(new core.String("")).toString))
+            case block: LangBlockAsValue => new TmplStringID(interId.getContext, new core.String(interId.getPre.orElse(new core.String("")).toString + Generator.generate(block, context).toOption.get.toString + interId.getPost.orElse(new core.String("")).toString))
+            case _ => new TmplStringID(interId.getContext, new core.String(interId.getPre.orElse(new core.String("")).toString + value.get.head.toString + interId.getPost.orElse(new core.String("")).toString))
           }
-        } else new TmplStringId(interId.getContext, new core.String("Undefined"))
+        } else new TmplStringID(interId.getContext, new core.String("Undefined"))
       }
-      case replacedId: TmplReplacedId => new TmplStringId(replacedId.getContext, new core.String(replacedId.getPre.orElse(new core.String("")).toString + replacedId.getNode.toString + replacedId.getPost.orElse(new core.String("")).toString))
-      case str: TmplStringId => new TmplStringId(str.getContext, str.getId)
-      case block: TmplBlockId => new TmplStringId(block.getContext, new core.String("Undefined"))
+      case replacedId: TmplReplacedId => new TmplStringID(replacedId.getContext, new core.String(replacedId.getPre.orElse(new core.String("")).toString + replacedId.getNode.toString + replacedId.getPost.orElse(new core.String("")).toString))
+      case str: TmplStringID => new TmplStringID(str.getContext, str.getId)
+      case block: TmplBlockId => new TmplStringID(block.getContext, new core.String("Undefined"))
     }
     //      var pos = str.indexOf("${")
     //      val ret = new StringBuilder(str)

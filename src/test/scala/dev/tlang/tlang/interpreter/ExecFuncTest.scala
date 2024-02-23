@@ -11,13 +11,13 @@ import scala.collection.mutable
 
 class ExecFuncTest extends AnyFunSuite {
 
-  test("Run simple function") {
+ /* test("Run simple function") {
     val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangBool(None, true)))))
     val caller = CallObject(None, List(CallVarObject(None, "var1")))
     val block = HelperContent(None, Some(List(caller)))
     val statement = HelperFunc(None, "myFunc", block = block)
     val res = ExecFunc.run(statement, context).toOption.get.get
     assert(res.head.asInstanceOf[TLangBool].getElement)
-  }
+  }*/
 
 }

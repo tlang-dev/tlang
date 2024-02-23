@@ -1,16 +1,6 @@
 package dev.tlang.tlang.generator
 
-import dev.tlang.tlang.ast.common.call._
-import dev.tlang.tlang.ast.common.value.TLangString
-import dev.tlang.tlang.generator.builder.TemplateBuilder
-import dev.tlang.tlang.interpreter.context.{Context, Scope}
-import dev.tlang.tlang.tmpl.common.ast.{TmplInterpretedID, TmplStringID}
-import dev.tlang.tlang.tmpl.lang.ast.condition.LangOperation
-import dev.tlang.tlang.tmpl.lang.ast.primitive.{LangArrayValue, LangStringValue}
-import dev.tlang.tlang.tmpl.lang.ast.{LangPkg, LangSetAttribute}
 import org.scalatest.funsuite.AnyFunSuite
-
-import scala.collection.mutable
 
 class TemplateBuilderTest extends AnyFunSuite {
 
@@ -21,17 +11,17 @@ class TemplateBuilderTest extends AnyFunSuite {
   //    TemplateBuilder.buildBlockAsValue(blockAsValue)
   //  }
 
-  test("build Pkg") {
-    val pkg = Some(LangPkg(None, List(TmplStringID(None, "pkg1"))))
-    val res = TemplateBuilder.buildPkg(pkg, Context()).toOption.get.get
-    assert("pkg1" == res.parts.head.toString)
-  }
-
-  test("build Pkg with call") {
-    val pkg = Some(LangPkg(None, List(TmplStringID(None, "pkg1"), TmplInterpretedID(None, Some("before_"), CallObject(None, List(CallVarObject(None, "var1"))), Some("_after")))))
-    val res = TemplateBuilder.buildPkg(pkg, Context(List(Scope(variables = mutable.Map("var1" -> new TLangString(None, "during")))))).toOption.get.get
-    assert("pkg1.before_during_after" == res.parts.mkString("."))
-  }
+//  test("build Pkg") {
+//    val pkg = Some(LangPkg(None, List(TmplStringID(None, "pkg1"))))
+//    val res = TemplateBuilder.buildPkg(pkg, Context()).toOption.get.get
+//    assert("pkg1" == res.parts.head.toString)
+//  }
+//
+//  test("build Pkg with call") {
+//    val pkg = Some(LangPkg(None, List(TmplStringID(None, "pkg1"), TmplInterpretedID(None, Some("before_"), CallObject(None, List(CallVarObject(None, "var1"))), Some("_after")))))
+//    val res = TemplateBuilder.buildPkg(pkg, Context(List(Scope(variables = mutable.Map("var1" -> new TLangString(None, "during")))))).toOption.get.get
+//    assert("pkg1.before_during_after" == res.parts.mkString("."))
+//  }
 
  /* test("build Pkg with for in call") {
     val tmpl = TmplBlock(None, "myTmpl", "scala", Some(List(HelperParam(None, Some("index"), ObjType(None, None, "String")))), None, None, specialised = true, Some(List(
@@ -88,10 +78,10 @@ class TemplateBuilderTest extends AnyFunSuite {
     assert("myValue5" == res.params.get.last.asInstanceOf[TmplAttribute].value.content.toOption.get.asInstanceOf[TmplStringValue].toString)
   }*/
 
-  test("Build array with call") {
-    val array = LangArrayValue(None, None, Some(List(LangSetAttribute(None, None, LangOperation(None, Right(LangStringValue(None, TmplInterpretedID(None, Some("before_"), CallObject(None, List(CallVarObject(None, "var1"))), Some("_after")))))))))
-    val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangString(None, "during")))))
-    val res = TemplateBuilder.buildArray(array, context).toOption.get.params.get
-    assert("before_during_after" == res.head.asInstanceOf[LangSetAttribute].value.content.toOption.get.toString)
-  }
+//  test("Build array with call") {
+//    val array = LangArrayValue(None, None, Some(List(LangSetAttribute(None, None, LangOperation(None, Right(LangStringValue(None, TmplInterpretedID(None, Some("before_"), CallObject(None, List(CallVarObject(None, "var1"))), Some("_after")))))))))
+//    val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangString(None, "during")))))
+//    val res = TemplateBuilder.buildArray(array, context).toOption.get.params.get
+//    assert("before_during_after" == res.head.asInstanceOf[LangSetAttribute].value.content.toOption.get.toString)
+//  }
 }

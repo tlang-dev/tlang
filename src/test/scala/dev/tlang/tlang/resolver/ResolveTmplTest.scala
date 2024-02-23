@@ -2,18 +2,19 @@ package dev.tlang.tlang.resolver
 
 import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value.{ArrayValue, TLangLong, TLangString}
-import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.interpreter.context.{Context, ContextUtils}
 import dev.tlang.tlang.loader.remote.RemoteLoader
 import dev.tlang.tlang.loader.{BuildModuleTree, FileResourceLoader, ResourceLoader, TBagManager}
 import dev.tlang.tlang.tmpl.lang.ast.LangBlock
 import org.scalatest.funsuite.AnyFunSuite
+import tlang.core
+import tlang.internal.ContextResource
 
 import java.nio.file.Paths
 
 class ResolveTmplTest extends AnyFunSuite {
 
-  val fakeContext: ContextResource = ContextResource("", "", "", "")
+  val fakeContext: ContextResource = new ContextResource(new core.String(""), new core.String(""), new core.String(""), new core.String(""))
 
   implicit val loader: FileResourceLoader.type = FileResourceLoader
   implicit val remoteLoader: RemoteLoader.type = RemoteLoader

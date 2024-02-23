@@ -4,13 +4,13 @@ import tlang.Entity;
 import tlang.core.String;
 import tlang.core.*;
 
-public class TmplStringId extends TmplID {
+public class TmplStringID extends TmplID {
 
     private final Null<ContextContent> context;
 
     private final String id;
 
-    public TmplStringId(Null<ContextContent> context, String id) {
+    public TmplStringID(Null<ContextContent> context, String id) {
         this.context = context;
         this.id = id;
     }
@@ -30,7 +30,7 @@ public class TmplStringId extends TmplID {
 
     @Override
     public Type getType() {
-        return ClassType.of(TmplStringId.class);
+        return ClassType.of(TmplStringID.class);
     }
 
     @Override

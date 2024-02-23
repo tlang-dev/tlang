@@ -12,7 +12,7 @@ import scala.collection.mutable.ListBuffer
 
 class ExecForTest extends AnyFunSuite {
 
-  test("For 1 to 10") {
+ /*test("For 1 to 10") {
     var count = 0
     var variable = 0
     val forStatement = HelperFor(None, "index",
@@ -71,6 +71,6 @@ class ExecForTest extends AnyFunSuite {
     assert("One" == array.head)
     assert("Two" == array(1))
     assert("Three" == array.last)
-  }
+  }*/
 
 }

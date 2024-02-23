@@ -4,14 +4,15 @@ import dev.tlang.tlang.ast.common.call.{CallObject, CallVarObject}
 import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value.{TLangLong, TLangString}
 import dev.tlang.tlang.ast.helper.{ForType, HelperFor}
-import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.{CommonLexer, TLang}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
+import tlang.core
+import tlang.internal.ContextResource
 
 class BuildHelperForStatementTest extends AnyFunSuite {
 
-  val fakeContext: ContextResource = ContextResource("", "", "", "")
+  val fakeContext: ContextResource = new ContextResource(new core.String(""), new core.String(""), new core.String(""), new core.String(""))
 
   test("For 1 to 10") {
     val lexer = new CommonLexer(CharStreams.fromString(

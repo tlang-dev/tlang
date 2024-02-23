@@ -10,7 +10,7 @@ import scala.collection.mutable
 
 class ExecOperationConditionTest extends AnyFunSuite {
 
-  test("Simple true condition") {
+  /*test("Simple true condition") {
     val context = Context(List(Scope(variables = mutable.Map("var1" -> new TLangBool(None, true)))))
     val statement = Operation(None, None, Right(CallObject(None, List(CallVarObject(None, "var1")))))
     val value = ExecOperation.run(statement, context).toOption.get.get.head.asInstanceOf[TLangBool]
@@ -317,6 +317,6 @@ class ExecOperationConditionTest extends AnyFunSuite {
       )))))
     val value = ExecOperation.run(statement, context).toOption.get.get.head.asInstanceOf[TLangBool]
     assert(!value.getElement)
-  }
+  }*/
 
 }

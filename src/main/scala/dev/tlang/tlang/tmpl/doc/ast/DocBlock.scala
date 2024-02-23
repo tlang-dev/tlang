@@ -10,7 +10,7 @@ import dev.tlang.tlang.tmpl.common.ast.NativeType
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core
 import tlang.core.{Array, Null, Type}
-import tlang.internal.{ContextContent, DomainBlock, TmplStringId}
+import tlang.internal.{ContextContent, DomainBlock, TmplStringID}
 
 case class DocBlock(context: Null[ContextContent], name: String, langs: Array[core.String],
                     var params: Option[List[NativeType[HelperParam]]], content: DocContent, scope: Scope = Scope()) extends DomainBlock with AnyTmplInterpretedBlock[DocBlock] {

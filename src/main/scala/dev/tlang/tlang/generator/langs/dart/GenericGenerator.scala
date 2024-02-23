@@ -12,7 +12,7 @@ import dev.tlang.tlang.tmpl.lang.ast.call._
 import dev.tlang.tlang.tmpl.lang.ast.condition.LangOperation
 import dev.tlang.tlang.tmpl.lang.ast.func.LangAnnotationParam
 import dev.tlang.tlang.tmpl.lang.ast.primitive._
-import tlang.internal.{TmplID, TmplStringId}
+import tlang.internal.{TmplID, TmplStringID}
 
 object GenericGenerator {
 
@@ -402,7 +402,7 @@ object GenericGenerator {
 
   def genTmplID(tmplId: TmplID): String = {
     tmplId match {
-      case str: TmplStringId =>
+      case str: TmplStringID =>
         var seq = "\""
         seq += str.toString
         seq += "\""

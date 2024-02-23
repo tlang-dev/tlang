@@ -2,16 +2,18 @@ package dev.tlang.tlang.resolver
 
 import dev.tlang.tlang.ast.common.value.{AssignVar, EntityValue}
 import dev.tlang.tlang.ast.model.ModelBlock
-import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.loader.remote.RemoteLoader
 import dev.tlang.tlang.loader.{BuildModuleTree, FileResourceLoader, ResourceLoader, TBagManager}
 import org.scalatest.funsuite.AnyFunSuite
+import tlang.core
+import tlang.internal.ContextResource
 
 import java.nio.file.Paths
 
 class BrowseNewEntityTest extends AnyFunSuite {
 
-  val fakeContext: ContextResource = ContextResource("", "", "", "")
+  val fakeContext: ContextResource = new ContextResource(new core.String(""), new core.String(""), new core.String(""), new core.String(""))
+
 
   implicit val loader: FileResourceLoader.type = FileResourceLoader
   implicit val remoteLoader: RemoteLoader.type = RemoteLoader

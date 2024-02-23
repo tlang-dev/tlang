@@ -1,8 +1,8 @@
+
 package dev.tlang.tlang.astbuilder
 
 import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.operation.Operator
-import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.tmpl.lang.ast._
 import dev.tlang.tlang.tmpl.lang.ast.call.{LangCallArray, LangCallFunc, LangCallObj, LangCallVar}
 import dev.tlang.tlang.tmpl.lang.ast.primitive._
@@ -10,10 +10,12 @@ import dev.tlang.tlang.tmpl.lang.astbuilder.BuildTmplBlock
 import dev.tlang.tlang.{CommonLexer, TLang}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
+import tlang.core
+import tlang.internal.ContextResource
 
 class BuildLangBlockTest extends AnyFunSuite {
 
-  val fakeContext: ContextResource = ContextResource("", "", "", "")
+  val fakeContext: ContextResource = new ContextResource(new core.String(""), new core.String(""), new core.String(""), new core.String(""))
 
   test("Template name") {
     val lexer = new CommonLexer(CharStreams.fromString(
@@ -24,7 +26,8 @@ class BuildLangBlockTest extends AnyFunSuite {
     val parser = new TLang(tokens)
     val tmpl = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock().tmplLang())
     assert("myTmpl" == tmpl.name)
-    assert("scala" == tmpl.langs.head)
+    assert("scala" == tmpl.langs.getElement.getElement)
+
     assert(tmpl.params.isEmpty)
   }
 

@@ -6,7 +6,7 @@ import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSe
 import dev.tlang.tlang.tmpl.lang.ast._
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core.{Null, Type}
-import tlang.internal.{ContextContent, TmplID, TmplNode, TmplStringId}
+import tlang.internal.{ContextContent, TmplID, TmplNode, TmplStringID}
 
 case class LangEntityValue(context: Null[ContextContent], var name: Option[TmplID], var params: Option[List[TmplNode[_]]], var attrs: Option[List[TmplNode[_]]]) extends LangPrimitiveValue[LangEntityValue] {
 //  override def deepCopy(): LangEntityValue = LangEntityValue(context,

@@ -3,14 +3,15 @@ package dev.tlang.tlang.astbuilder
 import dev.tlang.tlang.ast.common.call.{CallObject, CallVarObject}
 import dev.tlang.tlang.ast.common.operation.{Operation, Operator}
 import dev.tlang.tlang.ast.helper.HelperIf
-import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.{CommonLexer, TLang}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuite
+import tlang.core
+import tlang.internal.ContextResource
 
 class BuildHelperIfStatementTest extends AnyFunSuite {
 
-  val fakeContext: ContextResource = ContextResource("", "", "", "")
+  val fakeContext: ContextResource = new ContextResource(new core.String(""), new core.String(""), new core.String(""), new core.String(""))
 
   test("Simple if with one var") {
     val lexer = new CommonLexer(CharStreams.fromString(
