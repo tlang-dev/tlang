@@ -23,9 +23,4 @@ public class Void implements Value<Void> {
         return TYPE;
     }
 
-    @Override
-    public Null<ContextContent> getContext() {
-        return null;
-    }
-
 }

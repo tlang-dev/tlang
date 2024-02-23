@@ -71,40 +71,41 @@ object ExecOperation extends Executor {
   }
 
   private def compareLevel(value1: Value[_], operator: Operator.operator, value2: Value[_], level: Int): Either[ExecError, Value[_]] = {
-    level match {
-      case 0 =>
-        val val1 = value1.asInstanceOf[PrimitiveValue[Any]]
-        val val2 = value2.asInstanceOf[PrimitiveValue[Any]]
-        operator match {
-          case Operator.MULTIPLY => val1.multiply(val2)
-          case Operator.DIVIDE => val1.divide(val2)
-          case Operator.MODULO => val1.modulo(val2)
-        }
-      case 1 =>
-        val val1 = value1.asInstanceOf[PrimitiveValue[Any]]
-        val val2 = value2.asInstanceOf[PrimitiveValue[Any]]
-        operator match {
-          case Operator.ADD => val1.add(val2)
-          case Operator.SUBTRACT => val1.subtract(val2)
-        }
-      case 2 =>
-        val val1 = value1.asInstanceOf[Value[Any]]
-        val val2 = value2.asInstanceOf[Value[Any]]
-        operator match {
-          case Operator.EQUAL =>
-            Right(new TLangBool(Null.empty(), new Bool(val1.compareTo(val2).get() == 0)))
-          case Operator.GREATER => Right(new TLangBool(Null.empty(), new Bool(val1.compareTo(val2).get() > 0)))
-          case Operator.LESSER => Right(new TLangBool(Null.empty(), new Bool(val1.compareTo(val2).get() < 0)))
-          case Operator.GREATER_OR_EQUAL => Right(new TLangBool(Null.empty(), new Bool(val1.compareTo(val2).get() >= 0)))
-          case Operator.LESSER_OR_EQUAL => Right(new TLangBool(Null.empty(), new Bool(val1.compareTo(val2).get() <= 0)))
-          case Operator.NOT_EQUAL => Right(new TLangBool(Null.empty(), new Bool(val1.compareTo(val2).get() != 0)))
-        }
-      case 3 =>
-        operator match {
-          case Operator.AND => Right(new TLangBool(Null.empty(), new Bool(value1.asInstanceOf[TLangBool].getElement.get() && value2.asInstanceOf[TLangBool].getElement.get())))
-          case Operator.OR => Right(new TLangBool(Null.empty(), new Bool(value1.asInstanceOf[TLangBool].getElement.get() || value2.asInstanceOf[TLangBool].getElement.get())))
-        }
-    }
+//    level match {
+//      case 0 =>
+//        val val1 = value1.asInstanceOf[PrimitiveValue[Any]]
+//        val val2 = value2.asInstanceOf[PrimitiveValue[Any]]
+//        operator match {
+//          case Operator.MULTIPLY => val1.multiply(val2)
+//          case Operator.DIVIDE => val1.divide(val2)
+//          case Operator.MODULO => val1.modulo(val2)
+//        }
+//      case 1 =>
+//        val val1 = value1.asInstanceOf[PrimitiveValue[Any]]
+//        val val2 = value2.asInstanceOf[PrimitiveValue[Any]]
+//        operator match {
+//          case Operator.ADD => val1.add(val2)
+//          case Operator.SUBTRACT => val1.subtract(val2)
+//        }
+//      case 2 =>
+//        val val1 = value1.asInstanceOf[Value[Any]]
+//        val val2 = value2.asInstanceOf[Value[Any]]
+//        operator match {
+//          case Operator.EQUAL =>
+//            Right(new TLangBool(Null.empty(), new Bool(val1.compareTo(val2).get() == 0)))
+//          case Operator.GREATER => Right(new TLangBool(Null.empty(), new Bool(val1.compareTo(val2).get() > 0)))
+//          case Operator.LESSER => Right(new TLangBool(Null.empty(), new Bool(val1.compareTo(val2).get() < 0)))
+//          case Operator.GREATER_OR_EQUAL => Right(new TLangBool(Null.empty(), new Bool(val1.compareTo(val2).get() >= 0)))
+//          case Operator.LESSER_OR_EQUAL => Right(new TLangBool(Null.empty(), new Bool(val1.compareTo(val2).get() <= 0)))
+//          case Operator.NOT_EQUAL => Right(new TLangBool(Null.empty(), new Bool(val1.compareTo(val2).get() != 0)))
+//        }
+//      case 3 =>
+//        operator match {
+//          case Operator.AND => Right(new TLangBool(Null.empty(), new Bool(value1.asInstanceOf[TLangBool].getElement.get() && value2.asInstanceOf[TLangBool].getElement.get())))
+//          case Operator.OR => Right(new TLangBool(Null.empty(), new Bool(value1.asInstanceOf[TLangBool].getElement.get() || value2.asInstanceOf[TLangBool].getElement.get())))
+//        }
+//    }
+    Right(Null.empty())
   }
 
   //  def checkMathResult(res: Either[ExecError, Value[Any]]): Either[ExecError, Value[_]] = {

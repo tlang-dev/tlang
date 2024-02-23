@@ -10,18 +10,18 @@ import tlang.core.{Null, Type}
 import tlang.internal.{AstContext, ContextContent}
 
 case class LangIf(context: Null[ContextContent], cond: LangOperation, content: LangExprContent[_], elseBlock: Option[Either[LangExprContent[_], LangIf]]) extends LangExpression[LangIf] with AstContext {
-  override def deepCopy(): LangIf = LangIf(context, cond.deepCopy(), content.deepCopy().asInstanceOf[LangExprContent[_]],
-    if (elseBlock.isDefined) elseBlock.get match {
-      case Left(value) => Some(Left(value.deepCopy().asInstanceOf[LangExprContent[_]]))
-      case Right(value) => Some(Right(value.deepCopy()))
-    } else None,
-  )
+//  override def deepCopy(): LangIf = LangIf(context, cond.deepCopy(), content.deepCopy().asInstanceOf[LangExprContent[_]],
+//    if (elseBlock.isDefined) elseBlock.get match {
+//      case Left(value) => Some(Left(value.deepCopy().asInstanceOf[LangExprContent[_]]))
+//      case Right(value) => Some(Right(value.deepCopy()))
+//    } else None,
+//  )
 
   override def getContext: Null[ContextContent] = context
 
   override def getElement: LangIf = this
 
-  override def getType: String = getClass.getSimpleName
+  override def getType: Type = LangIf.modelName
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, LangIf.modelName)),
@@ -31,7 +31,7 @@ case class LangIf(context: Null[ContextContent], cond: LangOperation, content: L
     ))
   )
 
-  override def toModel: ModelSetEntity = LangIf.model
+//  override def toModel: ModelSetEntity = LangIf.model
 }
 
 object LangIf {

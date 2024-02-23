@@ -1,7 +1,7 @@
 package dev.tlang.tlang.ast.model.set
 
-import tlang.core.Null
-import tlang.internal.ContextContent
+import tlang.core.{Null, Type}
+import tlang.internal.{ClassType, ContextContent}
 
 /**
  *
@@ -10,8 +10,5 @@ import tlang.internal.ContextContent
  * @param attrs
  */
 case class ModelSetImpl(context: Null[ContextContent], var modelSetEntity: Option[ModelSetEntity], attrs: Option[List[ModelSetAttribute]]) extends ModelSetValueType[ModelSetImpl] {
-  override def getElement: ModelSetImpl = this
-
-  override def getType: String = "ModelSetImpl"
 
 }

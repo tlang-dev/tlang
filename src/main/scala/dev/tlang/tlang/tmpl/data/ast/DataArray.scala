@@ -8,18 +8,20 @@ import tlang.internal.{ContextContent, TmplNode}
 
 case class DataArray(context: Null[ContextContent]) extends TmplNode[DataArray] {
   override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, toModel.name)),
+    Some(ObjType(context, None, DataArray.modelName)),
     Some(List(
     ))
   )
 
-  override def toModel: ModelSetEntity = DataArray.model
+//  override def toModel: ModelSetEntity = DataArray.model
 
-  override def getType: String = getClass.getSimpleName
+  override def getType: Type = DataArray.modelName
 
-  override def deepCopy(): Any = DataArray(context)
+//  override def deepCopy(): Any = DataArray(context)
 
   override def getContext: Null[ContextContent] = context
+
+  override def getElement: DataArray = this
 }
 
 object DataArray {

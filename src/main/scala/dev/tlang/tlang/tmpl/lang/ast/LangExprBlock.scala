@@ -9,7 +9,7 @@ import tlang.core.{Null, Type}
 import tlang.internal.{AstContext, ContextContent, TmplNode}
 
 case class LangExprBlock(context: Null[ContextContent], var exprs: List[TmplNode[_]]) extends LangExprContent[LangExprBlock] with AstContext {
-  override def deepCopy(): LangExprBlock = LangExprBlock(context, exprs.map(_.deepCopy().asInstanceOf[TmplNode[_]]))
+//  override def deepCopy(): LangExprBlock = LangExprBlock(context, exprs.map(_.deepCopy().asInstanceOf[TmplNode[_]]))
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, LangExprBlock.modelName)),
@@ -18,9 +18,13 @@ case class LangExprBlock(context: Null[ContextContent], var exprs: List[TmplNode
     ))
   )
 
-  override def toModel: ModelSetEntity = LangExprBlock.model
+//  override def toModel: ModelSetEntity = LangExprBlock.model
 
   override def getContext: Null[ContextContent] = context
+
+  override def getElement: LangExprBlock = this
+
+  override def getType: Type = LangExprBlock.modelName
 }
 
 object LangExprBlock {

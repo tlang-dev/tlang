@@ -17,11 +17,9 @@ case class CallObject(context: Null[ContextContent], statements: List[CallObject
     ))
   )
 
-  override def toModel: ModelSetEntity = CallObject.model
-
-  override def deepCopy(): CallObject = CallObject(context, statements)
-
   override def getContext: Null[ContextContent] = context
+
+  override def getElement: CallObject = this
 }
 
 object CallObject extends TLangType {

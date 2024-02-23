@@ -4,20 +4,19 @@ import tlang.core.func.ApplyVoidFunc;
 import tlang.core.func.FuncRet;
 import tlang.core.func.MapFunc;
 import tlang.internal.ClassType;
-import tlang.internal.ContextContent;
 import tlang.mutable.List;
 
 public class Array<T> implements ImplicitMatch<Array<T>, Void, Void>, Value<Array<T>> {
 
     public static final Type TYPE = ClassType.of(Array.class);
 
-    private final T[] records;
+    private final Value<T>[] records;
 
-    public Array(T... records) {
+    public Array(Value<T>... records) {
         this.records = records;
     }
 
-    public T[] getRecords() {
+    public Value<T>[] getRecords() {
         return records;
     }
 
@@ -33,7 +32,7 @@ public class Array<T> implements ImplicitMatch<Array<T>, Void, Void>, Value<Arra
         return new Array<>();
     }
 
-    public static <T> T get(Array<T> array, Int index) {
+    public static <T> Value<T> get(Array<T> array, Int index) {
         return array.records[index.get()];
     }
 
@@ -51,7 +50,7 @@ public class Array<T> implements ImplicitMatch<Array<T>, Void, Void>, Value<Arra
     public static <T, B extends Value<B>> FuncRet<List<B>> map(Array<T> array, MapFunc<T, B> func) {
         var list = new List<B>(new Long(array.records.length));
         for (int i = 0; i < array.length().get(); i++) {
-            list.add(func.apply(array.getRecords()[i]));
+//            list.add(func.apply(array.getRecords()[i]));
         }
         return FuncRet.of(list);
     }
@@ -59,11 +58,6 @@ public class Array<T> implements ImplicitMatch<Array<T>, Void, Void>, Value<Arra
     @Override
     public Array<T> getElement() {
         return this;
-    }
-
-    @Override
-    public Null<ContextContent> getContext() {
-        return null;
     }
 
     @Override

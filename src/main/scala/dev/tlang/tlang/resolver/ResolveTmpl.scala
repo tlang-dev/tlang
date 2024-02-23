@@ -13,6 +13,7 @@ import dev.tlang.tlang.tmpl.lang.ast.condition.LangOperation
 import dev.tlang.tlang.tmpl.lang.ast.func.{LangAnonFunc, LangFunc}
 import dev.tlang.tlang.tmpl.lang.ast.loop.{LangDoWhile, LangFor, LangWhile}
 import dev.tlang.tlang.tmpl.lang.ast.primitive._
+import tlang.core
 import tlang.internal._
 
 import scala.collection.mutable.ListBuffer
@@ -32,7 +33,7 @@ object ResolveTmpl {
   def resolveLangBlock(block: LangBlock, module: Module, uses: List[DomainUse], currentResource: Resource): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
     //    checkRet(errors, FollowCallObject.followCallObject(CallObject(block.context, List(CallVarObject(block.context, block.lang), CallFuncObject(block.context, Some("generate"), Some(List(CallFuncParam(block.context, Some(List()))))))), module, uses, block.scope, currentResource, None))
-    checkRet(errors, resolveLangs(block, module, uses, currentResource))
+//    checkRet(errors, resolveLangs(block, module, uses, currentResource))
     checkRet(errors, resolveLangFullBlock(block.content, module, uses, currentResource))
     if (errors.nonEmpty) Left(errors.toList)
     else Right(())
@@ -60,8 +61,8 @@ object ResolveTmpl {
 
   def resolveLangs(block: AnyTmplInterpretedBlock[_], module: Module, uses: List[DomainUse], currentResource: Resource): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
-    block.getLangs.foreach(lang =>
-      resolveLang(block, lang, module, uses, currentResource) match {
+    block.getLangs.getElement.getRecords.foreach(lang =>
+      resolveLang(block, lang.getElement, module, uses, currentResource) match {
         case Left(error) => errors.addAll(error)
         case _ =>
       }
@@ -70,21 +71,22 @@ object ResolveTmpl {
     else Right(())
   }
 
-  private def resolveLang(block: AnyTmplInterpretedBlock[_], lang: String, module: Module, uses: List[DomainUse], currentResource: Resource): Either[List[ResolverError], Unit] = {
-    uses.find(use => use.parts.last.equals(lang) || use.alias.getOrElse("").equals(lang)) match {
-      case None => Left(List(ResourceNotFound(block.getContext, lang)))
-      case Some(use) =>
-        ResolveUtils.findResource(use, module) match {
-          case None => Left(List(ResourceNotFound(block.getContext, lang)))
-          case Some(resource) =>
-            ResolveContext.findInResource(resource, CallFuncObject(block.getContext, Some("generate"), Some(List(CallFuncParam(block.getContext, Some(List())))))) match {
-              case Left(error) => Left(error)
-              case Right(value) =>
-                ResolveContext.addValueInScope(use.parts.last, value.get, List(), block.getScope)
-                Right(())
-            }
-        }
-    }
+  private def resolveLang(block: AnyTmplInterpretedBlock[_], lang: core.String, module: Module, uses: List[DomainUse], currentResource: Resource): Either[List[ResolverError], Unit] = {
+//    uses.find(use => use.parts.last.equals(lang) || use.alias.orElse("").toString.equals(lang)) match {
+//      case None => Left(List(ResourceNotFound(block.getContext, lang)))
+//      case Some(use) =>
+//        ResolveUtils.findResource(use, module) match {
+//          case None => Left(List(ResourceNotFound(block.getContext, lang)))
+//          case Some(resource) =>
+//            ResolveContext.findInResource(resource, CallFuncObject(block.getContext, Some("generate"), Some(List(CallFuncParam(block.getContext, Some(List())))))) match {
+//              case Left(error) => Left(error)
+//              case Right(value) =>
+//                ResolveContext.addValueInScope(use.parts.last, value, List(), block.getScope)
+//                Right(())
+//            }
+//        }
+//    }
+    Right(())
   }
 
 
@@ -124,8 +126,8 @@ object ResolveTmpl {
   def resolveAttribute(attr: LangAttribute, module: Module, uses: List[DomainUse], currentResource: Resource, scope: Scope): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
     checkRet(errors, resolveOperation(attr.value, module, uses, currentResource, scope))
-    attr.attr.foreach(id => checkRet(errors, resolveTmplId(id, module, uses, currentResource, scope)))
-    attr.`type`.foreach(t => checkRet(errors, resolveType(t, module, uses, currentResource, scope)))
+//    attr.attr.foreach(id => checkRet(errors, resolveTmplId(id, module, uses, currentResource, scope)))
+//    attr.`type`.foreach(t => checkRet(errors, resolveType(t, module, uses, currentResource, scope)))
     if (errors.nonEmpty) Left(errors.toList)
     else Right(())
   }
@@ -442,14 +444,14 @@ object ResolveTmpl {
 
   def resolveImpl(impl: LangImpl, module: Module, uses: List[DomainUse], currentResource: Resource, scope: Scope): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
-    if (impl.content.isDefined) {
-      impl.content.get.foreach(content => {
-        resolveContent(content, module, uses, currentResource, scope) match {
-          case Left(error) => errors.addAll(error)
-          case _ =>
-        }
-      })
-    }
+//    if (impl.content.isNotNull.get()) {
+//      impl.content.get.getElement.foreach(content => {
+//        resolveContent(content, module, uses, currentResource, scope) match {
+//          case Left(error) => errors.addAll(error)
+//          case _ =>
+//        }
+//      })
+//    }
     if (errors.nonEmpty) Left(errors.toList)
     else Right(())
   }

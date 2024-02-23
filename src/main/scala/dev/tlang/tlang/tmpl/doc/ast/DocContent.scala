@@ -8,20 +8,20 @@ import tlang.core.{Null, Type}
 import tlang.internal.{ContextContent, TmplNode}
 
 case class DocContent(context: Null[ContextContent], contents: List[DocContentType[_]]) extends TmplNode[DocContent] {
-  override def deepCopy(): DocContent = DocContent(context, contents.map(_.deepCopy().asInstanceOf[DocContentType[_]]))
+//  override def deepCopy(): DocContent = DocContent(context, contents.map(_.deepCopy().asInstanceOf[DocContentType[_]]))
 
   override def getContext: Null[ContextContent] = context
 
   override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, toModel.name)),
+    Some(ObjType(context, None, DocContent.modelName)),
     Some(List(
       BuildLang.createArray(context, "contents", contents.map(_.toEntity))
     ))
   )
 
-  override def toModel: ModelSetEntity = DocContent.model
+  override def getType: Type = DocContent.modelName
 
-  override def getType: String = getClass.getSimpleName
+  override def getElement: DocContent = this
 }
 
 object DocContent {

@@ -1,7 +1,6 @@
 package dev.tlang.tlang.tmpl.lang.ast
 
-import dev.tlang.tlang.ast.common.operation.Operation
-import dev.tlang.tlang.ast.common.value.{ArrayValue, ComplexAttribute, EntityValue}
+import dev.tlang.tlang.ast.common.value.EntityValue
 import dev.tlang.tlang.ast.common.{ManualType, ObjType}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.tmpl.lang.ast.func.LangAnnotationParam
@@ -10,27 +9,27 @@ import tlang.core.{Null, Type}
 import tlang.internal.{AstContext, ContextContent, TmplID}
 
 case class LangAnnotation(context: Null[ContextContent], var name: TmplID, var values: Option[List[LangAnnotationParam]]) extends LangContent[LangAnnotation] with AstContext {
-  override def deepCopy(): LangAnnotation = LangAnnotation(context, name.deepCopy().asInstanceOf[TmplID],
-    if (values.isDefined) Some(values.get.map(_.deepCopy())) else None)
+//  override def deepCopy(): LangAnnotation = LangAnnotation(context, name.deepCopy().asInstanceOf[TmplID],
+//    if (values.isDefined) Some(values.get.map(_.deepCopy())) else None)
 
   override def getContext: Null[ContextContent] = context
 
   override def getElement: LangAnnotation = this
 
-  override def getType: String = getClass.getSimpleName
+  override def getType: Type = LangAnnotation.modelName
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, LangAnnotation.modelName)),
     Some(List(
       BuildLang.createAttrEntity(context, "name", name.toEntity),
-      BuildLang.createAttrNull(context, "values",
-        if (values.isDefined) Null.of(ArrayValue(context, Some(values.get.map(value => ComplexAttribute(context, None, None, Operation(context, None, Right(value.toEntity))))))) else Null.empty(),
-        None
-      )
+//      BuildLang.createAttrNull(context, "values",
+//        if (values.isDefined) Null.of(ArrayValue(context, Some(values.get.map(value => ComplexAttribute(context, None, None, Operation(context, None, Right(value.toEntity))))))) else Null.empty(),
+//        None
+//      )
     ))
   )
 
-  override def toModel: ModelSetEntity = LangAnnotation.model
+//  override def toModel: ModelSetEntity = LangAnnotation.model
 }
 
 object LangAnnotation {

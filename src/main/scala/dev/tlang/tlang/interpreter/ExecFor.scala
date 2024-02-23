@@ -32,7 +32,7 @@ object ExecFor extends Executor {
       ExecOperation.run(array(i).value, context) match {
         case Left(err) => error = Some(err)
         case Right(elem) =>
-          newLocalScope.variables.update("_i", new TLangLong(Null.empty(), new Long(i)))
+//          newLocalScope.variables.update("_i", new TLangLong(Null.empty(), new Long(i)))
           newScope.variables.update(forStatement.variable, elem.get.head)
           ExecContent.run(forStatement.body, newContext)
       }
@@ -52,7 +52,7 @@ object ExecFor extends Executor {
     val newScope = Scope()
     val newContext = Context(context.scopes :+ newScope)
     for (i <- start.get() to realEnd) {
-      newScope.variables.update(forStatement.variable, new TLangLong(Null.empty(), new Long(i)))
+//      newScope.variables.update(forStatement.variable, new TLangLong(Null.empty(), new Long(i)))
       ExecContent.run(forStatement.body, newContext)
     }
   }

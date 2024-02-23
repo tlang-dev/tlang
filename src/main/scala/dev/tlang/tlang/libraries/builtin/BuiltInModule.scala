@@ -47,8 +47,10 @@ object BuiltInModule {
     val returnType: String = method.getReturnType.getSimpleName
     val parameters: Array[Class[_]] = method.getParameterTypes
     HelperFunc(Null.empty(), name,
-      if (parameters.isEmpty) None else Some(List(HelperCurrying(Null.empty(), parameters.zipWithIndex.map(param => HelperParam(Null.empty(), None, ObjType(Null.empty(), Some("arg" + (param._2 + 1).toString), param._1.getSimpleName))).toList))),
-      Null.of(List(ObjType(Null.empty(), None, classOf[FuncRet[_]].getSimpleName))),
+      None,
+      //if (parameters.isEmpty) None else Some(List(HelperCurrying(Null.empty(), parameters.zipWithIndex.map(param => HelperParam(Null.empty(), None, ObjType(Null.empty(), Some("arg" + (param._2 + 1).toString), param._1.get))).toList))),
+//      Null.of(List(ObjType(Null.empty(), None, classOf[FuncRet[_]].getSimpleName))),
+      None,
 
       HelperContent(Null.empty(), Some(List(
         HelperInternalFunc((context: Context) => {

@@ -7,7 +7,7 @@ import tlang.mutable.List;
 
 public class Loop {
 
-    public static <T> FuncRet<Void> forEach(Array<Value<T>> array, ApplyVoidFunc<Value<T>> func) {
+    /*public static <T> FuncRet<Void> forEach(Array<Value<T>> array, ApplyVoidFunc<Value<T>> func) {
         for (Value<T> value : array.getRecords()) {
             func.apply(value);
         }
@@ -22,7 +22,7 @@ public class Loop {
             }
         }
         return result.toArray();
-    }
+    }*/
 
 
 }

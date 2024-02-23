@@ -18,7 +18,7 @@ case class ModelLetRefVar(context: Null[ContextContent], variable: Value[_]) ext
 }
 
 object ModelLetRefVar extends TLangType {
-  override def getType: String = "VarRef"
+  override def getType: Type = ManualType(getClass.getPackageName, "VarRef")
 
   override def getValueType: ValueType = ObjType(Null.empty(), Some("TLang"), getType)
 }

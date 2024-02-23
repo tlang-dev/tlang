@@ -12,12 +12,12 @@ import tlang.internal.ContextContent;
 
 public class List<T extends Value<T>> implements Value<List<T>> {
 
-    private T[] records;
+    private Value<T>[] records;
 
     private int size;
 
     public List() {
-        this.records = (T[]) new Object[10];
+        this.records = (Value<T>[]) new Object[10];
         this.size = 0;
     }
 
@@ -43,7 +43,7 @@ public class List<T extends Value<T>> implements Value<List<T>> {
 
     public FuncRet<T> get(int index) {
         if (index < 0 || index >= size) {
-            return FuncRet.error(new Error(new String("Index out of bound: " + index)));
+            //return FuncRet.error(new Error(new String("Index out of bound: " + index)));
         }
         return FuncRet.of(records[index]);
     }
@@ -51,26 +51,27 @@ public class List<T extends Value<T>> implements Value<List<T>> {
     public <B extends Value<B>> FuncRet<List<B>> map(MapFunc<T, B> func) {
         var list = new List<B>(new Long(size));
         for (int i = 0; i < size; i++) {
-            list.add(func.apply(records[i]));
+            //list.add(func.apply(records[i]));
         }
         return FuncRet.of(list);
     }
 
-    public <B> FuncRet mapWithIndex(MapFuncWithIndex<T, B> func) {
+    public <B extends Value<B>> FuncRet mapWithIndex(MapFuncWithIndex<T, B> func) {
         var list = new List<B>(new Long(size));
         for (int i = 0; i < size; i++) {
-            list.add(func.apply(records[i], new Long(i)));
+          //  list.add(func.apply(records[i], new Long(i)));
         }
         return FuncRet.of(list);
     }
 
-    public T[] getRecords() {
+    public Value<T>[] getRecords() {
         return records;
     }
 
     public FuncRet<Array<T>> toArray() {
-        List<Set<T>> list = (List<Set<T>>) mapWithIndex((record, index) -> new Set<>(index.toStringValue(), record)).getFirst().get();
-        return FuncRet.ofOneValue(new SetArray<>(list.getRecords()));
+//        List<Set<T>> list = (List<Set<T>>) mapWithIndex((record, index) -> new Set<>(index.toStringValue(), record)).getFirst().get();
+//        return FuncRet.of(new Array<>(list.getRecords()));
+        return new FuncRet<>(new Array<>(records));
     }
 
     @Override
@@ -83,8 +84,4 @@ public class List<T extends Value<T>> implements Value<List<T>> {
         return null;
     }
 
-    @Override
-    public Null<ContextContent> getContext() {
-        return null;
-    }
 }

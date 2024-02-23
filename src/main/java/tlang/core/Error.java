@@ -56,8 +56,4 @@ public class Error implements Value<Error> {
         return null;
     }
 
-    @Override
-    public Null<ContextContent> getContext() {
-        return null;
-    }
 }

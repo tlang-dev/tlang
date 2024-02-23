@@ -18,11 +18,6 @@ public class Double implements Value<Double> {
     }
 
     @Override
-    public Null<ContextContent> getContext() {
-        return null;
-    }
-
-    @Override
     public Double getElement() {
         return this;
     }

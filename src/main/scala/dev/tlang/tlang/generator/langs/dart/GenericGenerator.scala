@@ -339,11 +339,11 @@ object GenericGenerator {
   def genAttribute: BlockGenerator = (node: TmplNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter, followUp: (TmplNode[_], StringBuilder, Indent, List[FormatRule], GenParameter) => Indent) => {
     var _ind = indent
     val tmpl = node.asInstanceOf[LangAttribute]
-    if (tmpl.`type`.isDefined) str ++= tmpl.`type`.get.toString ++= ":"
-    if (tmpl.attr.isDefined) {
-      str ++= tmpl.attr.get.toString
-      str ++= ":"
-    }
+//    if (tmpl.`type`.isDefined) str ++= tmpl.`type`.get.toString ++= ":"
+//    if (tmpl.attr.isDefined) {
+//      str ++= tmpl.attr.get.toString
+//      str ++= ":"
+//    }
 //    _ind = followUp(tmpl.value, str, _ind, rules, params)
     _ind
   }

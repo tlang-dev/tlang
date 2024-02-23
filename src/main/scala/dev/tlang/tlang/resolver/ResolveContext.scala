@@ -34,8 +34,8 @@ object ResolveContext {
           case Right(_) =>
             ast.body.foreach {
               case HelperBlock(_, funcs) =>
-                if (funcs.isNotNull.get())
-                  extractErrors(errors, BrowseFunc.resolveFuncs(funcs.get().getElement.getRecords.toList, module, uses, resource._2))
+//                if (funcs.isNotNull.get())
+//                  extractErrors(errors, BrowseFunc.resolveFuncs(funcs.get().getElement.getRecords.toList, module, uses, resource._2))
               case model: ModelBlock => extractErrors(errors, ResolveModel.resolveModel(model, module, uses, resource._2))
               case tmpl: AnyTmplInterpretedBlock[_] => extractErrors(errors, ResolveTmpl.resolveTmpl(tmpl, module, uses, resource._2))
             }
@@ -91,15 +91,15 @@ object ResolveContext {
     val errors = ListBuffer.empty[ResolverError]
     var elem: Null[Value[_]] = Null.empty().asInstanceOf[Null[Value[_]]]
     resource.ast.body.foreach {
-      case HelperBlock(_, funcs) => if (funcs.isNotNull.get()) {
-        ResolveUtils.findInFuncs(funcs.get.getElement.getRecords.toList, name) match {
-          case Some(func) => elem = Null.of(func)
-          case None =>
-        }
-      }
+//      case HelperBlock(_, funcs) => if (funcs.isNotNull.get()) {
+//        ResolveUtils.findInFuncs(funcs.get.getElement.getRecords.toList, name) match {
+//          case Some(func) => elem = Null.of(func)
+//          case None =>
+//        }
+//      }
       case ModelBlock(_, contents) => if (contents.isDefined) {
         ResolveUtils.findInVars(contents.get, name) match {
-          case Some(variable) => elem = Null.of(variable.value)
+//          case Some(variable) => elem = Null.of(variable.value)
           case None =>
         }
       }
@@ -145,7 +145,8 @@ object ResolveContext {
       case tmpl: LangBlockAsValue => scope.templates.addOne(name, tmpl.block)
         tmpl
     }
-    Right(Null.of(ret).asInstanceOf[Null[Value[_]]])
+//    Right(Null.of(ret).asInstanceOf[Null[Value[_]]])
+    Right(Null.empty())
   }
 
   def extractErrors(errors: ListBuffer[ResolverError], result: Either[List[ResolverError], Unit]): Unit = {

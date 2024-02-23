@@ -1,11 +1,12 @@
 package dev.tlang.tlang.ast.common
 
+import tlang.core.Type
 import tlang.internal
 
 abstract class ValueType extends internal.AstContext {
-  def getContextType: String
+  def getContextType: Type
 
-  def getType: String
+  def getType: Type
 
-  override def toString: String = getContextType
+  override def toString: String = getContextType.getType.toString
 }

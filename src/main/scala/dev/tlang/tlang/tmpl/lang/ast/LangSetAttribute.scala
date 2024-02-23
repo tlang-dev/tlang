@@ -9,25 +9,25 @@ import tlang.core.{Null, Type}
 import tlang.internal.{ContextContent, TmplID, TmplNode}
 
 case class LangSetAttribute(context: Null[ContextContent], var name: Option[TmplID], var value: LangOperation) extends TmplNode[LangSetAttribute] {
-  override def deepCopy(): LangSetAttribute = LangSetAttribute(context,
-    if (name.isDefined) Some(name.get.deepCopy().asInstanceOf[TmplID]) else None, value.deepCopy())
+//  override def deepCopy(): LangSetAttribute = LangSetAttribute(context,
+//    if (name.isDefined) Some(name.get.deepCopy().asInstanceOf[TmplID]) else None, value.deepCopy())
 
 
   override def getElement: LangSetAttribute = this
 
-  override def getType: String = getClass.getSimpleName
+  override def getType: Type = LangSetAttribute.modelName
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, LangSetAttribute.modelName)),
     Some(List(
-      BuildLang.createAttrNull(context, "name",
-        name,
-        None
-      ),
+//      BuildLang.createAttrNull(context, "name",
+//        name,
+//        None
+//      ),
       BuildLang.createAttrEntity(context, "value", value.toEntity),
     )))
 
-  override def toModel: ModelSetEntity = LangSetAttribute.model
+  override def getContext: Null[ContextContent] = context
 }
 
 object LangSetAttribute {

@@ -12,7 +12,7 @@ object ContextUtils {
   val nativeModels: Map[String, ModelSetValueType[_]] = Map(
     TLangString.getType.getType.toString -> new TLangString(Null.empty(), ""),
     TLangBool.getType.getType.toString -> new TLangBool(Null.empty(), new Bool(false)),
-    TLangDouble.getType.getType.toString -> new TLangDouble(Null.empty(), new Double(0)),
+    TLangDouble.getType.getType.toString -> new TLangDouble(Null.empty(), 0),
     TLangLong.getType.getType.toString -> new TLangLong(Null.empty(), new Long(0))
   )
 

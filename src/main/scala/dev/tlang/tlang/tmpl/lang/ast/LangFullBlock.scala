@@ -17,15 +17,15 @@ case class LangFullBlock(context: Null[ContextContent],
                          var uses: Option[List[LangUse]] = None,
                          var specialised: Boolean = false,
                          var content: Option[List[TmplNode[_]]] = None,
-                         scope: Scope = Scope()) extends DomainBlock with DeepCopy with TmplNode[LangFullBlock] {
+                         scope: Scope = Scope()) extends DomainBlock with TmplNode[LangFullBlock] {
 
-  override def deepCopy(): LangFullBlock =
-    LangFullBlock(context,
-      if (pkg.isDefined) Some(pkg.get.deepCopy()) else None,
-      if (uses.isDefined) Some(uses.get.map(_.deepCopy())) else None,
-      specialised,
-      if (content.isDefined) Some(content.get.map(_.deepCopy().asInstanceOf[TmplNode[_]])) else None,
-      scope)
+//  override def deepCopy(): LangFullBlock =
+//    LangFullBlock(context,
+//      if (pkg.isDefined) Some(pkg.get.deepCopy()) else None,
+//      if (uses.isDefined) Some(uses.get.map(_.deepCopy())) else None,
+//      specialised,
+//      if (content.isDefined) Some(content.get.map(_.deepCopy().asInstanceOf[TmplNode[_]])) else None,
+//      scope)
 
   override def getContext: Null[ContextContent] = context
 
@@ -44,7 +44,7 @@ case class LangFullBlock(context: Null[ContextContent],
       Some(elems.toList))
   }
 
-  override def toModel: ModelSetEntity = LangFullBlock.model
+//  override def toModel: ModelSetEntity = LangFullBlock.model
 
   override def getElement: LangFullBlock = this
 

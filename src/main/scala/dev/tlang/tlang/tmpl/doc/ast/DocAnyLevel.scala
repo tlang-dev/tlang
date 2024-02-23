@@ -7,18 +7,20 @@ import tlang.core.{Null, Type}
 import tlang.internal.{ContextContent, TmplNode}
 
 case class DocAnyLevel(context: Null[ContextContent]) extends TmplNode[DocAnyLevel] {
-  override def deepCopy(): DocAnyLevel = DocAnyLevel(context)
+  //  override def deepCopy(): DocAnyLevel = DocAnyLevel(context)
 
   override def getContext: Null[ContextContent] = context
 
   override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, toModel.name)),
+    Some(ObjType(context, None, DocAnyLevel.modelName)),
     Some(List())
   )
 
-  override def getType: String = getClass.getSimpleName
+  override def getType: Type = DocAnyLevel.modelName
 
-  override val toModel: ModelSetEntity = DocAnyLevel.model
+  //  override val toModel: ModelSetEntity = DocAnyLevel.model
+
+  override def getElement: DocAnyLevel = this
 }
 
 object DocAnyLevel {

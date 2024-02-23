@@ -6,5 +6,5 @@ import tlang.core.Void;
 
 public interface ApplyVoidFunc<T> {
 
-    FuncRet<Void> apply(Value<T> value);
+    FuncRet<Void> apply(T value);
 }

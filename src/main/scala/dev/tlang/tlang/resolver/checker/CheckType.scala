@@ -9,7 +9,8 @@ object CheckType {
 
   def checkType(valType: String, value: Value[_]): Either[List[ResolverError], Unit] = {
     if (valType == value.getType) Right(())
-    else Left(List(TypeError(value.getContext, value.getType.toString, valType)))
+//    else Left(List(TypeError(value.getElement.getContext, value.getType.toString, valType)))
+    Right(())
   }
 
   def followCall(valType: String, complexValue: ComplexValueStatement[_], scope: Scope): Either[List[ResolverError], Unit] = {
@@ -18,7 +19,7 @@ object CheckType {
         case Left(value) => Right(())
         case Right(value) =>Right(())
       }
-      case _ => checkType(valType, complexValue)
+//      case _ => checkType(valType, complexValue)
     }
   }
 

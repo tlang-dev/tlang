@@ -63,26 +63,26 @@ object DartGenerator {
   def genImpl(impl: LangImpl): Seq = {
     val str = new SeqBuilder()
     str.setBlockName("class")
-    str.head(genAnnotations(impl.annots, DartFormatter.RET))
-    if (impl.props.isDefined) {
-      str.head(genProps(impl.props.get))
-    } else {
-      str.head(Seq("class"))
-    }
+//    str.head(genAnnotations(impl.annots, DartFormatter.RET))
+//    if (impl.props.isDefined) {
+//      str.head(genProps(impl.props.get))
+//    } else {
+//      str.head(Seq("class"))
+//    }
     str.head(SeqBuilder.build(Seq(" "), Seq(impl.name.toString)))
     if (impl.fors.isDefined) {
       str.head(SeqBuilder.build(Seq(" "), impl.fors.get.props.fold(Seq("extends"))(genProps(_)), Seq(" ")))
       //      cur = cur += " " += impl.withs.get.props.fold(Seq("implements"))(genProps(_)) += " "
 //      str.head(mkSeq(impl.fors.get.types.map(implFor => genType(implFor)), ","))
     }
-    if (impl.withs.isDefined) {
-      val sep = if (impl.fors.isDefined) "" else " "
-      str.head(SeqBuilder.build(Seq(" "), impl.withs.get.props.fold(Seq((sep + "implements")))(genProps(_)), Seq(" ")))
-//      str.head(mkSeq(impl.withs.get.types.map(implFor => genType(implFor)), ","))
-    }
-    str.head(Seq("{"))
-    if (impl.content.isDefined) genContents(impl.content.get, addEndOfStatement = true).foreach(content => str += content)
-    str.bottom(Seq("}"))
+//    if (impl.withs.isDefined) {
+//      val sep = if (impl.fors.isDefined) "" else " "
+//      str.head(SeqBuilder.build(Seq(" "), impl.withs.get.props.fold(Seq((sep + "implements")))(genProps(_)), Seq(" ")))
+////      str.head(mkSeq(impl.withs.get.types.map(implFor => genType(implFor)), ","))
+//    }
+//    str.head(Seq("{"))
+//    if (impl.content.isDefined) genContents(impl.content.get, addEndOfStatement = true).foreach(content => str += content)
+//    str.bottom(Seq("}"))
     str.build()
   }
 
@@ -467,7 +467,7 @@ object DartGenerator {
 
   def genAttribute(attr: LangAttribute): Seq = {
     val str = Seq()
-    if (attr.`type`.isDefined) str += attr.`type`.get.toString += ":"
+//    if (attr.`type`.isDefined) str += attr.`type`.get.toString += ":"
     str += genOperation(attr.value)
     str
   }

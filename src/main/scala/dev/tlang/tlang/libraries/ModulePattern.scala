@@ -16,7 +16,7 @@ abstract class ModulePattern {
 
   def getName: String
 
-  def getFunctions: Array[HelperFunc]
+  def getFunctions: List[HelperFunc]
 
   def getMain: String = "Main"
 
@@ -29,7 +29,7 @@ abstract class ModulePattern {
 
   protected def getMainResource: Resource = {
     Resource("", "", "", getMain, DomainModel(Null.empty(), Some(DomainHeader(Null.empty(), Some(exposeFunctions), None)), List(
-      HelperBlock(Null.empty(), Null.of(getFunctions)),
+//      HelperBlock(Null.empty(), Null.of(getFunctions)),
       ModelBlock(Null.empty(), getModelContent)
     )))
   }
@@ -43,8 +43,8 @@ abstract class ModulePattern {
 
   private def exposeFunctions: List[DomainExpose] = {
     val exposes = ListBuffer.empty[DomainExpose]
-    exposes ++= getFunctions.map(func => DomainExpose(Null.empty(), func.name)).get().get().getRecords
-    if (getModelContent.isDefined) exposes ++= getModelContent.get.filter(_.isInstanceOf[ModelSetEntity]).map(entity => DomainExpose(Null.empty(), entity.asInstanceOf[ModelSetEntity].name))
+    exposes ++= getFunctions.map(func => DomainExpose(Null.empty(), func.getElement.name))
+    if (getModelContent.isDefined) exposes ++= getModelContent.get.filter(_.isInstanceOf[ModelSetEntity]).map(entity => DomainExpose(Null.empty(), entity.asInstanceOf[ModelSetEntity].name.getSimpleType.toString))
     exposes.toList
   }
 

@@ -8,23 +8,20 @@ import tlang.core.{Null, Type}
 import tlang.internal.ContextContent
 
 case class DocImg(context: Null[ContextContent], src: String, alt: Option[String]) extends DocTextType[DocImg] {
-  override def deepCopy(): DocImg = DocImg(context, new String(src), if (alt.isDefined) Some(new String(alt.get)) else None)
 
   override def getContext: Null[ContextContent] = context
 
   override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, toModel.name)),
+    Some(ObjType(context, None, DocImg.modelName)),
     Some(List(
       BuildLang.createAttrStr(context, "src", src),
       BuildLang.createAttrStr(context, "alt", alt.get),
     ))
   )
 
-  override def toModel: ModelSetEntity = DocImg.model
-
   override def getElement: DocImg = this
 
-  override def getType: String = getClass.getSimpleName
+  override def getType: Type = DocImg.modelName
 }
 
 object DocImg {

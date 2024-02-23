@@ -2,20 +2,21 @@ package dev.tlang.tlang.tmpl.style.astbuilder
 
 import dev.tlang.tlang.TLang._
 import dev.tlang.tlang.astbuilder.BuildAst.addContext
-import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.astbuilder.{BuildHelperBlock, BuildHelperStatement}
-import tlang.internal.TmplNode
 import dev.tlang.tlang.tmpl.common.ast.NativeType
 import dev.tlang.tlang.tmpl.common.astbuilder.BuildCommonTmpl
 import dev.tlang.tlang.tmpl.style.ast._
-import tlang.internal.ContextResource
+import tlang.{core, mutable}
+import tlang.internal.{ContextResource, TmplNode}
 
 import scala.jdk.CollectionConverters._
 
 object BuildStyle {
 
   def buildStyle(resource: ContextResource, style: TmplStyleContext): StyleBlock = {
-    StyleBlock(addContext(resource, style), style.name.getText, style.langs.asScala.map(_.getText).toList,
+    val langs = new mutable.List[core.String]()
+        style.langs.asScala.foreach(str => langs.add(new core.String(str.getText)))
+    StyleBlock(addContext(resource, style), style.name.getText, langs.toArray.get().get().getElement,
       if (style.params != null && !style.params.isEmpty) Some(BuildHelperBlock.buildParams(resource, style.params.asScala.toList).map(param => NativeType(param.context, param))) else None,
       style.content.blocks.asScala.map(buildStyleStruct(resource, _)).toList)
   }

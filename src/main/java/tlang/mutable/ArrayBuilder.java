@@ -2,18 +2,19 @@ package tlang.mutable;
 
 import tlang.core.Array;
 import tlang.core.Int;
+import tlang.core.Value;
 
 public class ArrayBuilder<T> {
 
-    private final T[] array;
+    private final Value<T>[] array;
 
     private Int index = new Int(0);
 
     public ArrayBuilder(Int size) {
-        this.array = (T[]) new Object[size.get()];
+        this.array = (Value<T>[]) new Object[size.get()];
     }
 
-    public void add(T value) {
+    public void add(Value<T> value) {
         array[index.get()] = value;
         index = new Int(index.get() + 1);
     }

@@ -8,23 +8,21 @@ import tlang.core.{Null, Type}
 import tlang.internal.ContextContent
 
 case class DocLink(context: Null[ContextContent], src: String, name: String) extends DocTextType[DocLink] {
-  override def deepCopy(): DocLink = DocLink(context, new String(src), new String(name))
 
   override def getContext: Null[ContextContent] = context
 
   override def getElement: DocLink = this
 
-  override def getType: String = getClass.getSimpleName
+  override def getType: Type = DocLink.modelName
 
   override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, toModel.name)),
+    Some(ObjType(context, None, DocLink.modelName)),
     Some(List(
       BuildLang.createAttrStr(context, "src", src),
       BuildLang.createAttrStr(context, "name", name),
     ))
   )
 
-  override def toModel: ModelSetEntity = DocLink.model
 }
 
 object DocLink {

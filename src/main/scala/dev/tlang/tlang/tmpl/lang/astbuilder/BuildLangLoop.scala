@@ -4,7 +4,6 @@ import dev.tlang.tlang.TLang.{TmplDoWhileContext, TmplForContext, TmplWhileConte
 import dev.tlang.tlang.ast.common.ObjType
 import dev.tlang.tlang.ast.common.value.EntityValue
 import dev.tlang.tlang.astbuilder.BuildAst
-import dev.tlang.tlang.astbuilder.context.ContextResource
 
 object BuildLangLoop {
 

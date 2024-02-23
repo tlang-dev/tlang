@@ -8,18 +8,20 @@ import tlang.internal.{ContextContent, TmplNode}
 
 case class DataAttribute(context: Null[ContextContent]) extends TmplNode[DataAttribute] {
   override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, toModel.name)),
+    Some(ObjType(context, None, DataAttribute.modelName)),
     Some(List(
     ))
   )
 
-  override def toModel: ModelSetEntity = DataBlock.model
+//  override def toModel: ModelSetEntity = DataBlock.model
 
-  override def getType: String = getClass.getSimpleName
+  override def getType: Type = DataAttribute.modelName
 
-  override def deepCopy(): DataBlock = DataBlock(context)
+//  override def deepCopy(): DataBlock = DataBlock(context)
 
   override def getContext: Null[ContextContent] = context
+
+  override def getElement: DataAttribute = this
 }
 
 object DataAttribute {

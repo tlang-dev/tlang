@@ -8,23 +8,21 @@ import tlang.core.{Null, Type}
 import tlang.internal.ContextContent
 
 case class DocCodeBlock(context: Null[ContextContent], lang: String, code: String) extends DocTextType[DocCodeBlock] {
-  override def deepCopy(): DocCodeBlock = DocCodeBlock(context, new String(lang), new String(code))
 
   override def getContext: Null[ContextContent] = context
 
   override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, toModel.name)),
+    Some(ObjType(context, None, DocCodeBlock.modelName)),
     Some(List(
       BuildLang.createAttrStr(context, "language", lang),
       BuildLang.createAttrStr(context, "code", code)
     ))
   )
 
-  override def toModel: ModelSetEntity = DocCodeBlock.model
 
   override def getElement: DocCodeBlock = this
 
-  override def getType: String = getClass.getSimpleName
+  override def getType: Type = DocCodeBlock.modelName
 }
 
 object DocCodeBlock {

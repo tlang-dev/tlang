@@ -18,7 +18,7 @@ object FollowType {
     val errors = ListBuffer.empty[ResolverError]
     valueType match {
       case ArrayType(context, preType, name) => findInside(context, preType, name)(module, uses, scope, currentResource)
-      case ObjType(context, preType, name) => findInside(context, preType, name)(module, uses, scope, currentResource)
+//      case ObjType(context, preType, name) => findInside(context, preType, name)(module, uses, scope, currentResource)
       case _ =>
     }
     if (errors.nonEmpty) Left(errors.toList)

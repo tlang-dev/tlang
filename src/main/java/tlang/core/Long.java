@@ -30,11 +30,6 @@ public class Long implements Value<Long> {
     }
 
     @Override
-    public Null<ContextContent> getContext() {
-        return null;
-    }
-
-    @Override
     public Long getElement() {
         return this;
     }

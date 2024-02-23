@@ -1,6 +1,7 @@
 package dev.tlang.tlang.astbuilder
 
 import dev.tlang.tlang.TLang._
+import dev.tlang.tlang.ast.common.ManualType
 import dev.tlang.tlang.ast.model._
 import dev.tlang.tlang.ast.model.set._
 import dev.tlang.tlang.astbuilder.BuildAst.addContext
@@ -20,7 +21,7 @@ object BuildModelBlock {
 
   def buildSetEntity(resource: ContextResource, setEntity: ModelSetEntityContext): ModelSetEntity = {
     val ext = if (setEntity.ext != null && !setEntity.ext.isEmpty) Some(BuildCommon.buildObjType(resource, setEntity.ext)) else None
-    ModelSetEntity(addContext(resource, setEntity), setEntity.name.getText, ext, extractSetEntityAttrDefs(resource, setEntity.params.asScala.toList), extractSetEntityAttrDefs(resource, setEntity.attrs.asScala.toList))
+    ModelSetEntity(addContext(resource, setEntity), ManualType(resource.getPkg.toString, setEntity.name.getText), ext, extractSetEntityAttrDefs(resource, setEntity.params.asScala.toList), extractSetEntityAttrDefs(resource, setEntity.attrs.asScala.toList))
   }
 
   def extractSetEntityAttrDefs(resource: ContextResource, attrs: List[ModelSetAttributeContext]): Option[List[ModelSetAttribute]] = {
@@ -40,7 +41,7 @@ object BuildModelBlock {
   }
 
   def buildType(resource: ContextResource, setType: ModelSetTypeContext): ModelSetType = {
-    ModelSetType(addContext(resource, setType), setType.`type`.getText)
+    ModelSetType(addContext(resource, setType), ManualType(resource.getPkg.toString, setType.`type`.getText))
   }
 
   def buildFuncDef(resource: ContextResource, funcDef: ModelSetFuncDefContext): ModelSetFuncDef = {

@@ -6,12 +6,12 @@ import dev.tlang.tlang.ast.common.{ManualType, ObjType}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.tmpl.doc.ast.DocModel
 import tlang.core.{Null, Type}
-import tlang.internal.{ContextContent, DeepCopy, TmplID, TmplNode}
+import tlang.internal.{ContextContent, TmplID, TmplNode}
 
-case class LangPkg(context: Null[ContextContent], var parts: List[TmplID]) extends DeepCopy with TmplNode[LangPkg] {
-  override def deepCopy(): LangPkg = {
-    LangPkg(context, parts.map(_.deepCopy().asInstanceOf[TmplID]))
-  }
+case class LangPkg(context: Null[ContextContent], var parts: List[TmplID]) extends TmplNode[LangPkg] {
+  //  override def deepCopy(): LangPkg = {
+  //    LangPkg(context, parts.map(_.deepCopy().asInstanceOf[TmplID]))
+  //  }
 
   override def toEntity: EntityValue = {
     EntityValue(context,
@@ -23,9 +23,12 @@ case class LangPkg(context: Null[ContextContent], var parts: List[TmplID]) exten
       ))
   }
 
-  override def toModel: ModelSetEntity = LangPkg.model
-
   override def getContext: Null[ContextContent] = context
+
+
+  override def getElement: LangPkg = this
+
+  override def getType: Type = LangPkg.modelName
 }
 
 object LangPkg {

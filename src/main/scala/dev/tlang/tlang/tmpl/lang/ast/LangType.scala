@@ -9,26 +9,28 @@ import tlang.core.{Null, Type}
 import tlang.internal.{ContextContent, TmplID, TmplNode}
 
 case class LangType(context: Null[ContextContent], var name: TmplID, var generic: Option[LangGeneric] = None, isArray: Boolean = false, var currying: Option[List[LangCallFuncParam]] = None) extends TmplNode[LangType] {
-  override def deepCopy(): LangType = LangType(context, name.deepCopy().asInstanceOf[TmplID],
-    if (generic.isDefined) Some(generic.get.deepCopy()) else None,
-    if (isArray) true else false,
-    if (currying.isDefined) Some(currying.get.map(_.deepCopy())) else None,
-  )
+//  override def deepCopy(): LangType = LangType(context, name.deepCopy().asInstanceOf[TmplID],
+//    if (generic.isDefined) Some(generic.get.deepCopy()) else None,
+//    if (isArray) true else false,
+//    if (currying.isDefined) Some(currying.get.map(_.deepCopy())) else None,
+//  )
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, LangType.modelName)),
     Some(List(
       BuildLang.createAttrEntity(context, "name", name.toEntity),
-      BuildLang.createAttrNull(context, "generic",
-        generic,
-        None
-      ),
+//      BuildLang.createAttrNull(context, "generic",
+//        generic,
+//        None
+//      ),
     ))
   )
 
-  override def toModel: ModelSetEntity = LangType.model
-
   override def getContext: Null[ContextContent] = context
+
+  override def getElement: LangType = this
+
+  override def getType: Type = LangType.modelName
 }
 
 object LangType {

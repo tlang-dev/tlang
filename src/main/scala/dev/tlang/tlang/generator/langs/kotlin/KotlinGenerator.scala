@@ -65,20 +65,20 @@ object KotlinGenerator {
   def genImpl(impl: LangImpl): Seq = {
     val str = Seq()
     var cur = str
-    cur += genAnnotations(impl.annots, KotlinFormatter.RET)
-    cur = impl.props.fold(Seq.add(cur, "class"))(prop => cur += genProps(prop)) += " " += impl.name.toString
-    if (impl.fors.isDefined) {
-      cur = cur += " " += impl.fors.get.props.fold(Seq(":"))(genProps(_)) += " "
-      cur = cur += mkSeq(impl.fors.get.types.map(implFor => genType(implFor)), ",")
-    }
-    if (impl.withs.isDefined) {
-      val sep = if (impl.fors.isDefined) "" else ":"
-      cur = cur += " " += impl.withs.get.props.fold(Seq(sep))(genProps(_)) += " "
-      cur = cur += mkSeq(impl.fors.get.types.map(implFor => genType(implFor)), ",")
-    }
-    cur += "{"
-    if (impl.content.isDefined) cur -> genContents(impl.content.get)
-    cur += "}"
+    //cur += genAnnotations(impl.annots, KotlinFormatter.RET)
+//    cur = impl.props.fold(Seq.add(cur, "class"))(prop => cur += genProps(prop)) += " " += impl.name.toString
+//    if (impl.fors.isDefined) {
+//      cur = cur += " " += impl.fors.get.props.fold(Seq(":"))(genProps(_)) += " "
+//      cur = cur += mkSeq(impl.fors.get.types.map(implFor => genType(implFor)), ",")
+//    }
+//    if (impl.withs.isDefined) {
+//      val sep = if (impl.fors.isDefined) "" else ":"
+//      cur = cur += " " += impl.withs.get.props.fold(Seq(sep))(genProps(_)) += " "
+//      cur = cur += mkSeq(impl.fors.get.types.map(implFor => genType(implFor)), ",")
+//    }
+//    cur += "{"
+//    if (impl.content.isDefined) cur -> genContents(impl.content.get)
+//    cur += "}"
     str
   }
 
@@ -443,7 +443,7 @@ object KotlinGenerator {
 
   def genAttribute(attr: LangAttribute): Seq = {
     val str = Seq()
-    if (attr.`type`.isDefined) str += attr.`type`.get.toString += ":"
+    //if (attr.`type`.isDefined) str += attr.`type`.get.toString += ":"
     str += genOperation(attr.value)
     str
   }

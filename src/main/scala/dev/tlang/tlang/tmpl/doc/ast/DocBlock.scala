@@ -9,35 +9,37 @@ import dev.tlang.tlang.tmpl.AnyTmplInterpretedBlock
 import dev.tlang.tlang.tmpl.common.ast.NativeType
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core
-import tlang.core.{Null, Type}
+import tlang.core.{Array, Null, Type}
 import tlang.internal.{ContextContent, DomainBlock, TmplStringId}
 
-case class DocBlock(context: Null[ContextContent], name: String, langs: List[String],
+case class DocBlock(context: Null[ContextContent], name: String, langs: Array[core.String],
                     var params: Option[List[NativeType[HelperParam]]], content: DocContent, scope: Scope = Scope()) extends DomainBlock with AnyTmplInterpretedBlock[DocBlock] {
   override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, toModel.name)),
+    Some(ObjType(context, None, DocBlock.modelName)),
     Some(List(
       BuildLang.createAttrStr(context, "name", name),
-      BuildLang.createArray(context, "langs", langs.map(value => new TmplStringId(context, new core.String(value)).toEntity)),
+//      BuildLang.createArray(context, "langs", langs.map(value => new TmplStringId(context, new core.String(value)).toEntity)),
       BuildLang.createAttrEntity(context, "content", content.toEntity)
     ))
   )
 
-  override def toModel: ModelSetEntity = DocBlock.model
+//  override def toModel: ModelSetEntity = DocBlock.model
 
-  override def getType: String = getClass.getSimpleName
+  override def getType: Type = DocBlock.modelName
 
   override def getContext: Null[ContextContent] = context
 
-  override def deepCopy(): Any = DocBlock(context, new String(name), langs.map(new String(_)), params, content.deepCopy(), scope)
+//  override def deepCopy(): Any = DocBlock(context, new String(name), langs.map(new String(_)), params, content.deepCopy(), scope)
 
   override def getParams: Option[List[HelperParam]] = params.map(_.map(_.statement))
 
-  override def getLangs: List[String] = langs
+  override def getLangs: Array[core.String] = langs
 
   override def getScope: Scope = scope
 
-  override def getName: String = name
+  override def getName: core.String = new core.String(name)
+
+  override def getElement: DocBlock = this
 }
 
 object DocBlock {

@@ -5,6 +5,7 @@ import dev.tlang.tlang.astbuilder.BuildAst.addContext
 import dev.tlang.tlang.astbuilder.{AstBuilderUtils, BuildHelperBlock, BuildHelperStatement}
 import dev.tlang.tlang.tmpl.common.ast.NativeType
 import dev.tlang.tlang.tmpl.doc.ast._
+import tlang.{core, mutable}
 import tlang.core.Null
 import tlang.internal.ContextResource
 
@@ -13,8 +14,10 @@ import scala.jdk.CollectionConverters._
 object BuildDoc {
 
   def buildTmplDoc(resource: ContextResource, block: TmplDocContext): DocBlock = {
+    val langs = new mutable.List[core.String]()
+//    block.langs.asScala.foreach(str => langs.add(new core.String(str.getText)))
     val content = block.content.tmplDocContent()
-    DocBlock(addContext(resource, block), block.name.getText, block.langs.asScala.map(_.getText).toList,
+    DocBlock(addContext(resource, block), block.name.getText, langs.toArray.get().get().getElement,
       if (block.params != null && !block.params.isEmpty) Some(BuildHelperBlock.buildParams(resource, block.params.asScala.toList).map(param => NativeType(param.context, param))) else None,
       buildDocContent(resource, content))
   }

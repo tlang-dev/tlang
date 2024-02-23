@@ -31,7 +31,7 @@ object TemplateBuilder {
   def buildBlock(block: AnyTmplInterpretedBlock[_], context: Context): Either[ExecError, AnyTmplInterpretedBlock[_]] = {
     block match {
       case doc: DocBlock => buildDocBlock(doc, context)
-      case lang: LangBlock => buildLangBlock(lang, context)
+//      case lang: LangBlock => buildLangBlock(lang, context)
       case _ => println("TemplateBuilder: TmplBlock type not implemented")
         Right(block)
     }
@@ -289,23 +289,23 @@ object TemplateBuilder {
 
   def includeTmplId(tmplID: TmplID, context: Context): Either[ExecError, List[TmplNode[_]]] = {
     tmplID match {
-      case inter: TmplInterpretedId => ExecCallObject.run(inter.call, context) match {
-        case Left(error) => Left(error)
-        case Right(value) => value match {
-          case Some(value) =>
-            if (value.length == 1) {
-              buildValue(value.head) match {
-                case Left(error) => Left(error)
-                case Right(value) => Right(List(new TmplReplacedId(tmplID.getContext, inter.getPre, value, inter.getPost)))
-              }
-            } else buildValues(value)
-          case None => Left(NoValue("No value returned", tmplID.getContext))
-        }
-      }
-      case block: TmplBlockId => buildBlock(block.getBlock, Context(List(block.getBlock.getScope))) match {
-        case Left(error) => Left(error)
-        case Right(value) => Right(List(value))
-      }
+//      case inter: TmplInterpretedId => ExecCallObject.run(inter.call, context) match {
+//        case Left(error) => Left(error)
+//        case Right(value) => value match {
+//          case Some(value) =>
+//            if (value.length == 1) {
+//              buildValue(value.head) match {
+//                case Left(error) => Left(error)
+//                case Right(value) => Right(List(new TmplReplacedId(tmplID.getContext, inter.getPre, value, inter.getPost)))
+//              }
+//            } else buildValues(value)
+//          case None => Left(NoValue("No value returned", tmplID.getContext))
+//        }
+//      }
+//      case block: TmplBlockId => buildBlock(block.getBlock, Context(List(block.getBlock.getScope))) match {
+//        case Left(error) => Left(error)
+//        case Right(value) => Right(List(value))
+//      }
       case _ => Right(List(tmplID))
     }
   }

@@ -18,15 +18,15 @@ object FollowCallObject {
       case varObj: CallVarObject =>
         findInResource(currentResource, varObj) match {
           case Left(error) => Left(error)
-          case Right(elem) => elem match {
-            case Some(value) => addValueInScope(newName.getOrElse(varObj.name), value, List(), scope) match {
-              case Left(error) =>
-                Left(error)
-              case Right(_) =>
-                Right(())
-            }
-            case None => findOutside(call, varObj, module, uses, scope, currentResource)
-          }
+//          case Right(elem) => elem match {
+//            case Some(value) => addValueInScope(newName.getOrElse(varObj.name), value, List(), scope) match {
+//              case Left(error) =>
+//                Left(error)
+//              case Right(_) =>
+//                Right(())
+//            }
+//            case None => findOutside(call, varObj, module, uses, scope, currentResource)
+//          }
         }
 
 
@@ -48,10 +48,10 @@ object FollowCallObject {
           case funcObject: CallFuncObject =>
             BrowseHelperStatement.browseCallFuncObjectParams(funcObject.currying, value.get, module, uses, scope, currentResource)
           case funcObject: CallRefFuncObject =>
-            value.get match {
-              case tmpl: LangBlockAsValue => funcObject.func = Some(Right(tmpl.block))
-              case func: HelperFunc => funcObject.func = Some(Left(func))
-            }
+//            value.get match {
+////              case tmpl: LangBlockAsValue => funcObject.func = Some(Right(tmpl.block))
+////              case func: HelperFunc => funcObject.func = Some(Left(func))
+//            }
             BrowseHelperStatement.browseCallFuncObjectParams(funcObject.currying, value.get, module, uses, scope, currentResource)
           case _ => Right(())
         }
@@ -84,7 +84,7 @@ object FollowCallObject {
       val callFunc = call.statements.last.asInstanceOf[CallFuncObject]
 //      callFunc.currying.foreach(params => params.foreach(param => param.))
 ////
-      BrowseHelperStatement.browseCallFuncObjectParams(callFunc.currying, call.getElement, module, uses, scope, currentResource)
+//      BrowseHelperStatement.browseCallFuncObjectParams(callFunc.currying, call.getElement, module, uses, scope, currentResource)
     }
     Right(())
   }

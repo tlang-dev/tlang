@@ -15,6 +15,7 @@ import dev.tlang.tlang.tmpl.lang.ast.loop.{ForType, LangFor}
 import dev.tlang.tlang.tmpl.lang.ast.primitive._
 import dev.tlang.tlang.tmpl.style.astbuilder.BuildStyle
 import tlang.internal.{AnyTmplBlock, ContextResource, TmplNode}
+import tlang.{core, mutable}
 
 import scala.jdk.CollectionConverters._
 
@@ -34,9 +35,11 @@ object BuildTmplBlock {
   }
 
   def buildLangBlock(resource: ContextResource, tmpl: TmplLangContext): LangBlock = {
+    val langs = new mutable.List[core.String]()
+    tmpl.langs.asScala.foreach(str => langs.add(new core.String(str.getText)))
     val content = buildFullBlock(resource, tmpl.tmplFullBlock())
-    LangBlock(addContext(resource, tmpl), tmpl.name.getText,
-      tmpl.langs.asScala.map(_.getText).toList,
+    LangBlock(addContext(resource, tmpl), tmpl.name.getText, langs.toArray.get().get().getElement
+      ,
       if (tmpl.params != null && !tmpl.params.isEmpty) Some(BuildHelperBlock.buildParams(resource, tmpl.params.asScala.toList).map(param => NativeType(param.context, param))) else None,
       content)
   }

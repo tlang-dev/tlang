@@ -15,10 +15,10 @@ public class StyleUtils {
         if (struct.isNotNull().get()) {
             var contents = (Array<Entity>) struct.get();
             for (var content : contents.getRecords()) {
-                content.getAttr(name).ifNotNull(value -> {
-                    Instance.isEntity(value).onResult(isEntity -> isEntity.getElement().ifTrue(styles::add));
-                    return FuncRet.VOID;
-                });
+                //content.getAttr(name).ifNotNull(value -> {
+                  //  Instance.isEntity(value).onResult(isEntity -> isEntity.getElement().ifTrue(styles::add));
+//                    return FuncRet.VOID;
+               // });
             }
         }
         return FuncRet.of(Array.empty());

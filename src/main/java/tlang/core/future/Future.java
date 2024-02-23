@@ -1,12 +1,12 @@
 package tlang.core.future;
 
+import tlang.core.*;
 import tlang.core.Error;
-import tlang.core.Null;
-import tlang.core.Value;
 import tlang.core.Void;
 import tlang.core.func.Apply;
 import tlang.core.func.ApplyVoidFunc;
 import tlang.core.func.FuncRet;
+import tlang.internal.ClassType;
 
 public class Future<T> implements Value<Future<T>> {
 
@@ -36,7 +36,12 @@ public class Future<T> implements Value<Future<T>> {
     }
 
     @Override
-    public Future<T> value() {
+    public Future<T> getElement() {
         return this;
+    }
+
+    @Override
+    public Type getType() {
+        return ClassType.of(Future.class);
     }
 }

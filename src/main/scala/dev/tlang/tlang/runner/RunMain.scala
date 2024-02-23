@@ -58,8 +58,8 @@ object RunMain {
   }
 
   def findMainInHelper(helper: HelperBlock): Option[HelperFunc] = {
-    if (helper.funcs.isNotNull.get()) {
-      helper.funcs.get().getElement.getRecords.find(_.name == "main")
+    if (helper.funcs.isDefined) {
+      helper.funcs.get.find(_.name == "main")
     } else {
       None
     }

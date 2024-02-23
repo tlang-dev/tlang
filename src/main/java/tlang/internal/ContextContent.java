@@ -47,8 +47,4 @@ public class ContextContent implements Value<ContextContent>, DeepCopy{
         return null;
     }
 
-    @Override
-    public Null<ContextContent> getContext() {
-        return null;
-    }
 }

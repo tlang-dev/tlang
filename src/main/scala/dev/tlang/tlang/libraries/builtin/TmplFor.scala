@@ -12,7 +12,7 @@ import scala.collection.mutable.ListBuffer
 
 object TmplFor {
 
-  def tmplForFunc: HelperFunc = HelperFunc(Null.empty(), "forEach", Some(List(HelperCurrying(Null.empty(), List(HelperParam(Null.empty(), Some("array"), ObjType(Null.empty(), None, ArrayValue.getType)), HelperParam(Null.empty(), Some("refFunc"), ObjType(Null.empty(), None, CallRefFuncObject.getType)))))), Null.empty(), HelperContent(Null.empty(), Some(List(
+  def tmplForFunc: HelperFunc = HelperFunc(Null.empty(), "forEach", Some(List(HelperCurrying(Null.empty(), List(HelperParam(Null.empty(), Some("array"), ObjType(Null.empty(), None, ArrayValue.getType)), HelperParam(Null.empty(), Some("refFunc"), ObjType(Null.empty(), None, CallRefFuncObject.getType)))))),None, HelperContent(Null.empty(), Some(List(
     HelperInternalFunc((context: Context) => {
       ContextUtils.findVar(context, "array") match {
         case Some(arrayVar) => ContextUtils.findRefFunc(context, "refFunc") match {
@@ -34,7 +34,7 @@ object TmplFor {
       val rets = ListBuffer.empty[Value[_]]
       var error: Option[ExecError] = None
       for (i <- array.indices) {
-        newScope.variables.update("_i", new TLangLong(Null.empty(), new Long(i)))
+//        newScope.variables.update("_i", new TLangLong(Null.empty(), new Long(i)))
         val newCaller = CallFuncObject(Null.empty(), Some("refFunc"), Some(List(CallFuncParam(Null.empty(), Some(List(SetAttribute(Null.empty(), Some("_"), array(i).value)))))))
         ExecCallFunc.run(newCaller, newContext) match {
           case Left(err) => error = Some(err)

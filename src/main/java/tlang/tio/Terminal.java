@@ -1,7 +1,9 @@
 package tlang.tio;
 
 import dev.tlang.tlang.ast.common.value.TLangString;
-import dev.tlang.tlang.interpreter.Value;
+import tlang.core.Int;
+import tlang.core.String;
+import tlang.core.Value;
 import tlang.core.func.FuncRet;
 
 import java.io.BufferedReader;
@@ -24,7 +26,7 @@ public class Terminal {
 
     public static FuncRet readln() {
         try {
-            return FuncRet.of(READER.readLine());
+            return FuncRet.of(new String(READER.readLine()));
         } catch (IOException e) {
             return FuncRet.error(e);
         }
@@ -32,7 +34,7 @@ public class Terminal {
 
     public static FuncRet read() {
         try {
-            return FuncRet.of(READER.read());
+            return FuncRet.of(new Int(READER.read()));
         } catch (IOException e) {
             return FuncRet.error(e);
         }
@@ -42,7 +44,7 @@ public class Terminal {
         try {
             Process process = Runtime.getRuntime().exec(command.toString());
             process.waitFor();
-            return FuncRet.of(process.exitValue());
+            return FuncRet.of(new Int(process.exitValue()));
         } catch (IOException | InterruptedException e) {
             return FuncRet.error(e);
         }

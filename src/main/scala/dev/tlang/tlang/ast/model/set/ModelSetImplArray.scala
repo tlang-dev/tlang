@@ -1,11 +1,8 @@
 package dev.tlang.tlang.ast.model.set
 
-import tlang.core.Null
-import tlang.internal.ContextContent
+import tlang.core.{Null, Type}
+import tlang.internal.{ClassType, ContextContent}
 
 case class ModelSetImplArray(context: Null[ContextContent], var modelSetEntity: Option[ModelSetEntity]) extends ModelSetValueType[ModelSetImplArray] {
-  override def getElement: ModelSetImplArray = this
-
-  override def getType: String = "ModelSetImplArray"
 
 }

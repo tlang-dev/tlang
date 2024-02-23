@@ -28,7 +28,11 @@ object AstBuilderUtils {
     }
   }
 
-  def getText(token: Token): Null[core.String] = {
+  def getText(token: Token): Option[String] = {
+    if (token != null) Some(token.getText) else None
+  }
+
+  def getNullText(token: Token): Null[core.String] = {
     if (token != null) Null.of(new core.String(token.getText)) else Null.empty()
   }
 

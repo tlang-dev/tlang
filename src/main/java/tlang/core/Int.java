@@ -18,11 +18,6 @@ public class Int implements Value<Int> {
     }
 
     @Override
-    public Null<ContextContent> getContext() {
-        return null;
-    }
-
-    @Override
     public Int getElement() {
         return this;
     }

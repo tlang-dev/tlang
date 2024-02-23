@@ -8,17 +8,19 @@ import tlang.internal.{ContextContent, TmplNode}
 
 case class CmdCallFunc(context: Null[ContextContent]) extends TmplNode[CmdCallFunc] {
   override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, toModel.name)),
+    Some(ObjType(context, None, CmdCallFunc.modelName)),
     Some(List())
   )
 
-  override def toModel: ModelSetEntity = CmdCallFunc.model
+  //  override def toModel: ModelSetEntity = CmdCallFunc.model
 
-  override def getType: String = getClass.getSimpleName
+  override def getType: Type = CmdCallFunc.modelName
 
   override def getContext: Null[ContextContent] = context
 
-  override def deepCopy(): CmdCallFunc = CmdCallFunc(context)
+  //  override def deepCopy(): CmdCallFunc = CmdCallFunc(context)
+
+  override def getElement: CmdCallFunc = this
 }
 
 object CmdCallFunc {

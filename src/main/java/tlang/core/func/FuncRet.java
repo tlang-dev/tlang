@@ -11,7 +11,7 @@ public class FuncRet<T> implements Value<FuncRet<T>> {
 
     public static final FuncRet<Void> VOID = new FuncRet<>();
 
-    private final Null<T> ret;
+    private final Null<Value<T>> ret;
 
     private final Null<Error> error;
 
@@ -21,7 +21,7 @@ public class FuncRet<T> implements Value<FuncRet<T>> {
     }
 
     public FuncRet(Value<T> ret) {
-        this.ret = Null.of(ret);
+        this.ret = (Null<Value<T>>) Null.of(ret);
         this.error = Null.empty();
     }
 
@@ -31,11 +31,11 @@ public class FuncRet<T> implements Value<FuncRet<T>> {
     }
 
     public Null<T> get() {
-        return ret;
+        return (Null<T>) ret;
     }
 
     public FuncRet<T> onResult(OnResult<T> onResult) {
-        ret.ifNotNull(onResult::onResult);
+        ret.ifNotNull(value -> onResult.onResult(value));
         return this;
     }
 
@@ -49,7 +49,7 @@ public class FuncRet<T> implements Value<FuncRet<T>> {
     }
 
     public FuncRet<Void> inAllCase(ApplyVoidFunc<T> func) {
-        func.apply(ret.get());
+        func.apply((T) ret.get());
         return FuncRet.VOID;
     }
 
@@ -100,8 +100,4 @@ public class FuncRet<T> implements Value<FuncRet<T>> {
     }
 
 
-    @Override
-    public Null<ContextContent> getContext() {
-        return null;
-    }
 }

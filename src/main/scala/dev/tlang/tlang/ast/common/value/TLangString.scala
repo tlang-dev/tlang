@@ -11,29 +11,18 @@ import tlang.internal.{AstContext, ContextContent}
 class TLangString(context: Null[ContextContent], value: String) extends PrimitiveValue[String] with AstContext {
   override def getElement: String = value
 
-  override def getType: String = TLangString.getType
+  override def getType: Type = TLangString.getType
 
   override def toString: String = getElement
 
-  override def add(value: PrimitiveValue[String]): Either[ExecError, TLangString] = Right(new TLangString(Null.empty(), this.value + value.getElement))
-
-  override def subtract(value: PrimitiveValue[String]): Either[ExecError, TLangString] = Left(NotImplemented(context = context))
-
-  override def multiply(value: PrimitiveValue[String]): Either[ExecError, TLangString] = Left(NotImplemented(context = context))
-
-  override def divide(value: PrimitiveValue[String]): Either[ExecError, TLangString] = Left(NotImplemented(context = context))
-
-  override def modulo(value: PrimitiveValue[String]): Either[ExecError, TLangString] = Left(NotImplemented(context = context))
-
-  override def deepCopy(): TLangString = new TLangString(context, new String(value))
+//  override def deepCopy(): TLangString = new TLangString(context, new String(value))
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, TLangString.getType)),
     Some(List())
   )
 
-  override def toModel: ModelSetEntity = ModelSetEntity(Null.empty(), getType, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
-  )))
+  override def getContext: Null[ContextContent] = context
 }
 
 object TLangString extends TLangType {

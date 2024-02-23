@@ -3,7 +3,6 @@ package dev.tlang.tlang.tmpl.lang.astbuilder
 import dev.tlang.tlang.TLang
 import dev.tlang.tlang.TLang.{TmplCurryingContext, TmplFuncContext}
 import dev.tlang.tlang.astbuilder.BuildAst.addContext
-import dev.tlang.tlang.astbuilder.context.ContextResource
 import dev.tlang.tlang.tmpl.common.astbuilder.BuildCommonTmpl
 import dev.tlang.tlang.tmpl.lang.ast.LangParam
 import dev.tlang.tlang.tmpl.lang.ast.func.{LangFunc, LangFuncParam}

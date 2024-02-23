@@ -21,11 +21,6 @@ public class TmplInterpretedId extends TmplID {
     }
 
     @Override
-    public Value<?> deepCopy() {
-        return null;
-    }
-
-    @Override
     public TmplID getElement() {
         return this;
     }
@@ -37,11 +32,6 @@ public class TmplInterpretedId extends TmplID {
 
     @Override
     public Entity toEntity() {
-        return null;
-    }
-
-    @Override
-    public Model toModel() {
         return null;
     }
 

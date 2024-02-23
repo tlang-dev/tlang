@@ -37,19 +37,19 @@ public class Either<T extends Value<T>, U extends Value<U>> {
         return right;
     }
 
-    public <B extends Value<B>> Either<B, U> mapLeft(MapFunc<T, B> func) {
-        if (isLeft()) {
-            return Either.left(func.apply(getLeft()));
-        }
-        return Either.right(getRight());
-    }
-
-    public <B extends Value<B>> Either<T, B> mapRight(MapFunc<U, B> func) {
-        if (isRight()) {
-            return Either.right(func.apply(getRight()));
-        }
-        return Either.left(getLeft());
-    }
+//    public <B extends Value<B>> Either<B, U> mapLeft(MapFunc<T, B> func) {
+//        if (isLeft()) {
+//            return Either.left(func.apply(getLeft()));
+//        }
+//        return Either.right(getRight());
+//    }
+//
+//    public <B extends Value<B>> Either<T, B> mapRight(MapFunc<U, B> func) {
+//        if (isRight()) {
+//            return Either.right(func.apply(getRight()));
+//        }
+//        return Either.left(getLeft());
+//    }
 
     public void applyLeft(ApplyVoidFunc<T> func) {
         if (isLeft()) {
@@ -63,10 +63,10 @@ public class Either<T extends Value<T>, U extends Value<U>> {
         }
     }
 
-    public <B> B fold(MapFunc<T, B> leftFunc, MapFunc<U, B> rightFunc) {
-        if (isLeft()) {
-            return leftFunc.apply(getLeft());
-        }
-        return rightFunc.apply(getRight());
-    }
+//    public <B> B fold(MapFunc<T, B> leftFunc, MapFunc<U, B> rightFunc) {
+//        if (isLeft()) {
+//            return leftFunc.apply(getLeft());
+//        }
+//        return rightFunc.apply(getRight());
+//    }
 }

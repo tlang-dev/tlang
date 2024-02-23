@@ -18,11 +18,6 @@ public class TmplBlockId extends TmplID {
     }
 
     @Override
-    public Value<?> deepCopy() {
-        return null;
-    }
-
-    @Override
     public TmplID getElement() {
         return this;
     }
@@ -34,11 +29,6 @@ public class TmplBlockId extends TmplID {
 
     @Override
     public Entity toEntity() {
-        return null;
-    }
-
-    @Override
-    public Model toModel() {
         return null;
     }
 

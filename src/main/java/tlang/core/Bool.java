@@ -80,8 +80,4 @@ public class Bool implements Value<Bool> {
         return TYPE;
     }
 
-    @Override
-    public Null<ContextContent> getContext() {
-        return null;
-    }
 }

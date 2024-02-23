@@ -1,10 +1,9 @@
 package tlang.internal;
 
 import tlang.Entity;
-import tlang.core.Model;
 import tlang.core.Null;
 import tlang.core.String;
-import tlang.core.Value;
+import tlang.core.Type;
 
 public class TmplReplacedId extends TmplID {
 
@@ -22,18 +21,9 @@ public class TmplReplacedId extends TmplID {
         this.post = post;
     }
 
-    @Override
-    public Value<?> deepCopy() {
-        return null;
-    }
 
     @Override
     public Entity toEntity() {
-        return null;
-    }
-
-    @Override
-    public Model toModel() {
         return null;
     }
 
@@ -51,5 +41,15 @@ public class TmplReplacedId extends TmplID {
 
     public Null<String> getPost() {
         return post;
+    }
+
+    @Override
+    public TmplID getElement() {
+        return this;
+    }
+
+    @Override
+    public Type getType() {
+        return ClassType.of(TmplReplacedId.class);
     }
 }

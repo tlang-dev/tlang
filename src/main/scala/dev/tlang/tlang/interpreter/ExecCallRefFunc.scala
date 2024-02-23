@@ -19,9 +19,10 @@ object ExecCallRefFunc extends Executor {
         val newContext = ExecCallFunc.manageParameters(CallFuncObject(Null.empty(), None, currying), func, MutableContext.toMutable(context).removeLocalScopes().toContext())
         ExecFunc.run(func, newContext)
       case Right(tmpl) =>
-        val tmplCopy = tmpl.deepCopy().asInstanceOf[AnyTmplInterpretedBlock[_]]
-        val newContext = ExecCallFunc.manageTmplParameters(CallFuncObject(Null.empty(), None, currying), tmplCopy, MutableContext.toMutable(context).removeLocalScopes().toContext())
-        Right(Some(List(LangBlockAsValue(tmplCopy.getContext, tmplCopy, newContext))))
+        Right(None)
+//        val tmplCopy = tmpl.deepCopy().asInstanceOf[AnyTmplInterpretedBlock[_]]
+//        val newContext = ExecCallFunc.manageTmplParameters(CallFuncObject(Null.empty(), None, currying), tmplCopy, MutableContext.toMutable(context).removeLocalScopes().toContext())
+//        Right(Some(List(LangBlockAsValue(tmplCopy.getContext, tmplCopy, newContext))))
     }
   }
 }

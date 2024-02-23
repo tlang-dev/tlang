@@ -32,8 +32,8 @@ object CheckExistingElement {
   def checkInHead(resource: Resource, usedNames: mutable.Map[String, AstContext]): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
     resource.ast.header.foreach(_.uses.foreach(_.foreach(use => {
-      val name = if (use.alias.isNotNull.get()) use.alias.get else use.parts.last
-      checkExisting(name, use, usedNames, errors)
+      val name = if (use.alias.isDefined) use.alias.get else use.parts.last
+//      checkExisting(name, use, usedNames, errors)
     })))
     if (errors.isEmpty) Right(())
     else Left(errors.toList)
@@ -88,7 +88,7 @@ object CheckExistingElement {
     val errors = ListBuffer.empty[ResolverError]
     model.content.foreach(_.foreach {
       case assign: AssignVar => checkExisting(assign.name, assign, usedNames, errors)
-      case setEntity: ModelSetEntity => checkExisting(setEntity.name, setEntity, usedNames, errors)
+//      case setEntity: ModelSetEntity => checkExisting(setEntity.name, setEntity, usedNames, errors)
     })
     if (errors.isEmpty) Right(())
     else Left(errors.toList)

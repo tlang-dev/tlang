@@ -6,7 +6,7 @@ import tlang.internal.{ClassType, ContextContent}
 
 case class NullValue[T](context: Null[ContextContent], var value: Null[T], valueType: Option[TLangType]) extends ComplexValueStatement[Null[T]] {
 
-  override def getType: Type = if (valueType.isDefined) valueType.get.getType else ClassType.of(this.getClass)
+//  override def getType: Type = if (valueType.isDefined) valueType.get.getType else ClassType.of(this.getClass)
 
 }
 

@@ -24,11 +24,6 @@ public class TmplStringId extends TmplID {
     }
 
     @Override
-    public Value<?> deepCopy() {
-        return new TmplStringId(context, new String(id.get()));
-    }
-
-    @Override
     public TmplID getElement() {
         return this;
     }
@@ -43,8 +38,4 @@ public class TmplStringId extends TmplID {
         return null;
     }
 
-    @Override
-    public Model toModel() {
-        return null;
-    }
 }

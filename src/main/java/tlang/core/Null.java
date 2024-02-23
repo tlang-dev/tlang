@@ -50,7 +50,7 @@ public class Null<T> implements Value<Null<T>> {
 
     public Null<T> ifNotNull(ApplyVoidFunc<T> func) {
         if (value != null) {
-            func.apply(value);
+            func.apply(value.getElement());
         }
         return this;
     }
@@ -77,8 +77,4 @@ public class Null<T> implements Value<Null<T>> {
         return TYPE;
     }
 
-    @Override
-    public Null<ContextContent> getContext() {
-        return Null.empty();
-    }
 }

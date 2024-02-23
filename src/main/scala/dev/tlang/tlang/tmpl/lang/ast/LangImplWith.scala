@@ -1,34 +1,35 @@
 package dev.tlang.tlang.tmpl.lang.ast
 
+import dev.tlang.tlang.ast.common.value.{ArrayValue, EntityValue}
 import dev.tlang.tlang.ast.common.{ManualType, ObjType}
-import dev.tlang.tlang.ast.common.value.{ArrayValue, EntityValue, NullValue}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
-import dev.tlang.tlang.tmpl.doc.ast.DocModel
-import tlang.internal.TmplNode
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
-import tlang.core.{Null, Type, Value}
-import tlang.internal.{AstContext, ContextContent}
+import tlang.core.{Null, Type}
+import tlang.internal.{AstContext, ContextContent, TmplNode}
 
 case class LangImplWith(context: Null[ContextContent], var props: Option[LangProp] = None, var types: List[LangType]) extends TmplNode[LangImplWith] with AstContext {
-  override def deepCopy(): LangImplWith = LangImplWith(context,
-    if (props.isDefined) Some(props.get.deepCopy()) else None,
-    types.map(_.deepCopy()))
+//  override def deepCopy(): LangImplWith = LangImplWith(context,
+//    if (props.isDefined) Some(props.get.deepCopy()) else None,
+//    types.map(_.deepCopy()))
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, LangImplWith.modelName)),
     Some(List(
-      BuildLang.createAttrNull(context, "props",
-        props,
-        None
-      ),
+//      BuildLang.createAttrNull(context, "props",
+////        props,
+//        None
+//      ),
       BuildLang.createArray(context, "types", types.map(_.toEntity))
     ))
   )
 
-  override def toModel: ModelSetEntity = LangImplWith.model
+//  override def toModel: ModelSetEntity = LangImplWith.model
 
   override def getContext: Null[ContextContent] = context
 
+  override def getElement: LangImplWith = this
+
+  override def getType: Type = LangImplWith.modelName
 }
 
 object LangImplWith {

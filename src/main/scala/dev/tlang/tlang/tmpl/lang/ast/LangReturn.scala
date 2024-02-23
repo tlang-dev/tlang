@@ -9,7 +9,7 @@ import tlang.core.{Null, Type}
 import tlang.internal.{AstContext, ContextContent}
 
 case class LangReturn(context: Null[ContextContent], var operation: LangOperation) extends LangExpression[LangReturn] with AstContext {
-  override def deepCopy(): LangReturn = LangReturn(context, operation.deepCopy())
+//  override def deepCopy(): LangReturn = LangReturn(context, operation.deepCopy())
 
 
   override def toEntity: EntityValue = EntityValue(context,
@@ -19,9 +19,11 @@ case class LangReturn(context: Null[ContextContent], var operation: LangOperatio
     ))
   )
 
-  override def toModel: ModelSetEntity = LangReturn.model
-
   override def getContext: Null[ContextContent] = context
+
+  override def getElement: LangReturn = this
+
+  override def getType: Type = LangReturn.modelName
 }
 
 object LangReturn {

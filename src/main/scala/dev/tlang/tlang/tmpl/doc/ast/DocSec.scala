@@ -7,20 +7,19 @@ import tlang.core.{Null, Type}
 import tlang.internal.ContextContent
 
 case class DocSec(context: Null[ContextContent], title: String, content: DocContent) extends DocContentType[DocSec] {
-  override def deepCopy(): DocSec = DocSec(context, new String(title), content.deepCopy())
+//  override def deepCopy(): DocSec = DocSec(context, new String(title), content.deepCopy())
 
   override def getContext: Null[ContextContent] = context
 
   override def getElement: DocSec = this
 
-  override def getType: String = getClass.getSimpleName
+  override def getType: Type = DocSec.modelName
 
   override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, toModel.name)),
+    Some(ObjType(context, None, DocSec.modelName)),
     Some(List())
   )
 
-  override def toModel: ModelSetEntity = DocSec.model
 }
 
 object DocSec {

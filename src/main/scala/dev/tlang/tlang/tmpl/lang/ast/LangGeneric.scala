@@ -9,7 +9,7 @@ import tlang.core.{Null, Type}
 import tlang.internal.{ContextContent, TmplNode}
 
 case class LangGeneric(context: Null[ContextContent], var types: List[LangType]) extends TmplNode[LangGeneric] {
-  override def deepCopy(): LangGeneric = LangGeneric(context, types.map(_.deepCopy()))
+//  override def deepCopy(): LangGeneric = LangGeneric(context, types.map(_.deepCopy()))
 
   override def getContext: Null[ContextContent] = context
 
@@ -20,7 +20,7 @@ case class LangGeneric(context: Null[ContextContent], var types: List[LangType])
     ))
   )
 
-  override def toModel: ModelSetEntity = LangGeneric.model
+//  override def toModel: ModelSetEntity = LangGeneric.model
 
   override def getElement: LangGeneric = this
 

@@ -6,10 +6,7 @@ import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value._
 import dev.tlang.tlang.ast.helper.{HelperFunc, HelperStatement}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetRef}
-import dev.tlang.tlang.interpreter.ExecCallFunc.manageTmplParameters
 import dev.tlang.tlang.interpreter.context.{Context, ContextUtils, Scope}
-import dev.tlang.tlang.tmpl.AnyTmplInterpretedBlock
-import dev.tlang.tlang.tmpl.lang.ast.LangBlockAsValue
 import tlang.core.{Null, Value}
 import tlang.internal.ContextContent
 
@@ -54,9 +51,10 @@ object ExecCallObject extends Executor {
           case Some(_) => ExecCallFunc.run(CallFuncObject(Null.empty(), Some(name), func.currying), context)
           case None => ContextUtils.findTmpl(context, name) match {
             case Some(tmpl) =>
-              val tmplCopy = tmpl.deepCopy().asInstanceOf[AnyTmplInterpretedBlock[_]]
-              val newContext = manageTmplParameters(func, tmplCopy, context)
-              Right(Some(List(LangBlockAsValue(tmplCopy.getContext, tmplCopy, Context(newContext.scopes :+ tmplCopy.getScope)))))
+              //              val tmplCopy = tmpl.deepCopy().asInstanceOf[AnyTmplInterpretedBlock[_]]
+              //              val newContext = manageTmplParameters(func, tmplCopy, context)
+              //              Right(Some(List(LangBlockAsValue(tmplCopy.getContext, tmplCopy, Context(newContext.scopes :+ tmplCopy.getScope)))))
+              Right(None)
             case None => Left(CallableNotFound(name, func.context))
           }
         }
@@ -114,15 +112,15 @@ object ExecCallObject extends Executor {
 
     def resolve(posValue: Value[_]): Either[ExecError, Option[List[Value[_]]]] = {
       array.tbl match {
-        case Some(array) => posValue match {
-          case long: TLangLong => Right(Some(List(array(long.getElement.intValue()).value)))
-          case str: TLangString =>
-            val callRes = array.find(elem => elem.attr.isDefined && elem.attr.get.equals(str.getElement))
-            if (callRes.isDefined) Right(Some(List(callRes.get.value)))
-            else Left(CallableNotFound(posValue.getElement.toString, posValue.getContext))
-          case _ => Left(WrongType("Should be Int or String instead of " + posValue.getType, posValue.getContext))
-
-        }
+//        case Some(array) => posValue match {
+//          case long: TLangLong => Right(Some(List(array(long.getElement.intValue()).value)))
+//          case str: TLangString =>
+//            val callRes = array.find(elem => elem.attr.isDefined && elem.attr.get.equals(str.getElement))
+//            if (callRes.isDefined) Right(Some(List(callRes.get.value)))
+//            else Left(CallableNotFound(posValue.getElement.toString, posValue.getContext))
+//          case _ => Left(WrongType("Should be Int or String instead of " + posValue.getType, posValue.getContext))
+//
+//        }
         case None => Left(CallableNotFound("position", array.context))
       }
 
@@ -176,12 +174,14 @@ object ExecCallObject extends Executor {
         case Some(value) => Right(Some(value))
         case None =>
           if (name == "type")
-            Right(Some(List(new TLangString(Null.empty(), entity.getType))))
+//            Right(Some(List(new TLangString(Null.empty(), entity.getType.getType.toString))))
+            Right(None)
           else findModelInEntity(name, entity, context, caller)
       }
     }
     else if (name == "type")
-      Right(Some(List(new TLangString(Null.empty(), entity.getType))))
+//      Right(Some(List(new TLangString(Null.empty(), entity.getType.getType.toString))))
+      Right(None)
     else findModelInEntity(name, entity, context, caller)
   }
 
@@ -204,24 +204,25 @@ object ExecCallObject extends Executor {
 
   def findModelFromType(name: String, modelType: ValueType, currentScope: Scope, context: Context, caller: CallObjectType): Either[ExecError, Option[List[Value[_]]]] = {
     val typeName = modelType.getContextType
-    currentScope.models.get(typeName) match {
-      case Some(value) =>
-        val model = value.asInstanceOf[ModelSetEntity]
-        findInModel(name, model, Context(model.scope :: context.scopes), caller) match {
-          case Left(error) => Left(error)
-          case Right(res) => res match {
-            case Some(_) => Right(res)
-            case None =>
-              if (model.ext.isDefined) findModelFromType(name, model.ext.get, model.scope, context, caller)
-              else Left(CallableNotFound(name, modelType.getContext))
-          }
-        }
-      case None => Left(CallableNotFound(name, modelType.getContext))
-    }
+//    currentScope.models.get(typeName) match {
+//      case Some(value) =>
+//        val model = value.asInstanceOf[ModelSetEntity]
+//        findInModel(name, model, Context(model.scope :: context.scopes), caller) match {
+//          case Left(error) => Left(error)
+//          case Right(res) => res match {
+//            case Some(_) => Right(res)
+//            case None =>
+//              if (model.ext.isDefined) findModelFromType(name, model.ext.get, model.scope, context, caller)
+//              else Left(CallableNotFound(name, modelType.getContext))
+//          }
+//        }
+//      case None => Left(CallableNotFound(name, modelType.getContext))
+//    }
+    Right(None)
   }
 
   def findInModel(name: String, model: ModelSetEntity, context: Context, caller: CallObjectType): Either[ExecError, Option[List[Value[_]]]] = {
-    if (model.attrs.isDefined) findInSetAttrs(name, model.attrs.get, context, model.getContext, caller)
+    if (model.attrs.isDefined) findInSetAttrs(name, model.attrs.get, context, model.context, caller)
     else Right(None)
   }
 
@@ -264,7 +265,7 @@ object ExecCallObject extends Executor {
             case Right(tmplBlock) => Left(NotImplemented("The execution of TmplBloc is not yet implemented in a ref func in an array or entity", ref.context))
           }
 
-        case _ => Left(NotImplemented(value.getType.toString, value.getContext))
+//        case _ => Left(NotImplemented(value.getType.toString, value.getContext))
       }
     }
   }
@@ -289,7 +290,7 @@ object ExecCallObject extends Executor {
         else {
           value.get.head match {
             case refFunc: CallRefFuncObject => execRefFuncWithCaller(caller, refFunc, context)
-            case _ => Left(NotImplemented(value.get.head.getType.toString, value.get.head.getContext))
+//            case _ => Left(NotImplemented(value.get.head.getType.toString, value.get.head.getContext))
           }
         }
     }

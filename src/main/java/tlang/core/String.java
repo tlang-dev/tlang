@@ -35,8 +35,4 @@ public class String implements Value<String> {
         return TYPE;
     }
 
-    @Override
-    public Null<ContextContent> getContext() {
-        return null;
-    }
 }

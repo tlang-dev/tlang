@@ -15,13 +15,13 @@ object BuildHelperBlock {
   def build(resource: ContextResource, helperBlock: HelperBlockContext): HelperBlock = {
     val funcs = ListBuffer.empty[HelperFunc]
     helperBlock.helperFuncs.asScala.foreach(func => funcs.addOne(buildFunc(resource, func)))
-    HelperBlock(addContext(resource, helperBlock), if (funcs.isEmpty) Null.empty() else Null.of(funcs.toList))
+    HelperBlock(addContext(resource, helperBlock), if (funcs.isEmpty) None else Some(funcs.toList))
   }
 
   def buildFunc(resource: ContextResource, func: HelperFuncContext): HelperFunc = {
     HelperFunc(addContext(resource, func), func.name.getText,
       if (func.currying != null && !func.currying.isEmpty) Some(buildCurrying(resource, func.currying.asScala.toList)) else None,
-      if (func.retVals != null && !func.retVals.isEmpty) Null.of(func.retVals.asScala.toList.map(retVal => buildParamType(resource, retVal))) else Null.empty(),
+      if (func.retVals != null && !func.retVals.isEmpty) Some(func.retVals.asScala.toList.map(retVal => buildParamType(resource, retVal))) else None,
       if (func.body != null) buildContent(resource, func.body) else HelperContent(addContext(resource, func), None))
   }
 

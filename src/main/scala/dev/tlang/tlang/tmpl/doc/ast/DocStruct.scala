@@ -10,14 +10,14 @@ import tlang.internal.ContextContent
 import scala.collection.mutable.ListBuffer
 
 case class DocStruct(context: Null[ContextContent], level: Int, title: String, content: Option[DocContent]) extends DocContentType[DocStruct] {
-  override def deepCopy(): DocStruct = DocStruct(context, level, new String(title),
-    if (content.isDefined) Some(content.get.deepCopy()) else None)
+  //  override def deepCopy(): DocStruct = DocStruct(context, level, new String(title),
+  //    if (content.isDefined) Some(content.get.deepCopy()) else None)
 
   override def getContext: Null[ContextContent] = context
 
   override def getElement: DocStruct = this
 
-  override def getType: String = getClass.getSimpleName
+  override def getType: Type = DocStruct.modelName
 
   override def toEntity: EntityValue = {
     val elems = ListBuffer.empty[ComplexAttribute]
@@ -26,12 +26,11 @@ case class DocStruct(context: Null[ContextContent], level: Int, title: String, c
     if (content.isDefined)
       elems += BuildLang.createAttrEntity(context, "content", content.get.toEntity)
     EntityValue(context,
-      Some(ObjType(context, None, toModel.name)),
+      Some(ObjType(context, None, DocStruct.modelName)),
       Some(elems.toList)
     )
   }
 
-  override def toModel: ModelSetEntity = DocStruct.model
 }
 
 object DocStruct {

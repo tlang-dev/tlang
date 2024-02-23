@@ -12,30 +12,10 @@ case class ArrayValue(context: Null[ContextContent], tbl: Option[List[ComplexAtt
 
   override def getType: Type = ArrayValue.getType
 
-  override def compareTo(value: Value[ArrayValue]): Int = 0
-
-  override def add(value: PrimitiveValue[ArrayValue]): Either[ExecError, ArrayValue] = {
-    if (tbl.isEmpty && value.getElement.tbl.isEmpty) Right(ArrayValue(Null.empty(), None))
-    else Right(ArrayValue(Null.empty(), Some(tbl.getOrElse(List()) ++: value.getElement.tbl.getOrElse(List()))))
-  }
-
-  override def subtract(value: PrimitiveValue[ArrayValue]): Either[ExecError, ArrayValue] = Left(NotImplemented(context = context))
-
-  override def multiply(value: PrimitiveValue[ArrayValue]): Either[ExecError, ArrayValue] = Left(NotImplemented(context = context))
-
-  override def divide(value: PrimitiveValue[ArrayValue]): Either[ExecError, ArrayValue] = Left(NotImplemented(context = context))
-
-  override def modulo(value: PrimitiveValue[ArrayValue]): Either[ExecError, ArrayValue] = Left(NotImplemented(context = context))
-
-  override def deepCopy(): ArrayValue = ArrayValue(context, tbl)
-
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, ArrayValue.getType)),
     Some(List())
   )
-
-  override def toModel: ModelSetEntity = ModelSetEntity(Null.empty(), getType, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
-  )))
 
   override def getContext: Null[ContextContent] = context
 }

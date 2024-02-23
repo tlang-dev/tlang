@@ -10,7 +10,7 @@ import tlang.core.{Null, Type}
 import tlang.internal.ContextContent
 
 case class LangInclude(context: Null[ContextContent], calls: List[CallObject]) extends LangExpression[LangInclude] {
-  override def deepCopy(): LangInclude = LangInclude(context, calls)
+//  override def deepCopy(): LangInclude = LangInclude(context, calls)
 
   override def getContext: Null[ContextContent] = context
 
@@ -21,7 +21,7 @@ case class LangInclude(context: Null[ContextContent], calls: List[CallObject]) e
     ))
   )
 
-  override def toModel: ModelSetEntity = LangInclude.model
+//  override def toModel: ModelSetEntity = LangInclude.model
 
   override def getElement: LangInclude = this
 

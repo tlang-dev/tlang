@@ -7,20 +7,18 @@ import tlang.core.{Null, Type}
 import tlang.internal.ContextContent
 
 case class DocSpan(context: Null[ContextContent]) extends DocTextType[DocSpan] {
-  override def deepCopy(): DocSpan = DocSpan(context)
 
   override def getContext: Null[ContextContent] = context
 
   override def getElement: DocSpan = this
 
-  override def getType: String = getClass.getSimpleName
+  override def getType: Type = DocSpan.modelName
 
   override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, toModel.name)),
+    Some(ObjType(context, None, DocSpan.modelName)),
     Some(List())
   )
 
-  override def toModel: ModelSetEntity = DocSpan.model
 }
 
 object DocSpan {

@@ -9,7 +9,7 @@ public class Instance {
         if (entity.getType().getType().isEqual(type).get()) {
             return FuncRet.of(Bool.TRUE);
         } else if (entity.getModel().isNotNull().get()) {
-            return Instance.isModelOf(entity.getModel().get(), type);
+            return Instance.isModelOf(entity.getModel().get().getElement(), type);
         }
         return FuncRet.of(Bool.FALSE);
     }
@@ -18,39 +18,39 @@ public class Instance {
         if (model.getType().getType().isEqual(type).get()) {
             return FuncRet.of(Bool.TRUE);
         } else {
-            return FuncRet.of(new Bool(model.getModel().isNotNull().get() && Instance.isModelOf(model.getModel().get(), type).get().get().value().get()));
+            return FuncRet.of(new Bool(model.getModel().isNotNull().get() && Instance.isModelOf(model.getModel().get().getElement(), type).get().get().getElement().get()));
         }
     }
 
     public static FuncRet<Bool> isArray(Value<?> value) {
-        return FuncRet.of(new Bool(value.value() instanceof Array<?>));
+        return FuncRet.of(new Bool(value instanceof Array<?>));
     }
 
     public static FuncRet<Bool> isLong(Value<?> value) {
-        return FuncRet.of(new Bool(value.value() instanceof Long));
+        return FuncRet.of(new Bool(value instanceof Long));
     }
 
     public static FuncRet<Bool> isDouble(Value<?> value) {
-        return FuncRet.of(new Bool(value.value() instanceof Double));
+        return FuncRet.of(new Bool(value instanceof Double));
     }
 
     public static FuncRet<Bool> isString(Value<?> value) {
-        return FuncRet.of(new Bool(value.value() instanceof String));
+        return FuncRet.of(new Bool(value instanceof String));
     }
 
     public static FuncRet<Bool> isBool(Value<?> value) {
-        return FuncRet.of(new Bool(value.value() instanceof Bool));
+        return FuncRet.of(new Bool(value instanceof Bool));
     }
 
     public static FuncRet<Bool> isANull(Value<?> value) {
-        return FuncRet.of(new Bool(value.value() instanceof Null));
+        return FuncRet.of(new Bool(value instanceof Null));
     }
 
     public static FuncRet<Bool> isMultiValue(Value<?> value) {
-        return FuncRet.of(new Bool(value.value() instanceof MultiValue));
+        return FuncRet.of(new Bool(value instanceof MultiValue));
     }
 
     public static FuncRet<Bool> isEntity(Value<?> value) {
-        return FuncRet.of(new Bool(value.value() instanceof Entity));
+        return FuncRet.of(new Bool(value instanceof Entity));
     }
 }

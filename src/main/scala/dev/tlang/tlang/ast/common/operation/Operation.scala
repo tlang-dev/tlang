@@ -17,9 +17,8 @@ case class Operation(context: Null[ContextContent], expectedType: Option[ValueTy
 
   override def getType: Type = Operation.getType
 
-  override def compareTo(value: Value[Operation]): Int = 0
+//  override def compareTo(value: Value[Operation]): Int = 0
 
-  override def getContext: Null[ContextContent] = context
 }
 
 object Operation extends TLangType {

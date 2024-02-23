@@ -6,51 +6,50 @@ import dev.tlang.tlang.ast.common.{ManualType, ObjType}
 import dev.tlang.tlang.ast.helper.HelperParam
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.interpreter.context.Scope
-import dev.tlang.tlang.tmpl.AnyTmplInterpretedBlock
 import dev.tlang.tlang.tmpl.common.ast.NativeType
 import dev.tlang.tlang.tmpl.doc.ast.DocModel
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core
-import tlang.core.{Null, Type}
-import tlang.internal.{ContextContent, TmplStringId}
+import tlang.core.{Array, Null, Type}
+import tlang.internal.{AnyTmplBlock, ContextContent}
 
-case class LangBlock(context: Null[ContextContent], name: String, langs: List[String],
+case class LangBlock(context: Null[ContextContent], name: String, langs: Array[core.String],
                      var params: Option[List[NativeType[HelperParam]]],
                      var content: LangFullBlock,
-                     scope: Scope = Scope()) extends AnyTmplInterpretedBlock[LangBlock] {
+                     scope: Scope = Scope()) extends AnyTmplBlock[LangBlock] {
 
-  override def deepCopy(): LangBlock =
-    LangBlock(context, name, langs, params,
-      content.deepCopy(),
-      scope)
+  //  override def deepCopy(): LangBlock =
+  //    LangBlock(context, name, langs, params,
+  //      content.deepCopy(),
+  //      scope)
 
   override def getElement: LangBlock = this
 
-  override def getType: String = getClass.getSimpleName
+  override def getType: Type = LangBlock.modelName
 
   override def toEntity: EntityValue = {
     EntityValue(context, Some(ObjType(context, None, LangBlock.modelName)), Some(List(
       BuildLang.createAttrStr(context, "name", name),
-      BuildLang.createArray(context, "langs", langs.map(value => new TmplStringId(context, new core.String(value)).toEntity)),
-      BuildLang.createAttrNull(context, "params",
-        if (params.isDefined) Some(ArrayValue(context, Some(params.get.map(value => ComplexAttribute(context, None, None, Operation(context, None, Right(value.toEntity))))))) else None,
-        None
-      ),
+      //      BuildLang.createArray(context, "langs", langs.map(value => new TmplStringId(context, new core.String(value.getElement)).toEntity)),
+      //      BuildLang.createAttrNull(context, "params",
+      //        if (params.isDefined) Some(ArrayValue(context, Some(params.get.map(value => ComplexAttribute(context, None, None, Operation(context, None, Right(value.toEntity))))))) else None,
+      //        None
+      //      ),
       ComplexAttribute(context, Some("content"),
         Some(ObjType(context, None, LangFullBlock.modelName)), Operation(context, None, Right(content.toEntity))
       )
     )))
   }
 
-  override def toModel: ModelSetEntity = LangBlock.model
+  //  override def toModel: ModelSetEntity = LangBlock.model
 
-  override def getParams: Option[List[HelperParam]] = params.map(_.map(_.getElement))
+  //  override def getParams: Option[List[HelperParam]] = params.map(_.map(_.getElement))
 
-  override def getLangs: List[String] = langs
+  override def getLangs: Array[core.String] = langs
 
-  override def getScope: Scope = scope
+  //  override def getScope: Scope = scope
 
-  override def getName: String = name
+  override def getName: core.String = new core.String(name)
 
   override def getContext: Null[ContextContent] = context
 }

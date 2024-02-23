@@ -37,7 +37,7 @@ object ResolveUtils {
     var entity: Option[ModelSetEntity] = None
     while (entity.isEmpty && i < contents.size) {
       contents(i) match {
-        case newModel: ModelSetEntity => if (newModel.name == name) entity = Some(newModel)
+        case newModel: ModelSetEntity => if (newModel.name.getType.toString == name) entity = Some(newModel)
         case _ =>
       }
       i += 1

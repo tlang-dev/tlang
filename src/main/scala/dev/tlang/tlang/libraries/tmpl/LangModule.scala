@@ -12,7 +12,7 @@ object LangModule extends ModulePattern {
 
   override def getName: String = "Lang"
 
-  override def getFunctions: core.Array[HelperFunc] = core.Array.empty().asInstanceOf[Array[HelperFunc]]
+  override def getFunctions: List[HelperFunc] = List.empty
 
   override def getModels: List[ModelContent[_]] = LangModel.getAll
 

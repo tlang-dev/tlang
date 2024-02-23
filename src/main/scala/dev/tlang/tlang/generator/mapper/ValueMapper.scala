@@ -1,11 +1,10 @@
 package dev.tlang.tlang.generator.mapper
 
-import dev.tlang.tlang.ast.common.call.{CallObject, CallObjectType}
+import dev.tlang.tlang.ast.common.call.CallObject
 import dev.tlang.tlang.ast.common.value.TLangString
 import dev.tlang.tlang.interpreter.ExecCallObject
 import dev.tlang.tlang.interpreter.context.Context
 import dev.tlang.tlang.libraries.generator.Generator
-import tlang.internal.TmplNode
 import dev.tlang.tlang.tmpl.doc.ast.DocBlock
 import dev.tlang.tlang.tmpl.lang.ast._
 import dev.tlang.tlang.tmpl.lang.ast.call._
@@ -122,9 +121,9 @@ object ValueMapper {
 
   def mapImpl(impl: LangImpl, context: Context): LangImpl = {
     impl.name = mapID(impl.name, context)
-    impl.content = mapContents(impl.content, context)
+   // impl.content = mapContents(impl.content, context)
     impl.fors = mapFors(impl.fors, context)
-    impl.withs = mapWiths(impl.withs, context)
+   // impl.withs = mapWiths(impl.withs, context)
     impl
   }
 
@@ -321,8 +320,8 @@ object ValueMapper {
   }
 
   def mapAttribute(attrs: LangAttribute, context: Context): LangAttribute = {
-    attrs.attr = mapOptID(attrs.attr, context)
-    if (attrs.`type`.isDefined) attrs.`type` = Some(mapType(attrs.`type`.get, context))
+ //   attrs.attr = mapOptID(attrs.attr, context)
+//    if (attrs.`type`.isDefined) attrs.`type` = Some(mapType(attrs.`type`.get, context))
     attrs.value = mapOperation(attrs.value, context)
     attrs
   }
@@ -409,18 +408,18 @@ object ValueMapper {
   def mapID(id: TmplID, context: Context): TmplStringId = {
     id match {
       case interId: TmplInterpretedId => ExecCallObject.run(interId.getNativeType.getNativeElement.asInstanceOf[CallObject], context) match {
-        case Left(error) =>new TmplStringId(interId.getContext, new core.String(error.message))
+        case Left(error) => new TmplStringId(interId.getContext, new core.String(error.message))
         case Right(value) => if (value.isDefined) {
           value.get.head match {
-            case str: TLangString =>new TmplStringId(interId.getContext, interId.getPre.orElse(new core.String("")) + str.getElement + interId.getPost.orElse(new core.String("")))
-            case block: LangBlockAsValue => new TmplStringId(interId.getContext, interId.getPre.orElse(new core.String("")) + Generator.generate(block, context) + interId.getPost.orElse(new core.String("")))
-            case _ => new TmplStringId(interId.getContext, interId.getPre.orElse(new core.String("")) + value.get.head.toString + interId.getPost.orElse(new core.String("")))
+            case str: TLangString => new TmplStringId(interId.getContext, new core.String(interId.getPre.orElse(new core.String("")).toString + str.getElement + interId.getPost.orElse(new core.String("")).toString))
+            case block: LangBlockAsValue => new TmplStringId(interId.getContext, new core.String(interId.getPre.orElse(new core.String("")).toString + Generator.generate(block, context).toOption.get.toString + interId.getPost.orElse(new core.String("")).toString))
+            case _ => new TmplStringId(interId.getContext, new core.String(interId.getPre.orElse(new core.String("")).toString + value.get.head.toString + interId.getPost.orElse(new core.String("")).toString))
           }
         } else new TmplStringId(interId.getContext, new core.String("Undefined"))
       }
-      case replacedId: TmplReplacedId => new TmplStringId(replacedId.getContext, replacedId.getPre.orElse(new core.String("")) + replacedId.getNode.toString + replacedId.getPost.orElse(new core.String("")))
+      case replacedId: TmplReplacedId => new TmplStringId(replacedId.getContext, new core.String(replacedId.getPre.orElse(new core.String("")).toString + replacedId.getNode.toString + replacedId.getPost.orElse(new core.String("")).toString))
       case str: TmplStringId => new TmplStringId(str.getContext, str.getId)
-      case block: TmplBlockId => new TmplBlockId(block.getContext, new core.String("Undefined"))
+      case block: TmplBlockId => new TmplStringId(block.getContext, new core.String("Undefined"))
     }
     //      var pos = str.indexOf("${")
     //      val ret = new StringBuilder(str)

@@ -10,13 +10,13 @@ import tlang.core.{Null, Type}
 import tlang.internal.{AstContext, ContextContent}
 
 case class LangAffect(context: Null[ContextContent], var variable: LangCallObj, var value: LangOperation) extends LangExpression[LangAffect] with AstContext {
-  override def deepCopy(): LangAffect = LangAffect(context, variable.deepCopy(), value.deepCopy())
+//  override def deepCopy(): LangAffect = LangAffect(context, variable.deepCopy(), value.deepCopy())
 
   override def getContext: Null[ContextContent] = context
 
   override def getElement: LangAffect = this
 
-  override def getType: String = getClass.getSimpleName
+  override def getType: Type = LangAffect.modelName
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, LangAffect.modelName)),
@@ -26,7 +26,7 @@ case class LangAffect(context: Null[ContextContent], var variable: LangCallObj, 
     ))
   )
 
-  override def toModel: ModelSetEntity = LangAffect.model
+//  override def toModel: ModelSetEntity = LangAffect.model
 }
 
 object LangAffect {

@@ -9,13 +9,15 @@ import tlang.internal.{ContextContent, TmplNode}
 case class NativeType[T](context: Null[ContextContent], statement: T) extends TmplNode[T] {
   override def toEntity: EntityValue = EntityValue(context, None, None)
 
-  override def toModel: ModelSetEntity = NativeType.model
+  //  override def toModel: ModelSetEntity = NativeType.model
 
-  override def getType: String = getClass.getSimpleName
+  override def getType: Type = NativeType.modelName
 
-  override def deepCopy(): NativeType[_] = NativeType(context, statement)
+  //  override def deepCopy(): NativeType[_] = NativeType(context, statement)
 
   override def getContext: Null[ContextContent] = context
+
+  override def getElement: T = statement
 }
 
 object NativeType {

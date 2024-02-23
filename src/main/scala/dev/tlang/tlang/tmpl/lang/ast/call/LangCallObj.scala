@@ -1,42 +1,37 @@
 package dev.tlang.tlang.tmpl.lang.ast.call
 
+import dev.tlang.tlang.ast.common.value.{ArrayValue, EntityValue}
 import dev.tlang.tlang.ast.common.{ManualType, ObjType}
-import dev.tlang.tlang.ast.common.call.CallRefFuncObject
-import dev.tlang.tlang.ast.common.value.{ArrayValue, EntityValue, NullValue}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
-import dev.tlang.tlang.astbuilder.context.ContextContent
-import dev.tlang.tlang.interpreter.Value
-import dev.tlang.tlang.tmpl.cmd.ast.CmdCallFuncArgs.getClass
 import dev.tlang.tlang.tmpl.lang.ast._
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
-import tlang.core
-import tlang.core.{Int, Null, Type}
+import tlang.core.{Null, Type}
+import tlang.internal.ContextContent
 
 case class LangCallObj(context: Null[ContextContent], var props: Option[LangProp] = None, var firstCall: LangCallObjType[_], var calls: List[LangCallObjectLink]) extends LangSimpleValueType[LangCallObj] with LangExpression[LangCallObj] {
-  override def deepCopy(): LangCallObj = LangCallObj(context,
-    if (props.isDefined) Some(props.get.deepCopy()) else None,
-    firstCall.deepCopy().asInstanceOf[LangCallObjType[_]],
-    calls.map(_.deepCopy()))
+//  override def deepCopy(): LangCallObj = LangCallObj(context,
+//    if (props.isDefined) Some(props.get.deepCopy()) else None,
+//    firstCall.deepCopy().asInstanceOf[LangCallObjType[_]],
+//    calls.map(_.deepCopy()))
 
-  override def compareTo(value: core.Value[LangCallObj]): Int = new Int(0)
 
   override def getElement: LangCallObj = this
 
-  override def getType: String = getClass.getSimpleName
+  override def getType: Type = LangCallObj.modelName
 
   override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, LangCallObj.name)),
+    Some(ObjType(context, None, LangCallObj.modelName)),
     Some(List(
-      BuildLang.createAttrNull(context, "props",
-        if (props.isDefined) Some(props.get.toEntity) else None,
-        None
-      ),
+//      BuildLang.createAttrNull(context, "props",
+//        if (props.isDefined) Some(props.get.toEntity) else None,
+//        None
+//      ),
       BuildLang.createAttrEntity(context, "firstCall", firstCall.toEntity),
       BuildLang.createArray(context, "calls", calls.map(_.toEntity))
     ))
   )
 
-  override def toModel: ModelSetEntity = LangCallObj.model
+  override def getContext: Null[ContextContent] = context
 }
 
 object LangCallObj {
@@ -45,9 +40,9 @@ object LangCallObj {
 
   val modelName: Type = ManualType(getClass.getPackageName, name)
 
-  val model: ModelSetEntity = ModelSetEntity(None, name, Some(ObjType(None, None, LangModel.langNode.name)), None, Some(List(
-    ModelSetAttribute(None, Some("props"), ModelSetType(None, NullValue.name)),
-    ModelSetAttribute(None, Some("firstCall"), ModelSetType(None, LangCallObjType.name)),
-    ModelSetAttribute(None, Some("calls"), ModelSetType(None, ArrayValue.getType)),
+  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
+    ModelSetAttribute(Null.empty(), Some("props"), ModelSetType(Null.empty(), Null.TYPE)),
+    ModelSetAttribute(Null.empty(), Some("firstCall"), ModelSetType(Null.empty(), LangCallObjType.modelName)),
+    ModelSetAttribute(Null.empty(), Some("calls"), ModelSetType(Null.empty(), ArrayValue.getType)),
   )))
 }

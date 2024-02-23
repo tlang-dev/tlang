@@ -25,16 +25,13 @@ object Generator {
           case None => Right(Some(List(new TLangString(Null.empty(), ""))))
         }
       })
-    ))))
+    ))))*/
 
   def generate(block: LangBlockAsValue, context: Context): Either[ExecError, TLangString] = {
-    TemplateBuilder.buildBlockAsValue(block) match {
-      case Left(error) => Left(error)
-      case Right(newBlock) => generateAfterMapping(newBlock, context)
-    }
+    Right(new TLangString(Null.empty(), "Generator not yet done"))
   }
 
-  private def generateAfterMapping(block: LangBlockAsValue, context: Context): Either[ExecError, TLangString] = {
+  /*private def generateAfterMapping(block: LangBlockAsValue, context: Context): Either[ExecError, TLangString] = {
     //    generators.get(block.block.lang) match {
     //      case None => Left(ElementNotFound("This language does not exist: " + block.block.lang))
     //      case Some(generator) =>

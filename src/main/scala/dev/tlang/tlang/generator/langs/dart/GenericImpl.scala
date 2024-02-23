@@ -16,27 +16,27 @@ object GenericImpl extends BlockGenerator {
     val implRules = FormatManager.findRules("impl", rules)
     val noEOS = params.copy(addEOS = false)
     _ind = Formatter.indent(str, indent)
-    if (tmpl.annots.isDefined) tmpl.annots.get.foreach(annot => _ind = followUp(annot, str, _ind, rules, noEOS))
-    str ++= "class" ++= " " ++= tmpl.name.toString
-    if (tmpl.fors.isDefined) {
-      str ++= " extends "
-      tmpl.fors.get.types.zipWithIndex.foreach { case (incl, i) =>
-        _ind = followUp(incl, str, _ind, rules, noEOS)
-        if (i != tmpl.fors.get.types.size - 1) str ++= ","
-      }
-    }
-    if (tmpl.withs.isDefined) {
-      str ++= " implements "
-      tmpl.withs.get.types.zipWithIndex.foreach { case (incl, i) =>
-        _ind = followUp(incl, str, _ind, rules, noEOS)
-        if (i != tmpl.fors.get.types.size - 1) str ++= ","
-      }
-    }
-    _ind = FormatManager.applyRules(str, implRules, "{", _ind)
-    if (tmpl.content.isDefined) tmpl.content.get.foreach(content => {
-      _ind = Formatter.indent(str, _ind)
-      _ind = followUp(content, str, _ind, rules, params.copy(addEOS = true))
-    })
+//    if (tmpl.annots.isDefined) tmpl.annots.get.foreach(annot => _ind = followUp(annot, str, _ind, rules, noEOS))
+//    str ++= "class" ++= " " ++= tmpl.name.toString
+//    if (tmpl.fors.isDefined) {
+//      str ++= " extends "
+//      tmpl.fors.get.types.zipWithIndex.foreach { case (incl, i) =>
+//        _ind = followUp(incl, str, _ind, rules, noEOS)
+//        if (i != tmpl.fors.get.types.size - 1) str ++= ","
+//      }
+//    }
+//    if (tmpl.withs.isDefined) {
+//      str ++= " implements "
+//      tmpl.withs.get.types.zipWithIndex.foreach { case (incl, i) =>
+//        _ind = followUp(incl, str, _ind, rules, noEOS)
+//        if (i != tmpl.fors.get.types.size - 1) str ++= ","
+//      }
+//    }
+//    _ind = FormatManager.applyRules(str, implRules, "{", _ind)
+//    if (tmpl.content.isDefined) tmpl.content.get.foreach(content => {
+//      _ind = Formatter.indent(str, _ind)
+//      _ind = followUp(content, str, _ind, rules, params.copy(addEOS = true))
+//    })
     _ind = FormatManager.applyRules(str, implRules, "}", _ind)
     _ind
   }

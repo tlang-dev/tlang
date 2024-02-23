@@ -7,14 +7,14 @@ import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core.{Null, Type}
 import tlang.internal._
 
-case class LangProp(context: Null[ContextContent], var props: List[TmplID]) extends DeepCopy with AstContext with TmplNode[LangProp] {
-  override def deepCopy(): LangProp = LangProp(context, props.map(_.deepCopy().asInstanceOf[TmplID]))
+case class LangProp(context: Null[ContextContent], var props: List[TmplID]) extends AstContext with TmplNode[LangProp] {
+  //  override def deepCopy(): LangProp = LangProp(context, props.map(_.deepCopy().asInstanceOf[TmplID]))
 
   override def getContext: Null[ContextContent] = context
 
   override def getElement: LangProp = this
 
-  override def getType: String = getClass.getSimpleName
+  override def getType: Type = LangProp.modelName
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, LangProp.modelName)),
@@ -23,7 +23,6 @@ case class LangProp(context: Null[ContextContent], var props: List[TmplID]) exte
     ))
   )
 
-  override def toModel: ModelSetEntity = LangProp.model
 }
 
 object LangProp {

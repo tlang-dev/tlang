@@ -80,7 +80,7 @@ object BuildLang {
 
   def createAttrDouble(context: Null[ContextContent], name: String, value: Double): ComplexAttribute = {
     ComplexAttribute(context, Some(name), None, Operation(
-      context, None, Right(new TLangDouble(context, new core.Double(value)))
+      context, None, Right(new TLangDouble(context, value))
     ))
   }
 
@@ -93,7 +93,8 @@ object BuildLang {
   def createAttrNull(context: Null[ContextContent], name: String, value: Null[TmplNode[_]], valueType: Option[TLangType]): ComplexAttribute = {
     ComplexAttribute(context, Some(name), None, Operation(
       context, None, Right(new NullValue[Value[_]](context,
-        if (value.isNotNull.get()) Null.of(value.get.getElement.toEntity) else Null.empty(),
+        //        if (value.isNotNull.get()) Null.of(value.get.getElement.toEntity) else Null.empty(),
+        Null.empty(),
         valueType))
     ))
   }
