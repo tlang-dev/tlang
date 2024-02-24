@@ -6,17 +6,17 @@ import scala.collection.mutable
 
 class State {
 
-  private val jumps = mutable.Stack[Int]()
+  private val jumps = mutable.Stack[LabelIndex]()
 
   private val boxes = mutable.Stack[Box]()
 
   private val stack = new Stack
 
-  def jumpTo(index: Int): Unit = {
+  def jumpTo(index: LabelIndex): Unit = {
     jumps.prepend(index)
   }
 
-  def getJump: Int = {
+  def getJump: LabelIndex = {
     jumps.pop()
   }
 
@@ -24,7 +24,7 @@ class State {
     jumps.nonEmpty
   }
 
-  def getBox(): Box = {
+  def getBox: Box = {
     boxes.head
   }
 

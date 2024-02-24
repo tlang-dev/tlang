@@ -6,8 +6,8 @@ import tlang.core.Value
 
 case class Set(value: Option[Value[_]]) extends Instruction {
   override def run(state: State): Either[ExecError, Unit] = {
-    if (value.isDefined) state.getBox().set(value.get)
-    else state.getBox().set(state.getStack.load())
+    if (value.isDefined) state.getBox.set(value.get)
+    else state.getBox.set(state.getStack.load())
     Right(())
   }
 }

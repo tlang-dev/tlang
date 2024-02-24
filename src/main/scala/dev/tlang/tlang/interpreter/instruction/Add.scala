@@ -8,11 +8,11 @@ case class Add() extends Instruction {
 
 
   override def run(state: State): Either[ExecError, Unit] = {
-    val v1 = state.getBox().get()
-    val v2 = state.getBox().get()
+    val v1 = state.getBox.get()
+    val v2 = state.getBox.get()
     v1 match {
       case str: core.String =>
-        state.getBox().set(new core.String(v1.asInstanceOf[core.String].get() + v2.asInstanceOf[core.String].get()))
+        state.getBox.set(new core.String(v1.asInstanceOf[core.String].get() + v2.asInstanceOf[core.String].get()))
         Right(())
     }
   }

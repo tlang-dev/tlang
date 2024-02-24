@@ -5,7 +5,7 @@ import dev.tlang.tlang.interpreter.context.State
 
 case class Get() extends Instruction {
   override def run(state: State): Either[ExecError, Unit] = {
-    state.getStack.push(state.getBox().get())
+    state.getStack.push(state.getBox.get())
     Right(())
   }
 }

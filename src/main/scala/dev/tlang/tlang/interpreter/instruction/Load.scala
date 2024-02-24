@@ -5,8 +5,8 @@ import dev.tlang.tlang.interpreter.context.State
 
 case class Load(popFromStack: Boolean = false) extends Instruction {
   override def run(state: State): Either[ExecError, Unit] = {
-    if (popFromStack) state.getBox().set(state.getStack.pop())
-    else state.getBox().set(state.getStack.load())
+    if (popFromStack) state.getBox.set(state.getStack.pop())
+    else state.getBox.set(state.getStack.load())
     Right(())
   }
 }

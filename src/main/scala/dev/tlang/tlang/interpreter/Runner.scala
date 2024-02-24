@@ -5,26 +5,31 @@ import dev.tlang.tlang.interpreter.instruction.{EndSeq, ExecJump}
 
 class Runner {
 
-  private var pos: Int = 0
+  private var sectionPos: Int = 0
+  private var instrPos: Int = 0
   private var error: Option[ExecError] = None
   private val state = new State
 
-  def run(program: Program, start: Int): Either[ExecError, Unit] = {
-    pos = start
+  def run(program: Program, sectionStart: Int, instrStart: Int): Either[ExecError, Unit] = {
+    sectionPos = sectionStart
+    instrPos = instrStart
     do {
-      println("Instruction n°: " + pos)
-      val instr = program.getInstr(pos)
+      println("Section n°: " + sectionPos + ", Instruction n°: " + instrPos)
+      val section = program.getSection(sectionPos)
+      val instr = section.getInstr(instrPos)
       instr.run(state) match {
         case Left(err) => error = Some(err)
         case Right(_) => {
           if (instr.isInstanceOf[ExecJump] && state.hasJump) {
-            pos = state.getJump
-            println("Jump to: " + pos)
-          } else pos += 1
+            val jump = state.getJump
+            sectionPos = jump.section
+            instrPos = jump.instruction
+            println("Jump to: " + sectionPos + ":" + instrPos)
+          } else instrPos += 1
         }
       }
 
-    } while (error.isEmpty && (state.hasJump || !program.getInstr(pos - 1).isInstanceOf[EndSeq]) && pos < program.getInstructions.length)
+    } while (error.isEmpty && (state.hasJump || !program.getSection(sectionPos).getInstr(instrPos - 1).isInstanceOf[EndSeq]) && instrPos < program.getSection(sectionPos).getInstructions.length)
     if (error.isDefined) Left(error.get)
     else Right(())
   }

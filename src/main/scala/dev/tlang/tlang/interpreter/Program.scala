@@ -1,24 +1,21 @@
 package dev.tlang.tlang.interpreter
 
-import dev.tlang.tlang.interpreter.instruction.Instruction
-
-import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
 class Program {
 
-  private val instructions = ListBuffer.empty[Instruction]
+  private val sections = ListBuffer.empty[Section]
 
-  def addInstruction(instruction: Instruction): Unit = {
-    instructions.addOne(instruction)
+  def addSection(section: Section): Unit = {
+    sections.addOne(section)
   }
 
-  def getInstructions: List[Instruction] = {
-    instructions.toList
+  def getSections: List[Section] = {
+    sections.toList
   }
 
-  def getInstr(index: Int): Instruction = {
-    instructions(index)
+  def getSection(index: Int): Section = {
+    sections(index)
   }
 
 }

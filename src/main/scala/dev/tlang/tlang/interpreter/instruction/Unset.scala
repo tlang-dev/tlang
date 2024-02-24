@@ -5,7 +5,7 @@ import dev.tlang.tlang.interpreter.context.State
 
 case class Unset() extends Instruction {
   override def run(state: State): Either[ExecError, Unit] = {
-    state.getBox().unset()
+    state.getBox.unset()
     Right(())
   }
 }
