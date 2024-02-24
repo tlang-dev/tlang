@@ -15,7 +15,8 @@ class buildProgramTest extends AnyFunSuiteLike {
     val lexer = new CommonLexer(CharStreams.fromString(
       """helper {
         |func myFunc {
-        |myVar
+        |if(1 == 1) {
+        |} else {
         |}
         |}
         |""".stripMargin))

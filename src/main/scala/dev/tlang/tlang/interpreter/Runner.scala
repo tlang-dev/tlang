@@ -12,12 +12,14 @@ class Runner {
   def run(program: Program, start: Int): Either[ExecError, Unit] = {
     pos = start
     do {
+      println("Instruction n°: " + pos)
       val instr = program.getInstr(pos)
       instr.run(state) match {
         case Left(err) => error = Some(err)
         case Right(_) => {
           if (instr.isInstanceOf[ExecJump] && state.hasJump) {
             pos = state.getJump
+            println("Jump to: " + pos)
           } else pos += 1
         }
       }

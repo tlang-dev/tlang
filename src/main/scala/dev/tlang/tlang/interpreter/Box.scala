@@ -10,6 +10,10 @@ case class Box(stack: mutable.Stack[Value[_]] = new mutable.Stack()) {
 
   def get(): Value[_] = stack(0)
 
+  def getRemoveAt(index: Int): Value[_] = stack.remove(index)
+
+  def pop(): Value[_] = stack.pop()
+
   def setAt(index: Int, value: Value[_]): Unit = stack.insert(index, value)
 
   def set(value: Value[_]): Unit = stack.prepend(value)

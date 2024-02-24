@@ -2,10 +2,12 @@ package dev.tlang.tlang.interpreter.instruction
 
 import dev.tlang.tlang.interpreter._
 import dev.tlang.tlang.interpreter.context.State
+import tlang.core.Value
 
-case class Set() extends Instruction {
+case class Set(value: Option[Value[_]]) extends Instruction {
   override def run(state: State): Either[ExecError, Unit] = {
-    state.getBox().set(state.getStack.load())
+    if (value.isDefined) state.getBox().set(value.get)
+    else state.getBox().set(state.getStack.load())
     Right(())
   }
 }
