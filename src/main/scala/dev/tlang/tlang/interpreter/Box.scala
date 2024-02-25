@@ -16,6 +16,8 @@ case class Box(stack: mutable.Stack[Value[_]] = new mutable.Stack()) {
 
   def setAt(index: Int, value: Value[_]): Unit = stack.insert(index, value)
 
+  def replaceAt(index: Int, value: Value[_]): Unit = stack(index) = value
+
   def set(value: Value[_]): Unit = stack.prepend(value)
 
   def unsetAt(index: Int): Unit = stack.remove(index)

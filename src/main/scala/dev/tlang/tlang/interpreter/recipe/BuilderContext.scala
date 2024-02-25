@@ -1,13 +1,13 @@
 package dev.tlang.tlang.interpreter.recipe
 
-import dev.tlang.tlang.interpreter.context.LabelIndex
+import dev.tlang.tlang.interpreter.context.JumpIndex
 import dev.tlang.tlang.interpreter.{Program, Section}
 import dev.tlang.tlang.loader.{Module, Resource}
 
 import scala.collection.mutable
 
 case class BuilderContext(
-                           labels: mutable.Map[String, LabelIndex] = mutable.Map(),
+                           labels: mutable.Map[String, JumpIndex] = mutable.Map(),
                            program: Program = new Program(),
                            section: Section = new Section(),
                            module: Module,

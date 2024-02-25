@@ -3,9 +3,10 @@ package dev.tlang.tlang.interpreter.instruction
 import dev.tlang.tlang.interpreter.ExecError
 import dev.tlang.tlang.interpreter.context.State
 
-case class Label(name: String) extends Instruction {
+case class GotoLabel(label: String) extends Instruction {
   override def run(state: State): Either[ExecError, Unit] = {
-    state.getLogger.debug("[Label] New label: " + name)
+    state.goto(label)
+    state.getLogger.debug("Set Goto to: " + label)
     Right(())
   }
 }

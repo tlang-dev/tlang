@@ -6,21 +6,25 @@ import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value._
 import dev.tlang.tlang.ast.helper._
 import dev.tlang.tlang.ast.model.ModelBlock
-import dev.tlang.tlang.interpreter.context.LabelIndex
+import dev.tlang.tlang.ast.model.set.ModelSetEntity
+import dev.tlang.tlang.interpreter.context.JumpIndex
+import dev.tlang.tlang.interpreter.instruction
 import dev.tlang.tlang.interpreter.instruction._
 import dev.tlang.tlang.tmpl.lang.ast.LangBlock
 import tlang.core
-import tlang.internal.{AnyTmplBlock, DomainBlock}
+import tlang.core.{Lazy, Null}
+import tlang.internal.{AnyTmplBlock, ContextContent, DomainBlock}
 
 object BuildProgram {
 
   def buildProgram(context: BuilderContext, domain: DomainModel): Unit = {
     context.program.addSection(context.section)
     context.section.addInstruction(Label(domain.getType.getType.toString))
-    context.labels.addOne(domain.getType.getType.toString -> LabelIndex(context.sectionPos, context.instrPos))
+    context.labels.addOne(domain.getType.getType.toString -> JumpIndex(context.sectionPos, context.instrPos))
     context.section.addInstruction(StartBlock())
     buildBody(context, domain.body)
     context.section.addInstruction(EndBlock())
+    context.program.setLabels(context.labels.toMap)
   }
 
   def buildBody(context: BuilderContext, bodies: List[DomainBlock]): Unit = {
@@ -32,7 +36,31 @@ object BuildProgram {
   }
 
   def buildModel(context: BuilderContext, model: ModelBlock): Unit = {
+    val label = model.context.get().getElement.getResource.getPkg + "." + model.context.get().getElement.getResource.getName
+    val boxBuilder = new BoxBuilder()
+    boxBuilder.setBoxId(label)
+    context.section.addInstruction(StartStaticBox(label))
+    model.content.foreach(_.foreach {
+      case assignVar: AssignVar => buildAssignVarInModel(context, boxBuilder, assignVar)
+      case setEntity: ModelSetEntity => ???
+      case _ =>
+    })
+    context.section.addInstruction(EndStaticBox(label))
+  }
 
+  def buildAssignVarInModel(context: BuilderContext, boxBuilder: BoxBuilder, assignVar: AssignVar): Unit = {
+    implicit val isStatic: Boolean = true
+    val label = getContentType(assignVar.context, Some(assignVar.name))
+    context.section.addInstruction(Label(label))
+    context.labels.addOne(label -> JumpIndex(context.sectionPos, context.instrPos))
+    val callOnce = CallOnce(assignVar.value, JumpIndex(context.sectionPos, context.instrPos + 3), JumpIndex(context.sectionPos, context.instrPos + 3))
+    val lazyVar = boxBuilder.addVar("lazy" + assignVar.name.capitalize)
+    context.section.addInstruction(instruction.SetStatic(boxBuilder.getBoxId, Some(new Lazy())))
+    context.section.addInstruction(callOnce)
+    BuildProgram.buildOperation(context, assignVar.value)
+    context.section.addInstruction(SetLazyStatic(boxBuilder.getBoxId, lazyVar.pos))
+    callOnce.getIndex = JumpIndex(context.sectionPos, context.instrPos + 1)
+    context.section.addInstruction(GetLazyStatic(boxBuilder.getBoxId, lazyVar.pos))
   }
 
   def buildHelper(context: BuilderContext, helper: HelperBlock): Unit = {
@@ -40,9 +68,9 @@ object BuildProgram {
   }
 
   def buildFunc(context: BuilderContext, func: HelperFunc): Unit = {
-    context.section.addInstruction(Label(func.getType.getType.toString))
-    val name = func.getType.getType.toString
-    context.labels.addOne(func.getType.getType.toString -> LabelIndex(context.sectionPos, context.instrPos))
+    val label = func.getType.getType.toString
+    context.section.addInstruction(Label(label))
+    context.labels.addOne(label -> JumpIndex(context.sectionPos, context.instrPos))
     context.section.addInstruction(StartBox())
 
     func.currying.foreach(_.foreach(_.params.foreach(_ => {
@@ -76,7 +104,7 @@ object BuildProgram {
     context.section.addInstruction(Put())
   }
 
-  def buildOperation(context: BuilderContext, operation: Operation): Unit = {
+  def buildOperation(context: BuilderContext, operation: Operation)(implicit isStatic: Boolean = false): Unit = {
     operation.content match {
       case Left(op) => buildOperation(context, op)
       case Right(value) => buildComplexValue(context, value)
@@ -92,7 +120,7 @@ object BuildProgram {
     //    context.section.addInstruction(Set(Some(new core.String("This is a test"))))
   }
 
-  def buildComplexValue(context: BuilderContext, value: ComplexValueStatement[_]): Unit = {
+  def buildComplexValue(context: BuilderContext, value: ComplexValueStatement[_])(implicit isStatic: Boolean = false): Unit = {
     value match {
       case callObj: CallObject => buildCallObject(context, callObj)
       case primitive: PrimitiveValue[_] => buildPrimitive(context, primitive)
@@ -112,16 +140,18 @@ object BuildProgram {
 
   def buildCallFunc(context: BuilderContext, func: CallFuncObject): Unit = {
     //func.currying.foreach(_.foreach(_.params.foreach(_.foreach(buildOperation(context, _)))))
-    context.section.addInstruction(Jump(context.labels(func.name.get)))
-    context.section.addInstruction(Back(LabelIndex(context.sectionPos, context.instrPos + 2)))
+    context.section.addInstruction(GotoLabel(getContentType(func.context, func.name)))
+    context.section.addInstruction(Back(JumpIndex(context.sectionPos, context.instrPos + 2)))
   }
 
-  def buildPrimitive(context: BuilderContext, primitive: PrimitiveValue[_]): Unit = {
+  def buildPrimitive(context: BuilderContext, primitive: PrimitiveValue[_])(implicit isStatic: Boolean = false): Unit = {
     primitive match {
       case bool: TLangBool => buildBool(context, bool)
       case str: TLangString => buildString(context, str)
       case long: TLangLong => buildLong(context, long)
       case double: TLangDouble => buildDouble(context, double)
+      case entityValue: EntityValue =>
+        if (isStatic) BuildStaticEntity.buildStaticEntity(context, entityValue)
     }
   }
 
@@ -159,11 +189,11 @@ object BuildProgram {
 
   def buildIf(context: BuilderContext, ifStatement: HelperIf): Unit = {
     buildOperation(context, ifStatement.condition)
-    val ifInst = IfInstr(LabelIndex(context.sectionPos, context.instrPos + 2), None)
+    val ifInst = IfInstr(JumpIndex(context.sectionPos, context.instrPos + 2), None)
     context.section.addInstruction(ifInst)
     ifStatement.ifTrue.foreach(_.content.foreach(_.foreach(buildStatement(context, _))))
     if (ifStatement.ifFalse.isDefined) {
-      ifInst.jumpFalse = Some(LabelIndex(context.sectionPos, context.instrPos + 2))
+      ifInst.jumpFalse = Some(JumpIndex(context.sectionPos, context.instrPos + 2))
       ifStatement.ifFalse.foreach(_.content.foreach(_.foreach(buildStatement(context, _))))
     }
   }
@@ -181,5 +211,16 @@ object BuildProgram {
 
   def buildLang(context: BuilderContext, lang: LangBlock): Unit = {
 
+  }
+
+  def getContentType(context: Null[ContextContent], name: Option[String] = None): String = {
+    var pkg = ""
+    var newName = name.getOrElse("")
+    if (context.isNotNull.get()) {
+      pkg = context.get().getElement.getResource.getPkg.toString
+      if (name.isEmpty) newName = context.get().getElement.getResource.getName.toString
+    }
+    if (pkg.isEmpty) newName
+    else pkg + "." + newName
   }
 }
