@@ -1,23 +1,28 @@
 package tlang.internal;
 
-import tlang.Entity;
-import tlang.core.*;
-import tlang.core.String;
+import tlang.core.Entity;
+import tlang.core.Null;
+import tlang.core.Type;
 
 public class TmplInterpretedId extends TmplID {
 
-    private final Null<ContextContent> contextContent;
+    private final Null contextContent;
 
-    private final Null<String> pre;
+    private final Null pre;
 
     private final NativeType<?> nativeType;
-    private final Null<String> post;
+    private final Null post;
 
-    public TmplInterpretedId(Null<ContextContent> contextContent, Null<String> pre, NativeType<?> nativeType, Null<String> post) {
+    public TmplInterpretedId(Null contextContent, Null pre, NativeType<?> nativeType, Null post) {
         this.contextContent = contextContent;
         this.pre = pre;
         this.nativeType = nativeType;
         this.post = post;
+    }
+
+    @Override
+    public TmplID getValue() {
+        return this;
     }
 
     @Override
@@ -35,7 +40,7 @@ public class TmplInterpretedId extends TmplID {
         return null;
     }
 
-    public Null<String> getPre() {
+    public Null getPre() {
         return pre;
     }
 
@@ -43,12 +48,12 @@ public class TmplInterpretedId extends TmplID {
         return nativeType;
     }
 
-    public Null<String> getPost() {
+    public Null getPost() {
         return post;
     }
 
     @Override
-    public Null<ContextContent> getContext() {
+    public Null getContext() {
         return contextContent;
     }
 }

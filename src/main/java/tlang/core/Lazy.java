@@ -2,12 +2,12 @@ package tlang.core;
 
 import tlang.internal.ClassType;
 
-public class Lazy implements Value<Value<?>> {
+public class Lazy implements Value {
 
-    private Value<?> value;
+    private Value value;
 
     @Override
-    public Value<?> getElement() {
+    public Value getValue() {
         return value;
     }
 
@@ -16,11 +16,8 @@ public class Lazy implements Value<Value<?>> {
         return ClassType.of(Lazy.class);
     }
 
-    public void setValue(Value<?> value) {
+    public void setValue(Value value) {
         this.value = value;
     }
 
-    public Value<?> getValue() {
-        return value;
-    }
 }

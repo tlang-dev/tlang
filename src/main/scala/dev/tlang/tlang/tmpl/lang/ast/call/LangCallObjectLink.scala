@@ -8,7 +8,7 @@ import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core.{Null, Type}
 import tlang.internal.{ContextContent, TmplNode}
 
-case class LangCallObjectLink(context: Null[ContextContent], var link: String = ".", var call: LangCallObjType[_]) extends TmplNode[LangCallObjectLink] {
+case class LangCallObjectLink(context: Null, var link: String = ".", var call: LangCallObjType[_]) extends TmplNode[LangCallObjectLink] {
   //  override def deepCopy(): LangCallObjectLink = LangCallObjectLink(context, link, call.deepCopy().asInstanceOf[LangCallObjType[_]])
 
   override def getType: Type = LangCallObjectLink.modelName
@@ -21,7 +21,7 @@ case class LangCallObjectLink(context: Null[ContextContent], var link: String = 
     ))
   )
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 
   override def getElement: LangCallObjectLink = this
 }

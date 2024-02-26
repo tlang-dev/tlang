@@ -6,18 +6,18 @@ import dev.tlang.tlang.ast.common.{ObjType, ValueType}
 import dev.tlang.tlang.ast.helper.HelperStatement
 import dev.tlang.tlang.ast.model.set.ModelSetRefValue
 import tlang.core.{Null, Type, Value}
-import tlang.internal.{ClassType, ContextContent}
+import tlang.internal.ClassType
 
-case class Operation(context: Null[ContextContent], expectedType: Option[ValueType],
+case class Operation(context: Null, expectedType: Option[ValueType],
                      content: Either[Operation, ComplexValueStatement[_]],
                      next: Option[(Operator.operator, Operation)] = None)
-  extends HelperStatement with Value[Operation] with ModelSetRefValue {
+  extends HelperStatement with Value with ModelSetRefValue {
 
-  override def getElement: Operation = this
+  override def getValue: Value = this
 
   override def getType: Type = Operation.getType
 
-//  override def compareTo(value: Value[Operation]): Int = 0
+  //  override def compareTo(value: Value[Operation]): Int = 0
 
 }
 

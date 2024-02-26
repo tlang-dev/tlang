@@ -310,7 +310,7 @@ object TemplateBuilder {
     }
   }
 
-  def buildValues(values: List[Value[_]]): Either[ExecError, List[TmplNode[_]]] = {
+  def buildValues(values: List[Value]): Either[ExecError, List[TmplNode[_]]] = {
     var err: Option[ExecError] = None
     var i = 0
     val newNodes = ListBuffer.empty[TmplNode[_]]
@@ -325,11 +325,11 @@ object TemplateBuilder {
     else Right(newNodes.toList)
   }
 
-  def buildValue(value: Value[_]): Either[ExecError, TmplNode[_]] = {
+  def buildValue(value: Value): Either[ExecError, TmplNode[_]] = {
     value match {
       case valueBlock: LangBlockAsValue =>
         buildBlockAsValue(valueBlock)
-      case value: Value[_] => Right(value.asInstanceOf[TmplNode[_]])
+      case value: Value => Right(value.asInstanceOf[TmplNode[_]])
     }
   }
 

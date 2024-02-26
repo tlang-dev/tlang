@@ -5,7 +5,7 @@ import tlang.core.Type;
 
 public interface AstContext {
 
-    Null<ContextContent> getContext();
+    Null getContext();
 
     Type getType();
 }

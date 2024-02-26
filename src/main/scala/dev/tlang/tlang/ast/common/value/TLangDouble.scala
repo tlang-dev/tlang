@@ -7,7 +7,7 @@ import tlang.core
 import tlang.core.{Int, Model, Null, Type, Value}
 import tlang.internal.ContextContent
 
-class TLangDouble(context: Null[ContextContent], value: Double) extends PrimitiveValue[Double] {
+class TLangDouble(context: Null, value: Double) extends PrimitiveValue[Double] {
 
   override def getType: Type = TLangDouble.getType
 
@@ -27,7 +27,7 @@ class TLangDouble(context: Null[ContextContent], value: Double) extends Primitiv
 
 //  override def toModel: Model = ???
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 }
 
 object TLangDouble extends TLangType {

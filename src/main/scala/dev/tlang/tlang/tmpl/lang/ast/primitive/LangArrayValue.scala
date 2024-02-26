@@ -7,7 +7,7 @@ import dev.tlang.tlang.tmpl.lang.ast.{LangModel, LangType}
 import tlang.core.{Null, Type}
 import tlang.internal.{ContextContent, TmplNode}
 
-case class LangArrayValue(context: Null[ContextContent], var `type`: Option[LangType] = None, var params: Option[List[TmplNode[_]]]) extends LangPrimitiveValue[LangArrayValue] {
+case class LangArrayValue(context: Null, var `type`: Option[LangType] = None, var params: Option[List[TmplNode[_]]]) extends LangPrimitiveValue[LangArrayValue] {
 //  override def deepCopy(): LangArrayValue = LangArrayValue(context,
 //    if (`type`.isDefined) Some(`type`.get.deepCopy()) else None,
 //    if (params.isDefined) Some(params.get.map(_.deepCopy().asInstanceOf[TmplNode[_]])) else None)
@@ -33,7 +33,7 @@ case class LangArrayValue(context: Null[ContextContent], var `type`: Option[Lang
   )
 
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 }
 
 object LangArrayValue {

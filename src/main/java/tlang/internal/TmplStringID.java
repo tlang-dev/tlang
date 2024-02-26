@@ -1,16 +1,17 @@
 package tlang.internal;
 
-import tlang.Entity;
+import tlang.core.Entity;
+import tlang.core.Null;
 import tlang.core.String;
-import tlang.core.*;
+import tlang.core.Type;
 
 public class TmplStringID extends TmplID {
 
-    private final Null<ContextContent> context;
+    private final Null context;
 
     private final String id;
 
-    public TmplStringID(Null<ContextContent> context, String id) {
+    public TmplStringID(Null context, String id) {
         this.context = context;
         this.id = id;
     }
@@ -19,8 +20,13 @@ public class TmplStringID extends TmplID {
         return id;
     }
 
-    public Null<ContextContent> getContext() {
+    public Null getContext() {
         return context;
+    }
+
+    @Override
+    public TmplID getValue() {
+        return this;
     }
 
     @Override

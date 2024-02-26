@@ -43,7 +43,7 @@ abstract class ModulePattern {
 
   private def exposeFunctions: List[DomainExpose] = {
     val exposes = ListBuffer.empty[DomainExpose]
-    exposes ++= getFunctions.map(func => DomainExpose(Null.empty(), func.getElement.name))
+    exposes ++= getFunctions.map(func => DomainExpose(Null.empty(), func.getValue.asInstanceOf[HelperFunc].name))
     if (getModelContent.isDefined) exposes ++= getModelContent.get.filter(_.isInstanceOf[ModelSetEntity]).map(entity => DomainExpose(Null.empty(), entity.asInstanceOf[ModelSetEntity].name.getSimpleType.toString))
     exposes.toList
   }

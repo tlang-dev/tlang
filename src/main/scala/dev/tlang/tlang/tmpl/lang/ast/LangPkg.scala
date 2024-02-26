@@ -8,7 +8,7 @@ import dev.tlang.tlang.tmpl.doc.ast.DocModel
 import tlang.core.{Null, Type}
 import tlang.internal.{ContextContent, TmplID, TmplNode}
 
-case class LangPkg(context: Null[ContextContent], var parts: List[TmplID]) extends TmplNode[LangPkg] {
+case class LangPkg(context: Null, var parts: List[TmplID]) extends TmplNode[LangPkg] {
   //  override def deepCopy(): LangPkg = {
   //    LangPkg(context, parts.map(_.deepCopy().asInstanceOf[TmplID]))
   //  }
@@ -23,7 +23,7 @@ case class LangPkg(context: Null[ContextContent], var parts: List[TmplID]) exten
       ))
   }
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 
 
   override def getElement: LangPkg = this

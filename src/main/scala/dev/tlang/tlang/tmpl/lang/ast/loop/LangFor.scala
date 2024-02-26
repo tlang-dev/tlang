@@ -9,7 +9,7 @@ import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core.{Null, Type, Value}
 import tlang.internal.{ContextContent, TmplID}
 
-case class LangFor(context: Null[ContextContent], var variable: TmplID, var start: Option[LangOperation], forType: ForType.ForType, var cond: LangOperation, var content: LangExprContent[_]) extends LangExpression[LangFor] {
+case class LangFor(context: Null, var variable: TmplID, var start: Option[LangOperation], forType: ForType.ForType, var cond: LangOperation, var content: LangExprContent[_]) extends LangExpression[LangFor] {
 //  override def deepCopy(): LangFor = LangFor(context,
 //    variable.deepCopy().asInstanceOf[TmplID],
 //    if (start.isDefined) Some(start.get.deepCopy()) else None,
@@ -30,12 +30,12 @@ case class LangFor(context: Null[ContextContent], var variable: TmplID, var star
 //        None
 //      ),
       BuildLang.createAttrStr(context, "forType", ForType.value(forType)),
-      BuildLang.createAttrEntity(context, "cond", cond.toEntity),
+//      BuildLang.createAttrEntity(context, "cond", cond.toEntity),
       BuildLang.createAttrEntity(context, "content", content.toEntity),
     ))
   )
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 }
 
 object LangFor {

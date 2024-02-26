@@ -9,15 +9,15 @@ import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core.{Null, Type}
 import tlang.internal.ContextContent
 
-case class LangInclude(context: Null[ContextContent], calls: List[CallObject]) extends LangExpression[LangInclude] {
+case class LangInclude(context: Null, calls: List[CallObject]) extends LangExpression[LangInclude] {
 //  override def deepCopy(): LangInclude = LangInclude(context, calls)
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, LangInclude.modelName)),
     Some(List(
-      BuildLang.createArray(context, "calls", calls.map(_.toEntity))
+//      BuildLang.createArray(context, "calls", calls.map(_.toEntity))
     ))
   )
 

@@ -8,7 +8,7 @@ import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core.{Null, Type}
 import tlang.internal.{ContextContent, TmplID}
 
-case class LangCallVar(context: Null[ContextContent], var name: TmplID) extends LangCallObjType[LangCallVar] {
+case class LangCallVar(context: Null, var name: TmplID) extends LangCallObjType[LangCallVar] {
 //  override def deepCopy(): LangCallVar = LangCallVar(context, name.deepCopy().asInstanceOf[TmplID])
 
   override def toEntity: EntityValue = EntityValue(context,
@@ -16,7 +16,7 @@ case class LangCallVar(context: Null[ContextContent], var name: TmplID) extends 
     Some(List(BuildLang.createAttrEntity(context, "name", name.toEntity)))
   )
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 
   override def getElement: LangCallVar = this
 

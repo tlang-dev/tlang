@@ -9,7 +9,7 @@ import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core.{Null, Type}
 import tlang.internal.{ContextContent, TmplID, TmplNode}
 
-case class LangAttribute(context: Null[ContextContent], var attr: Option[TmplID], var `type`: Option[LangType], var value: LangOperation) extends TmplNode[LangAttribute] {
+case class LangAttribute(context: Null, var attr: Option[TmplID], var `type`: Option[LangType], var value: LangOperation) extends TmplNode[LangAttribute] {
 //  override def deepCopy(): LangAttribute = LangAttribute(context,
 //    if (attr.isDefined) Some(attr.get.getElement.deepCopy().asInstanceOf[TmplID]) else None,
 //    if (`type`.isDefined) Some(`type`.get.getElement.deepCopy()) else None,
@@ -27,7 +27,7 @@ case class LangAttribute(context: Null[ContextContent], var attr: Option[TmplID]
       //        `type`,
       //        None
       //      ),
-      BuildLang.createAttrEntity(context, "value", value.toEntity),
+//      BuildLang.createAttrEntity(context, "value", value.toEntity),
     ))
   )
 
@@ -37,7 +37,7 @@ case class LangAttribute(context: Null[ContextContent], var attr: Option[TmplID]
 
   override def getType: Type = LangAttribute.modelName
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 }
 
 object LangAttribute {

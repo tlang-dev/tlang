@@ -1,7 +1,7 @@
 package dev.tlang.tlang.interpreter.recipe
 
 import dev.tlang.tlang.ast.DomainModel
-import dev.tlang.tlang.ast.common.call.{CallFuncObject, CallObject, ComplexValueStatement}
+import dev.tlang.tlang.ast.common.call.{CallFuncObject, CallObject, CallVarObject, ComplexValueStatement}
 import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value._
 import dev.tlang.tlang.ast.helper._
@@ -12,6 +12,7 @@ import dev.tlang.tlang.interpreter.instruction
 import dev.tlang.tlang.interpreter.instruction._
 import dev.tlang.tlang.tmpl.lang.ast.LangBlock
 import tlang.core
+import tlang.core.func.FuncRet
 import tlang.core.{Lazy, Null}
 import tlang.internal.{AnyTmplBlock, ContextContent, DomainBlock}
 
@@ -36,7 +37,7 @@ object BuildProgram {
   }
 
   def buildModel(context: BuilderContext, model: ModelBlock): Unit = {
-    val label = model.context.get().getElement.getResource.getPkg + "." + model.context.get().getElement.getResource.getName
+    val label = model.context.get().getValue.asInstanceOf[ContextContent].getResource.getPkg + "." + model.context.get().getValue.asInstanceOf[ContextContent].getResource.getName
     val boxBuilder = new BoxBuilder()
     boxBuilder.setBoxId(label)
     context.section.addInstruction(StartStaticBox(label))
@@ -77,7 +78,12 @@ object BuildProgram {
       context.section.addInstruction(Label(func.getType.getType.toString))
     })))
 
-    buildContent(context, func.block)
+    if (func.block.content.isDefined) {
+      func.block.content.get.foreach(buildStatement(context, _))
+      context.section.addInstruction(RefFuncSet())
+    } else context.section.addInstruction(Set(Some(FuncRet.VOID)))
+
+    context.section.addInstruction(Put(popFromBox = true))
 
     context.section.addInstruction(EndBox())
   }
@@ -132,16 +138,31 @@ object BuildProgram {
   }
 
   def buildCallObject(context: BuilderContext, callObject: CallObject): Unit = {
-    callObject.statements.head match {
-      case call: CallObject => buildCallObject(context, call)
-      case func: CallFuncObject => buildCallFunc(context, func)
+    if (callObject.statements.size == 1) {
+      callObject.statements.head match {
+        case call: CallObject => buildCallObject(context, call)
+        case func: CallFuncObject => buildCallFunc(context, func)
+      }
+    } else buildCallObjectChained(context, callObject)
+  }
+
+  def buildCallObjectChained(context: BuilderContext, callObject: CallObject): Unit = {
+    val head = callObject.statements.head
+    if (head.isInstanceOf[CallVarObject]) {
+      val callVar = head.asInstanceOf[CallVarObject]
+      val use = context.resource.ast.header.get.uses.get.filter(part => part.parts.last == callVar.name)
+      val clazz = if (use.isEmpty) TLangModuleList.getClass(callVar.name)
+      else TLangModuleList.getClass(callVar.name, Some(use.head.parts.head))
+      val callFunc = callObject.statements(1).asInstanceOf[CallFuncObject]
+      context.section.addInstruction(CallCore(clazz.className, callFunc.name.get, new core.Array(Array(new core.String("This is a super test")))))
     }
   }
 
-  def buildCallFunc(context: BuilderContext, func: CallFuncObject): Unit = {
+  def buildCallFunc(context: BuilderContext, func: CallFuncObject, hasOtherCallAfterwards: Boolean = false): Unit = {
     //func.currying.foreach(_.foreach(_.params.foreach(_.foreach(buildOperation(context, _)))))
     context.section.addInstruction(GotoLabel(getContentType(func.context, func.name)))
     context.section.addInstruction(Back(JumpIndex(context.sectionPos, context.instrPos + 2)))
+    if (!hasOtherCallAfterwards) context.section.addInstruction(RefFuncGet())
   }
 
   def buildPrimitive(context: BuilderContext, primitive: PrimitiveValue[_])(implicit isStatic: Boolean = false): Unit = {
@@ -213,12 +234,12 @@ object BuildProgram {
 
   }
 
-  def getContentType(context: Null[ContextContent], name: Option[String] = None): String = {
+  def getContentType(context: Null, name: Option[String] = None): String = {
     var pkg = ""
     var newName = name.getOrElse("")
     if (context.isNotNull.get()) {
-      pkg = context.get().getElement.getResource.getPkg.toString
-      if (name.isEmpty) newName = context.get().getElement.getResource.getName.toString
+      pkg = context.get().getValue.asInstanceOf[ContextContent].getResource.getPkg.toString
+      if (name.isEmpty) newName = context.get().getValue.asInstanceOf[ContextContent].getResource.getName.toString
     }
     if (pkg.isEmpty) newName
     else pkg + "." + newName

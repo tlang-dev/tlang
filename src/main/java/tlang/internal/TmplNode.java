@@ -1,7 +1,6 @@
 package tlang.internal;
 
-import tlang.Entity;
-import tlang.core.Model;
+import tlang.core.Entity;
 import tlang.core.Type;
 
 public interface TmplNode<T> extends Element<T>, AstContext {

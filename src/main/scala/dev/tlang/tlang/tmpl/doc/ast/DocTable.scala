@@ -6,9 +6,9 @@ import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import tlang.core.{Null, Type}
 import tlang.internal.ContextContent
 
-case class DocTable(context: Null[ContextContent]) extends DocTextType[DocTable] {
+case class DocTable(context: Null) extends DocTextType[DocTable] {
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 
   override def getElement: DocTable = this
 

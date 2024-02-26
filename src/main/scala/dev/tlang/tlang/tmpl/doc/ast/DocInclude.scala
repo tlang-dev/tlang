@@ -7,9 +7,9 @@ import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import tlang.core.{Null, Type}
 import tlang.internal.ContextContent
 
-case class DocInclude(context: Null[ContextContent], call: CallObject) extends DocTextType[DocInclude] {
+case class DocInclude(context: Null, call: CallObject) extends DocTextType[DocInclude] {
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, DocInclude.modelName)),

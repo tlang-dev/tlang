@@ -4,5 +4,5 @@ import tlang.core.Value;
 
 public interface DeepCopy {
 
-    Value<?> deepCopy();
+    Value deepCopy();
 }

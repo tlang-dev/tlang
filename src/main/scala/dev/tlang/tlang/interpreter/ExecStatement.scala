@@ -9,7 +9,7 @@ import tlang.core.Value
 
 object ExecStatement extends Executor {
 
-  override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+  override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value]]] = {
     statement match {
       case stmt: HelperIf => ExecIf.run(stmt, context)
       case stmt: CallObject => ExecCallObject.run(stmt, context)

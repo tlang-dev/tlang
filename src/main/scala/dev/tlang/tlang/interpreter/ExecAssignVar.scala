@@ -7,7 +7,7 @@ import tlang.core.{Null, Value}
 
 object ExecAssignVar extends Executor {
 
-  override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+  override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value]]] = {
     val varStatement = statement.asInstanceOf[AssignVar]
 
     ExecOperation.run(varStatement.value, context) match {
@@ -22,7 +22,7 @@ object ExecAssignVar extends Executor {
             Right(Some(List(value.head)))
           } else {
             val values = MultiValue(Null.empty(), value)
-            context.scopes.last.variables.addOne(varStatement.name -> values.asInstanceOf[Value[_]])
+            context.scopes.last.variables.addOne(varStatement.name -> values.asInstanceOf[Value])
             Right(Some(value))
           }
       }

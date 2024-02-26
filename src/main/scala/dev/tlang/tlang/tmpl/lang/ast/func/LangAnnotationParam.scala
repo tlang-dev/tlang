@@ -7,13 +7,13 @@ import dev.tlang.tlang.tmpl.lang.ast._
 import tlang.core.{Null, Type, Value}
 import tlang.internal._
 
-case class LangAnnotationParam(context: Null[ContextContent], var name: Option[TmplID], var value: LangValueType[_])  extends TmplNode[LangAnnotationParam] with AstContext {
+case class LangAnnotationParam(context: Null, var name: Option[TmplID], var value: LangValueType[_])  extends TmplNode[LangAnnotationParam] with AstContext {
 //  override def deepCopy(): LangAnnotationParam =
 //    LangAnnotationParam(context,
 //      if (name.isDefined) Some(name.get.deepCopy().asInstanceOf[TmplID]) else None,
 //      value.deepCopy().asInstanceOf[LangValueType[_]])
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 
   override def getElement: LangAnnotationParam = this
 

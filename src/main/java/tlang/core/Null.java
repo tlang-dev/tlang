@@ -5,23 +5,22 @@ import tlang.core.func.ApplyVoidFunc;
 import tlang.core.func.FuncRet;
 import tlang.core.func.MapFunc;
 import tlang.internal.ClassType;
-import tlang.internal.ContextContent;
 
-public class Null<T> implements Value<Null<T>> {
+public class Null implements Value {
 
     public static final Type TYPE = ClassType.of(Null.class);
 
-    private final Value<T> value;
+    private final Value value;
 
     public Null() {
-        this.value = new None<>();
+        this.value = new None();
     }
 
-    public Null(Value<T> value) {
+    public Null(Value value) {
         this.value = value;
     }
 
-    public Value<T> get() {
+    public Value get() {
         return value;
     }
 
@@ -33,42 +32,42 @@ public class Null<T> implements Value<Null<T>> {
         return new Bool(value != null);
     }
 
-    public <B> Value<B> map(MapFunc<T, B> func) {
+    public Value map(MapFunc func) {
         return func.apply(value);
     }
 
-    public FuncRet<T> orElse(Value<T> orElse) {
-        return new FuncRet<T>((this.get() == null ? orElse : this.get()));
+    public FuncRet orElse(Value orElse) {
+        return new FuncRet((this.get() == null ? orElse : this.get()));
     }
 
-    public Null<T> ifNull(Apply func) {
+    public Null ifNull(Apply func) {
         if (value == null) {
             func.apply();
         }
         return this;
     }
 
-    public Null<T> ifNotNull(ApplyVoidFunc<T> func) {
+    public Null ifNotNull(ApplyVoidFunc func) {
         if (value != null) {
-            func.apply(value.getElement());
+            func.apply(value.getValue());
         }
         return this;
     }
 
-    public static <T> Null<T> of(Value<T> value) {
-        return new Null<>(value);
+    public static Null of(Value value) {
+        return new Null(value);
     }
 
-    public static <T> Null<T> empty() {
-        return new Null<>();
+    public static Null empty() {
+        return new Null();
     }
 
-    public static <T> FuncRet<T> orElse(Null<T> that, Value<T> orElse) {
-        return new FuncRet<>((that.get() == null ? orElse : that.get()));
+    public static FuncRet orElse(Null that, Value orElse) {
+        return new FuncRet((that.get() == null ? orElse : that.get()));
     }
 
     @Override
-    public Null<T> getElement() {
+    public Null getValue() {
         return this;
     }
 

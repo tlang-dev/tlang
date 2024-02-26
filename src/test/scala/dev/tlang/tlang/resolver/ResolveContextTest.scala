@@ -218,7 +218,7 @@ class ResolveContextTest extends AnyFunSuite {
     val scope = Scope()
     FollowCallObject.followCallObject(caller, module, uses, scope, module.resources.head._2).toOption.get
     assert("MyFile/myFunc" == scope.functions.head._1)
-    assert("myFunc" == scope.functions.head._2.getElement.name)
+    assert("myFunc" == scope.functions.head._2.getValue.asInstanceOf[HelperFunc].name)
   }
 
   test("Follow func call") {

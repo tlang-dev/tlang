@@ -1,5 +1,6 @@
 package dev.tlang.tlang.astbuilder
 
+import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value.{ArrayValue, AssignVar, EntityValue, TLangString}
 import dev.tlang.tlang.{CommonLexer, TLang}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
@@ -50,7 +51,7 @@ class BuildModelNewEntityTest extends AnyFunSuite {
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
     val newEntity = BuildModelBlock.build(fakeContext, parser.modelBlock()).content.get.head.asInstanceOf[AssignVar]
-    val params = newEntity.value.getElement.content.toOption.get.asInstanceOf[EntityValue].attrs
+    val params = newEntity.value.getValue.asInstanceOf[Operation].content.toOption.get.asInstanceOf[EntityValue].attrs
     assert("firstEntity".equals(newEntity.name))
     assert("AnyEntity".equals(newEntity.`type`.get.getType))
     assert(params.get.head.attr.isEmpty)

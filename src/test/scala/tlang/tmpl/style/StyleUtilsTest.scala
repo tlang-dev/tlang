@@ -10,7 +10,7 @@ class StyleUtilsTest extends AnyFunSuiteLike {
 
   test("Find style") {
     val struct = StyleStruct(Null.empty(), Some(new TmplStringID(Null.empty(), new core.String("h1"))), None, Some(List()))
-    val block = StyleBlock(Null.empty(), "styles",new Array[core.String], None, List())
+    val block = StyleBlock(Null.empty(), "styles", Array.empty(), None, List())
     StyleUtils.findStyles(block.toEntity, new core.String("h1"))
     assert(true)
   }

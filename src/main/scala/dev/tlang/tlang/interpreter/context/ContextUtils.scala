@@ -16,9 +16,9 @@ object ContextUtils {
     TLangLong.getType.getType.toString -> new TLangLong(Null.empty(), new Long(0))
   )
 
-  def findVar(context: Context, name: String): Option[Value[_]] = {
+  def findVar(context: Context, name: String): Option[Value] = {
     var i = context.scopes.length - 1
-    var variable: Option[Value[_]] = None
+    var variable: Option[Value] = None
     while (variable.isEmpty && i >= 0) {
       context.scopes(i).variables.get(name).foreach(value => variable = Some(value))
       i -= 1
@@ -26,8 +26,8 @@ object ContextUtils {
     variable
   }
 
-  def findVarInScope(scope: Scope, name: String): Option[Value[_]] = {
-    var variable: Option[Value[_]] = None
+  def findVarInScope(scope: Scope, name: String): Option[Value] = {
+    var variable: Option[Value] = None
     scope.variables.get(name).foreach(value => variable = Some(value))
     variable
   }

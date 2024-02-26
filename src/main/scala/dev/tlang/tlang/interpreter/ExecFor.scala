@@ -7,7 +7,7 @@ import tlang.core.{Long, Null, Value}
 
 object ExecFor extends Executor {
 
-  override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+  override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value]]] = {
     val forStatement = statement.asInstanceOf[HelperFor]
     forStatement.forType match {
       case ForType.IN => runForIn(forStatement, context) match {

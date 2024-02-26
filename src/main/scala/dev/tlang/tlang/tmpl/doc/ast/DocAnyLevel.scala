@@ -6,10 +6,10 @@ import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import tlang.core.{Null, Type}
 import tlang.internal.{ContextContent, TmplNode}
 
-case class DocAnyLevel(context: Null[ContextContent]) extends TmplNode[DocAnyLevel] {
+case class DocAnyLevel(context: Null) extends TmplNode[DocAnyLevel] {
   //  override def deepCopy(): DocAnyLevel = DocAnyLevel(context)
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, DocAnyLevel.modelName)),

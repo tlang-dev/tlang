@@ -9,7 +9,7 @@ import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core.{Null, Type}
 import tlang.internal.{AstContext, ContextContent, TmplID}
 
-case class LangFunc(context: Null[ContextContent], var annots: Option[List[LangAnnotation]] = None, var props: Option[LangProp] = None, var preNames: Option[List[TmplID]] = None, var name: TmplID, var curries: Option[List[LangFuncParam]], var content: Option[LangExprContent[_]],
+case class LangFunc(context: Null, var annots: Option[List[LangAnnotation]] = None, var props: Option[LangProp] = None, var preNames: Option[List[TmplID]] = None, var name: TmplID, var curries: Option[List[LangFuncParam]], var content: Option[LangExprContent[_]],
                     var ret: Option[List[LangType]] = None, postPros: Option[LangProp] = None) extends LangExpression[LangFunc] with LangContent[LangFunc] with AstContext {
 //  override def deepCopy(): LangFunc = LangFunc(context,
 //    if (annots.isDefined) Some(annots.get.map(_.deepCopy())) else None,
@@ -46,11 +46,11 @@ case class LangFunc(context: Null[ContextContent], var annots: Option[List[LangA
 //        if (curries.isDefined) Some(ArrayValue(context, Some(curries.get.map(value => ComplexAttribute(context, None, None, Operation(context, None, Right(value.toEntity))))))) else None,
 //        None
 //      ),
-      BuildLang.createAttrEntity(context, "content", content.map(_.toEntity).getOrElse(EntityValue(context, None, None))),
+//      BuildLang.createAttrEntity(context, "content", content.map(_.toEntity).getOrElse(EntityValue(context, None, None))),
     ))
   )
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 }
 
 object LangFunc {

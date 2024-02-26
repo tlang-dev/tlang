@@ -1,20 +1,20 @@
 package tlang.internal;
 
-import tlang.Entity;
+import tlang.core.Entity;
 import tlang.core.Null;
 import tlang.core.String;
 import tlang.core.Type;
 
 public class TmplReplacedId extends TmplID {
 
-    private final Null<ContextContent> context;
+    private final Null context;
 
-    private final Null<String> pre;
+    private final Null pre;
 
     private final TmplNode node;
-    private final Null<String> post;
+    private final Null post;
 
-    public TmplReplacedId(Null<ContextContent> context, Null<String> pre, TmplNode node, Null<String> post) {
+    public TmplReplacedId(Null context, Null pre, TmplNode node, Null post) {
         this.context = context;
         this.pre = pre;
         this.node = node;
@@ -27,11 +27,11 @@ public class TmplReplacedId extends TmplID {
         return null;
     }
 
-    public Null<ContextContent> getContext() {
+    public Null getContext() {
         return context;
     }
 
-    public Null<String> getPre() {
+    public Null getPre() {
         return pre;
     }
 
@@ -39,8 +39,13 @@ public class TmplReplacedId extends TmplID {
         return node;
     }
 
-    public Null<String> getPost() {
+    public Null getPost() {
         return post;
+    }
+
+    @Override
+    public TmplID getValue() {
+        return this;
     }
 
     @Override

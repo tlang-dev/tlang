@@ -29,7 +29,7 @@ object CheckEntityType {
     else Right(())
   }
 
-  private def checkType(errors: ListBuffer[ResolverError], valType: String, value: Value[_]): Unit = {
+  private def checkType(errors: ListBuffer[ResolverError], valType: String, value: Value): Unit = {
     CheckType.checkType(valType, value) match {
       case Left(errs) => errors.addAll(errs)
       case Right(_) =>

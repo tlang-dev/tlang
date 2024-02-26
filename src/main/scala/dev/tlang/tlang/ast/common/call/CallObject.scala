@@ -7,7 +7,7 @@ import dev.tlang.tlang.tmpl.lang.ast.LangModel
 import tlang.core.{Null, Type}
 import tlang.internal.{ContextContent, TmplNode}
 
-case class CallObject(context: Null[ContextContent], statements: List[CallObjectType]) extends ComplexValueStatement[CallObject] with TmplNode[CallObject] {
+case class CallObject(context: Null, statements: List[CallObjectType]) extends ComplexValueStatement[CallObject] with TmplNode[CallObject] {
 
   override def getType: Type = CallObject.getType
 
@@ -17,7 +17,7 @@ case class CallObject(context: Null[ContextContent], statements: List[CallObject
     ))
   )
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 
   override def getElement: CallObject = this
 }

@@ -6,7 +6,7 @@ import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import tlang.core.{Null, Type}
 import tlang.internal.{ContextContent, TmplNode}
 
-case class DataBool(context: Null[ContextContent]) extends TmplNode[DataBool] {
+case class DataBool(context: Null) extends TmplNode[DataBool] {
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, DataBool.modelName)),
     Some(List(
@@ -17,7 +17,7 @@ case class DataBool(context: Null[ContextContent]) extends TmplNode[DataBool] {
 
   override def getType: Type = DataBool.modelName
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 
   override def getElement: DataBool = this
 }

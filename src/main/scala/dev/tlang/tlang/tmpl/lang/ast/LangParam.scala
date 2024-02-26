@@ -9,7 +9,7 @@ import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core.{Null, Type}
 import tlang.internal.{ContextContent, TmplID, TmplNode}
 
-case class LangParam(context: Null[ContextContent], var annots: Option[List[LangAnnotation]] = None, var name: TmplID, var `type`: Option[LangType]) extends TmplNode[LangParam] {
+case class LangParam(context: Null, var annots: Option[List[LangAnnotation]] = None, var name: TmplID, var `type`: Option[LangType]) extends TmplNode[LangParam] {
 //  override def deepCopy(): LangParam = LangParam(context,
 //    if (annots.isDefined) Some(annots.get.map(_.deepCopy())) else None,
 //    name.deepCopy().asInstanceOf[TmplID],
@@ -31,7 +31,7 @@ case class LangParam(context: Null[ContextContent], var annots: Option[List[Lang
     ))
   )
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 
   override def getElement: LangParam = this
 

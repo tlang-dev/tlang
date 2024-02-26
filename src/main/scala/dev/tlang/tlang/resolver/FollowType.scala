@@ -25,7 +25,7 @@ object FollowType {
     else Right(())
   }
 
-  def findInside(context: Null[ContextContent], preType: Option[String], name: String, addPreType: Option[String] = None)(module: Module, uses: List[DomainUse], scope: Scope, currentResource: Resource): Either[List[ResolverError], Unit] = {
+  def findInside(context: Null, preType: Option[String], name: String, addPreType: Option[String] = None)(module: Module, uses: List[DomainUse], scope: Scope, currentResource: Resource): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
     if (preType.isEmpty) {
       browseModel(name, currentResource) match {
@@ -42,7 +42,7 @@ object FollowType {
     else Right(())
   }
 
-  def findOutside(context: Null[ContextContent], preType: String, name: String)(module: Module, uses: List[DomainUse], scope: Scope): Either[List[ResolverError], Unit] = {
+  def findOutside(context: Null, preType: String, name: String)(module: Module, uses: List[DomainUse], scope: Scope): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
     uses.foreach(use => {
       if (use.parts.last == preType) {

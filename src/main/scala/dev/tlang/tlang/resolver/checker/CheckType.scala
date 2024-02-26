@@ -7,7 +7,7 @@ import tlang.core.Value
 
 object CheckType {
 
-  def checkType(valType: String, value: Value[_]): Either[List[ResolverError], Unit] = {
+  def checkType(valType: String, value: Value): Either[List[ResolverError], Unit] = {
     if (valType == value.getType) Right(())
 //    else Left(List(TypeError(value.getElement.getContext, value.getType.toString, valType)))
     Right(())

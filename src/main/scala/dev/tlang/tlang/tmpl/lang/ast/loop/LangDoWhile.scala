@@ -9,11 +9,11 @@ import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core.{Null, Type}
 import tlang.internal.{AstContext, ContextContent}
 
-case class LangDoWhile(context: Null[ContextContent], content: LangExprContent[_], cond: LangOperation) extends LangExpression[LangDoWhile] with AstContext {
+case class LangDoWhile(context: Null, content: LangExprContent[_], cond: LangOperation) extends LangExpression[LangDoWhile] with AstContext {
 //  override def deepCopy(): LangDoWhile =
 //    LangDoWhile(context, content.deepCopy().asInstanceOf[LangExprContent[_]], cond.deepCopy())
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 
 
   override def getElement: LangDoWhile = this
@@ -24,7 +24,7 @@ case class LangDoWhile(context: Null[ContextContent], content: LangExprContent[_
     Some(ObjType(context, None, LangDoWhile.modelName)),
     Some(List(
       BuildLang.createAttrEntity(context, "content", content.toEntity),
-      BuildLang.createAttrEntity(context, "cond", cond.toEntity),
+//      BuildLang.createAttrEntity(context, "cond", cond.toEntity),
     ))
   )
 

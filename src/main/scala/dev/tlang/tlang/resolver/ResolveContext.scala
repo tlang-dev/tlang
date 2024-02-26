@@ -47,7 +47,7 @@ object ResolveContext {
   }
 
 
-  def followCall(resource: Resource, sameResource: Boolean, statements: List[CallObjectType], nextStatement: Int, previousNames: List[String], scope: Scope): Either[List[ResolverError], Null[Value[_]]] = {
+  def followCall(resource: Resource, sameResource: Boolean, statements: List[CallObjectType], nextStatement: Int, previousNames: List[String], scope: Scope): Either[List[ResolverError], Null] = {
 
 
     val callName: Option[String] = statements(nextStatement) match {
@@ -68,9 +68,9 @@ object ResolveContext {
               }
               case None =>
                 println("Verify if you have exposed the element")
-                Right(Null.empty().asInstanceOf[Null[Value[_]]])
+                Right(Null.empty().asInstanceOf[Null])
             }
-            case None => Right(Null.empty().asInstanceOf[Null[Value[_]]])
+            case None => Right(Null.empty().asInstanceOf[Null])
           }
         } else addInScope(objName, findInResource(resource, statements(nextStatement)), previousNames, scope)
       case None => Left(List(new ResolverError("Should be a var or a func")))
@@ -78,18 +78,18 @@ object ResolveContext {
 
   }
 
-  def findInResource(resource: Resource, nextCaller: CallObjectType): Either[List[ResolverError], Null[Value[_]]] = {
+  def findInResource(resource: Resource, nextCaller: CallObjectType): Either[List[ResolverError], Null] = {
     nextCaller match {
       case CallFuncObject(_, name, _) => browseBody(name.get, resource)
       case CallVarObject(_, name) => browseBody(name, resource)
       case CallRefFuncObject(_, name, _, _, _) => browseBody(name.get, resource)
-      case _ => Right(Null.empty().asInstanceOf[Null[Value[_]]])
+      case _ => Right(Null.empty())
     }
   }
 
-  def browseBody(name: String, resource: Resource): Either[List[ResolverError], Null[Value[_]]] = {
+  def browseBody(name: String, resource: Resource): Either[List[ResolverError], Null] = {
     val errors = ListBuffer.empty[ResolverError]
-    var elem: Null[Value[_]] = Null.empty().asInstanceOf[Null[Value[_]]]
+    var elem: Null = Null.empty().asInstanceOf[Null]
     resource.ast.body.foreach {
 //      case HelperBlock(_, funcs) => if (funcs.isNotNull.get()) {
 //        ResolveUtils.findInFuncs(funcs.get.getElement.getRecords.toList, name) match {
@@ -112,19 +112,19 @@ object ResolveContext {
     else Right(elem)
   }
 
-  def findInTmpl(tmpl: AnyTmplInterpretedBlock[_], name: String): Either[List[ResolverError], Null[Value[_]]] = {
+  def findInTmpl(tmpl: AnyTmplInterpretedBlock[_], name: String): Either[List[ResolverError], Null] = {
     val errors = ListBuffer.empty[ResolverError]
-    var elem: Null[Value[_]] = Null.empty().asInstanceOf[Null[Value[_]]]
+    var elem: Null = Null.empty().asInstanceOf[Null]
     tmpl match {
-      case doc: DocBlock => if (doc.name == name) elem = Null.of(LangBlockAsValue(doc.context, doc, Context())).asInstanceOf[Null[Value[_]]]
-      case lang: LangBlock => if (lang.name == name) elem = Null.of(LangBlockAsValue(lang.context, lang, Context())).asInstanceOf[Null[Value[_]]]
+      case doc: DocBlock => if (doc.name == name) elem = Null.of(LangBlockAsValue(doc.context, doc, Context())).asInstanceOf[Null]
+      case lang: LangBlock => if (lang.name == name) elem = Null.of(LangBlockAsValue(lang.context, lang, Context())).asInstanceOf[Null]
       case _ => println("ResolveContext: TmplBlock type not yet implemented")
     }
     if (errors.nonEmpty) Left(errors.toList)
     else Right(elem)
   }
 
-  def addInScope(lastName: String, elem: Either[List[ResolverError], Null[Value[_]]], previousNames: List[String], scope: Scope): Either[List[ResolverError], Null[Value[_]]] = {
+  def addInScope(lastName: String, elem: Either[List[ResolverError], Null], previousNames: List[String], scope: Scope): Either[List[ResolverError], Null] = {
     elem match {
       case Left(error) => Left(error)
       case Right(value) => if (value.isNotNull.get()) {
@@ -133,19 +133,19 @@ object ResolveContext {
     }
   }
 
-  def addValueInScope(lastName: String, value: Value[_], previousNames: List[String], scope: Scope): Either[List[ResolverError], Null[Value[_]]] = {
+  def addValueInScope(lastName: String, value: Value, previousNames: List[String], scope: Scope): Either[List[ResolverError], Null] = {
     val name = if (previousNames.nonEmpty) BuildModuleTree.createPkg(previousNames.mkString("/"), lastName) else lastName
     val ret = value match {
       case func: HelperFunc => scope.functions.addOne(name, func)
         func
-      //      case variable: PrimitiveValue[_] => scope.variables.addOne(name, variable)
+      //      case variable: PrimitiveValue => scope.variables.addOne(name, variable)
       //        variable
       case variable: Operation => scope.variables.addOne(name, variable)
         variable
       case tmpl: LangBlockAsValue => scope.templates.addOne(name, tmpl.block)
         tmpl
     }
-//    Right(Null.of(ret).asInstanceOf[Null[Value[_]]])
+//    Right(Null.of(ret).asInstanceOf[Null])
     Right(Null.empty())
   }
 

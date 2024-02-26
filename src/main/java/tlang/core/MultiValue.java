@@ -2,20 +2,20 @@ package tlang.core;
 
 import tlang.internal.ClassType;
 
-public class MultiValue implements Value<MultiValue> {
+public class MultiValue implements Value {
 
-    private final Value<?>[] values;
+    private final Value[] values;
 
-    public MultiValue(Value<?>... values) {
+    public MultiValue(Value... values) {
         this.values = values;
     }
 
-    public Value<?>[] getValues() {
+    public Value[] getValues() {
         return values;
     }
 
     @Override
-    public MultiValue getElement() {
+    public MultiValue getValue() {
         return this;
     }
 

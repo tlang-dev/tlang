@@ -8,10 +8,10 @@ import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core.{Null, Type}
 import tlang.internal.{AstContext, ContextContent, TmplID}
 
-case class LangTextValue(context: Null[ContextContent], var value: TmplID) extends LangPrimitiveValue[LangTextValue] with AstContext {
+case class LangTextValue(context: Null, var value: TmplID) extends LangPrimitiveValue[LangTextValue] with AstContext {
 //  override def deepCopy(): LangTextValue = LangTextValue(context, value.deepCopy().asInstanceOf[TmplID])
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 
 
   override def getElement: LangTextValue = this

@@ -13,7 +13,7 @@ import tlang.core
 import tlang.core.{Array, Null, Type}
 import tlang.internal.{AnyTmplBlock, ContextContent}
 
-case class LangBlock(context: Null[ContextContent], name: String, langs: Array[core.String],
+case class LangBlock(context: Null, name: String, langs: Array,
                      var params: Option[List[NativeType[HelperParam]]],
                      var content: LangFullBlock,
                      scope: Scope = Scope()) extends AnyTmplBlock[LangBlock] {
@@ -45,13 +45,13 @@ case class LangBlock(context: Null[ContextContent], name: String, langs: Array[c
 
   //  override def getParams: Option[List[HelperParam]] = params.map(_.map(_.getElement))
 
-  override def getLangs: Array[core.String] = langs
+  override def getLangs: Array = langs
 
   //  override def getScope: Scope = scope
 
   override def getName: core.String = new core.String(name)
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 }
 
 object LangBlock {

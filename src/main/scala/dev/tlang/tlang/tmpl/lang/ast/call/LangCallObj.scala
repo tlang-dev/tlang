@@ -8,7 +8,7 @@ import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core.{Null, Type}
 import tlang.internal.ContextContent
 
-case class LangCallObj(context: Null[ContextContent], var props: Option[LangProp] = None, var firstCall: LangCallObjType[_], var calls: List[LangCallObjectLink]) extends LangSimpleValueType[LangCallObj] with LangExpression[LangCallObj] {
+case class LangCallObj(context: Null, var props: Option[LangProp] = None, var firstCall: LangCallObjType[_], var calls: List[LangCallObjectLink]) extends LangSimpleValueType[LangCallObj] with LangExpression[LangCallObj] {
 //  override def deepCopy(): LangCallObj = LangCallObj(context,
 //    if (props.isDefined) Some(props.get.deepCopy()) else None,
 //    firstCall.deepCopy().asInstanceOf[LangCallObjType[_]],
@@ -27,11 +27,11 @@ case class LangCallObj(context: Null[ContextContent], var props: Option[LangProp
 //        None
 //      ),
       BuildLang.createAttrEntity(context, "firstCall", firstCall.toEntity),
-      BuildLang.createArray(context, "calls", calls.map(_.toEntity))
+//      BuildLang.createArray(context, "calls", calls.map(_.toEntity))
     ))
   )
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 }
 
 object LangCallObj {

@@ -1,9 +1,8 @@
 package tlang.core;
 
 import tlang.internal.ClassType;
-import tlang.internal.ContextContent;
 
-public class Long implements Value<Long> {
+public class Long implements Value {
 
     public static final Type TYPE = ClassType.of(Long.class);
 
@@ -30,7 +29,7 @@ public class Long implements Value<Long> {
     }
 
     @Override
-    public Long getElement() {
+    public Long getValue() {
         return this;
     }
 

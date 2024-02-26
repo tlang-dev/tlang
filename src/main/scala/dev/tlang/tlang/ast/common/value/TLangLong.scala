@@ -8,7 +8,7 @@ import tlang.core
 import tlang.core.{Null, Type, Value}
 import tlang.internal.{AstContext, ContextContent}
 
-class TLangLong(context: Null[ContextContent], value: core.Long) extends PrimitiveValue[core.Long] with AstContext {
+class TLangLong(context: Null, value: core.Long) extends PrimitiveValue[core.Long] with AstContext {
   override def getElement: core.Long = value
 
   override def getType: Type = TLangLong.getType
@@ -25,7 +25,7 @@ class TLangLong(context: Null[ContextContent], value: core.Long) extends Primiti
 //  override def toModel: ModelSetEntity = ModelSetEntity(Null.empty(), getType, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
 //  )))
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 }
 
 object TLangLong extends TLangType {

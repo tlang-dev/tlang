@@ -9,8 +9,8 @@ import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core.{Null, Type}
 import tlang.internal.{AstContext, ContextContent}
 
-case class LangSpecialBlock(context: Null[ContextContent], var `type`: String, var curries: Option[List[LangFuncParam]], var content: Option[LangExprContent[_]]) extends LangExpression[LangSpecialBlock] with LangContent[LangSpecialBlock] with AstContext {
-  override def getContext: Null[ContextContent] = context
+case class LangSpecialBlock(context: Null, var `type`: String, var curries: Option[List[LangFuncParam]], var content: Option[LangExprContent[_]]) extends LangExpression[LangSpecialBlock] with LangContent[LangSpecialBlock] with AstContext {
+  override def getContext: Null = context
 
 //  override def deepCopy(): LangSpecialBlock = LangSpecialBlock(
 //    context,

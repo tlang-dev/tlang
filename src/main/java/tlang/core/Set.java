@@ -2,11 +2,11 @@ package tlang.core;
 
 import tlang.internal.ClassType;
 
-public class Set<T> implements Value<Set<T>> {
+public class Set implements Value {
     private final String key;
-    private final Value<T> value;
+    private final Value value;
 
-    public Set(String key, Value<T> value) {
+    public Set(String key, Value value) {
         this.key = key;
         this.value = value;
     }
@@ -15,12 +15,11 @@ public class Set<T> implements Value<Set<T>> {
         return key;
     }
 
-    public Value<T> getValue() {
+    public Value getValue() {
         return value;
     }
 
-    @Override
-    public Set<T> getElement() {
+    public Set getSet() {
         return this;
     }
 

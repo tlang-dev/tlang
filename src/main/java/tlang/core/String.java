@@ -1,9 +1,8 @@
 package tlang.core;
 
 import tlang.internal.ClassType;
-import tlang.internal.ContextContent;
 
-public class String implements Value<String> {
+public class String implements Value {
 
     public static final Type TYPE = ClassType.of(String.class);
 
@@ -26,7 +25,7 @@ public class String implements Value<String> {
     }
 
     @Override
-    public String getElement() {
+    public String getValue() {
         return this;
     }
 

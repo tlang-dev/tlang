@@ -6,7 +6,7 @@ import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import tlang.core.{Null, Type}
 import tlang.internal.{ContextContent, TmplNode}
 
-case class NativeType[T](context: Null[ContextContent], statement: T) extends TmplNode[T] {
+case class NativeType[T](context: Null, statement: T) extends TmplNode[T] {
   override def toEntity: EntityValue = EntityValue(context, None, None)
 
   //  override def toModel: ModelSetEntity = NativeType.model
@@ -15,7 +15,7 @@ case class NativeType[T](context: Null[ContextContent], statement: T) extends Tm
 
   //  override def deepCopy(): NativeType[_] = NativeType(context, statement)
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 
   override def getElement: T = statement
 }

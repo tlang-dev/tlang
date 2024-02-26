@@ -7,10 +7,10 @@ import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core.{Null, Type}
 import tlang.internal.ContextContent
 
-case class DocList(context: Null[ContextContent], order: String, contents: List[DocContent]) extends DocTextType[DocList] {
+case class DocList(context: Null, order: String, contents: List[DocContent]) extends DocTextType[DocList] {
 //  override def deepCopy(): DocList = DocList(context, new String(order), contents.map(_.deepCopy()))
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 
   override def getElement: DocList = this
 
@@ -20,7 +20,7 @@ case class DocList(context: Null[ContextContent], order: String, contents: List[
     Some(ObjType(context, None, DocList.modelName)),
     Some(List(
       BuildLang.createAttrStr(context, "order", order),
-      BuildLang.createArray(context, "contents", contents.map(_.toEntity))
+//      BuildLang.createArray(context, "contents", contents.map(_.toEntity))
     ))
   )
 

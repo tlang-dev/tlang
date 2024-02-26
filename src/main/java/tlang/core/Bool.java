@@ -3,9 +3,8 @@ package tlang.core;
 import tlang.core.func.ApplyVoidFunc;
 import tlang.core.func.FuncRet;
 import tlang.internal.ClassType;
-import tlang.internal.ContextContent;
 
-public class Bool implements Value<Bool> {
+public class Bool implements Value {
 
     public static final Type TYPE = ClassType.of(Bool.class);
 
@@ -23,45 +22,45 @@ public class Bool implements Value<Bool> {
         return value;
     }
 
-    public FuncRet<Void> ifTrue(ApplyVoidFunc<Void> func) {
+    public FuncRet ifTrue(ApplyVoidFunc func) {
         return Bool.ifTrue(this, func);
     }
 
-    public FuncRet<Void> ifFalse(ApplyVoidFunc<Void> func) {
+    public FuncRet ifFalse(ApplyVoidFunc func) {
         return Bool.ifFalse(this, func);
     }
 
-    public static FuncRet<Bool> isEqual(Bool that, Bool other) {
+    public static FuncRet isEqual(Bool that, Bool other) {
         return FuncRet.of(new Bool(that.get() == other.get()));
     }
 
-    public static FuncRet<Bool> isNotEqual(Bool that, Bool other) {
+    public static FuncRet isNotEqual(Bool that, Bool other) {
         return FuncRet.of(new Bool(that.get() != other.get()));
     }
 
-    public static FuncRet<Void> ifTrue(Bool that, ApplyVoidFunc<Void> func) {
+    public static FuncRet ifTrue(Bool that, ApplyVoidFunc func) {
         if (that.get()) {
             func.apply(Void.VOID);
         }
         return FuncRet.VOID;
     }
 
-    public static FuncRet<Void> ifFalse(Bool that, ApplyVoidFunc<Void> func) {
+    public static FuncRet ifFalse(Bool that, ApplyVoidFunc func) {
         if (!that.get()) {
             func.apply(Void.VOID);
         }
         return FuncRet.VOID;
     }
 
-    public static FuncRet<Bool> and(Bool that, Bool other) {
+    public static FuncRet and(Bool that, Bool other) {
         return FuncRet.of(new Bool(that.get() && other.get()));
     }
 
-    public static FuncRet<Bool> or(Bool that, Bool other) {
+    public static FuncRet or(Bool that, Bool other) {
         return FuncRet.of(new Bool(that.get() || other.get()));
     }
 
-    public static FuncRet<Void> fold(Bool that, ApplyVoidFunc<Void> ifTrue, ApplyVoidFunc<Void> ifFalse) {
+    public static FuncRet fold(Bool that, ApplyVoidFunc ifTrue, ApplyVoidFunc ifFalse) {
         if (that.get()) {
             ifTrue.apply(Void.VOID);
         } else {
@@ -71,7 +70,7 @@ public class Bool implements Value<Bool> {
     }
 
     @Override
-    public Bool getElement() {
+    public Bool getValue() {
         return null;
     }
 

@@ -7,13 +7,13 @@ import dev.tlang.tlang.interpreter.context.Context
 import tlang.core.Value
 
 object ExecComplexValue extends Executor {
-  override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+  override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value]]] = {
     val valueStatement = statement.asInstanceOf[ComplexValueStatement[_]]
     valueStatement match {
       case obj: CallObject => ExecCallObject.run(obj, context)
       case values: MultiValue => ExecMultiValue.run(values, context)
       case value: PrimitiveValue[_] => ExecPrimitiveValue.run(value, context)
-      case value: Value[_] => Right(Some(List(value)))
+      case value: Value => Right(Some(List(value)))
     }
   }
 }

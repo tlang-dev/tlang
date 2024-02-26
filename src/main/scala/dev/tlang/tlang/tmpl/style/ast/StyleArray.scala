@@ -7,7 +7,7 @@ import dev.tlang.tlang.tmpl.lang.ast.primitive.LangPrimitiveValue
 import tlang.core.{Null, Type}
 import tlang.internal.ContextContent
 
-case class StyleArray(context: Null[ContextContent], values: List[StyleAttribute[_]]) extends LangPrimitiveValue[StyleArray] {
+case class StyleArray(context: Null, values: List[StyleAttribute[_]]) extends LangPrimitiveValue[StyleArray] {
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, StyleArray.modelName)),
     Some(List())
@@ -19,7 +19,7 @@ case class StyleArray(context: Null[ContextContent], values: List[StyleAttribute
 
 //  override def deepCopy(): StyleArray = StyleArray(context, values.map(_.deepCopy().asInstanceOf[StyleAttribute[_]]))
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 }
 
 object StyleArray {

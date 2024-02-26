@@ -26,12 +26,12 @@ object TmplFor {
     })
   ))))
 
-  private def runFor(context: Context, arrayVal: ArrayValue): Either[ExecError, Option[List[Value[_]]]] = {
+  private def runFor(context: Context, arrayVal: ArrayValue): Either[ExecError, Option[List[Value]]] = {
     if (arrayVal.tbl.isDefined) {
       val array = arrayVal.tbl.get
       val newScope = Scope()
       val newContext = Context(context.scopes :+ newScope)
-      val rets = ListBuffer.empty[Value[_]]
+      val rets = ListBuffer.empty[Value]
       var error: Option[ExecError] = None
       for (i <- array.indices) {
 //        newScope.variables.update("_i", new TLangLong(Null.empty(), new Long(i)))

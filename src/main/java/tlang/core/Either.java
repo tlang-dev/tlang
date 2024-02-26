@@ -1,24 +1,23 @@
 package tlang.core;
 
 import tlang.core.func.ApplyVoidFunc;
-import tlang.core.func.MapFunc;
 
-public class Either<T extends Value<T>, U extends Value<U>> {
+public class Either {
 
-    private final T left;
-    private final U right;
+    private final Value left;
+    private final Value right;
 
-    private Either(T left, U right) {
+    private Either(Value left, Value right) {
         this.left = left;
         this.right = right;
     }
 
-    public static <T extends Value<T>, U extends Value<U>> Either<T, U> left(T value) {
-        return new Either<>(value, null);
+    public static Either left(Value value) {
+        return new Either(value, null);
     }
 
-    public static <T extends Value<T>, U extends Value<U>> Either<T, U> right(U value) {
-        return new Either<>(null, value);
+    public static Either right(Value value) {
+        return new Either(null, value);
     }
 
     public boolean isLeft() {
@@ -29,11 +28,11 @@ public class Either<T extends Value<T>, U extends Value<U>> {
         return right != null;
     }
 
-    public T getLeft() {
+    public Value getLeft() {
         return left;
     }
 
-    public U getRight() {
+    public Value getRight() {
         return right;
     }
 
@@ -51,13 +50,13 @@ public class Either<T extends Value<T>, U extends Value<U>> {
 //        return Either.left(getLeft());
 //    }
 
-    public void applyLeft(ApplyVoidFunc<T> func) {
+    public void applyLeft(ApplyVoidFunc func) {
         if (isLeft()) {
             func.apply(getLeft());
         }
     }
 
-    public void applyRight(ApplyVoidFunc<U> func) {
+    public void applyRight(ApplyVoidFunc func) {
         if (isRight()) {
             func.apply(getRight());
         }

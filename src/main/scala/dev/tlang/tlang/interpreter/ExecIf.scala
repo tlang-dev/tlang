@@ -7,7 +7,7 @@ import tlang.core.{Null, Value}
 
 object ExecIf extends Executor {
 
-  override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+  override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value]]] = {
     val ifStatement = statement.asInstanceOf[HelperIf]
     ExecOperation.run(ifStatement.condition, context) match {
       case Left(value) => Left(value)
@@ -20,14 +20,14 @@ object ExecIf extends Executor {
     }
   }
 
-  private def execIfTrue(helperIf: HelperIf, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+  private def execIfTrue(helperIf: HelperIf, context: Context): Either[ExecError, Option[List[Value]]] = {
     if (helperIf.ifTrue.isDefined) {
       if (helperIf.ifTrue.get.content.isDefined) ExecContent.run(helperIf.ifTrue.get, context)
       else Right(None)
     } else Right(None)
   }
 
-  private def execIfFalse(helperIf: HelperIf, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+  private def execIfFalse(helperIf: HelperIf, context: Context): Either[ExecError, Option[List[Value]]] = {
     if (helperIf.ifFalse.isDefined) {
       if (helperIf.ifFalse.get.content.isDefined) ExecContent.run(helperIf.ifFalse.get, context)
       else Right(None)

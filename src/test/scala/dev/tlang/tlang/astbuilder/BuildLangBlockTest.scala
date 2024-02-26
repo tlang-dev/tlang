@@ -26,7 +26,7 @@ class BuildLangBlockTest extends AnyFunSuite {
     val parser = new TLang(tokens)
     val tmpl = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock().tmplLang())
     assert("myTmpl" == tmpl.name)
-    assert("scala" == tmpl.langs.getElement.getElement)
+    assert("scala" == tmpl.langs.getValue.getValue)
 
     assert(tmpl.params.isEmpty)
   }

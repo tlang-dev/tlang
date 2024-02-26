@@ -1,18 +1,32 @@
 package tlang.mutable;
 
-public class Var<T> {
+import tlang.core.Type;
+import tlang.core.Value;
+import tlang.internal.ClassType;
 
-    private T value;
+public class Var implements Value {
 
-    public Var(T value) {
+    private Value value;
+
+    public Var(Value value) {
         this.value = value;
     }
 
-    public T get() {
+    public Value get() {
         return value;
     }
 
-    public void set(T value) {
+    public void set(Value value) {
         this.value = value;
+    }
+
+    @Override
+    public Value getValue() {
+        return this;
+    }
+
+    @Override
+    public Type getType() {
+        return ClassType.of(this.getClass());
     }
 }

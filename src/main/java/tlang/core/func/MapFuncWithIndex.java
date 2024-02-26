@@ -1,8 +1,9 @@
 package tlang.core.func;
 
 import tlang.core.Long;
+import tlang.core.Value;
 
-public interface MapFuncWithIndex<T, B> {
+public interface MapFuncWithIndex {
 
-    B apply(T value, Long index);
+    Value apply(Value value, Long index);
 }

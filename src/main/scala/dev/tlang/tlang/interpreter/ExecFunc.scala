@@ -5,7 +5,7 @@ import dev.tlang.tlang.interpreter.context.Context
 import tlang.core.Value
 
 object ExecFunc extends Executor {
-  override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+  override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value]]] = {
     val funcStatement = statement.asInstanceOf[HelperFunc]
     val newContext = Context(context.scopes :+ funcStatement.scope)
     if (funcStatement.block.content.isDefined) {

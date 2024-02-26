@@ -39,7 +39,7 @@ object BuildAst {
     DomainUse(addContext(resource, use), use.uses.asScala.toList.map(_.getText), AstBuilderUtils.getText(use.alias))
   }
 
-  def addContext(resource: ContextResource, parser: ParserRuleContext): Null[internal.ContextContent] = {
+  def addContext(resource: ContextResource, parser: ParserRuleContext): Null = {
     Null.of(new ContextContent(resource, new Int(parser.getStart.getLine), new Int(parser.getStart.getCharPositionInLine)))
   }
 

@@ -6,6 +6,7 @@ import dev.tlang.tlang.astbuilder.{BuildHelperBlock, BuildHelperStatement}
 import dev.tlang.tlang.tmpl.common.ast.NativeType
 import dev.tlang.tlang.tmpl.common.astbuilder.BuildCommonTmpl
 import dev.tlang.tlang.tmpl.style.ast._
+import tlang.core.Array
 import tlang.{core, mutable}
 import tlang.internal.{ContextResource, TmplNode}
 
@@ -14,9 +15,9 @@ import scala.jdk.CollectionConverters._
 object BuildStyle {
 
   def buildStyle(resource: ContextResource, style: TmplStyleContext): StyleBlock = {
-    val langs = new mutable.List[core.String]()
+    val langs = new mutable.List()
         style.langs.asScala.foreach(str => langs.add(new core.String(str.getText)))
-    StyleBlock(addContext(resource, style), style.name.getText, langs.toArray.get().get().getElement,
+    StyleBlock(addContext(resource, style), style.name.getText, langs.toArray.get().get().getValue.asInstanceOf[Array],
       if (style.params != null && !style.params.isEmpty) Some(BuildHelperBlock.buildParams(resource, style.params.asScala.toList).map(param => NativeType(param.context, param))) else None,
       style.content.blocks.asScala.map(buildStyleStruct(resource, _)).toList)
   }

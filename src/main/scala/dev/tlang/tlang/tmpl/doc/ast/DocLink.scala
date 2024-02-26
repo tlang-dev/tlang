@@ -7,9 +7,9 @@ import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core.{Null, Type}
 import tlang.internal.ContextContent
 
-case class DocLink(context: Null[ContextContent], src: String, name: String) extends DocTextType[DocLink] {
+case class DocLink(context: Null, src: String, name: String) extends DocTextType[DocLink] {
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 
   override def getElement: DocLink = this
 

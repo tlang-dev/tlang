@@ -4,5 +4,5 @@ import tlang.core.Void;
 
 public interface Apply {
 
-    FuncRet<Void> apply();
+    FuncRet apply();
 }

@@ -10,7 +10,7 @@ import tlang.core.{Null, Value}
 import scala.collection.mutable.ListBuffer
 
 object ExecModelSetRef extends Executor {
-  override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+  override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value]]] = {
     val ref = statement.asInstanceOf[ModelSetRef]
     if (ref.func.isDefined) {
       if (ref.currying.isEmpty) ExecCallRefFunc.runCallFunc(ref.func, None, context)

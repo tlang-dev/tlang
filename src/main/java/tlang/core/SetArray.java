@@ -5,25 +5,25 @@ import tlang.core.func.FuncRet;
 import tlang.core.func.MapFunc;
 import tlang.mutable.ArrayBuilder;
 
-public class SetArray<T> implements ImplicitMatch<SetArray<T>, Void, Void> {
+public class SetArray  {
 
-    private final Set<T>[] records;
+    private final Set[] records;
 
-    public SetArray(Set<T>... records) {
+    public SetArray(Set... records) {
         this.records = records;
     }
 
-    public Set<T>[] getRecords() {
+    public Set[] getRecords() {
         return records;
     }
 
-    public static <T> SetArray<T> empty() {
-        return new SetArray<>();
+    public static SetArray empty() {
+        return new SetArray();
     }
 
 
-    public static <T> Value<T> get(Set<T>[] records, String key) {
-        for (Set<T> record : records) {
+    public static  Value get(Set[] records, String key) {
+        for (Set record : records) {
             if (record.getKey().equals(key)) {
                 return record.getValue();
             }
@@ -31,7 +31,7 @@ public class SetArray<T> implements ImplicitMatch<SetArray<T>, Void, Void> {
         throw new RuntimeException("Key not found: " + key);
     }
 
-    public static <T> Value<T> get(Set<T>[] records, Long index) {
+    public static  Value get(Set[] records, Long index) {
         if (index.get() < 0 || index.get() >= records.length) {
             throw new RuntimeException("Index out of bound: " + index);
         }
@@ -46,30 +46,21 @@ public class SetArray<T> implements ImplicitMatch<SetArray<T>, Void, Void> {
 //        return new Array<>(array);
 //    }
 
-    public static Array<String> getKeys(Set<?>[] records) {
+    public static Array getKeys(Set[] records) {
         var array = new String[records.length];
         for (int i = 0; i < records.length; i++) {
             array[i] = records[i].getKey();
         }
-        return new Array<>(array);
+        return new Array(array);
     }
 
-    public static <T, B> Array<B> map(Set<T>[] records, MapFunc<T, B> func) {
-        var array = new ArrayBuilder<B>(new Int(records.length));
-        for (Set<T> record : records) {
+    public static  Array map(Set[] records, MapFunc func) {
+        var array = new ArrayBuilder(new Int(records.length));
+        for (Set record : records) {
             array.add(func.apply(record.getValue()));
         }
         return array.build();
     }
 
-    @Override
-    public FuncRet match(ApplyVoidFunc<SetArray<T>> first, Null<ApplyVoidFunc<Void>> second, Null<ApplyVoidFunc<Void>> last) {
-        if (records.length > 0) {
-            first.apply(this);
-        } else {
-            second.ifNotNull(func -> func.apply(Void.VOID));
-        }
-        last.ifNotNull(func -> func.apply(Void.VOID));
-        return FuncRet.VOID;
-    }
+
 }

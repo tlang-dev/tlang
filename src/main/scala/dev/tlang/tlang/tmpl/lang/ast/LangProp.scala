@@ -7,10 +7,10 @@ import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core.{Null, Type}
 import tlang.internal._
 
-case class LangProp(context: Null[ContextContent], var props: List[TmplID]) extends AstContext with TmplNode[LangProp] {
+case class LangProp(context: Null, var props: List[TmplID]) extends AstContext with TmplNode[LangProp] {
   //  override def deepCopy(): LangProp = LangProp(context, props.map(_.deepCopy().asInstanceOf[TmplID]))
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 
   override def getElement: LangProp = this
 

@@ -3,7 +3,7 @@ package tlang.core;
 import tlang.internal.ClassType;
 import tlang.internal.ContextContent;
 
-public class Void implements Value<Void> {
+public class Void implements Value {
 
     public static final Type TYPE = ClassType.of(Void.class);
 
@@ -14,7 +14,7 @@ public class Void implements Value<Void> {
     }
 
     @Override
-    public Void getElement() {
+    public Void getValue() {
         return this;
     }
 

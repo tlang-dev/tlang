@@ -5,7 +5,7 @@ import tlang.core.String;
 
 public interface AnyTmplBlock<T> extends TmplNode<T>, DomainBlock {
 
-    Array<String> getLangs();
+    Array getLangs();
 
     String getName();
 }

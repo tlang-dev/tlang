@@ -4,7 +4,7 @@ import dev.tlang.tlang.ast.common.{ObjType, ValueType}
 import tlang.core.{Bool, Null, Type}
 import tlang.internal.{AstContext, ContextContent}
 
-class TLangBool(context: Null[ContextContent], value: Bool) extends PrimitiveValue[Bool]() with AstContext {
+class TLangBool(context: Null, value: Bool) extends PrimitiveValue[Bool]() with AstContext {
   override def getElement: Bool = value
 
   override def getType: Type = TLangBool.getType
@@ -16,7 +16,7 @@ class TLangBool(context: Null[ContextContent], value: Bool) extends PrimitiveVal
     Some(List())
   )
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 }
 
 object TLangBool extends TLangType {

@@ -8,6 +8,6 @@ import tlang.core.Value
 
 trait Executor {
 
-  def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value[_]]]]
+  def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value]]]
 
 }

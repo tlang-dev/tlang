@@ -4,7 +4,7 @@ import tlang.core.Error;
 import tlang.core.Value;
 import tlang.core.Void;
 
-public interface ApplyVoidFunc<T> {
+public interface ApplyVoidFunc {
 
-    FuncRet<Void> apply(T value);
+    FuncRet apply(Value value);
 }

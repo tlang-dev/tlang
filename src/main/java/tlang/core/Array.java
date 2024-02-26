@@ -1,22 +1,21 @@
 package tlang.core;
 
-import tlang.core.func.ApplyVoidFunc;
 import tlang.core.func.FuncRet;
 import tlang.core.func.MapFunc;
 import tlang.internal.ClassType;
 import tlang.mutable.List;
 
-public class Array<T> implements ImplicitMatch<Array<T>, Void, Void>, Value<Array<T>> {
+public class Array implements Entity {
 
     public static final Type TYPE = ClassType.of(Array.class);
 
-    private final Value<T>[] records;
+    private final Value[] records;
 
-    public Array(Value<T>... records) {
+    public Array(Value[] records) {
         this.records = records;
     }
 
-    public Value<T>[] getRecords() {
+    public Value[] getRecords() {
         return records;
     }
 
@@ -24,31 +23,24 @@ public class Array<T> implements ImplicitMatch<Array<T>, Void, Void>, Value<Arra
         return Array.length(this);
     }
 
-    public <B extends Value<B>> FuncRet<List<B>> map(MapFunc<T, B> func) {
+    public Value get(Int index) {
+        return records[index.get()];
+    }
+
+    public FuncRet map(MapFunc func) {
         return Array.map(this, func);
     }
 
-    public static <T> Array<T> empty() {
-        return new Array<>();
+    public static Array empty() {
+        return new Array(new Value[0]);
     }
 
-    public static <T> Value<T> get(Array<T> array, Int index) {
+    public static  Value get(Array array, Int index) {
         return array.records[index.get()];
     }
 
-    @Override
-    public FuncRet<Void> match(ApplyVoidFunc<Array<T>> first, Null<ApplyVoidFunc<Void>> second, Null<ApplyVoidFunc<Void>> last) {
-        if (records.length > 0) {
-            first.apply(this);
-        } else {
-            second.ifNotNull(func -> func.apply(Void.VOID));
-        }
-        last.ifNotNull(func -> func.apply(Void.VOID));
-        return FuncRet.VOID;
-    }
-
-    public static <T, B extends Value<B>> FuncRet<List<B>> map(Array<T> array, MapFunc<T, B> func) {
-        var list = new List<B>(new Long(array.records.length));
+    public static FuncRet map(Array array, MapFunc func) {
+        var list = new List(new Long(array.records.length));
         for (int i = 0; i < array.length().get(); i++) {
 //            list.add(func.apply(array.getRecords()[i]));
         }
@@ -56,8 +48,43 @@ public class Array<T> implements ImplicitMatch<Array<T>, Void, Void>, Value<Arra
     }
 
     @Override
-    public Array<T> getElement() {
+    public Array getValue() {
         return this;
+    }
+
+    @Override
+    public Null getAttr(String name) {
+        return null;
+    }
+
+    @Override
+    public Bool hasAttrs() {
+        return null;
+    }
+
+    @Override
+    public Bool exists(String name) {
+        return null;
+    }
+
+    @Override
+    public Null getAttr(Int index) {
+        return null;
+    }
+
+    @Override
+    public Bool exists(Int index) {
+        return null;
+    }
+
+    @Override
+    public FuncRet call(String name, Array args) {
+        return null;
+    }
+
+    @Override
+    public FuncRet call(Int index, Array args) {
+        return null;
     }
 
     @Override
@@ -65,7 +92,12 @@ public class Array<T> implements ImplicitMatch<Array<T>, Void, Void>, Value<Arra
         return null;
     }
 
-    public static Int length(Array<?> array) {
+    @Override
+    public Null getModel() {
+        return null;
+    }
+
+    public static Int length(Array array) {
         return new Int(array.records.length);
     }
 

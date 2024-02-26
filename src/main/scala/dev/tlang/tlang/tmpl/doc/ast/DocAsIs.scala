@@ -7,10 +7,10 @@ import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core.{Null, Type}
 import tlang.internal.ContextContent
 
-case class DocAsIs(context: Null[ContextContent], content: String) extends DocContentType[DocAsIs] {
+case class DocAsIs(context: Null, content: String) extends DocContentType[DocAsIs] {
 //  override def deepCopy(): DocAsIs = DocAsIs(context, content)
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 
   override def getType: Type = DocAsIs.modelName
 

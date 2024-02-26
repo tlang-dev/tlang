@@ -10,30 +10,30 @@ import dev.tlang.tlang.tmpl.common.ast.NativeType
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core
 import tlang.core.{Array, Null, Type}
-import tlang.internal.{ContextContent, DomainBlock, TmplStringID}
+import tlang.internal.DomainBlock
 
-case class DocBlock(context: Null[ContextContent], name: String, langs: Array[core.String],
+case class DocBlock(context: Null, name: String, langs: Array,
                     var params: Option[List[NativeType[HelperParam]]], content: DocContent, scope: Scope = Scope()) extends DomainBlock with AnyTmplInterpretedBlock[DocBlock] {
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, DocBlock.modelName)),
     Some(List(
       BuildLang.createAttrStr(context, "name", name),
-//      BuildLang.createArray(context, "langs", langs.map(value => new TmplStringId(context, new core.String(value)).toEntity)),
-      BuildLang.createAttrEntity(context, "content", content.toEntity)
+      //      BuildLang.createArray(context, "langs", langs.map(value => new TmplStringId(context, new core.String(value)).toEntity)),
+      //      BuildLang.createAttrEntity(context, "content", content.toEntity)
     ))
   )
 
-//  override def toModel: ModelSetEntity = DocBlock.model
+  //  override def toModel: ModelSetEntity = DocBlock.model
 
   override def getType: Type = DocBlock.modelName
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 
-//  override def deepCopy(): Any = DocBlock(context, new String(name), langs.map(new String(_)), params, content.deepCopy(), scope)
+  //  override def deepCopy(): Any = DocBlock(context, new String(name), langs.map(new String(_)), params, content.deepCopy(), scope)
 
   override def getParams: Option[List[HelperParam]] = params.map(_.map(_.statement))
 
-  override def getLangs: Array[core.String] = langs
+  override def getLangs: Array = langs
 
   override def getScope: Scope = scope
 

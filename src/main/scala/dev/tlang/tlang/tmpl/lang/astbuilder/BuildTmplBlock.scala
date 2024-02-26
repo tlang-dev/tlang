@@ -14,6 +14,7 @@ import dev.tlang.tlang.tmpl.lang.ast.loop.ForType.ForType
 import dev.tlang.tlang.tmpl.lang.ast.loop.{ForType, LangFor}
 import dev.tlang.tlang.tmpl.lang.ast.primitive._
 import dev.tlang.tlang.tmpl.style.astbuilder.BuildStyle
+import tlang.core.Array
 import tlang.internal.{AnyTmplBlock, ContextResource, TmplNode}
 import tlang.{core, mutable}
 
@@ -35,10 +36,10 @@ object BuildTmplBlock {
   }
 
   def buildLangBlock(resource: ContextResource, tmpl: TmplLangContext): LangBlock = {
-    val langs = new mutable.List[core.String]()
+    val langs = new mutable.List()
     tmpl.langs.asScala.foreach(str => langs.add(new core.String(str.getText)))
     val content = buildFullBlock(resource, tmpl.tmplFullBlock())
-    LangBlock(addContext(resource, tmpl), tmpl.name.getText, langs.toArray.get().get().getElement
+    LangBlock(addContext(resource, tmpl), tmpl.name.getText, langs.toArray.get().get().getValue.asInstanceOf[Array]
       ,
       if (tmpl.params != null && !tmpl.params.isEmpty) Some(BuildHelperBlock.buildParams(resource, tmpl.params.asScala.toList).map(param => NativeType(param.context, param))) else None,
       content)

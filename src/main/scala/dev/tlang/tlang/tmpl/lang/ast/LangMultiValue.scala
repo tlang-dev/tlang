@@ -7,10 +7,10 @@ import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core.{Null, Type}
 import tlang.internal.{AstContext, ContextContent}
 
-case class LangMultiValue(context: Null[ContextContent], var values: List[LangValueType[_]]) extends LangValueType[LangMultiValue] with AstContext {
+case class LangMultiValue(context: Null, var values: List[LangValueType[_]]) extends LangValueType[LangMultiValue] with AstContext {
 //  override def deepCopy(): LangMultiValue = LangMultiValue(context, values.map(_.deepCopy().asInstanceOf[LangValueType[_]]))
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, LangMultiValue.modelName)),

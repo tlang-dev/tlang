@@ -8,7 +8,7 @@ import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core.{Null, Type}
 import tlang.internal.{ContextContent, TmplID, TmplNode}
 
-case class LangType(context: Null[ContextContent], var name: TmplID, var generic: Option[LangGeneric] = None, isArray: Boolean = false, var currying: Option[List[LangCallFuncParam]] = None) extends TmplNode[LangType] {
+case class LangType(context: Null, var name: TmplID, var generic: Option[LangGeneric] = None, isArray: Boolean = false, var currying: Option[List[LangCallFuncParam]] = None) extends TmplNode[LangType] {
 //  override def deepCopy(): LangType = LangType(context, name.deepCopy().asInstanceOf[TmplID],
 //    if (generic.isDefined) Some(generic.get.deepCopy()) else None,
 //    if (isArray) true else false,
@@ -26,7 +26,7 @@ case class LangType(context: Null[ContextContent], var name: TmplID, var generic
     ))
   )
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 
   override def getElement: LangType = this
 

@@ -6,7 +6,7 @@ import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import tlang.core.{Null, Type}
 import tlang.internal.{ContextContent, TmplNode}
 
-case class DataSetAttribute(context: Null[ContextContent]) extends TmplNode[DataSetAttribute] {
+case class DataSetAttribute(context: Null) extends TmplNode[DataSetAttribute] {
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, DataSetAttribute.modelName)),
     Some(List(
@@ -19,7 +19,7 @@ case class DataSetAttribute(context: Null[ContextContent]) extends TmplNode[Data
 
   //  override def deepCopy(): Any = DataSetAttribute(context)
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 
   override def getElement: DataSetAttribute = this
 }

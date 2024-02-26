@@ -32,7 +32,7 @@ object AstBuilderUtils {
     if (token != null) Some(token.getText) else None
   }
 
-  def getNullText(token: Token): Null[core.String] = {
+  def getNullText(token: Token): Null = {
     if (token != null) Null.of(new core.String(token.getText)) else Null.empty()
   }
 

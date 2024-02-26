@@ -1,9 +1,8 @@
 package tlang.core;
 
 import tlang.internal.ClassType;
-import tlang.internal.ContextContent;
 
-public class Int implements Value<Int> {
+public class Int implements Value {
 
     public static final Type TYPE = ClassType.of(Int.class);
 
@@ -18,7 +17,7 @@ public class Int implements Value<Int> {
     }
 
     @Override
-    public Int getElement() {
+    public Int getValue() {
         return this;
     }
 

@@ -9,6 +9,6 @@ import tlang.internal.{ClassType, ContextContent}
  * @param modelSetEntity points to the parent ModelSetEntity from which this impl is related
  * @param attrs
  */
-case class ModelSetImpl(context: Null[ContextContent], var modelSetEntity: Option[ModelSetEntity], attrs: Option[List[ModelSetAttribute]]) extends ModelSetValueType[ModelSetImpl] {
+case class ModelSetImpl(context: Null, var modelSetEntity: Option[ModelSetEntity], attrs: Option[List[ModelSetAttribute]]) extends ModelSetValueType[ModelSetImpl] {
 
 }

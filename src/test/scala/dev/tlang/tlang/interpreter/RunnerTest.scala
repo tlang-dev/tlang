@@ -39,7 +39,7 @@ class RunnerTest extends AnyFunSuiteLike {
     val parameter = Parameter(0, 7, logger)
     new Runner().run(context.program, parameter)
     val logs = logger.getLogs
-    assert(logs(18) == "Jumping to: 0:2")
+    assert(logs(17) == "Jumping to: 0:2")
   }
 
   test("test run model") {
@@ -110,7 +110,60 @@ class RunnerTest extends AnyFunSuiteLike {
     val parameter = Parameter(0, 0, logger)
     new Runner().run(context.program, parameter)
     val logs = logger.getLogs
-    assert(logs(21) == "Jumping to: 0:19")
+    assert(logs(20) == "Jumping to: 0:20")
+  }
+
+  test("test call func with return") {
+    val lexer = new CommonLexer(CharStreams.fromString(
+      """helper {
+        |
+        |func myFunc {
+        |  myFunc2()
+        |}
+        |
+        |func myFunc2: String {
+        |"This is the answer"
+        |}
+        |
+        |}
+        |""".stripMargin))
+    val tokens = new CommonTokenStream(lexer)
+    val parser = new TLang(tokens)
+    val domain = BuildAst.build(fakeContext, parser.domainModel())
+    val context = BuilderContext(module = Module("test", fakeManifest, Map(), None, ""), resource = Resource("test", "test", "test", "test", domain))
+    BuildProgram.buildProgram(context, domain)
+    val logger = new TestLogger
+    val parameter = Parameter(0, 0, logger)
+    new Runner().run(context.program, parameter)
+    val logs = logger.getLogs
+    assert(logs(15) == "[RefFuncSet] Section n°: 0, Instruction n°: 14")
+    assert(logs(18) == "Jumping to: 0:6")
+    assert(logs(19) == "[RefFuncGet] Section n°: 0, Instruction n°: 6")
+  }
+
+  test("test call Terminal") {
+    val lexer = new CommonLexer(CharStreams.fromString(
+      """
+        |use io.Terminal
+        |
+        |helper {
+        |
+        |func myFunc {
+        |  Terminal.println("This is a test")
+        |}
+        |
+        |}
+        |""".stripMargin))
+    val tokens = new CommonTokenStream(lexer)
+    val parser = new TLang(tokens)
+    val domain = BuildAst.build(fakeContext, parser.domainModel())
+    val context = BuilderContext(module = Module("test", fakeManifest, Map(), None, ""), resource = Resource("test", "test", "test", "test", domain))
+    BuildProgram.buildProgram(context, domain)
+    val logger = new TestLogger
+    val parameter = Parameter(0, 0, logger)
+    new Runner().run(context.program, parameter)
+    val logs = logger.getLogs
+    assert(logs(6) == "[CallCore] Section n°: 0, Instruction n°: 4")
   }
 
 }

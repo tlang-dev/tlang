@@ -6,7 +6,7 @@ import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import tlang.core.{Null, Type}
 import tlang.internal.{ContextContent, TmplNode}
 
-case class CmdCallFuncArg(context: Null[ContextContent]) extends TmplNode[CmdCallFuncArg] {
+case class CmdCallFuncArg(context: Null) extends TmplNode[CmdCallFuncArg] {
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, CmdCallFuncArgs.modelName)),
     Some(List())
@@ -16,7 +16,7 @@ case class CmdCallFuncArg(context: Null[ContextContent]) extends TmplNode[CmdCal
 
   override def getType: Type = CmdCallFuncArg.modelName
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 
 //  override def deepCopy(): CmdCallFuncArg = CmdCallFuncArg(context)
 

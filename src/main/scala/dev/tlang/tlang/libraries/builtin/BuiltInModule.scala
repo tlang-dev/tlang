@@ -22,7 +22,7 @@ object BuiltInModule {
   )
 
   val modelClasses: List[Class[_]] = List(
-    classOf[tlang.mutable.List[_]],
+    classOf[tlang.mutable.List],
     //    classOf[tlang.mutable.Map],
     //    classOf[tlang.mutable.Var],
     classOf[tlang.std.entity.StdEntity],
@@ -60,7 +60,7 @@ object BuiltInModule {
             case None => new TLangString(Null.empty(), "Not found")
           })
 
-          val ret = method.invoke(null, args: _*).asInstanceOf[FuncRet[_]]
+          val ret = method.invoke(null, args: _*).asInstanceOf[FuncRet]
           Right(Some(List(ret)))
         })
       )))

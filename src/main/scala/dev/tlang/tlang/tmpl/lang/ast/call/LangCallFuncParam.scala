@@ -7,11 +7,11 @@ import dev.tlang.tlang.tmpl.lang.ast.LangModel
 import tlang.core.{Null, Type}
 import tlang.internal.{ContextContent, TmplNode}
 
-case class LangCallFuncParam(context: Null[ContextContent], var params: Option[List[TmplNode[_]]]) extends TmplNode[LangCallFuncParam] {
+case class LangCallFuncParam(context: Null, var params: Option[List[TmplNode[_]]]) extends TmplNode[LangCallFuncParam] {
 
   override def getType: Type = LangCallFuncParam.modelName
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 
 //  override def deepCopy(): LangCallFuncParam = LangCallFuncParam(
 //    context,

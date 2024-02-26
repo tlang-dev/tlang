@@ -9,8 +9,8 @@ import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core.{Null, Type, Value}
 import tlang.internal.{ContextContent, TmplNode}
 
-case class LangBlockAsValue(astContext: Null[ContextContent], var block: AnyTmplInterpretedBlock[_], context: Context) extends TmplNode[LangBlockAsValue] with Value[LangBlockAsValue] {
-  override def getElement: LangBlockAsValue = this
+case class LangBlockAsValue(astContext: Null, var block: AnyTmplInterpretedBlock[_], context: Context) extends TmplNode[LangBlockAsValue] with Value {
+  override def getValue: Value = this
 
   override def getType: Type = LangBlockAsValue.getType
 
@@ -25,7 +25,9 @@ case class LangBlockAsValue(astContext: Null[ContextContent], var block: AnyTmpl
 
 //  override def toModel: ModelSetEntity = LangBlockAsValue.model
 
-  override def getContext: Null[ContextContent] = astContext
+  override def getContext: Null = astContext
+
+  override def getElement: LangBlockAsValue = this
 }
 
 object LangBlockAsValue extends TLangType {

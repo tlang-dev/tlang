@@ -8,7 +8,7 @@ import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core.{Null, Type}
 import tlang.internal.{ContextContent, TmplID, TmplNode, TmplStringID}
 
-case class LangEntityValue(context: Null[ContextContent], var name: Option[TmplID], var params: Option[List[TmplNode[_]]], var attrs: Option[List[TmplNode[_]]]) extends LangPrimitiveValue[LangEntityValue] {
+case class LangEntityValue(context: Null, var name: Option[TmplID], var params: Option[List[TmplNode[_]]], var attrs: Option[List[TmplNode[_]]]) extends LangPrimitiveValue[LangEntityValue] {
 //  override def deepCopy(): LangEntityValue = LangEntityValue(context,
 //    if (name.isDefined) Some(name.get.deepCopy().asInstanceOf[TmplID]) else None,
 //    if (params.isDefined) Some(params.get.map(_.deepCopy().asInstanceOf[TmplNode[_]])) else None,
@@ -28,7 +28,7 @@ case class LangEntityValue(context: Null[ContextContent], var name: Option[TmplI
     ))
   )
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 }
 
 object LangEntityValue {

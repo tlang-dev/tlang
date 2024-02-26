@@ -7,7 +7,7 @@ import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core.{Null, Type}
 import tlang.internal.{AstContext, ContextContent, TmplNode}
 
-case class LangImplWith(context: Null[ContextContent], var props: Option[LangProp] = None, var types: List[LangType]) extends TmplNode[LangImplWith] with AstContext {
+case class LangImplWith(context: Null, var props: Option[LangProp] = None, var types: List[LangType]) extends TmplNode[LangImplWith] with AstContext {
 //  override def deepCopy(): LangImplWith = LangImplWith(context,
 //    if (props.isDefined) Some(props.get.deepCopy()) else None,
 //    types.map(_.deepCopy()))
@@ -19,13 +19,13 @@ case class LangImplWith(context: Null[ContextContent], var props: Option[LangPro
 ////        props,
 //        None
 //      ),
-      BuildLang.createArray(context, "types", types.map(_.toEntity))
+//      BuildLang.createArray(context, "types", types.map(_.toEntity))
     ))
   )
 
 //  override def toModel: ModelSetEntity = LangImplWith.model
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 
   override def getElement: LangImplWith = this
 

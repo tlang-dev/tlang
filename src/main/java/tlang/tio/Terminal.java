@@ -12,14 +12,14 @@ import java.io.InputStreamReader;
 
 public class Terminal {
 
-    private static BufferedReader READER = new BufferedReader(new InputStreamReader(System.in));
+    private static final BufferedReader READER = new BufferedReader(new InputStreamReader(System.in));
 
-    public static FuncRet println(Value<?> value) {
+    public static FuncRet println(Value value) {
         System.out.println(value.toString());
         return FuncRet.VOID;
     }
 
-    public static FuncRet print(Value<?> value) {
+    public static FuncRet print(Value value) {
         System.out.print(value.toString());
         return FuncRet.VOID;
     }

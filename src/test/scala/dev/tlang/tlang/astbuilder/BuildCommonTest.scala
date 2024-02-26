@@ -1,5 +1,6 @@
 package dev.tlang.tlang.astbuilder
 
+import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value._
 import dev.tlang.tlang.{CommonLexer, TLang}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
@@ -26,7 +27,7 @@ class BuildCommonTest extends AnyFunSuite {
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
     val newEntity = BuildModelBlock.build(fakeContext, parser.modelBlock()).content.get.head.asInstanceOf[AssignVar]
-    val impl = newEntity.value.getElement.content.toOption.get.asInstanceOf[EntityValue].attrs.get.head.value.content.toOption.get.asInstanceOf[EntityImpl]
+    val impl = newEntity.value.getValue.asInstanceOf[Operation].content.toOption.get.asInstanceOf[EntityValue].attrs.get.head.value.content.toOption.get.asInstanceOf[EntityImpl]
     assert("firstEntity" == newEntity.name)
     assert("MyEntity" == impl.`type`.get)
     assert("myString" == impl.attrs.get.head.value.content.toOption.get.asInstanceOf[TLangString].getElement)

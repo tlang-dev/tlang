@@ -9,7 +9,7 @@ import tlang.core.Value
 import scala.collection.mutable
 
 case class Scope(name: String = "",
-                 variables: mutable.Map[String, Value[_]] = mutable.Map(),
+                 variables: mutable.Map[String, Value] = mutable.Map(),
                  functions: mutable.Map[String, HelperFunc] = mutable.Map(),
                  templates: mutable.Map[String, AnyTmplInterpretedBlock[_]] = mutable.Map(),
                  refFunctions: mutable.Map[String, CallRefFuncObject] = mutable.Map(),

@@ -7,9 +7,9 @@ import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core.{Null, Type}
 import tlang.internal.ContextContent
 
-case class DocCodeBlock(context: Null[ContextContent], lang: String, code: String) extends DocTextType[DocCodeBlock] {
+case class DocCodeBlock(context: Null, lang: String, code: String) extends DocTextType[DocCodeBlock] {
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, DocCodeBlock.modelName)),

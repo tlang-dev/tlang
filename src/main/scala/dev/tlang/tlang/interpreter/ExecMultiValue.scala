@@ -10,9 +10,9 @@ import scala.collection.mutable.ListBuffer
 
 object ExecMultiValue extends Executor {
 
-  override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+  override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value]]] = {
     val multiStatement = statement.asInstanceOf[MultiValue]
-    val values = ListBuffer.empty[Value[_]]
+    val values = ListBuffer.empty[Value]
     var error: Option[ExecError] = None
     var i = 0
     while (error.isEmpty && i < multiStatement.values.size) {
@@ -24,7 +24,7 @@ object ExecMultiValue extends Executor {
             case Right(value) => values.addOne(value)
           }
         }
-        case value: Value[_] => values.addOne(value)
+        case value: Value => values.addOne(value)
       }
       i += 1
     }
@@ -32,11 +32,11 @@ object ExecMultiValue extends Executor {
     else Right(Some(values.toList))
   }
 
-  private def convertValues(value: Option[List[Value[_]]]): Either[ExecError, Value[_]] = {
+  private def convertValues(value: Option[List[Value]]): Either[ExecError, Value] = {
     value match {
       case Some(v) => if (v.isEmpty) Left(NoValue("No value found", Null.empty()))
       else if (v.size == 1) Right(v.head)
-      else Right(MultiValue(Null.empty(), v).asInstanceOf[Value[_]])
+      else Right(MultiValue(Null.empty(), v).asInstanceOf[Value])
       case None => Left(NoValue("No value found", Null.empty()))
     }
   }

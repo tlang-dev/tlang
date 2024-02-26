@@ -7,8 +7,8 @@ import dev.tlang.tlang.ast.helper.HelperFunc
 import tlang.core.{Null, Type, Value}
 import tlang.internal.ContextContent
 
-case class ModelLetRefFunc(context: Null[ContextContent], func: HelperFunc, currying: Option[List[CallFuncParam]]) extends ModelLetRefType[ModelLetRefFunc] {
-  override def getElement: ModelLetRefFunc = this
+case class ModelLetRefFunc(context: Null, func: HelperFunc, currying: Option[List[CallFuncParam]]) extends ModelLetRefType[ModelLetRefFunc] {
+  override def getValue: Value = this
 
   override def getType: Type = ModelLetRefFunc.getType
 

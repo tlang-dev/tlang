@@ -7,9 +7,9 @@ import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core.{Null, Type}
 import tlang.internal.ContextContent
 
-case class DocImg(context: Null[ContextContent], src: String, alt: Option[String]) extends DocTextType[DocImg] {
+case class DocImg(context: Null, src: String, alt: Option[String]) extends DocTextType[DocImg] {
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, DocImg.modelName)),

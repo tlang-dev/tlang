@@ -104,7 +104,7 @@ object BrowseHelperStatement {
     else Right(())
   }
 
-  def browseCallFuncObjectParams(currying: Option[List[CallFuncParam]], called: Value[_], module: loader.Module, uses: List[DomainUse], scope: Scope, currentResource: Resource): Either[List[ResolverError], Unit] = {
+  def browseCallFuncObjectParams(currying: Option[List[CallFuncParam]], called: Value, module: loader.Module, uses: List[DomainUse], scope: Scope, currentResource: Resource): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
     currying.foreach(_.zipWithIndex.foreach(curry => curry._1.params.foreach(_.zipWithIndex.foreach(param => {
       val paramName = called match {

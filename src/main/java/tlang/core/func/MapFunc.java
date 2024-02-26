@@ -2,7 +2,7 @@ package tlang.core.func;
 
 import tlang.core.Value;
 
-public interface MapFunc<T, B> {
+public interface MapFunc {
 
-    Value<B> apply(Value<T> value);
+    Value apply(Value value);
 }

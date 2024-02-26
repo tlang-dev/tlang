@@ -1,14 +1,12 @@
 package tlang.core;
 
-import tlang.internal.Element;
+public interface Value {
 
-public interface Value<T> {
-
-    default Int compareTo(Value<T> other) {
+    default Int compareTo(Value other) {
         return new Int(0);
     }
 
-    T getElement();
+    Value getValue();
 
     Type getType();
 }

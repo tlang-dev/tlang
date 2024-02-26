@@ -5,17 +5,18 @@ import dev.tlang.tlang.ast.model.set.{ModelSetEntity, ModelSetRefValue}
 import dev.tlang.tlang.interpreter.ExecOperation
 import dev.tlang.tlang.interpreter.context.{Context, Scope}
 import dev.tlang.tlang.tmpl.lang.ast.LangModel
-import tlang.core.{Bool, Model, Null, Type, Value}
-import tlang.internal.{AstContext, ClassType, ContextContent, Element}
-import tlang.{Entity, core}
+import tlang.core
+import tlang.core.func.FuncRet
+import tlang.core.{Bool, Entity, Model, Null, Type, Value}
+import tlang.internal.{AstContext, ClassType}
 
-case class EntityValue(context: Null[ContextContent],
+case class EntityValue(context: Null,
                        var `type`: Option[ValueType],
                        attrs: Option[List[ComplexAttribute]] = None,
                        scope: Scope = Scope())
   extends PrimitiveValue[EntityValue] with Entity with ModelSetRefValue with AstContext {
 
-  override def getElement: EntityValue = this
+  override def getValue: Value = this
 
   override def getType: Type = if (`type`.isDefined) `type`.get.getContextType else ClassType.of(getClass)
 
@@ -25,39 +26,40 @@ case class EntityValue(context: Null[ContextContent],
     Some(List())
   )
 
-  def getAttrByName(name: core.String): Null[core.Value[_]] = {
-    if (attrs.isEmpty) Null.empty().asInstanceOf[Null[core.Value[_]]]
+  def getAttrByName(name: core.String): Null = {
+    if (attrs.isEmpty) Null.empty()
     else {
       val attr = attrs.get.find(attr => new core.String(attr.attr.orNull).isEqual(name).get())
-      if (attr.isEmpty) Null.empty().asInstanceOf[Null[core.Value[_]]]
+      if (attr.isEmpty) Null.empty()
       else {
         val op = attr.get.value
         ExecOperation.run(op, Context(List(scope))) match {
-          case Left(value) => Null.empty().asInstanceOf[Null[core.Value[_]]]
+          case Left(value) => Null.empty()
 //          case Right(value) => Null.of(value.get.head)
         }
       }
     }
   }
 
-  override def exists(name: core.String): Bool = {
-    if (attrs.isEmpty) Bool.FALSE
-    else {
-      val attr = attrs.get.find(attr => new core.String(attr.attr.orNull).isEqual(name).get())
-      if (attr.isEmpty) Bool.FALSE
-      else Bool.TRUE
-    }
-  }
+  override def getContext: Null = context
 
-  override def hasAttrs: Bool = if (attrs.isEmpty) Bool.FALSE else Bool.TRUE
+  override def getAttr(name: core.String): Null = ???
 
-  override def getModel: Null[Model] = Null.empty()
+  override def hasAttrs: Bool = ???
 
-  override def getContext: Null[ContextContent] = context
+  override def exists(name: core.String): Bool = ???
 
-  override def getAttr[T <: Value[T]](name: core.String): Null[T] = {
-    Null.empty()
-  }
+  override def getAttr(index: core.Int): Null = ???
+
+  override def exists(index: core.Int): Bool = ???
+
+  override def getModel: Null = ???
+
+  override def call(name: core.String, args: core.Array): FuncRet = ???
+
+  override def call(index: core.Int, args: core.Array): FuncRet = ???
+
+  override def getElement: EntityValue = ???
 }
 
 object EntityValue {

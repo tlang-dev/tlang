@@ -7,7 +7,7 @@ import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang.createArray
 import tlang.core.{Null, Type}
 import tlang.internal.{ContextContent, TmplID, TmplNode}
 
-case class LangUse(context: Null[ContextContent], var parts: List[TmplID], var alias: Option[TmplID] = None) extends TmplNode[LangUse] {
+case class LangUse(context: Null, var parts: List[TmplID], var alias: Option[TmplID] = None) extends TmplNode[LangUse] {
   //  override def deepCopy(): LangUse = LangUse(context, parts.map(_.deepCopy().asInstanceOf[TmplID]),
   //    if (alias.isDefined) Some(alias.get.deepCopy().asInstanceOf[TmplID]) else None)
 
@@ -29,7 +29,7 @@ case class LangUse(context: Null[ContextContent], var parts: List[TmplID], var a
       ))
   }
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 }
 
 object LangUse {

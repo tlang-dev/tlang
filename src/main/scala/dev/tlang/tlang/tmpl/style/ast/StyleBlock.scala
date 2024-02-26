@@ -12,7 +12,7 @@ import tlang.core
 import tlang.core.{Array, Null, Type}
 import tlang.internal.{ContextContent, TmplStringID}
 
-case class StyleBlock(context: Null[ContextContent], name: String, langs: Array[core.String],
+case class StyleBlock(context: Null, name: String, langs: Array,
                       var params: Option[List[NativeType[HelperParam]]], contents: List[StyleStruct], scope: Scope = Scope()) extends AnyTmplInterpretedBlock[StyleBlock] {
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, StyleBlock.modelName)),
@@ -23,7 +23,7 @@ case class StyleBlock(context: Null[ContextContent], name: String, langs: Array[
       //        if (params.isDefined) Some(ArrayValue(context, Some(params.get.map(value => ComplexAttribute(context, None, None, Operation(context, None, Right(value.toEntity))))))) else None,
       //        None
       //      ),
-      BuildLang.createArray(context, "contents", contents.map(_.toEntity))
+//      BuildLang.createArray(context, "contents", contents.map(_.toEntity))
     ))
   )
 
@@ -35,13 +35,13 @@ case class StyleBlock(context: Null[ContextContent], name: String, langs: Array[
 
   override def getParams: Option[List[HelperParam]] = params.map(_.map(_.getElement))
 
-  override def getLangs: Array[core.String] = langs
+  override def getLangs: Array = langs
 
   override def getScope: Scope = scope
 
   override def getName: core.String = new core.String(name)
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 }
 
 object StyleBlock {

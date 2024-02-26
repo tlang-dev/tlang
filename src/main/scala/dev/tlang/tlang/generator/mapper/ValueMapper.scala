@@ -121,9 +121,9 @@ object ValueMapper {
 
   def mapImpl(impl: LangImpl, context: Context): LangImpl = {
     impl.name = mapID(impl.name, context)
-   // impl.content = mapContents(impl.content, context)
+    // impl.content = mapContents(impl.content, context)
     impl.fors = mapFors(impl.fors, context)
-   // impl.withs = mapWiths(impl.withs, context)
+    // impl.withs = mapWiths(impl.withs, context)
     impl
   }
 
@@ -320,8 +320,8 @@ object ValueMapper {
   }
 
   def mapAttribute(attrs: LangAttribute, context: Context): LangAttribute = {
- //   attrs.attr = mapOptID(attrs.attr, context)
-//    if (attrs.`type`.isDefined) attrs.`type` = Some(mapType(attrs.`type`.get, context))
+    //   attrs.attr = mapOptID(attrs.attr, context)
+    //    if (attrs.`type`.isDefined) attrs.`type` = Some(mapType(attrs.`type`.get, context))
     attrs.value = mapOperation(attrs.value, context)
     attrs
   }

@@ -2,10 +2,10 @@ package tlang.core;
 
 import tlang.internal.ContextContent;
 
-public class Empty implements Value<Empty> {
+public class Empty implements Value {
 
     @Override
-    public Empty getElement() {
+    public Empty getValue() {
         return this;
     }
 

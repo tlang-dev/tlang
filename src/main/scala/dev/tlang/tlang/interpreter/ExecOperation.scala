@@ -11,12 +11,12 @@ import scala.collection.mutable.ListBuffer
 
 object ExecOperation extends Executor {
 
-  override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+  override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value]]] = {
     val block = statement.asInstanceOf[Operation]
     execOperation(block, context, newLevel = true)
   }
 
-  private def execOperation(block: Operation, context: Context, newLevel: Boolean): Either[ExecError, Option[List[Value[_]]]] = {
+  private def execOperation(block: Operation, context: Context, newLevel: Boolean): Either[ExecError, Option[List[Value]]] = {
     val value = block.content match {
       case Left(op) => execOperation(op, context, newLevel = true)
       case Right(value) => ExecComplexValue.run(value, context)
@@ -36,12 +36,12 @@ object ExecOperation extends Executor {
   }
 
   //  @tailrec
-  //  def execOperationWithoutNext(block: Operation, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+  //  def execOperationWithoutNext(block: Operation, context: Context): Either[ExecError, Option[List[Value]]] = {
   //
   //  }
 
   @tailrec
-  private def flatten(operator: Operator.operator, operation: Operation, ops: ListBuffer[(Option[Operator.operator], Value[_])], context: Context): Either[ExecError, List[(Option[Operator.operator], Value[_])]] = {
+  private def flatten(operator: Operator.operator, operation: Operation, ops: ListBuffer[(Option[Operator.operator], Value)], context: Context): Either[ExecError, List[(Option[Operator.operator], Value)]] = {
     execOperation(operation, context, newLevel = false) match {
       case Left(err) => Left(err)
       case Right(value) =>
@@ -52,7 +52,7 @@ object ExecOperation extends Executor {
   }
 
   @tailrec
-  private def applyOperation(ops: List[(Option[Operator.operator], Value[_])], level: Int): Either[ExecError, Option[List[Value[_]]]] = {
+  private def applyOperation(ops: List[(Option[Operator.operator], Value)], level: Int): Either[ExecError, Option[List[Value]]] = {
     if (ops.length > 1 && level < Operator.priorities.length) {
       var i = 1
       var found = false
@@ -70,7 +70,7 @@ object ExecOperation extends Executor {
     } else Right(Some(List(ops.head._2)))
   }
 
-  private def compareLevel(value1: Value[_], operator: Operator.operator, value2: Value[_], level: Int): Either[ExecError, Value[_]] = {
+  private def compareLevel(value1: Value, operator: Operator.operator, value2: Value, level: Int): Either[ExecError, Value] = {
 //    level match {
 //      case 0 =>
 //        val val1 = value1.asInstanceOf[PrimitiveValue[Any]]
@@ -108,14 +108,14 @@ object ExecOperation extends Executor {
     Right(Null.empty())
   }
 
-  //  def checkMathResult(res: Either[ExecError, Value[Any]]): Either[ExecError, Value[_]] = {
+  //  def checkMathResult(res: Either[ExecError, Value[Any]]): Either[ExecError, Value] = {
   //    res match {
   //      case Left(err) => Left(err)
   //      case Right(value) => Right(value)
   //    }
   //  }
 
-  private def reduce(ops: List[(Option[Operator.operator], Value[_])], pos: Int, newVal: Value[_]): List[(Option[Operator.operator], Value[_])] = {
+  private def reduce(ops: List[(Option[Operator.operator], Value)], pos: Int, newVal: Value): List[(Option[Operator.operator], Value)] = {
     val newList = ListBuffer.from(ops)
     newList.insert(pos - 1, (ops(pos - 1)._1, newVal))
     newList.remove(pos, 2)

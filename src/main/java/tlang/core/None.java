@@ -1,9 +1,9 @@
 package tlang.core;
 
-public class None<T> implements Value<T> {
+public class None implements Value {
 
     @Override
-    public T getElement() {
+    public Value getValue() {
         return null;
     }
 

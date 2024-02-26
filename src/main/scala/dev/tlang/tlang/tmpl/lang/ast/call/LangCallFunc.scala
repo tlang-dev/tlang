@@ -8,7 +8,7 @@ import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core.{Null, Type}
 import tlang.internal.{ContextContent, TmplID}
 
-case class LangCallFunc(context: Null[ContextContent], var name: TmplID, var currying: Option[List[LangCallFuncParam]]) extends LangCallObjType[LangCallFunc] {
+case class LangCallFunc(context: Null, var name: TmplID, var currying: Option[List[LangCallFuncParam]]) extends LangCallObjType[LangCallFunc] {
 //  override def deepCopy(): LangCallFunc = LangCallFunc(context, name.deepCopy().asInstanceOf[TmplID],
 //    if (currying.isDefined) Some(currying.get.map(_.deepCopy())) else None)
 
@@ -28,7 +28,7 @@ case class LangCallFunc(context: Null[ContextContent], var name: TmplID, var cur
     ))
   )
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 }
 
 object LangCallFunc {

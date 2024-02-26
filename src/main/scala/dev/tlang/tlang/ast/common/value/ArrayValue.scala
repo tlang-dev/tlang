@@ -7,7 +7,7 @@ import dev.tlang.tlang.tmpl.lang.ast.LangModel
 import tlang.core.{Null, Type, Value}
 import tlang.internal.ContextContent
 
-case class ArrayValue(context: Null[ContextContent], tbl: Option[List[ComplexAttribute]]) extends PrimitiveValue[ArrayValue] {
+case class ArrayValue(context: Null, tbl: Option[List[ComplexAttribute]]) extends PrimitiveValue[ArrayValue] {
   override def getElement: ArrayValue = this
 
   override def getType: Type = ArrayValue.getType
@@ -17,7 +17,7 @@ case class ArrayValue(context: Null[ContextContent], tbl: Option[List[ComplexAtt
     Some(List())
   )
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 }
 
 object ArrayValue extends TLangType {

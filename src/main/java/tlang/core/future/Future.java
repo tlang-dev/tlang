@@ -1,42 +1,42 @@
 package tlang.core.future;
 
-import tlang.core.*;
 import tlang.core.Error;
-import tlang.core.Void;
-import tlang.core.func.Apply;
+import tlang.core.Null;
+import tlang.core.Type;
+import tlang.core.Value;
 import tlang.core.func.ApplyVoidFunc;
 import tlang.core.func.FuncRet;
 import tlang.internal.ClassType;
 
-public class Future<T> implements Value<Future<T>> {
+public class Future implements Value {
 
-    private final ApplyVoidFunc<Value<T>> funcOnComplete;
+    private final ApplyVoidFunc funcOnComplete;
 
-    private final ApplyVoidFunc<Error> funcOnError;
+    private final ApplyVoidFunc funcOnError;
 
-    private final Null<ApplyVoidFunc<Void>> funcFinally;
+    private final Null funcFinally;
 
-    public Future(ApplyVoidFunc<Value<T>> funcOnComplete, ApplyVoidFunc<Error> funcOnError, Null<ApplyVoidFunc<Void>> funcFinally) {
+    public Future(ApplyVoidFunc funcOnComplete, ApplyVoidFunc funcOnError, Null funcFinally) {
         this.funcOnComplete = funcOnComplete;
         this.funcOnError = funcOnError;
         this.funcFinally = funcFinally;
     }
 
-    public FuncRet<Void> onComplete(Value<T> value) {
+    public FuncRet onComplete(Value value) {
         return funcOnComplete.apply(value);
     }
 
-    public FuncRet<Void> onError(Error error) {
+    public FuncRet onError(Error error) {
         return funcOnError.apply(error);
     }
 
-    public FuncRet<Void> finallyFunc() {
+    public FuncRet finallyFunc() {
         //funcFinally.ifNotNull(Apply::apply);
         return FuncRet.VOID;
     }
 
     @Override
-    public Future<T> getElement() {
+    public Future getValue() {
         return this;
     }
 

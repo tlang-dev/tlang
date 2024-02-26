@@ -8,18 +8,18 @@ import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core.{Null, Type}
 import tlang.internal.{AstContext, ContextContent}
 
-case class LangReturn(context: Null[ContextContent], var operation: LangOperation) extends LangExpression[LangReturn] with AstContext {
+case class LangReturn(context: Null, var operation: LangOperation) extends LangExpression[LangReturn] with AstContext {
 //  override def deepCopy(): LangReturn = LangReturn(context, operation.deepCopy())
 
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, LangReturn.modelName)),
     Some(List(
-      BuildLang.createAttrEntity(context, "operation", operation.toEntity),
+//      BuildLang.createAttrEntity(context, "operation", operation.toEntity),
     ))
   )
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 
   override def getElement: LangReturn = this
 

@@ -9,7 +9,7 @@ import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core.{Null, Type}
 import tlang.internal.{AstContext, ContextContent}
 
-case class LangIf(context: Null[ContextContent], cond: LangOperation, content: LangExprContent[_], elseBlock: Option[Either[LangExprContent[_], LangIf]]) extends LangExpression[LangIf] with AstContext {
+case class LangIf(context: Null, cond: LangOperation, content: LangExprContent[_], elseBlock: Option[Either[LangExprContent[_], LangIf]]) extends LangExpression[LangIf] with AstContext {
 //  override def deepCopy(): LangIf = LangIf(context, cond.deepCopy(), content.deepCopy().asInstanceOf[LangExprContent[_]],
 //    if (elseBlock.isDefined) elseBlock.get match {
 //      case Left(value) => Some(Left(value.deepCopy().asInstanceOf[LangExprContent[_]]))
@@ -17,7 +17,7 @@ case class LangIf(context: Null[ContextContent], cond: LangOperation, content: L
 //    } else None,
 //  )
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 
   override def getElement: LangIf = this
 
@@ -26,7 +26,7 @@ case class LangIf(context: Null[ContextContent], cond: LangOperation, content: L
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, LangIf.modelName)),
     Some(List(
-      BuildLang.createAttrEntity(context, "cond", cond.toEntity),
+//      BuildLang.createAttrEntity(context, "cond", cond.toEntity),
       BuildLang.createAttrEntity(context, "content", content.toEntity),
     ))
   )

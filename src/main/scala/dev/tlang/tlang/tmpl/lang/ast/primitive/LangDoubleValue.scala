@@ -8,9 +8,9 @@ import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core.{Null, Type}
 import tlang.internal.{AstContext, ContextContent}
 
-case class LangDoubleValue(context: Null[ContextContent], value: Double) extends LangPrimitiveValue[LangDoubleValue] with AstContext {
+case class LangDoubleValue(context: Null, value: Double) extends LangPrimitiveValue[LangDoubleValue] with AstContext {
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 
   override def getElement: LangDoubleValue = this
 

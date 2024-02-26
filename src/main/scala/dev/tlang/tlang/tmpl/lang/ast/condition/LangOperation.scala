@@ -9,7 +9,7 @@ import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core.{Null, Type, Value}
 import tlang.internal.{ContextContent, DeepCopy, TmplNode}
 
-case class LangOperation(context: Null[ContextContent], var content: Either[LangOperation, LangExpression[_]], var next: Option[(Operator.operator, LangOperation)] = None) extends TmplNode[LangOperation] {
+case class LangOperation(context: Null, var content: Either[LangOperation, LangExpression[_]], var next: Option[(Operator.operator, LangOperation)] = None) extends TmplNode[LangOperation] {
 //  override def deepCopy(): LangOperation = LangOperation(context,
 //    content match {
 //      case Left(value) => Left(value.deepCopy())
@@ -17,7 +17,7 @@ case class LangOperation(context: Null[ContextContent], var content: Either[Lang
 //    },
 //    if (next.isDefined) Some((next.get._1, next.get._2.deepCopy())) else None)
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 
 
   override def getElement: LangOperation = this
@@ -27,10 +27,10 @@ case class LangOperation(context: Null[ContextContent], var content: Either[Lang
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, LangOperation.modelType)),
     Some(List(
-      BuildLang.createAttrEntity(context, "content", content match {
-        case Left(value) => value.toEntity
-        case Right(value) => value.toEntity
-      }),
+//      BuildLang.createAttrEntity(context, "content", content match {
+//        case Left(value) => value.toEntity
+//        case Right(value) => value.toEntity
+//      }),
     ))
   )
 

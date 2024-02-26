@@ -12,7 +12,7 @@ import tlang.internal.{ContextContent, DeepCopy, DomainBlock, TmplNode}
 
 import scala.collection.mutable.ListBuffer
 
-case class LangFullBlock(context: Null[ContextContent],
+case class LangFullBlock(context: Null,
                          var pkg: Option[LangPkg] = None,
                          var uses: Option[List[LangUse]] = None,
                          var specialised: Boolean = false,
@@ -27,7 +27,7 @@ case class LangFullBlock(context: Null[ContextContent],
 //      if (content.isDefined) Some(content.get.map(_.deepCopy().asInstanceOf[TmplNode[_]])) else None,
 //      scope)
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 
   override def toEntity: EntityValue = {
     val elems = ListBuffer.empty[ComplexAttribute]
@@ -35,7 +35,7 @@ case class LangFullBlock(context: Null[ContextContent],
     if (pkg.nonEmpty) elems += ComplexAttribute(context, Some("tpkg"),
       Some(ObjType(context, None, LangPkg.modelName)), Operation(context, None, Right(pkg.get.toEntity)))
 
-    elems += createArray(context, "uses", if (uses.isDefined) uses.get.map(_.toEntity) else List())
+//    elems += createArray(context, "uses", if (uses.isDefined) uses.get.map(_.toEntity) else List())
     elems += createAttrBool(context, "specialized", specialised)
     elems += createArray(context, "contents", if (content.isDefined) content.get.map(_.toEntity) else List())
 

@@ -5,16 +5,16 @@ import dev.tlang.tlang.ast.common.{ManualType, ObjType, ValueType}
 import tlang.core.{Int, Null, Type, Value}
 import tlang.internal.ContextContent
 
-case class ModelLetRefVar(context: Null[ContextContent], variable: Value[_]) extends ModelLetRefType[ModelLetRefVar] {
-  override def getElement: ModelLetRefVar = this
+case class ModelLetRefVar(context: Null, variable: Value) extends ModelLetRefType[ModelLetRefVar] {
 
   override def getType: Type = ManualType(this.getClass.getPackageName, "VarRef")
 
-  override def compareTo(value: Value[ModelLetRefVar]): Int = {
-    if (variable.getType == value.getType) variable.asInstanceOf[Value[ModelLetRefVar]].compareTo(value.getElement)
+  override def compareTo(value: Value): Int = {
+    if (variable.getType == value.getType) variable.compareTo(value.getValue)
     else new Int(-1)
   }
 
+  override def getValue: Value = this
 }
 
 object ModelLetRefVar extends TLangType {

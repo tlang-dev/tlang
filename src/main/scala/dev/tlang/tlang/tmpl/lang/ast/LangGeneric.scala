@@ -8,15 +8,15 @@ import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core.{Null, Type}
 import tlang.internal.{ContextContent, TmplNode}
 
-case class LangGeneric(context: Null[ContextContent], var types: List[LangType]) extends TmplNode[LangGeneric] {
+case class LangGeneric(context: Null, var types: List[LangType]) extends TmplNode[LangGeneric] {
 //  override def deepCopy(): LangGeneric = LangGeneric(context, types.map(_.deepCopy()))
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, LangGeneric.modelName)),
     Some(List(
-      BuildLang.createArray(context, "types", types.map(_.toEntity))
+//      BuildLang.createArray(context, "types", types.map(_.toEntity))
     ))
   )
 

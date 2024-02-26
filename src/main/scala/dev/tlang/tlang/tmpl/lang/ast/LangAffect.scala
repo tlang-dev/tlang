@@ -9,10 +9,10 @@ import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core.{Null, Type}
 import tlang.internal.{AstContext, ContextContent}
 
-case class LangAffect(context: Null[ContextContent], var variable: LangCallObj, var value: LangOperation) extends LangExpression[LangAffect] with AstContext {
+case class LangAffect(context: Null, var variable: LangCallObj, var value: LangOperation) extends LangExpression[LangAffect] with AstContext {
 //  override def deepCopy(): LangAffect = LangAffect(context, variable.deepCopy(), value.deepCopy())
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 
   override def getElement: LangAffect = this
 
@@ -21,8 +21,8 @@ case class LangAffect(context: Null[ContextContent], var variable: LangCallObj, 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, LangAffect.modelName)),
     Some(List(
-      BuildLang.createAttrEntity(context, "variable", variable.toEntity),
-      BuildLang.createAttrEntity(context, "value", value.toEntity),
+//      BuildLang.createAttrEntity(context, "variable", variable.toEntity),
+//      BuildLang.createAttrEntity(context, "value", value.toEntity),
     ))
   )
 

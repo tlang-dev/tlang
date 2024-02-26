@@ -6,10 +6,10 @@ import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import tlang.core.{Null, Type}
 import tlang.internal.ContextContent
 
-case class DocSec(context: Null[ContextContent], title: String, content: DocContent) extends DocContentType[DocSec] {
+case class DocSec(context: Null, title: String, content: DocContent) extends DocContentType[DocSec] {
 //  override def deepCopy(): DocSec = DocSec(context, new String(title), content.deepCopy())
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 
   override def getElement: DocSec = this
 

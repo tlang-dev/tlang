@@ -8,7 +8,7 @@ import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core.{Bool, Null, Type}
 import tlang.internal.{AstContext, ContextContent, TmplID}
 
-case class LangVal(context: Null[ContextContent], var annots: Option[List[LangAnnotation]] = None, var props: Option[LangProp] = None, var name: TmplID, var `type`: Option[LangType], var value: Option[LangOperation], isOptional: Boolean) extends LangExpression[LangVal] with AstContext {
+case class LangVal(context: Null, var annots: Option[List[LangAnnotation]] = None, var props: Option[LangProp] = None, var name: TmplID, var `type`: Option[LangType], var value: Option[LangOperation], isOptional: Boolean) extends LangExpression[LangVal] with AstContext {
 //  override def deepCopy(): LangVal = LangVal(context,
 //    if (annots.isDefined) Some(annots.get.map(_.deepCopy())) else None,
 //    if (props.isDefined) Some(props.get.deepCopy()) else None,
@@ -18,7 +18,7 @@ case class LangVal(context: Null[ContextContent], var annots: Option[List[LangAn
 //    isOptional
 //  )
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, LangVal.modelName)),

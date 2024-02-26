@@ -32,7 +32,7 @@ object RunMain {
 
   }
 
-  def runMainFile(module: Module)(args: Option[Value[_]] = None): Either[ExecError, Option[List[Value[_]]]] = {
+  def runMainFile(module: Module)(args: Option[Value] = None): Either[ExecError, Option[List[Value]]] = {
     module.resources.get(module.mainFile) match {
       case Some(resource) =>
         val helpers = resource.ast.body.filter(_.isInstanceOf[HelperBlock]).map(_.asInstanceOf[HelperBlock])

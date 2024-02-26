@@ -9,11 +9,11 @@ import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core.{Null, Type}
 import tlang.internal.ContextContent
 
-case class StyleInclude(context: Null[ContextContent], call: NativeType[CallObject]) extends StyleAttribute[StyleInclude] {
+case class StyleInclude(context: Null, call: NativeType[CallObject]) extends StyleAttribute[StyleInclude] {
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, StyleInclude.modelName)),
     Some(List(
-      BuildLang.createAttrEntity(context, "call", call.toEntity),
+//      BuildLang.createAttrEntity(context, "call", call.toEntity),
     ))
   )
 
@@ -25,7 +25,7 @@ case class StyleInclude(context: Null[ContextContent], call: NativeType[CallObje
 
 //  override def deepCopy(): StyleInclude = StyleInclude(context, call.deepCopy().asInstanceOf[NativeType[CallObject]])
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 }
 
 object StyleInclude {

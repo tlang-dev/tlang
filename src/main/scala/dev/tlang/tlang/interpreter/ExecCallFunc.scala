@@ -13,7 +13,7 @@ import scala.collection.mutable.ListBuffer
 
 object ExecCallFunc extends Executor {
 
-  override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+  override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value]]] = {
     val caller = statement.asInstanceOf[CallFuncObject]
     ContextUtils.findFunc(context, caller.name.get) match {
       case Some(func) =>
@@ -47,7 +47,7 @@ object ExecCallFunc extends Executor {
   }
 
   def manageParameters(caller: CallFuncObject, helperFunc: HelperFunc, context: Context): Context = {
-    val vars: mutable.Map[String, Value[_]] = mutable.Map()
+    val vars: mutable.Map[String, Value] = mutable.Map()
     val refFuncs: mutable.Map[String, CallRefFuncObject] = mutable.Map()
     if (caller.currying.isDefined) {
       caller.currying.get.zipWithIndex.foreach(param => {
@@ -76,7 +76,7 @@ object ExecCallFunc extends Executor {
   }
 
   def manageTmplParameters(caller: CallFuncObject, tmpl: AnyTmplInterpretedBlock[_], context: Context): Context = {
-    val vars: mutable.Map[String, Value[_]] = mutable.Map()
+    val vars: mutable.Map[String, Value] = mutable.Map()
     val funcs: mutable.Map[String, HelperFunc] = mutable.Map()
     if (tmpl.getParams.isDefined) {
       for (param <- tmpl.getParams.get.zipWithIndex) {

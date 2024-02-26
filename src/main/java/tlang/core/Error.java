@@ -1,12 +1,10 @@
 package tlang.core;
 
-import tlang.internal.ContextContent;
-
-public class Error implements Value<Error> {
+public class Error implements Value {
 
     private final String code;
 
-    private final Null<String> message;
+    private final Null message;
 
     private final Error[] stackTrace;
 
@@ -16,13 +14,13 @@ public class Error implements Value<Error> {
         this.stackTrace = new Error[0];
     }
 
-    public Error(String code, Null<String> message) {
+    public Error(String code, Null message) {
         this.code = code;
         this.message = message;
         this.stackTrace = new Error[0];
     }
 
-    public Error(String code, Null<String> message, Error[] stackTrace) {
+    public Error(String code, Null message, Error[] stackTrace) {
         this.code = code;
         this.message = message;
         this.stackTrace = stackTrace;
@@ -38,7 +36,7 @@ public class Error implements Value<Error> {
         return code;
     }
 
-    public Null<String> getMessage() {
+    public Null getMessage() {
         return message;
     }
 
@@ -47,7 +45,7 @@ public class Error implements Value<Error> {
     }
 
     @Override
-    public Error getElement() {
+    public Error getValue() {
         return this;
     }
 

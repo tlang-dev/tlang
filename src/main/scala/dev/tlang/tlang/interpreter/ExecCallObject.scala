@@ -16,13 +16,13 @@ import scala.collection.mutable.ListBuffer
 
 object ExecCallObject extends Executor {
 
-  override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+  override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value]]] = {
     val arg1 = statement.asInstanceOf[CallObject]
     loopOverStatement(arg1.statements, context)
   }
 
   @tailrec
-  private def loopOverStatement(statements: List[CallObjectType], context: Context, index: Int = 0, callable: Option[List[Value[_]]] = None): Either[ExecError, Option[List[Value[_]]]] = {
+  private def loopOverStatement(statements: List[CallObjectType], context: Context, index: Int = 0, callable: Option[List[Value]] = None): Either[ExecError, Option[List[Value]]] = {
     if (index >= statements.size) Right(callable)
     else {
       if (callable.isDefined) {
@@ -42,7 +42,7 @@ object ExecCallObject extends Executor {
     }
   }
 
-  def tryExternalResource(statements: List[CallObjectType], context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+  def tryExternalResource(statements: List[CallObjectType], context: Context): Either[ExecError, Option[List[Value]]] = {
     val callVar = statements.head.asInstanceOf[CallVarObject]
     statements(1) match {
       case func: CallFuncObject =>
@@ -63,7 +63,7 @@ object ExecCallObject extends Executor {
     }
   }
 
-  private def findInContext(statement: CallObjectType, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+  private def findInContext(statement: CallObjectType, context: Context): Either[ExecError, Option[List[Value]]] = {
     statement match {
       case CallArrayObject(contextContent, name, position) => ContextUtils.findVar(context, name) match {
         case Some(array) => resolveArray(position, array.asInstanceOf[ArrayValue], context)
@@ -76,7 +76,7 @@ object ExecCallObject extends Executor {
     }
   }
 
-  private def findVar(name: String, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+  private def findVar(name: String, context: Context): Either[ExecError, Option[List[Value]]] = {
     ContextUtils.findVar(context, name) match {
       case Some(value) =>
         value match {
@@ -87,7 +87,7 @@ object ExecCallObject extends Executor {
     }
   }
 
-  private def findInCallable(statement: CallObjectType, callable: Option[List[Value[_]]], context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+  private def findInCallable(statement: CallObjectType, callable: Option[List[Value]], context: Context): Either[ExecError, Option[List[Value]]] = {
     statement match {
       case callArray: CallArrayObject => resolveArrayInCallable(callArray, callable, context)
       case caller: CallFuncObject => resolveFunc(caller, callable, context)
@@ -97,7 +97,7 @@ object ExecCallObject extends Executor {
     }
   }
 
-  def resolveCallVar(name: String, callable: Option[List[Value[_]]], context: Context, caller: CallObjectType): Either[ExecError, Option[List[Value[_]]]] = {
+  def resolveCallVar(name: String, callable: Option[List[Value]], context: Context, caller: CallObjectType): Either[ExecError, Option[List[Value]]] = {
     pickFirst(callable) match {
       case Left(error) => Left(error)
       case Right(value) => value match {
@@ -108,9 +108,9 @@ object ExecCallObject extends Executor {
     }
   }
 
-  def resolveArray(position: Operation, array: ArrayValue, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+  def resolveArray(position: Operation, array: ArrayValue, context: Context): Either[ExecError, Option[List[Value]]] = {
 
-    def resolve(posValue: Value[_]): Either[ExecError, Option[List[Value[_]]]] = {
+    def resolve(posValue: Value): Either[ExecError, Option[List[Value]]] = {
       array.tbl match {
 //        case Some(array) => posValue match {
 //          case long: TLangLong => Right(Some(List(array(long.getElement.intValue()).value)))
@@ -144,7 +144,7 @@ object ExecCallObject extends Executor {
   }
 
   //  @tailrec
-  private def resolveArrayInCallable(call: CallArrayObject, callable: Option[List[Value[_]]], context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+  private def resolveArrayInCallable(call: CallArrayObject, callable: Option[List[Value]], context: Context): Either[ExecError, Option[List[Value]]] = {
     pickFirst(callable) match {
       case Left(error) => Left(error)
       case Right(value) => value match {
@@ -162,12 +162,12 @@ object ExecCallObject extends Executor {
     }
   }
 
-  def findInImpl(name: String, impl: EntityImpl, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+  def findInImpl(name: String, impl: EntityImpl, context: Context): Either[ExecError, Option[List[Value]]] = {
     if (impl.attrs.isDefined) findInAttrs(name, impl.attrs.get, context)
     else Left(CallableNotFound(name, impl.context))
   }
 
-  def findInEntity(name: String, entity: EntityValue, context: Context, caller: CallObjectType): Either[ExecError, Option[List[Value[_]]]] = {
+  def findInEntity(name: String, entity: EntityValue, context: Context, caller: CallObjectType): Either[ExecError, Option[List[Value]]] = {
     if (entity.attrs.isDefined) findInAttrs(name, entity.attrs.get, context) match {
       case Left(error) => Left(error)
       case Right(value) => value match {
@@ -185,7 +185,7 @@ object ExecCallObject extends Executor {
     else findModelInEntity(name, entity, context, caller)
   }
 
-  def findInAttrs(name: String, attrs: List[ComplexAttribute], context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+  def findInAttrs(name: String, attrs: List[ComplexAttribute], context: Context): Either[ExecError, Option[List[Value]]] = {
     attrs.find(_.attr.getOrElse(false).equals(name)) match {
       case Some(value) => value.value match {
         case operation: Operation => ExecOperation.run(operation, context)
@@ -195,14 +195,14 @@ object ExecCallObject extends Executor {
     }
   }
 
-  def findModelInEntity(name: String, entity: EntityValue, context: Context, caller: CallObjectType): Either[ExecError, Option[List[Value[_]]]] = {
+  def findModelInEntity(name: String, entity: EntityValue, context: Context, caller: CallObjectType): Either[ExecError, Option[List[Value]]] = {
     entity.`type` match {
       case Some(entityType) => findModelFromType(name, entityType, entity.scope, context, caller)
       case None => Left(CallableNotFound(name, entity.getContext))
     }
   }
 
-  def findModelFromType(name: String, modelType: ValueType, currentScope: Scope, context: Context, caller: CallObjectType): Either[ExecError, Option[List[Value[_]]]] = {
+  def findModelFromType(name: String, modelType: ValueType, currentScope: Scope, context: Context, caller: CallObjectType): Either[ExecError, Option[List[Value]]] = {
     val typeName = modelType.getContextType
 //    currentScope.models.get(typeName) match {
 //      case Some(value) =>
@@ -221,12 +221,12 @@ object ExecCallObject extends Executor {
     Right(None)
   }
 
-  def findInModel(name: String, model: ModelSetEntity, context: Context, caller: CallObjectType): Either[ExecError, Option[List[Value[_]]]] = {
+  def findInModel(name: String, model: ModelSetEntity, context: Context, caller: CallObjectType): Either[ExecError, Option[List[Value]]] = {
     if (model.attrs.isDefined) findInSetAttrs(name, model.attrs.get, context, model.context, caller)
     else Right(None)
   }
 
-  def findInSetAttrs(name: String, attrs: List[ModelSetAttribute], context: Context, contextContent: Null[ContextContent], caller: CallObjectType): Either[ExecError, Option[List[Value[_]]]] = {
+  def findInSetAttrs(name: String, attrs: List[ModelSetAttribute], context: Context, contextContent: Null, caller: CallObjectType): Either[ExecError, Option[List[Value]]] = {
     attrs.find(_.attr.getOrElse(false).equals(name)) match {
       case Some(value) => value.value match {
         case ref: ModelSetRef =>
@@ -243,9 +243,9 @@ object ExecCallObject extends Executor {
   }
 
   // For now the returned functions are directly executed, a reference will be needed.
-  def resolveFunc(caller: CallFuncObject, callable: Option[List[Value[_]]], context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+  def resolveFunc(caller: CallFuncObject, callable: Option[List[Value]], context: Context): Either[ExecError, Option[List[Value]]] = {
 
-    def execFunc(func: HelperFunc): Either[ExecError, Option[List[Value[_]]]] = {
+    def execFunc(func: HelperFunc): Either[ExecError, Option[List[Value]]] = {
       val newName = "_call_" + caller.name.getOrElse("func")
       val newCaller = CallFuncObject(func.context, Some(newName), caller.currying)
       execFuncWithCaller(newCaller, func, context)
@@ -270,19 +270,19 @@ object ExecCallObject extends Executor {
     }
   }
 
-  private def execFuncWithCaller(newCaller: CallFuncObject, func: HelperFunc, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+  private def execFuncWithCaller(newCaller: CallFuncObject, func: HelperFunc, context: Context): Either[ExecError, Option[List[Value]]] = {
     val newScope = Scope(functions = mutable.Map(newCaller.name.get -> func))
     val newContext = Context(context.scopes :+ newScope)
     ExecCallFunc.run(newCaller, newContext)
   }
 
-  private def execRefFuncWithCaller(newCaller: CallFuncObject, refFunc: CallRefFuncObject, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+  private def execRefFuncWithCaller(newCaller: CallFuncObject, refFunc: CallRefFuncObject, context: Context): Either[ExecError, Option[List[Value]]] = {
     val newScope = Scope(refFunctions = mutable.Map(newCaller.name.get -> refFunc))
     val newContext = Context(context.scopes :+ newScope)
     ExecCallFunc.run(newCaller, newContext)
   }
 
-  private def execFuncInEntity(caller: CallFuncObject, entity: EntityValue, context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+  private def execFuncInEntity(caller: CallFuncObject, entity: EntityValue, context: Context): Either[ExecError, Option[List[Value]]] = {
     findInEntity(caller.name.get, entity, Context(List(entity.scope)), caller) match {
       case Left(error) => Left(error)
       case Right(value) =>
@@ -296,14 +296,14 @@ object ExecCallObject extends Executor {
     }
   }
 
-  private def pickFirst(callable: Option[List[Value[_]]]): Either[ExecError, Value[_]] = {
+  private def pickFirst(callable: Option[List[Value]]): Either[ExecError, Value] = {
     if (callable.isDefined && callable.get.nonEmpty) Right(callable.get.head)
     else Left(CallableNotFound("It's empty", Null.empty()))
   }
 
-  private def runIfOperation(result: Either[ExecError, Option[List[Value[_]]]], context: Context): Either[ExecError, Option[List[Value[_]]]] = {
+  private def runIfOperation(result: Either[ExecError, Option[List[Value]]], context: Context): Either[ExecError, Option[List[Value]]] = {
     var error: Option[ExecError] = None
-    val values = ListBuffer.empty[Value[_]]
+    val values = ListBuffer.empty[Value]
     result match {
       case Left(err) => error = Some(err)
       case Right(value) => value.map(instr => instr.map {

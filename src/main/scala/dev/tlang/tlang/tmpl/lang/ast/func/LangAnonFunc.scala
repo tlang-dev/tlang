@@ -8,11 +8,11 @@ import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core.{Null, Type}
 import tlang.internal.ContextContent
 
-case class LangAnonFunc(context: Null[ContextContent], var curries: Option[List[LangFuncParam]], var content: LangExprContent[_]) extends LangExpression[LangAnonFunc] {
+case class LangAnonFunc(context: Null, var curries: Option[List[LangFuncParam]], var content: LangExprContent[_]) extends LangExpression[LangAnonFunc] {
 
   override def getType: Type = LangAnonFunc.modelName
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 
   //  override def deepCopy(): LangAnonFunc = LangAnonFunc(context,
   //    if (curries.isDefined) Some(curries.get.map(curry => curry.deepCopy())) else None,

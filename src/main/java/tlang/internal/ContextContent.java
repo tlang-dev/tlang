@@ -1,11 +1,10 @@
 package tlang.internal;
 
 import tlang.core.Int;
-import tlang.core.Null;
 import tlang.core.Type;
 import tlang.core.Value;
 
-public class ContextContent implements Value<ContextContent>, DeepCopy{
+public class ContextContent implements Value, DeepCopy {
 
     private final ContextResource resource;
 
@@ -33,12 +32,12 @@ public class ContextContent implements Value<ContextContent>, DeepCopy{
     }
 
     @Override
-    public Value<?> deepCopy() {
+    public Value deepCopy() {
         return null;
     }
 
     @Override
-    public ContextContent getElement() {
+    public ContextContent getValue() {
         return this;
     }
 

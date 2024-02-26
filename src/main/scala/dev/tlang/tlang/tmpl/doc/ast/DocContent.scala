@@ -7,10 +7,10 @@ import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core.{Null, Type}
 import tlang.internal.{ContextContent, TmplNode}
 
-case class DocContent(context: Null[ContextContent], contents: List[DocContentType[_]]) extends TmplNode[DocContent] {
+case class DocContent(context: Null, contents: List[DocContentType[_]]) extends TmplNode[DocContent] {
 //  override def deepCopy(): DocContent = DocContent(context, contents.map(_.deepCopy().asInstanceOf[DocContentType[_]]))
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, DocContent.modelName)),

@@ -7,7 +7,7 @@ import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core.{Null, Type}
 import tlang.internal.{ContextContent, TmplID, TmplNode}
 
-case class StyleSetAttribute(context: Null[ContextContent], name: Option[TmplID], value: TmplNode[_]) extends StyleAttribute[StyleSetAttribute] {
+case class StyleSetAttribute(context: Null, name: Option[TmplID], value: TmplNode[_]) extends StyleAttribute[StyleSetAttribute] {
   override def toEntity: EntityValue = EntityValue(context,
     Some(ObjType(context, None, StyleSetAttribute.modelName)),
     Some(List(
@@ -15,7 +15,7 @@ case class StyleSetAttribute(context: Null[ContextContent], name: Option[TmplID]
 //        if (name.isDefined) Null.of(name.get.toEntity) else Null.empty(),
 //        None
 //      ),
-      BuildLang.createAttrEntity(context, "value", value.toEntity)
+//      BuildLang.createAttrEntity(context, "value", value.toEntity)
     ))
   )
 
@@ -28,7 +28,7 @@ case class StyleSetAttribute(context: Null[ContextContent], name: Option[TmplID]
 //    value.deepCopy().asInstanceOf[TmplNode[_]]
 //  )
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 }
 
 object StyleSetAttribute {

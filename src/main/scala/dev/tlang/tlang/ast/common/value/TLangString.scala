@@ -8,7 +8,7 @@ import tlang.core
 import tlang.core.{Null, Type}
 import tlang.internal.{AstContext, ContextContent}
 
-class TLangString(context: Null[ContextContent], value: String) extends PrimitiveValue[String] with AstContext {
+class TLangString(context: Null, value: String) extends PrimitiveValue[String] with AstContext {
   override def getElement: String = value
 
   override def getType: Type = TLangString.getType
@@ -22,7 +22,7 @@ class TLangString(context: Null[ContextContent], value: String) extends Primitiv
     Some(List())
   )
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 }
 
 object TLangString extends TLangType {

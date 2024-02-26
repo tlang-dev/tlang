@@ -4,23 +4,23 @@ import tlang.core.Array;
 import tlang.core.Int;
 import tlang.core.Value;
 
-public class ArrayBuilder<T> {
+public class ArrayBuilder {
 
-    private final Value<T>[] array;
+    private final Value[] array;
 
     private Int index = new Int(0);
 
     public ArrayBuilder(Int size) {
-        this.array = (Value<T>[]) new Object[size.get()];
+        this.array = new Value[size.get()];
     }
 
-    public void add(Value<T> value) {
+    public void add(Value value) {
         array[index.get()] = value;
         index = new Int(index.get() + 1);
     }
 
-    public Array<T> build() {
-        return new Array<>(array);
+    public Array build() {
+        return new Array(array);
     }
 
 }

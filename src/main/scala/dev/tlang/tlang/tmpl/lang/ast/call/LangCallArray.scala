@@ -9,7 +9,7 @@ import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
 import tlang.core.{Null, Type}
 import tlang.internal.{ContextContent, TmplID}
 
-case class LangCallArray(context: Null[ContextContent], var name: TmplID, var elem: LangOperation) extends LangCallObjType[LangCallArray] {
+case class LangCallArray(context: Null, var name: TmplID, var elem: LangOperation) extends LangCallObjType[LangCallArray] {
 //  override def deepCopy(): LangCallArray = LangCallArray(context, name.deepCopy().asInstanceOf[TmplID], elem.deepCopy())
 
   override def getElement: LangCallArray = this
@@ -20,11 +20,11 @@ case class LangCallArray(context: Null[ContextContent], var name: TmplID, var el
     Some(ObjType(context, None, LangCallArray.modelName)),
     Some(List(
       BuildLang.createAttrEntity(context, "name", name.toEntity),
-      BuildLang.createAttrEntity(context, "operation", elem.toEntity),
+//      BuildLang.createAttrEntity(context, "operation", elem.toEntity),
     ))
   )
 
-  override def getContext: Null[ContextContent] = context
+  override def getContext: Null = context
 }
 
 object LangCallArray {
