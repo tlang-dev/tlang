@@ -1,26 +1,24 @@
 package dev.tlang.tlang.tmpl.lang.ast.call
 
-import dev.tlang.tlang.ast.common.value.EntityValue
-import dev.tlang.tlang.ast.common.{ManualType, ObjType}
-import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
+import dev.tlang.tlang.ast.common.ManualType
 import dev.tlang.tlang.tmpl.lang.ast.LangModel
-import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
-import tlang.core.{Null, Type}
+import dev.tlang.tlang.tmpl.{AstEntity, AstModel, BuildAstTmpl}
+import tlang.core.Type
 import tlang.internal.{ContextContent, TmplID}
 
-case class LangCallFunc(context: Null, var name: TmplID, var currying: Option[List[LangCallFuncParam]]) extends LangCallObjType[LangCallFunc] {
-//  override def deepCopy(): LangCallFunc = LangCallFunc(context, name.deepCopy().asInstanceOf[TmplID],
-//    if (currying.isDefined) Some(currying.get.map(_.deepCopy())) else None)
+case class LangCallFunc(context: Option[ContextContent], var name: TmplID, var currying: Option[List[LangCallFuncParam]]) extends LangCallObjType[LangCallFunc] {
+  //  override def deepCopy(): LangCallFunc = LangCallFunc(context, name.deepCopy().asInstanceOf[TmplID],
+  //    if (currying.isDefined) Some(currying.get.map(_.deepCopy())) else None)
 
 
   override def getElement: LangCallFunc = this
 
   override def getType: Type = LangCallFunc.modelName
 
-  override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, LangCallFunc.modelName)),
+  override def toEntity: AstEntity = AstEntity(context,
+    Some(LangCallFunc.model),
     Some(List(
-      BuildLang.createAttrEntity(context, "name", name.toEntity),
+      //      BuildAstTmpl.createAttrEntity(context, "name", name.toEntity),
       //      BuildLang.createAttrNull(context, "currying",
       //        if (currying.isDefined) Some(ArrayValue(context, Some(currying.get.map(value => ComplexAttribute(context, None, None, Operation(context, None, Right(value.toEntity))))))) else None,
       //        None
@@ -28,7 +26,7 @@ case class LangCallFunc(context: Null, var name: TmplID, var currying: Option[Li
     ))
   )
 
-  override def getContext: Null = context
+  override def getContext: Option[ContextContent] = context
 }
 
 object LangCallFunc {
@@ -37,8 +35,8 @@ object LangCallFunc {
 
   val modelName: Type = ManualType(getClass.getPackageName, name)
 
-  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
-    ModelSetAttribute(Null.empty(), Some("name"), ModelSetType(Null.empty(), TmplID.TYPE)),
-    ModelSetAttribute(Null.empty(), Some("currying"), ModelSetType(Null.empty(), Null.TYPE)),
+  val model: AstModel = AstModel(None, modelName, Some(LangModel.langNode), None, Some(List(
+    BuildAstTmpl.createModelAttrTmplID(None, Some("name")),
+    BuildAstTmpl.createModelAttrNull(None, Some("currying")),
   )))
 }

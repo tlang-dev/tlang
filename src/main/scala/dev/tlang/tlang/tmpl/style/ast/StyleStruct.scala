@@ -1,14 +1,13 @@
 package dev.tlang.tlang.tmpl.style.ast
 
-import dev.tlang.tlang.ast.common.value.EntityValue
-import dev.tlang.tlang.ast.common.{ManualType, ObjType}
-import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
-import tlang.core.{Null, Type}
-import tlang.internal.{TmplID, TmplNode}
+import dev.tlang.tlang.ast.common.ManualType
+import dev.tlang.tlang.tmpl.{AstEntity, AstModel, AstTmplNode, BuildAstTmpl}
+import tlang.core.Type
+import tlang.internal.{ContextContent, TmplID}
 
-case class StyleStruct(context: Null, name: Option[TmplID], params: Option[List[StyleAttribute[_]]], attrs: Option[List[StyleAttribute[_]]]) extends TmplNode[StyleStruct] {
-  override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, StyleStruct.modelName)),
+case class StyleStruct(context: Option[ContextContent], name: Option[TmplID], params: Option[List[StyleAttribute[_]]], attrs: Option[List[StyleAttribute[_]]]) extends AstTmplNode {
+  override def toEntity: AstEntity = AstEntity(context,
+    Some(StyleStruct.model),
     Some(List(
       //      BuildLang.createAttrNull(context, "name",
       //        if (name.isDefined) Null.of(name.get.toEntity) else Null.empty(),
@@ -34,8 +33,11 @@ case class StyleStruct(context: Null, name: Option[TmplID], params: Option[List[
   //    if (params.isDefined) Some(params.get.map(_.deepCopy().asInstanceOf[StyleAttribute[_]])) else None,
   //    if (attrs.isDefined) Some(attrs.get.map(_.deepCopy().asInstanceOf[StyleAttribute[_]])) else None)
 
-  override def getContext: Null = context
+  override def getContext: Option[ContextContent] = context
 
+  override def getName: String = getClass.getSimpleName
+
+  override def toModel: AstModel = StyleStruct.model
 }
 
 object StyleStruct {
@@ -44,9 +46,9 @@ object StyleStruct {
 
   val modelName: Type = ManualType(getClass.getPackageName, name)
 
-  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, None, None, Some(List(
-    ModelSetAttribute(Null.empty(), Some("name"), ModelSetType(Null.empty(), Null.TYPE)),
-    ModelSetAttribute(Null.empty(), Some("params"), ModelSetType(Null.empty(), Null.TYPE)),
-    ModelSetAttribute(Null.empty(), Some("attrs"), ModelSetType(Null.empty(), Null.TYPE)),
+  val model: AstModel = AstModel(None, modelName, None, None, Some(List(
+    BuildAstTmpl.createModelAttrNull(None, Some("name")),
+    BuildAstTmpl.createModelAttrNull(None, Some("params")),
+    BuildAstTmpl.createModelAttrNull(None, Some("attrs")),
   )))
 }

@@ -1,13 +1,11 @@
 package dev.tlang.tlang.tmpl.lang.ast
 
-import dev.tlang.tlang.ast.common.value.{ArrayValue, EntityValue}
-import dev.tlang.tlang.ast.common.{ManualType, ObjType}
-import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
-import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang.createArray
-import tlang.core.{Null, Type}
+import dev.tlang.tlang.ast.common.ManualType
+import dev.tlang.tlang.tmpl.{AstEntity, AstModel, BuildAstTmpl}
+import tlang.core.Type
 import tlang.internal.{ContextContent, TmplID, TmplNode}
 
-case class LangUse(context: Null, var parts: List[TmplID], var alias: Option[TmplID] = None) extends TmplNode[LangUse] {
+case class LangUse(context: Option[ContextContent], var parts: List[TmplID], var alias: Option[TmplID] = None) extends TmplNode[LangUse] {
   //  override def deepCopy(): LangUse = LangUse(context, parts.map(_.deepCopy().asInstanceOf[TmplID]),
   //    if (alias.isDefined) Some(alias.get.deepCopy().asInstanceOf[TmplID]) else None)
 
@@ -16,11 +14,11 @@ case class LangUse(context: Null, var parts: List[TmplID], var alias: Option[Tmp
   override def getType: Type = LangUse.modelName
 
 
-  override def toEntity: EntityValue = {
-    EntityValue(context,
-      Some(ObjType(context, None, LangUse.modelName)),
+  override def toEntity: AstEntity = {
+    AstEntity(context,
+      Some(LangUse.model),
       Some(List(
-        createArray(context, "parts", parts.map(part => part.toEntity)),
+//        BuildAstTmpl.createAttrList(context, "parts", parts.map(part => part.toEntity)),
         //        BuildLang.createAttrNull(context, "alias",
         //          if (alias.isDefined) Null.of(alias.get.toEntity) else Null.empty(),
         //          None
@@ -29,7 +27,7 @@ case class LangUse(context: Null, var parts: List[TmplID], var alias: Option[Tmp
       ))
   }
 
-  override def getContext: Null = context
+  override def getContext: Option[ContextContent] = context
 }
 
 object LangUse {
@@ -38,9 +36,9 @@ object LangUse {
 
   val modelName: Type = ManualType(getClass.getPackageName, name)
 
-  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
-    ModelSetAttribute(Null.empty(), Some("parts"), ModelSetType(Null.empty(), ArrayValue.getType)),
-    ModelSetAttribute(Null.empty(), Some("alias"), ModelSetType(Null.empty(), Null.TYPE)),
+  val model: AstModel = AstModel(None, modelName, Some(LangModel.langNode), None, Some(List(
+    BuildAstTmpl.createModelAttrArray(None, Some("parts")),
+    BuildAstTmpl.createModelAttrNull(None, Some("alias")),
   )))
 }
 

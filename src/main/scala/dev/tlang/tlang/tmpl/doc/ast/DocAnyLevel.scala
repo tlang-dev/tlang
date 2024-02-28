@@ -1,18 +1,17 @@
 package dev.tlang.tlang.tmpl.doc.ast
 
-import dev.tlang.tlang.ast.common.value.EntityValue
-import dev.tlang.tlang.ast.common.{ManualType, ObjType}
-import dev.tlang.tlang.ast.model.set.ModelSetEntity
-import tlang.core.{Null, Type}
+import dev.tlang.tlang.ast.common.ManualType
+import dev.tlang.tlang.tmpl.{AstEntity, AstModel}
+import tlang.core.Type
 import tlang.internal.{ContextContent, TmplNode}
 
-case class DocAnyLevel(context: Null) extends TmplNode[DocAnyLevel] {
+case class DocAnyLevel(context: Option[ContextContent]) extends TmplNode[DocAnyLevel] {
   //  override def deepCopy(): DocAnyLevel = DocAnyLevel(context)
 
-  override def getContext: Null = context
+  override def getContext: Option[ContextContent] = context
 
-  override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, DocAnyLevel.modelName)),
+  override def toEntity: AstEntity = AstEntity(context,
+    Some(DocAnyLevel.model),
     Some(List())
   )
 
@@ -29,6 +28,6 @@ object DocAnyLevel {
 
   val modelName: Type = ManualType(getClass.getPackageName, name)
 
-  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, Some(ObjType(Null.empty(), None, DocModel.docModel.name)), None, Some(List(
+  val model: AstModel = AstModel(None, modelName, Some(DocModel.docModel), None, Some(List(
   )))
 }

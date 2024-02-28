@@ -2,7 +2,7 @@ package tlang.internal;
 
 import tlang.core.Type;
 
-public interface Element<T> extends AstContext {
+public interface Element<T> extends Context {
 
     T getElement();
 

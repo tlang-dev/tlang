@@ -23,11 +23,11 @@ object BuildDoc {
   }
 
   def buildCodeBlock(resource: ContextResource, block: TmplDocCodeBlockContext): DocCodeBlock = {
-    DocCodeBlock(Null.empty(), AstBuilderUtils.extraString(block.lang.getText), AstBuilderUtils.extraText(block.code.getText))
+    DocCodeBlock(None, AstBuilderUtils.extraString(block.lang.getText), AstBuilderUtils.extraText(block.code.getText))
   }
 
   def buildAnyLevel(resource: ContextResource, anyLevel: TmplDocAnyLevelContext): DocAnyLevel = {
-    DocAnyLevel(Null.empty())
+    DocAnyLevel(None)
   }
 
   private def buildDocContent(resource: ContextResource, content: TmplDocContentContext): DocContent = {
@@ -41,29 +41,29 @@ object BuildDoc {
   }
 
   def buildDocImg(resource: ContextResource, img: TmplDocImgContext): DocImg = {
-    DocImg(Null.empty(), AstBuilderUtils.extraString(img.src.getText), if (img.alt != null) Some(AstBuilderUtils.extraString(img.alt.getText)) else None)
+    DocImg(None, AstBuilderUtils.extraString(img.src.getText), if (img.alt != null) Some(AstBuilderUtils.extraString(img.alt.getText)) else None)
   }
 
   def buildDocInclude(resource: ContextResource, include: TmplDocIncludeContext): DocInclude = {
-    DocInclude(Null.empty(), BuildHelperStatement.buildCallObject(resource, include.callObj()))
+    DocInclude(None, BuildHelperStatement.buildCallObject(resource, include.callObj()))
   }
 
   def buildDocLink(resource: ContextResource, link: TmplDocLinkContext): DocLink = {
-    DocLink(Null.empty(), AstBuilderUtils.extraString(link.src.getText), AstBuilderUtils.extraString(link.name.getText))
+    DocLink(None, AstBuilderUtils.extraString(link.src.getText), AstBuilderUtils.extraString(link.name.getText))
   }
 
   def buildDocList(resource: ContextResource, list: TmplDocListContext): DocList = {
-    DocList(Null.empty(), AstBuilderUtils.extraString(list.order.getText), list.contents.asScala.toList.map {
+    DocList(None, AstBuilderUtils.extraString(list.order.getText), list.contents.asScala.toList.map {
       buildDocContent(resource, _)
     })
   }
 
   def buildDocSec(resource: ContextResource, section: TmplDocSecContext): DocSec = {
-    DocSec(Null.empty(), AstBuilderUtils.extraString(section.name.getText), buildDocContent(resource, section.content))
+    DocSec(None, AstBuilderUtils.extraString(section.name.getText), buildDocContent(resource, section.content))
   }
 
   def buildDocSpan(resource: ContextResource, span: TmplDocSpanContext): DocSpan = {
-    DocSpan(Null.empty())
+    DocSpan(None)
   }
 
   def buildDocStruct(resource: ContextResource, struct: TmplDocStructContext): DocStruct = {
@@ -72,7 +72,7 @@ object BuildDoc {
       case _ if struct.LEVEL2() != null => 2
       case _ if struct.LEVEL3() != null => 3
     }
-    DocStruct(Null.empty(), level, AstBuilderUtils.extraString(struct.title.getText).trim,
+    DocStruct(None, level, AstBuilderUtils.extraString(struct.title.getText).trim,
       if (struct.content != null) Some(buildDocContent(resource, struct.content)) else None
     )
   }
@@ -88,19 +88,19 @@ object BuildDoc {
       case code@_ if code.tmplDocCodeBlock() != null => buildCodeBlock(resource, code.tmplDocCodeBlock())
       case table@_ if table.tmplDocTable() != null => buildDocTable(resource, table.tmplDocTable())
     }
-    DocText(Null.empty(), content)
+    DocText(None, content)
   }
 
   def buildDocTable(resource: ContextResource, table: TmplDocTableContext): DocTable = {
-    DocTable(Null.empty())
+    DocTable(None)
   }
 
   def buildDocPlainText(resource: ContextResource, text: TmplDocPlainTextContext): DocPlainText = {
-    DocPlainText(Null.empty(), text.PLAIN_TEXT().getText.trim)
+    DocPlainText(None, text.PLAIN_TEXT().getText.trim)
   }
 
   def buildDocAsIs(resource: ContextResource, asIs: TmplDocAsIsContext): DocAsIs = {
-    DocAsIs(Null.empty(), AstBuilderUtils.extraText(asIs.content.getText))
+    DocAsIs(None, AstBuilderUtils.extraText(asIs.content.getText))
   }
 
 }

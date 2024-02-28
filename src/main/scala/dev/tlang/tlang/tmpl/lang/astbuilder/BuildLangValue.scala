@@ -6,7 +6,7 @@ import dev.tlang.tlang.ast.common.call.CallObject
 import dev.tlang.tlang.ast.common.value.EntityValue
 import dev.tlang.tlang.astbuilder.{AstBuilderUtils, BuildAst, BuildHelperStatement}
 import dev.tlang.tlang.tmpl.lang.ast.{LangType, LangVar}
-import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang.createAttrStr
+import dev.tlang.tlang.tmpl.BuildAstTmpl.createAttrStr
 
 object BuildLangValue {
 

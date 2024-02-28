@@ -1,33 +1,30 @@
 package dev.tlang.tlang.tmpl.lang.ast.func
 
-import dev.tlang.tlang.ast.common.operation.Operation
-import dev.tlang.tlang.ast.common.value.{ArrayValue, ComplexAttribute, EntityValue}
-import dev.tlang.tlang.ast.common.{ManualType, ObjType}
-import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
+import dev.tlang.tlang.ast.common.ManualType
 import dev.tlang.tlang.tmpl.lang.ast._
-import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
-import tlang.core.{Null, Type}
-import tlang.internal.{AstContext, ContextContent, TmplID}
+import dev.tlang.tlang.tmpl.{AstEntity, AstModel, BuildAstTmpl}
+import tlang.core.Type
+import tlang.internal.{Context, ContextContent, TmplID}
 
-case class LangFunc(context: Null, var annots: Option[List[LangAnnotation]] = None, var props: Option[LangProp] = None, var preNames: Option[List[TmplID]] = None, var name: TmplID, var curries: Option[List[LangFuncParam]], var content: Option[LangExprContent[_]],
-                    var ret: Option[List[LangType]] = None, postPros: Option[LangProp] = None) extends LangExpression[LangFunc] with LangContent[LangFunc] with AstContext {
-//  override def deepCopy(): LangFunc = LangFunc(context,
-//    if (annots.isDefined) Some(annots.get.map(_.deepCopy())) else None,
-//    if (props.isDefined) Some(props.get.deepCopy()) else None,
-//    if (preNames.isDefined) Some(preNames.get.map(_.deepCopy().asInstanceOf[TmplID])) else None,
-//    name.deepCopy().asInstanceOf[TmplID],
-//    if (curries.isDefined) Some(curries.get.map(_.deepCopy())) else None,
-//    if (content.isDefined) Some(content.get.deepCopy().asInstanceOf[LangExprContent[_]]) else None,
-//    if (ret.isDefined) Some(ret.get.map(_.deepCopy())) else None,
-//    if (postPros.isDefined) Some(postPros.get.deepCopy()) else None)
+case class LangFunc(context: Option[ContextContent], var annots: Option[List[LangAnnotation]] = None, var props: Option[LangProp] = None, var preNames: Option[List[TmplID]] = None, var name: TmplID, var curries: Option[List[LangFuncParam]], var content: Option[LangExprContent[_]],
+                    var ret: Option[List[LangType]] = None, postPros: Option[LangProp] = None) extends LangExpression[LangFunc] with LangContent[LangFunc] with Context {
+  //  override def deepCopy(): LangFunc = LangFunc(context,
+  //    if (annots.isDefined) Some(annots.get.map(_.deepCopy())) else None,
+  //    if (props.isDefined) Some(props.get.deepCopy()) else None,
+  //    if (preNames.isDefined) Some(preNames.get.map(_.deepCopy().asInstanceOf[TmplID])) else None,
+  //    name.deepCopy().asInstanceOf[TmplID],
+  //    if (curries.isDefined) Some(curries.get.map(_.deepCopy())) else None,
+  //    if (content.isDefined) Some(content.get.deepCopy().asInstanceOf[LangExprContent[_]]) else None,
+  //    if (ret.isDefined) Some(ret.get.map(_.deepCopy())) else None,
+  //    if (postPros.isDefined) Some(postPros.get.deepCopy()) else None)
 
 
   override def getElement: LangFunc = this
 
   override def getType: Type = LangFunc.modelName
 
-  override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, LangFunc.modelName)),
+  override def toEntity: AstEntity = AstEntity(context,
+    Some(LangFunc.model),
     Some(List(
       //      BuildLang.createAttrNull(context, "annots",
       //        if (annots.isDefined) Some(ArrayValue(context, Some(annots.get.map(value => ComplexAttribute(context, None, None, Operation(context, None, Right(value.toEntity))))))) else None,
@@ -37,20 +34,24 @@ case class LangFunc(context: Null, var annots: Option[List[LangAnnotation]] = No
       //        if (props.isDefined) Some(props.get.toEntity) else None,
       //        None
       //      ),
-//      BuildLang.createAttrNull(context, "preNames",
-//        if (preNames.isDefined) Some(ArrayValue(context, Some(preNames.get.map(value => ComplexAttribute(context, None, None, Operation(context, None, Right(value.toEntity))))))) else None,
-//        None
-//      ),
-      BuildLang.createAttrEntity(context, "name", name.toEntity),
-//      BuildLang.createAttrNull(context, "curries",
-//        if (curries.isDefined) Some(ArrayValue(context, Some(curries.get.map(value => ComplexAttribute(context, None, None, Operation(context, None, Right(value.toEntity))))))) else None,
-//        None
-//      ),
-//      BuildLang.createAttrEntity(context, "content", content.map(_.toEntity).getOrElse(EntityValue(context, None, None))),
+      //      BuildLang.createAttrNull(context, "preNames",
+      //        if (preNames.isDefined) Some(ArrayValue(context, Some(preNames.get.map(value => ComplexAttribute(context, None, None, Operation(context, None, Right(value.toEntity))))))) else None,
+      //        None
+      //      ),
+      //      BuildAstTmpl.createAttrEntity(context, "name", name.toEntity),
+      //      BuildLang.createAttrNull(context, "curries",
+      //        if (curries.isDefined) Some(ArrayValue(context, Some(curries.get.map(value => ComplexAttribute(context, None, None, Operation(context, None, Right(value.toEntity))))))) else None,
+      //        None
+      //      ),
+      //      BuildLang.createAttrEntity(context, "content", content.map(_.toEntity).getOrElse(EntityValue(context, None, None))),
     ))
   )
 
-  override def getContext: Null = context
+  override def getContext: Option[ContextContent] = context
+
+  override def getName: String = getClass.getSimpleName
+
+  override def toModel: AstModel = LangFunc.model
 }
 
 object LangFunc {
@@ -59,12 +60,12 @@ object LangFunc {
 
   val modelName: Type = ManualType(getClass.getPackageName, name)
 
-  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
-    ModelSetAttribute(Null.empty(), Some("annots"), ModelSetType(Null.empty(), Null.TYPE)),
-    ModelSetAttribute(Null.empty(), Some("props"), ModelSetType(Null.empty(), Null.TYPE)),
-    ModelSetAttribute(Null.empty(), Some("preNames"), ModelSetType(Null.empty(), Null.TYPE)),
-    ModelSetAttribute(Null.empty(), Some("name"), ModelSetType(Null.empty(), TmplID.TYPE)),
-    ModelSetAttribute(Null.empty(), Some("curries"), ModelSetType(Null.empty(), Null.TYPE)),
-    ModelSetAttribute(Null.empty(), Some("content"), ModelSetType(Null.empty(), Null.TYPE)),
+  val model: AstModel = AstModel(None, modelName, Some(LangModel.langNode), None, Some(List(
+    BuildAstTmpl.createModelAttrNull(None, Some("annots")),
+    BuildAstTmpl.createModelAttrNull(None, Some("props")),
+    BuildAstTmpl.createModelAttrNull(None, Some("preNames")),
+    BuildAstTmpl.createModelAttrTmplID(None, Some("name")),
+    BuildAstTmpl.createModelAttrNull(None, Some("curries")),
+    BuildAstTmpl.createModelAttrNull(None, Some("content")),
   )))
 }

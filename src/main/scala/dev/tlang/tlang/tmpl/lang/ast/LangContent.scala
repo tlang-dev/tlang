@@ -1,12 +1,11 @@
 package dev.tlang.tlang.tmpl.lang.ast
 
-import dev.tlang.tlang.ast.common.{ManualType, ObjType}
-import dev.tlang.tlang.ast.model.set.ModelSetEntity
+import dev.tlang.tlang.ast.common.ManualType
 import dev.tlang.tlang.tmpl.doc.ast.DocModel
-import tlang.core.{Null, Type}
-import tlang.internal.TmplNode
+import dev.tlang.tlang.tmpl.{AstModel, AstTmplNode}
+import tlang.core.Type
 
-trait LangContent[TYPE] extends TmplNode[TYPE]
+trait LangContent[TYPE] extends AstTmplNode
 
 
 object LangContent {
@@ -15,6 +14,6 @@ object LangContent {
 
   val modelName: Type = ManualType(DocModel.pkg, name)
 
-  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
+  val model: AstModel = AstModel(None, modelName, Some(LangModel.langNode), None, Some(List(
   )))
 }

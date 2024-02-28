@@ -4,11 +4,11 @@ import dev.tlang.tlang.ast.helper.{HelperFunc, HelperStatement}
 import dev.tlang.tlang.interpreter.context.Scope
 import dev.tlang.tlang.tmpl.AnyTmplInterpretedBlock
 import tlang.core.{Null, Type}
-import tlang.internal.{AstContext, ClassType, ContextContent}
+import tlang.internal.{Context, ClassType, ContextContent}
 
 case class ModelSetRef(context: Null, refs: List[String], currying: Option[List[ModelSetRefCurrying]],
                        var func: Option[Either[HelperFunc, AnyTmplInterpretedBlock[_]]] = None, scope: Scope = Scope())
-  extends ModelSetValueType[ModelSetRef] with ModelSetRefValue with HelperStatement with AstContext {
+  extends ModelSetValueType[ModelSetRef] with ModelSetRefValue with HelperStatement with Context {
   override def getContext: Null = context
 
   override def getType: Type = ClassType.of(this.getClass)

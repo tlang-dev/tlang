@@ -1,26 +1,30 @@
 package dev.tlang.tlang.tmpl.lang.ast.call
 
-import dev.tlang.tlang.ast.common.value.EntityValue
-import dev.tlang.tlang.ast.common.{ManualType, ObjType}
-import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
+import dev.tlang.tlang.ast.common.ManualType
 import dev.tlang.tlang.tmpl.lang.ast.LangModel
-import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
-import tlang.core.{Null, Type}
+import dev.tlang.tlang.tmpl.{AstEntity, AstModel, BuildAstTmpl}
+import tlang.core.Type
 import tlang.internal.{ContextContent, TmplID}
 
-case class LangCallVar(context: Null, var name: TmplID) extends LangCallObjType[LangCallVar] {
-//  override def deepCopy(): LangCallVar = LangCallVar(context, name.deepCopy().asInstanceOf[TmplID])
+case class LangCallVar(context: Option[ContextContent], var name: TmplID) extends LangCallObjType[LangCallVar] {
+  //  override def deepCopy(): LangCallVar = LangCallVar(context, name.deepCopy().asInstanceOf[TmplID])
 
-  override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, LangCallVar.modelName)),
-    Some(List(BuildLang.createAttrEntity(context, "name", name.toEntity)))
+  override def toEntity: AstEntity = AstEntity(context,
+    Some(LangCallVar.model),
+    Some(List(
+      //          BuildAstTmpl.createAttrEntity(context, "name", name.toEntity)
+    ))
   )
 
-  override def getContext: Null = context
+  override def getContext: Option[ContextContent] = context
 
   override def getElement: LangCallVar = this
 
   override def getType: Type = LangCallVar.modelName
+
+  override def getName: String = getClass.getSimpleName
+
+  override def toModel: AstModel = LangCallVar.model
 }
 
 object LangCallVar {
@@ -28,7 +32,7 @@ object LangCallVar {
 
   val modelName: Type = ManualType(getClass.getPackageName, name)
 
-  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
-    ModelSetAttribute(Null.empty(), Some("name"), ModelSetType(Null.empty(), TmplID.TYPE)),
+  val model: AstModel = AstModel(None, modelName, Some(LangModel.langNode), None, Some(List(
+    BuildAstTmpl.createModelAttrTmplID(None, Some("name")),
   )))
 }

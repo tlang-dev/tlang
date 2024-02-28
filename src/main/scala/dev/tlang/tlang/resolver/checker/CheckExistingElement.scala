@@ -7,7 +7,7 @@ import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.loader.Resource
 import dev.tlang.tlang.resolver.{NameAlreadyUsed, ResolverError}
 import dev.tlang.tlang.tmpl.AnyTmplInterpretedBlock
-import tlang.internal.AstContext
+import tlang.internal.Context
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
@@ -15,7 +15,7 @@ import scala.collection.mutable.ListBuffer
 object CheckExistingElement {
 
   def checkExistingElement(resource: Resource): Either[List[ResolverError], Unit] = {
-    val usedNames = mutable.Map.empty[String, AstContext]
+    val usedNames = mutable.Map.empty[String, Context]
     val errors = ListBuffer.empty[ResolverError]
     checkInHead(resource, usedNames) match {
       case Left(errs) => errors.addAll(errs)
@@ -29,7 +29,7 @@ object CheckExistingElement {
     else Left(errors.toList)
   }
 
-  def checkInHead(resource: Resource, usedNames: mutable.Map[String, AstContext]): Either[List[ResolverError], Unit] = {
+  def checkInHead(resource: Resource, usedNames: mutable.Map[String, Context]): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
     resource.ast.header.foreach(_.uses.foreach(_.foreach(use => {
       val name = if (use.alias.isDefined) use.alias.get else use.parts.last
@@ -39,7 +39,7 @@ object CheckExistingElement {
     else Left(errors.toList)
   }
 
-  def checkInBody(resource: Resource, usedNames: mutable.Map[String, AstContext]): Either[List[ResolverError], Unit] = {
+  def checkInBody(resource: Resource, usedNames: mutable.Map[String, Context]): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
     resource.ast.body.foreach {
       case helper: HelperBlock => checkInHelper(helper, usedNames) match {
@@ -59,7 +59,7 @@ object CheckExistingElement {
     else Left(errors.toList)
   }
 
-  def checkInHelper(helperBlock: HelperBlock, usedNames: mutable.Map[String, AstContext]): Either[List[ResolverError], Unit] = {
+  def checkInHelper(helperBlock: HelperBlock, usedNames: mutable.Map[String, Context]): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
     helperBlock.funcs.foreach(_.foreach(func => {
       checkFunc(func, usedNames) match {
@@ -71,9 +71,9 @@ object CheckExistingElement {
     else Left(errors.toList)
   }
 
-  def checkFunc(func: HelperFunc, usedNames: mutable.Map[String, AstContext]): Either[List[ResolverError], Unit] = {
+  def checkFunc(func: HelperFunc, usedNames: mutable.Map[String, Context]): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
-    val usedNamesInFunc = mutable.Map.empty[String, AstContext]
+    val usedNamesInFunc = mutable.Map.empty[String, Context]
     checkExisting(func.name, func, usedNames, errors)
     usedNamesInFunc.addAll(usedNames)
     func.block.content.foreach(_.foreach {
@@ -84,7 +84,7 @@ object CheckExistingElement {
     else Left(errors.toList)
   }
 
-  def checkInModel(model: ModelBlock, usedNames: mutable.Map[String, AstContext]): Either[List[ResolverError], Unit] = {
+  def checkInModel(model: ModelBlock, usedNames: mutable.Map[String, Context]): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
     model.content.foreach(_.foreach {
       case assign: AssignVar => checkExisting(assign.name, assign, usedNames, errors)
@@ -94,14 +94,14 @@ object CheckExistingElement {
     else Left(errors.toList)
   }
 
-  def checkInTmpl(tmpl: AnyTmplInterpretedBlock[_], usedNames: mutable.Map[String, AstContext]): Either[List[ResolverError], Unit] = {
+  def checkInTmpl(tmpl: AnyTmplInterpretedBlock[_], usedNames: mutable.Map[String, Context]): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
     //checkExisting(tmpl.name, tmpl, usedNames, errors)
     if (errors.isEmpty) Right(())
     else Left(errors.toList)
   }
 
-  def checkExisting(name: String, node: AstContext, usedNames: mutable.Map[String, AstContext], errors: ListBuffer[ResolverError]): Unit = {
+  def checkExisting(name: String, node: Context, usedNames: mutable.Map[String, Context], errors: ListBuffer[ResolverError]): Unit = {
     if (usedNames.contains(name)) errors.addOne(NameAlreadyUsed(node.getContext, name))
     else usedNames.addOne((name, node))
   }

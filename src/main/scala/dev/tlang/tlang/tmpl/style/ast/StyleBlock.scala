@@ -1,29 +1,25 @@
 package dev.tlang.tlang.tmpl.style.ast
 
-import dev.tlang.tlang.ast.common.value._
-import dev.tlang.tlang.ast.common.{ManualType, ObjType}
+import dev.tlang.tlang.ast.common.ManualType
 import dev.tlang.tlang.ast.helper.HelperParam
-import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.interpreter.context.Scope
-import dev.tlang.tlang.tmpl.AnyTmplInterpretedBlock
 import dev.tlang.tlang.tmpl.common.ast.NativeType
-import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
-import tlang.core
-import tlang.core.{Array, Null, Type}
-import tlang.internal.{ContextContent, TmplStringID}
+import dev.tlang.tlang.tmpl.{AnyTmplInterpretedBlock, AstEntity, AstModel, BuildAstTmpl}
+import tlang.core.Type
+import tlang.internal.ContextContent
 
-case class StyleBlock(context: Null, name: String, langs: Array,
+case class StyleBlock(context: Option[ContextContent], name: String, langs: List[String],
                       var params: Option[List[NativeType[HelperParam]]], contents: List[StyleStruct], scope: Scope = Scope()) extends AnyTmplInterpretedBlock[StyleBlock] {
-  override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, StyleBlock.modelName)),
+  override def toEntity: AstEntity = AstEntity(context,
+    Some(StyleBlock.model),
     Some(List(
-      BuildLang.createAttrStr(context, "name", name),
-//      BuildLang.createArray(context, "langs", langs.map(value => new TmplStringId(context, new core.String(value.getElement.toString)).toEntity).get().get().getElement),
+      BuildAstTmpl.createAttrStr(context, "name", name),
+      //      BuildLang.createArray(context, "langs", langs.map(value => new TmplStringId(context, new core.String(value.getElement.toString)).toEntity).get().get().getElement),
       //      BuildLang.createAttrNull(context, "params",
       //        if (params.isDefined) Some(ArrayValue(context, Some(params.get.map(value => ComplexAttribute(context, None, None, Operation(context, None, Right(value.toEntity))))))) else None,
       //        None
       //      ),
-//      BuildLang.createArray(context, "contents", contents.map(_.toEntity))
+      //      BuildLang.createArray(context, "contents", contents.map(_.toEntity))
     ))
   )
 
@@ -35,13 +31,17 @@ case class StyleBlock(context: Null, name: String, langs: Array,
 
   override def getParams: Option[List[HelperParam]] = params.map(_.map(_.getElement))
 
-  override def getLangs: Array = langs
 
   override def getScope: Scope = scope
 
-  override def getName: core.String = new core.String(name)
 
-  override def getContext: Null = context
+  override def getContext: Option[ContextContent] = context
+
+  override def getLangs: List[String] = langs
+
+  override def getName: String = getClass.getSimpleName
+
+  override def toModel: AstModel = StyleBlock.model
 }
 
 object StyleBlock {
@@ -50,10 +50,10 @@ object StyleBlock {
 
   val modelName: Type = ManualType(getClass.getPackageName, name)
 
-  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, Some(ObjType(Null.empty(), None, StyleModel.styleModel.name)), None, Some(List(
-    ModelSetAttribute(Null.empty(), Some("name"), ModelSetType(Null.empty(), TLangString.getType)),
-    ModelSetAttribute(Null.empty(), Some("langs"), ModelSetType(Null.empty(), TLangString.getType)),
-    ModelSetAttribute(Null.empty(), Some("params"), ModelSetType(Null.empty(), Null.TYPE)),
-    ModelSetAttribute(Null.empty(), Some("contents"), ModelSetType(Null.empty(), ArrayValue.getType)),
+  val model: AstModel = AstModel(None, modelName, Some(StyleModel.styleModel), None, Some(List(
+    BuildAstTmpl.createModelAttrStr(None, Some("name")),
+    BuildAstTmpl.createModelAttrStr(None, Some("langs")),
+    BuildAstTmpl.createModelAttrNull(None, Some("params")),
+    BuildAstTmpl.createModelAttrArray(None, Some("contents")),
   )))
 }

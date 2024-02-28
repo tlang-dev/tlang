@@ -1,38 +1,36 @@
 package dev.tlang.tlang.tmpl.lang.ast
 
 import dev.tlang.tlang.ast.common.ManualType
-import dev.tlang.tlang.ast.common.value.{TLangDouble, TLangString}
-import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.tmpl.lang.ast.call._
 import dev.tlang.tlang.tmpl.lang.ast.condition.LangOperation
 import dev.tlang.tlang.tmpl.lang.ast.func.{LangAnnotationParam, LangAnonFunc, LangFunc, LangFuncParam}
 import dev.tlang.tlang.tmpl.lang.ast.loop.{LangDoWhile, LangFor, LangWhile}
 import dev.tlang.tlang.tmpl.lang.ast.primitive._
-import tlang.core.Null
+import dev.tlang.tlang.tmpl.{AstModel, BuildAstTmpl}
 
 object LangModel {
 
   val pkg = "tlang.tmpl.lang"
 
-  val langResource: ModelSetEntity = ModelSetEntity(Null.empty(), ManualType(pkg, "LangResource"), None, None, Some(List(
-    ModelSetAttribute(Null.empty(), Some("rootDir"), ModelSetType(Null.empty(), TLangString.getType)),
-    ModelSetAttribute(Null.empty(), Some("fromRoot"), ModelSetType(Null.empty(), TLangString.getType)),
-    ModelSetAttribute(Null.empty(), Some("pkg"), ModelSetType(Null.empty(), TLangString.getType)),
-    ModelSetAttribute(Null.empty(), Some("name"), ModelSetType(Null.empty(), TLangString.getType)),
+  val langResource: AstModel = AstModel(None, ManualType(pkg, "LangResource"), None, None, Some(List(
+    BuildAstTmpl.createModelAttrStr(None, Some("rootDir")),
+    BuildAstTmpl.createModelAttrStr(None, Some("fromRoot")),
+    BuildAstTmpl.createModelAttrStr(None, Some("pkg")),
+    BuildAstTmpl.createModelAttrStr(None, Some("name")),
   )))
 
-  val langContext: ModelSetEntity = ModelSetEntity(Null.empty(), ManualType(pkg, "LangContext"), None, None, Some(List(
-    ModelSetAttribute(Null.empty(), Some("resource"), langResource),
-    ModelSetAttribute(Null.empty(), Some("line"), ModelSetType(Null.empty(), TLangDouble.getType)),
-    ModelSetAttribute(Null.empty(), Some("charPos"), ModelSetType(Null.empty(), TLangDouble.getType)),
+  val langContext: AstModel = AstModel(None, ManualType(pkg, "LangContext"), None, None, Some(List(
+    BuildAstTmpl.createModelAttrEntity(None, Some("resource"), langResource.getType),
+    BuildAstTmpl.createModelAttrDouble(None, Some("line")),
+    BuildAstTmpl.createModelAttrDouble(None, Some("charPos")),
 
   )))
 
-  val langNode: ModelSetEntity = ModelSetEntity(Null.empty(), ManualType(pkg, "LangNode"), None, None, Some(List(
-    ModelSetAttribute(Null.empty(), Some("context"), langContext)
+  val langNode: AstModel = AstModel(None, ManualType(pkg, "LangNode"), None, None, Some(List(
+    BuildAstTmpl.createModelAttrEntity(None, Some("context"), langContext.getType)
   )))
 
-  val getAll: List[ModelSetEntity] = List(
+  val getAll: List[AstModel] = List(
     LangBlock.model,
     LangFullBlock.model,
     LangPkg.model,

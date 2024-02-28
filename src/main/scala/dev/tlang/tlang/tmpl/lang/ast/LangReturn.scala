@@ -1,29 +1,31 @@
 package dev.tlang.tlang.tmpl.lang.ast
 
-import dev.tlang.tlang.ast.common.value.EntityValue
-import dev.tlang.tlang.ast.common.{ManualType, ObjType}
-import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
+import dev.tlang.tlang.ast.common.ManualType
 import dev.tlang.tlang.tmpl.lang.ast.condition.LangOperation
-import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
-import tlang.core.{Null, Type}
-import tlang.internal.{AstContext, ContextContent}
+import dev.tlang.tlang.tmpl.{AstEntity, AstModel, BuildAstTmpl}
+import tlang.core.Type
+import tlang.internal.ContextContent
 
-case class LangReturn(context: Null, var operation: LangOperation) extends LangExpression[LangReturn] with AstContext {
-//  override def deepCopy(): LangReturn = LangReturn(context, operation.deepCopy())
+case class LangReturn(context: Option[ContextContent], var operation: LangOperation) extends LangExpression[LangReturn] {
+  //  override def deepCopy(): LangReturn = LangReturn(context, operation.deepCopy())
 
 
-  override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, LangReturn.modelName)),
+  override def toEntity: AstEntity = AstEntity(context,
+    Some(LangReturn.model),
     Some(List(
-//      BuildLang.createAttrEntity(context, "operation", operation.toEntity),
+      //      BuildLang.createAttrEntity(context, "operation", operation.toEntity),
     ))
   )
 
-  override def getContext: Null = context
+  override def getContext: Option[ContextContent] = context
 
   override def getElement: LangReturn = this
 
   override def getType: Type = LangReturn.modelName
+
+  override def getName: String = getClass.getSimpleName
+
+  override def toModel: AstModel = LangReturn.model
 }
 
 object LangReturn {
@@ -32,8 +34,8 @@ object LangReturn {
 
   val modelName: Type = ManualType(LangModel.pkg, name)
 
-  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
-    ModelSetAttribute(Null.empty(), Some("operation"), ModelSetType(Null.empty(), LangOperation.modelType)),
+  val model: AstModel = AstModel(None, modelName, Some(LangModel.langNode), None, Some(List(
+    BuildAstTmpl.createModelAttrEntity(None, Some("operation"), LangOperation.modelType),
   )))
 
 }

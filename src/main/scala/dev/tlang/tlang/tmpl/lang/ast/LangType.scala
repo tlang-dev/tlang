@@ -1,32 +1,30 @@
 package dev.tlang.tlang.tmpl.lang.ast
 
-import dev.tlang.tlang.ast.common.{ManualType, ObjType}
-import dev.tlang.tlang.ast.common.value.EntityValue
-import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
+import dev.tlang.tlang.ast.common.ManualType
 import dev.tlang.tlang.tmpl.lang.ast.call.LangCallFuncParam
-import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
-import tlang.core.{Null, Type}
+import dev.tlang.tlang.tmpl.{AstEntity, AstModel, BuildAstTmpl}
+import tlang.core.Type
 import tlang.internal.{ContextContent, TmplID, TmplNode}
 
-case class LangType(context: Null, var name: TmplID, var generic: Option[LangGeneric] = None, isArray: Boolean = false, var currying: Option[List[LangCallFuncParam]] = None) extends TmplNode[LangType] {
-//  override def deepCopy(): LangType = LangType(context, name.deepCopy().asInstanceOf[TmplID],
-//    if (generic.isDefined) Some(generic.get.deepCopy()) else None,
-//    if (isArray) true else false,
-//    if (currying.isDefined) Some(currying.get.map(_.deepCopy())) else None,
-//  )
+case class LangType(context: Option[ContextContent], var name: TmplID, var generic: Option[LangGeneric] = None, isArray: Boolean = false, var currying: Option[List[LangCallFuncParam]] = None) extends TmplNode[LangType] {
+  //  override def deepCopy(): LangType = LangType(context, name.deepCopy().asInstanceOf[TmplID],
+  //    if (generic.isDefined) Some(generic.get.deepCopy()) else None,
+  //    if (isArray) true else false,
+  //    if (currying.isDefined) Some(currying.get.map(_.deepCopy())) else None,
+  //  )
 
-  override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, LangType.modelName)),
+  override def toEntity: AstEntity = AstEntity(context,
+    Some(LangType.model),
     Some(List(
-      BuildLang.createAttrEntity(context, "name", name.toEntity),
-//      BuildLang.createAttrNull(context, "generic",
-//        generic,
-//        None
-//      ),
+      //      BuildAstTmpl.createAttrEntity(context, "name", name.toEntity),
+      //      BuildLang.createAttrNull(context, "generic",
+      //        generic,
+      //        None
+      //      ),
     ))
   )
 
-  override def getContext: Null = context
+  override def getContext: Option[ContextContent] = context
 
   override def getElement: LangType = this
 
@@ -38,8 +36,8 @@ object LangType {
 
   val modelName: Type = ManualType(LangModel.pkg, name)
 
-  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
-    ModelSetAttribute(Null.empty(), Some("name"), ModelSetType(Null.empty(), TmplID.TYPE)),
-    ModelSetAttribute(Null.empty(), Some("generic"), ModelSetType(Null.empty(), Null.TYPE)),
+  val model: AstModel = AstModel(None, modelName, Some(LangModel.langNode), None, Some(List(
+    BuildAstTmpl.createModelAttrTmplID(None, Some("name")),
+    BuildAstTmpl.createModelAttrNull(None, Some("generic")),
   )))
 }

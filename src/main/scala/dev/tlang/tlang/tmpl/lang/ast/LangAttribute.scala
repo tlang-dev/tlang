@@ -1,43 +1,43 @@
 package dev.tlang.tlang.tmpl.lang.ast
 
-import dev.tlang.tlang.ast.common.value.EntityValue
-import dev.tlang.tlang.ast.common.{ManualType, ObjType}
-import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
+import dev.tlang.tlang.ast.common.ManualType
 import dev.tlang.tlang.tmpl.doc.ast.DocModel
 import dev.tlang.tlang.tmpl.lang.ast.condition.LangOperation
-import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
-import tlang.core.{Null, Type}
-import tlang.internal.{ContextContent, TmplID, TmplNode}
+import dev.tlang.tlang.tmpl.{AstEntity, AstModel, AstTmplNode, BuildAstTmpl}
+import tlang.core.Type
+import tlang.internal.{ContextContent, TmplID}
 
-case class LangAttribute(context: Null, var attr: Option[TmplID], var `type`: Option[LangType], var value: LangOperation) extends TmplNode[LangAttribute] {
-//  override def deepCopy(): LangAttribute = LangAttribute(context,
-//    if (attr.isDefined) Some(attr.get.getElement.deepCopy().asInstanceOf[TmplID]) else None,
-//    if (`type`.isDefined) Some(`type`.get.getElement.deepCopy()) else None,
-//    value.deepCopy()
-//  )
+case class LangAttribute(context: Option[ContextContent], var attr: Option[TmplID], var `type`: Option[LangType], var value: LangOperation) extends AstTmplNode {
+  //  override def deepCopy(): LangAttribute = LangAttribute(context,
+  //    if (attr.isDefined) Some(attr.get.getElement.deepCopy().asInstanceOf[TmplID]) else None,
+  //    if (`type`.isDefined) Some(`type`.get.getElement.deepCopy()) else None,
+  //    value.deepCopy()
+  //  )
 
-  override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, LangAttribute.modelName)),
+  override def toEntity: AstEntity = AstEntity(context,
+    Some(LangAttribute.model),
     Some(List(
-      //      BuildLang.createAttrNull(context, "attr",
-      //        attr,
-      //        None
+      //      BuildAstTmpl.createAttrNull(context, "attr",
+      //        attr
       //      ),
-      //      BuildLang.createAttrNull(context, "tType",
+      //      BuildAstTmpl.createAttrNull(context, "tType",
       //        `type`,
-      //        None
       //      ),
-//      BuildLang.createAttrEntity(context, "value", value.toEntity),
+      BuildAstTmpl.createAttrEntity(context, "value", Some(LangOperation.model.getType), value.toEntity),
     ))
   )
 
-//  override def toModel: ModelSetEntity = LangAttribute.model
+  //  override def toModel: ModelSetEntity = LangAttribute.model
 
   override def getElement: LangAttribute = this
 
   override def getType: Type = LangAttribute.modelName
 
-  override def getContext: Null = context
+  override def getContext: Option[ContextContent] = context
+
+  override def getName: String = getClass.getSimpleName
+
+  override def toModel: AstModel = LangAttribute.model
 }
 
 object LangAttribute {
@@ -45,9 +45,9 @@ object LangAttribute {
 
   val modelName: Type = ManualType(DocModel.pkg, name)
 
-  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
-    ModelSetAttribute(Null.empty(), Some("attr"), ModelSetType(Null.empty(), Null.TYPE)),
-    ModelSetAttribute(Null.empty(), Some("tType"), ModelSetType(Null.empty(), Null.TYPE)),
-    ModelSetAttribute(Null.empty(), Some("value"), ModelSetType(Null.empty(), LangOperation.modelType)),
+  val model: AstModel = AstModel(None, modelName, Some(LangModel.langNode), None, Some(List(
+    BuildAstTmpl.createModelAttrNull(None, Some("attr")),
+    BuildAstTmpl.createModelAttrNull(None, Some("tType")),
+    BuildAstTmpl.createModelAttrEntity(None, Some("value"), LangOperation.modelType),
   )))
 }

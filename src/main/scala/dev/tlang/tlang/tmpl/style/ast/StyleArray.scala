@@ -1,15 +1,14 @@
 package dev.tlang.tlang.tmpl.style.ast
 
-import dev.tlang.tlang.ast.common.value.EntityValue
-import dev.tlang.tlang.ast.common.{ManualType, ObjType}
-import dev.tlang.tlang.ast.model.set.ModelSetEntity
+import dev.tlang.tlang.ast.common.ManualType
 import dev.tlang.tlang.tmpl.lang.ast.primitive.LangPrimitiveValue
-import tlang.core.{Null, Type}
+import dev.tlang.tlang.tmpl.{AstEntity, AstModel}
+import tlang.core.Type
 import tlang.internal.ContextContent
 
-case class StyleArray(context: Null, values: List[StyleAttribute[_]]) extends LangPrimitiveValue[StyleArray] {
-  override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, StyleArray.modelName)),
+case class StyleArray(context: Option[ContextContent], values: List[StyleAttribute[_]]) extends LangPrimitiveValue[StyleArray] {
+  override def toEntity: AstEntity = AstEntity(context,
+    Some(StyleArray.model),
     Some(List())
   )
 
@@ -17,9 +16,13 @@ case class StyleArray(context: Null, values: List[StyleAttribute[_]]) extends La
 
   override def getType: Type = StyleArray.modelName
 
-//  override def deepCopy(): StyleArray = StyleArray(context, values.map(_.deepCopy().asInstanceOf[StyleAttribute[_]]))
+  //  override def deepCopy(): StyleArray = StyleArray(context, values.map(_.deepCopy().asInstanceOf[StyleAttribute[_]]))
 
-  override def getContext: Null = context
+  override def getContext: Option[ContextContent] = context
+
+  override def getName: String = getClass.getSimpleName
+
+  override def toModel: AstModel = StyleArray.model
 }
 
 object StyleArray {
@@ -28,6 +31,6 @@ object StyleArray {
 
   val modelName: Type = ManualType(getClass.getPackageName, name)
 
-  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, Some(ObjType(Null.empty(), None, StyleModel.styleModel.name)), None, Some(List(
+  val model: AstModel = AstModel(None, modelName, Some(StyleModel.styleModel), None, Some(List(
   )))
 }

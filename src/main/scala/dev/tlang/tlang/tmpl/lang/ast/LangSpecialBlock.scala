@@ -1,41 +1,41 @@
 package dev.tlang.tlang.tmpl.lang.ast
 
-import dev.tlang.tlang.ast.common.operation.Operation
-import dev.tlang.tlang.ast.common.value._
-import dev.tlang.tlang.ast.common.{ManualType, ObjType}
-import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
+import dev.tlang.tlang.ast.common.ManualType
 import dev.tlang.tlang.tmpl.lang.ast.func.LangFuncParam
-import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
-import tlang.core.{Null, Type}
-import tlang.internal.{AstContext, ContextContent}
+import dev.tlang.tlang.tmpl.{AstEntity, AstModel, BuildAstTmpl}
+import tlang.core.Type
+import tlang.internal.{Context, ContextContent}
 
-case class LangSpecialBlock(context: Null, var `type`: String, var curries: Option[List[LangFuncParam]], var content: Option[LangExprContent[_]]) extends LangExpression[LangSpecialBlock] with LangContent[LangSpecialBlock] with AstContext {
-  override def getContext: Null = context
+case class LangSpecialBlock(context: Option[ContextContent], var `type`: String, var curries: Option[List[LangFuncParam]], var content: Option[LangExprContent[_]]) extends LangExpression[LangSpecialBlock] with LangContent[LangSpecialBlock] with Context {
+  override def getContext: Option[ContextContent] = context
 
-//  override def deepCopy(): LangSpecialBlock = LangSpecialBlock(
-//    context,
-//    `type` = `type`,
-//    if (curries.isDefined) Some(curries.get.map(_.deepCopy())) else None,
-//    content = if (content.isDefined) Some(content.get.deepCopy().asInstanceOf[LangExprContent[_]]) else None)
+  //  override def deepCopy(): LangSpecialBlock = LangSpecialBlock(
+  //    context,
+  //    `type` = `type`,
+  //    if (curries.isDefined) Some(curries.get.map(_.deepCopy())) else None,
+  //    content = if (content.isDefined) Some(content.get.deepCopy().asInstanceOf[LangExprContent[_]]) else None)
 
   override def getElement: LangSpecialBlock = this
 
   override def getType: Type = LangSpecialBlock.modelName
 
-  override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, LangSpecialBlock.modelName)),
+  override def toEntity: AstEntity = AstEntity(context,
+    Some(LangSpecialBlock.model),
     Some(List(
-      BuildLang.createAttrStr(context, "tType", `type`),
-//      BuildLang.createAttrNull(context, "curries",
-//        if (curries.isDefined) Some(ArrayValue(context, Some(curries.get.map(value => ComplexAttribute(context, None, None, Operation(context, None, Right(value.toEntity))))))) else None,
-//        None
-//      ),
-//      BuildLang.createAttrNull(context, "content",
-//        content,
-//        None
-//      ),
+      BuildAstTmpl.createAttrStr(context, "tType", `type`),
+      //      BuildLang.createAttrNull(context, "curries",
+      //        if (curries.isDefined) Some(ArrayValue(context, Some(curries.get.map(value => ComplexAttribute(context, None, None, Operation(context, None, Right(value.toEntity))))))) else None,
+      //        None
+      //      ),
+      //      BuildLang.createAttrNull(context, "content",
+      //        content,
+      //        None
+      //      ),
     )))
 
+  override def getName: String = getClass.getSimpleName
+
+  override def toModel: AstModel = LangSpecialBlock.model
 }
 
 object LangSpecialBlock {
@@ -43,9 +43,9 @@ object LangSpecialBlock {
 
   val modelName: Type = ManualType(LangModel.pkg, name)
 
-  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
-    ModelSetAttribute(Null.empty(), Some("tType"), ModelSetType(Null.empty(), TLangString.getType)),
-    ModelSetAttribute(Null.empty(), Some("curries"), ModelSetType(Null.empty(), Null.TYPE)),
-    ModelSetAttribute(Null.empty(), Some("content"), ModelSetType(Null.empty(), Null.TYPE)),
+  val model: AstModel = AstModel(None, modelName, Some(LangModel.langNode), None, Some(List(
+    BuildAstTmpl.createModelAttrStr(None, Some("tType")),
+    BuildAstTmpl.createModelAttrNull(None, Some("curries")),
+    BuildAstTmpl.createModelAttrNull(None, Some("content")),
   )))
 }

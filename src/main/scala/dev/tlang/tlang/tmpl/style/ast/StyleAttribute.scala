@@ -1,8 +1,8 @@
 package dev.tlang.tlang.tmpl.style.ast
 
-import tlang.internal.TmplNode
+import dev.tlang.tlang.tmpl.AstTmplNode
 
-trait StyleAttribute[T] extends TmplNode[T] {
+trait StyleAttribute[T] extends AstTmplNode {
 
 
 }

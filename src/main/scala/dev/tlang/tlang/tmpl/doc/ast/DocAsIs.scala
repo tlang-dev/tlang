@@ -1,29 +1,31 @@
 package dev.tlang.tlang.tmpl.doc.ast
 
-import dev.tlang.tlang.ast.common.value.EntityValue
-import dev.tlang.tlang.ast.common.{ManualType, ObjType}
-import dev.tlang.tlang.ast.model.set.ModelSetEntity
-import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
-import tlang.core.{Null, Type}
+import dev.tlang.tlang.ast.common.ManualType
+import dev.tlang.tlang.tmpl.{AstEntity, AstModel, BuildAstTmpl}
+import tlang.core.Type
 import tlang.internal.ContextContent
 
-case class DocAsIs(context: Null, content: String) extends DocContentType[DocAsIs] {
-//  override def deepCopy(): DocAsIs = DocAsIs(context, content)
+case class DocAsIs(context: Option[ContextContent], content: String) extends DocContentType[DocAsIs] {
+  //  override def deepCopy(): DocAsIs = DocAsIs(context, content)
 
-  override def getContext: Null = context
+  override def getContext: Option[ContextContent] = context
 
   override def getType: Type = DocAsIs.modelName
 
-  override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, DocAsIs.modelName)),
+  override def toEntity: AstEntity = AstEntity(context,
+    Some(DocAsIs.model),
     Some(List(
-      BuildLang.createAttrStr(context, "content", content)
+      BuildAstTmpl.createAttrStr(context, "content", content)
     ))
   )
 
-//  override def toModel: ModelSetEntity = DocAsIs.model
+  //  override def toModel: ModelSetEntity = DocAsIs.model
 
   override def getElement: DocAsIs = this
+
+  override def getName: String = getClass.getSimpleName
+
+  override def toModel: AstModel = DocAsIs.model
 }
 
 object DocAsIs {
@@ -32,6 +34,6 @@ object DocAsIs {
 
   val modelName: Type = ManualType(getClass.getPackageName, name)
 
-  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, Some(ObjType(Null.empty(), None, DocModel.docModel.name)), None, Some(List(
+  val model: AstModel = AstModel(None, modelName, Some(DocModel.docModel), None, Some(List(
   )))
 }

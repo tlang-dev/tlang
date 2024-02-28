@@ -1,22 +1,18 @@
 package dev.tlang.tlang.tmpl.lang.ast
 
-import dev.tlang.tlang.ast.common.operation.Operation
-import dev.tlang.tlang.ast.common.value._
-import dev.tlang.tlang.ast.common.{ManualType, ObjType}
+import dev.tlang.tlang.ast.common.ManualType
 import dev.tlang.tlang.ast.helper.HelperParam
-import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
 import dev.tlang.tlang.interpreter.context.Scope
 import dev.tlang.tlang.tmpl.common.ast.NativeType
 import dev.tlang.tlang.tmpl.doc.ast.DocModel
-import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
-import tlang.core
-import tlang.core.{Array, Null, Type}
-import tlang.internal.{AnyTmplBlock, ContextContent}
+import dev.tlang.tlang.tmpl.{AstAnyTmplBlock, AstEntity, AstModel, BuildAstTmpl}
+import tlang.core.Type
+import tlang.internal.ContextContent
 
-case class LangBlock(context: Null, name: String, langs: Array,
+case class LangBlock(context: Option[ContextContent], name: String, langs: List[String],
                      var params: Option[List[NativeType[HelperParam]]],
                      var content: LangFullBlock,
-                     scope: Scope = Scope()) extends AnyTmplBlock[LangBlock] {
+                     scope: Scope = Scope()) extends AstAnyTmplBlock {
 
   //  override def deepCopy(): LangBlock =
   //    LangBlock(context, name, langs, params,
@@ -27,17 +23,17 @@ case class LangBlock(context: Null, name: String, langs: Array,
 
   override def getType: Type = LangBlock.modelName
 
-  override def toEntity: EntityValue = {
-    EntityValue(context, Some(ObjType(context, None, LangBlock.modelName)), Some(List(
-      BuildLang.createAttrStr(context, "name", name),
+  override def toEntity: AstEntity = {
+    AstEntity(context, Some(LangBlock.model), Some(List(
+      BuildAstTmpl.createAttrStr(context, "name", name),
       //      BuildLang.createArray(context, "langs", langs.map(value => new TmplStringId(context, new core.String(value.getElement)).toEntity)),
       //      BuildLang.createAttrNull(context, "params",
       //        if (params.isDefined) Some(ArrayValue(context, Some(params.get.map(value => ComplexAttribute(context, None, None, Operation(context, None, Right(value.toEntity))))))) else None,
       //        None
       //      ),
-      ComplexAttribute(context, Some("content"),
-        Some(ObjType(context, None, LangFullBlock.modelName)), Operation(context, None, Right(content.toEntity))
-      )
+      //      ComplexAttribute(context, Some("content"),
+      //        Some(ObjType(context, None, LangFullBlock.modelName)), Operation(context, None, Right(content.toEntity))
+      //      )
     )))
   }
 
@@ -45,13 +41,15 @@ case class LangBlock(context: Null, name: String, langs: Array,
 
   //  override def getParams: Option[List[HelperParam]] = params.map(_.map(_.getElement))
 
-  override def getLangs: Array = langs
+  override def getLangs: List[String] = langs
 
   //  override def getScope: Scope = scope
 
-  override def getName: core.String = new core.String(name)
+  override def getName: String = name
 
-  override def getContext: Null = context
+  override def getContext: Option[ContextContent] = context
+
+  override def toModel: AstModel = LangBlock.model
 }
 
 object LangBlock {
@@ -60,10 +58,10 @@ object LangBlock {
 
   val modelName: Type = ManualType(DocModel.pkg, name)
 
-  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
-    ModelSetAttribute(Null.empty(), Some("name"), ModelSetType(Null.empty(), TLangString.getType)),
-    ModelSetAttribute(Null.empty(), Some("langs"), ModelSetType(Null.empty(), TLangString.getType)),
-    ModelSetAttribute(Null.empty(), Some("params"), ModelSetType(Null.empty(), Null.TYPE)),
-    ModelSetAttribute(Null.empty(), Some("content"), ModelSetType(Null.empty(), LangFullBlock.modelName)),
+  val model: AstModel = AstModel(None, modelName, Some(LangModel.langNode), None, Some(List(
+    BuildAstTmpl.createModelAttrStr(None, Some("name")),
+    BuildAstTmpl.createModelAttrStr(None, Some("langs")),
+    BuildAstTmpl.createModelAttrNull(None, Some("params")),
+    BuildAstTmpl.createModelAttrEntity(None, Some("content"), LangFullBlock.model.getType),
   )))
 }

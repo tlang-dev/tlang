@@ -4,7 +4,7 @@ import dev.tlang.tlang.TLang._
 import dev.tlang.tlang.ast._
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildTmplBlock
 import org.antlr.v4.runtime.ParserRuleContext
-import tlang.core.{Int, Null}
+import tlang.core.Int
 import tlang.internal
 import tlang.internal.{ContextContent, ContextResource}
 
@@ -39,8 +39,8 @@ object BuildAst {
     DomainUse(addContext(resource, use), use.uses.asScala.toList.map(_.getText), AstBuilderUtils.getText(use.alias))
   }
 
-  def addContext(resource: ContextResource, parser: ParserRuleContext): Null = {
-    Null.of(new ContextContent(resource, new Int(parser.getStart.getLine), new Int(parser.getStart.getCharPositionInLine)))
+  def addContext(resource: ContextResource, parser: ParserRuleContext): Option[ContextContent] = {
+    Some(new ContextContent(resource, new Int(parser.getStart.getLine), new Int(parser.getStart.getCharPositionInLine)))
   }
 
 }

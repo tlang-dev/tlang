@@ -1,35 +1,37 @@
 package dev.tlang.tlang.ast.common.value
 
 import dev.tlang.tlang.ast.common.{ObjType, ValueType}
-import dev.tlang.tlang.ast.model.set.{ModelSetEntity, ModelSetValueType}
-import dev.tlang.tlang.interpreter.ExecError
 import dev.tlang.tlang.tmpl.lang.ast.LangModel
+import dev.tlang.tlang.tmpl.{AstEntity, AstModel, AstValue}
 import tlang.core
-import tlang.core.{Null, Type, Value}
-import tlang.internal.{AstContext, ContextContent}
+import tlang.core.Type
+import tlang.internal.{Context, ContextContent}
 
-class TLangLong(context: Null, value: core.Long) extends PrimitiveValue[core.Long] with AstContext {
-  override def getElement: core.Long = value
+class TLangLong(context: Option[ContextContent], value: Long) extends PrimitiveValue[core.Long] with Context {
 
   override def getType: Type = TLangLong.getType
 
   override def toString: String = getElement.toString
 
-//  override def deepCopy(): TLangLong = new TLangLong(context, value)
+  //  override def deepCopy(): TLangLong = new TLangLong(context, value)
 
-  override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, TLangLong.getType)),
+  override def toEntity: AstEntity = AstEntity(context,
+    Some(toModel),
     Some(List())
   )
 
-//  override def toModel: ModelSetEntity = ModelSetEntity(Null.empty(), getType, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
-//  )))
+  override def toModel: AstModel = AstModel(None, getType, Some(LangModel.langNode), None, Some(List(
+  )))
 
-  override def getContext: Null = context
+  override def getContext: Option[ContextContent] = context
+
+  override def getName: String = getClass.getSimpleName
+
+  override def getElement: AstValue = this
 }
 
 object TLangLong extends TLangType {
   override def getType: Type = core.Long.TYPE
 
-  override def getValueType: ValueType = ObjType(Null.empty(), Some("TLang"), getType)
+  override def getValueType: ValueType = ObjType(None, Some("TLang"), getType)
 }

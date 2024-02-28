@@ -1,24 +1,26 @@
 package dev.tlang.tlang.tmpl.doc.ast
 
-import dev.tlang.tlang.ast.common.value.EntityValue
-import dev.tlang.tlang.ast.common.{ManualType, ObjType}
-import dev.tlang.tlang.ast.model.set.ModelSetEntity
-import tlang.core.{Null, Type}
+import dev.tlang.tlang.ast.common.ManualType
+import dev.tlang.tlang.tmpl.{AstEntity, AstModel}
+import tlang.core.Type
 import tlang.internal.ContextContent
 
-case class DocSpan(context: Null) extends DocTextType[DocSpan] {
+case class DocSpan(context: Option[ContextContent]) extends DocTextType[DocSpan] {
 
-  override def getContext: Null = context
+  override def getContext: Option[ContextContent] = context
 
   override def getElement: DocSpan = this
 
   override def getType: Type = DocSpan.modelName
 
-  override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, DocSpan.modelName)),
+  override def toEntity: AstEntity = AstEntity(context,
+    Some(DocSpan.model),
     Some(List())
   )
 
+  override def getName: String = getClass.getSimpleName
+
+  override def toModel: AstModel = DocSpan.model
 }
 
 object DocSpan {
@@ -27,6 +29,6 @@ object DocSpan {
 
   val modelName: Type = ManualType(DocModel.pkg, name)
 
-  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, Some(ObjType(Null.empty(), None, DocModel.docModel.name)), None, Some(List(
+  val model: AstModel = AstModel(None, modelName, Some(DocModel.docModel), None, Some(List(
   )))
 }

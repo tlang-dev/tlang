@@ -1,37 +1,39 @@
 package dev.tlang.tlang.tmpl.lang.ast
 
-import dev.tlang.tlang.ast.common.value.EntityValue
-import dev.tlang.tlang.ast.common.{ManualType, ObjType}
-import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
+import dev.tlang.tlang.ast.common.ManualType
 import dev.tlang.tlang.tmpl.doc.ast.DocModel
 import dev.tlang.tlang.tmpl.lang.ast.condition.LangOperation
-import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
-import tlang.core.{Null, Type}
-import tlang.internal.{AstContext, ContextContent}
+import dev.tlang.tlang.tmpl.{AstEntity, AstModel, BuildAstTmpl}
+import tlang.core.{Entity, Type}
+import tlang.internal.{Context, ContextContent}
 
-case class LangIf(context: Null, cond: LangOperation, content: LangExprContent[_], elseBlock: Option[Either[LangExprContent[_], LangIf]]) extends LangExpression[LangIf] with AstContext {
-//  override def deepCopy(): LangIf = LangIf(context, cond.deepCopy(), content.deepCopy().asInstanceOf[LangExprContent[_]],
-//    if (elseBlock.isDefined) elseBlock.get match {
-//      case Left(value) => Some(Left(value.deepCopy().asInstanceOf[LangExprContent[_]]))
-//      case Right(value) => Some(Right(value.deepCopy()))
-//    } else None,
-//  )
+case class LangIf(context: Option[ContextContent], cond: LangOperation, content: LangExprContent[_], elseBlock: Option[Either[LangExprContent[_], LangIf]]) extends LangExpression[LangIf] with Context {
+  //  override def deepCopy(): LangIf = LangIf(context, cond.deepCopy(), content.deepCopy().asInstanceOf[LangExprContent[_]],
+  //    if (elseBlock.isDefined) elseBlock.get match {
+  //      case Left(value) => Some(Left(value.deepCopy().asInstanceOf[LangExprContent[_]]))
+  //      case Right(value) => Some(Right(value.deepCopy()))
+  //    } else None,
+  //  )
 
-  override def getContext: Null = context
+  override def getContext: Option[ContextContent] = context
 
   override def getElement: LangIf = this
 
   override def getType: Type = LangIf.modelName
 
-  override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, LangIf.modelName)),
+  override def toEntity: AstEntity = AstEntity(context,
+    Some(LangIf.model),
     Some(List(
-//      BuildLang.createAttrEntity(context, "cond", cond.toEntity),
-      BuildLang.createAttrEntity(context, "content", content.toEntity),
+      //      BuildLang.createAttrEntity(context, "cond", cond.toEntity),
+      BuildAstTmpl.createAttrEntity(context, "content", Some(content.getType), content.toEntity),
     ))
   )
 
-//  override def toModel: ModelSetEntity = LangIf.model
+  //  override def toModel: ModelSetEntity = LangIf.model
+
+  override def getName: String = getClass.getSimpleName
+
+  override def toModel: AstModel = LangIf.model
 }
 
 object LangIf {
@@ -39,9 +41,9 @@ object LangIf {
 
   val modelName: Type = ManualType(DocModel.pkg, name)
 
-  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
-    ModelSetAttribute(Null.empty(), Some("cond"), ModelSetType(Null.empty(), LangOperation.modelType)),
-    ModelSetAttribute(Null.empty(), Some("content"), ModelSetType(Null.empty(), LangExprContent.modelName)),
-    ModelSetAttribute(Null.empty(), Some("elseBlock"), ModelSetType(Null.empty(), Null.TYPE)),
+  val model: AstModel = AstModel(None, modelName, Some(LangModel.langNode), None, Some(List(
+    BuildAstTmpl.createModelAttrNull(None, Some("cond")),
+    BuildAstTmpl.createModelAttrEntity(None, Some("content"), Entity.TYPE),
+    BuildAstTmpl.createModelAttrNull(None, Some("elseBlock")),
   )))
 }

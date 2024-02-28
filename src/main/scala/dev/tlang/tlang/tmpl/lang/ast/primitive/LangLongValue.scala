@@ -1,28 +1,29 @@
 package dev.tlang.tlang.tmpl.lang.ast.primitive
 
-import dev.tlang.tlang.ast.common.value.{EntityValue, TLangLong}
-import dev.tlang.tlang.ast.common.{ManualType, ObjType}
-import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
+import dev.tlang.tlang.ast.common.ManualType
 import dev.tlang.tlang.tmpl.lang.ast.LangModel
-import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
-import tlang.core.{Null, Type}
-import tlang.internal.{AstContext, ContextContent}
+import dev.tlang.tlang.tmpl.{AstEntity, AstModel, BuildAstTmpl}
+import tlang.core.Type
+import tlang.internal.{Context, ContextContent}
 
-case class LangLongValue(context: Null, value: Long) extends LangPrimitiveValue[LangLongValue] with AstContext {
+case class LangLongValue(context: Option[ContextContent], value: Long) extends LangPrimitiveValue[LangLongValue] {
 
-  override def getContext: Null = context
+  override def getContext: Option[ContextContent] = context
 
   override def getElement: LangLongValue = this
 
   override def getType: Type = LangLongValue.modelName
 
-  override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, LangLongValue.modelName)),
+  override def toEntity: AstEntity = AstEntity(context,
+    Some(LangLongValue.model),
     Some(List(
-      BuildLang.createAttrLong(context, "value", value)
+      //      BuildAstTmpl.createAttrLong(context, "value", value)
     ))
   )
 
+  override def getName: String = getClass.getSimpleName
+
+  override def toModel: AstModel = LangLongValue.model
 }
 
 object LangLongValue {
@@ -30,7 +31,7 @@ object LangLongValue {
 
   val modelName: Type = ManualType(getClass.getPackageName, name)
 
-  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
-    ModelSetAttribute(Null.empty(), Some("value"), ModelSetType(Null.empty(), TLangLong.getType)),
+  val model: AstModel = AstModel(None, modelName, Some(LangModel.langNode), None, Some(List(
+    BuildAstTmpl.createModelAttrLong(None, Some("value")),
   )))
 }

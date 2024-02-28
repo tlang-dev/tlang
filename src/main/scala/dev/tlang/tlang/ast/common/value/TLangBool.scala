@@ -1,26 +1,34 @@
 package dev.tlang.tlang.ast.common.value
 
 import dev.tlang.tlang.ast.common.{ObjType, ValueType}
-import tlang.core.{Bool, Null, Type}
-import tlang.internal.{AstContext, ContextContent}
+import dev.tlang.tlang.tmpl.lang.ast.LangModel
+import dev.tlang.tlang.tmpl.{AstEntity, AstModel, AstValue}
+import tlang.core.{Bool, Type}
+import tlang.internal.{Context, ContextContent}
 
-class TLangBool(context: Null, value: Bool) extends PrimitiveValue[Bool]() with AstContext {
-  override def getElement: Bool = value
+class TLangBool(context: Option[ContextContent], value: Bool) extends PrimitiveValue[Bool]() with Context {
 
   override def getType: Type = TLangBool.getType
 
-  override def toString: String = if (getElement.get()) "true" else "false"
+  override def toString: String = if (value.get()) "true" else "false"
 
-  override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, TLangBool.getType)),
+  override def toEntity: AstEntity = AstEntity(context,
+    Some(toModel),
     Some(List())
   )
 
-  override def getContext: Null = context
+  override def getContext: Option[ContextContent] = context
+
+  override def getElement: AstValue = this
+
+  override def toModel: AstModel = AstModel(None, getType, Some(LangModel.langNode), None, Some(List(
+  )))
+
+  override def getName: String = getClass.getSimpleName
 }
 
 object TLangBool extends TLangType {
   override def getType: Type = Bool.TYPE
 
-  override def getValueType: ValueType = ObjType(Null.empty(), Some("TLang"), getType)
+  override def getValueType: ValueType = ObjType(None, Some("TLang"), getType)
 }

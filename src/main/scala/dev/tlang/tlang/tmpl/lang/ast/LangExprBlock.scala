@@ -1,30 +1,32 @@
 package dev.tlang.tlang.tmpl.lang.ast
 
-import dev.tlang.tlang.ast.common.{ManualType, ObjType}
-import dev.tlang.tlang.ast.common.value.{ArrayValue, EntityValue}
-import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
+import dev.tlang.tlang.ast.common.ManualType
 import dev.tlang.tlang.tmpl.doc.ast.DocModel
-import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
-import tlang.core.{Null, Type}
-import tlang.internal.{AstContext, ContextContent, TmplNode}
+import dev.tlang.tlang.tmpl.{AstEntity, AstModel, BuildAstTmpl}
+import tlang.core.Type
+import tlang.internal.{Context, ContextContent, TmplNode}
 
-case class LangExprBlock(context: Null, var exprs: List[TmplNode[_]]) extends LangExprContent[LangExprBlock] with AstContext {
-//  override def deepCopy(): LangExprBlock = LangExprBlock(context, exprs.map(_.deepCopy().asInstanceOf[TmplNode[_]]))
+case class LangExprBlock(context: Option[ContextContent], var exprs: List[TmplNode[_]]) extends LangExprContent[LangExprBlock] with Context {
+  //  override def deepCopy(): LangExprBlock = LangExprBlock(context, exprs.map(_.deepCopy().asInstanceOf[TmplNode[_]]))
 
-  override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, LangExprBlock.modelName)),
+  override def toEntity: AstEntity = AstEntity(context,
+    Some(LangExprBlock.model),
     Some(List(
-      BuildLang.createArray(context, "exprs", exprs.map(_.toEntity)),
+      //      BuildAstTmpl.createAttrList(context, "exprs", exprs.map(_.toEntity)),
     ))
   )
 
-//  override def toModel: ModelSetEntity = LangExprBlock.model
+  //  override def toModel: ModelSetEntity = LangExprBlock.model
 
-  override def getContext: Null = context
+  override def getContext: Option[ContextContent] = context
 
   override def getElement: LangExprBlock = this
 
   override def getType: Type = LangExprBlock.modelName
+
+  override def getName: String = getClass.getSimpleName
+
+  override def toModel: AstModel = LangExprBlock.model
 }
 
 object LangExprBlock {
@@ -33,7 +35,7 @@ object LangExprBlock {
 
   val modelName: Type = ManualType(DocModel.pkg, name)
 
-  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
-    ModelSetAttribute(Null.empty(), Some("exprs"), ModelSetType(Null.empty(), ArrayValue.getType)),
+  val model: AstModel = AstModel(None, modelName, Some(LangModel.langNode), None, Some(List(
+    BuildAstTmpl.createModelAttrArray(None, Some("exprs")),
   )))
 }

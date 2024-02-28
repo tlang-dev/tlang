@@ -1,32 +1,34 @@
 package dev.tlang.tlang.tmpl.lang.ast
 
-import dev.tlang.tlang.ast.common.value.EntityValue
-import dev.tlang.tlang.ast.common.{ManualType, ObjType}
-import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
+import dev.tlang.tlang.ast.common.ManualType
 import dev.tlang.tlang.tmpl.lang.ast.call.LangCallObj
 import dev.tlang.tlang.tmpl.lang.ast.condition.LangOperation
-import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
-import tlang.core.{Null, Type}
-import tlang.internal.{AstContext, ContextContent}
+import dev.tlang.tlang.tmpl.{AstContext, AstEntity, AstModel, BuildAstTmpl}
+import tlang.core.Type
+import tlang.internal.ContextContent
 
-case class LangAffect(context: Null, var variable: LangCallObj, var value: LangOperation) extends LangExpression[LangAffect] with AstContext {
-//  override def deepCopy(): LangAffect = LangAffect(context, variable.deepCopy(), value.deepCopy())
+case class LangAffect(context: Option[ContextContent], var variable: LangCallObj, var value: LangOperation) extends LangExpression[LangAffect] with AstContext {
+  //  override def deepCopy(): LangAffect = LangAffect(context, variable.deepCopy(), value.deepCopy())
 
-  override def getContext: Null = context
+  override def getContext: Option[ContextContent] = context
 
   override def getElement: LangAffect = this
 
   override def getType: Type = LangAffect.modelName
 
-  override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, LangAffect.modelName)),
+  override def toEntity: AstEntity = AstEntity(context,
+    Some(LangAffect.model),
     Some(List(
-//      BuildLang.createAttrEntity(context, "variable", variable.toEntity),
-//      BuildLang.createAttrEntity(context, "value", value.toEntity),
+      BuildAstTmpl.createAttrEntity(context, "variable", Some(LangCallObj.model.getType), variable.toEntity),
+      BuildAstTmpl.createAttrEntity(context, "value", Some(LangOperation.model.getType), value.toEntity),
     ))
   )
 
-//  override def toModel: ModelSetEntity = LangAffect.model
+  //  override def toModel: ModelSetEntity = LangAffect.model
+
+  override def getName: String = getClass.getSimpleName
+
+  override def toModel: AstModel = LangAffect.model
 }
 
 object LangAffect {
@@ -34,8 +36,8 @@ object LangAffect {
 
   val modelName: Type = ManualType(getClass.getPackageName, name)
 
-  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
-    ModelSetAttribute(Null.empty(), Some("variable"), ModelSetType(Null.empty(), LangCallObj.modelName)),
-    ModelSetAttribute(Null.empty(), Some("value"), ModelSetType(Null.empty(), LangOperation.modelType)),
+  val model: AstModel = AstModel(None, modelName, Some(LangModel.langNode), None, Some(List(
+    BuildAstTmpl.createModelAttrEntity(None, Some("variable"), LangCallObj.model.getType),
+    BuildAstTmpl.createModelAttrEntity(None, Some("value"), LangOperation.model.getType),
   )))
 }

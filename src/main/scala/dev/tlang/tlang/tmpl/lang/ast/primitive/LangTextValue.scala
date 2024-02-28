@@ -1,17 +1,15 @@
 package dev.tlang.tlang.tmpl.lang.ast.primitive
 
-import dev.tlang.tlang.ast.common.value.EntityValue
-import dev.tlang.tlang.ast.common.{ManualType, ObjType}
-import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
+import dev.tlang.tlang.ast.common.ManualType
 import dev.tlang.tlang.tmpl.lang.ast.LangModel
-import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
-import tlang.core.{Null, Type}
-import tlang.internal.{AstContext, ContextContent, TmplID}
+import dev.tlang.tlang.tmpl.{AstEntity, AstModel, BuildAstTmpl}
+import tlang.core.Type
+import tlang.internal.{ContextContent, TmplID}
 
-case class LangTextValue(context: Null, var value: TmplID) extends LangPrimitiveValue[LangTextValue] with AstContext {
-//  override def deepCopy(): LangTextValue = LangTextValue(context, value.deepCopy().asInstanceOf[TmplID])
+case class LangTextValue(context: Option[ContextContent], var value: TmplID) extends LangPrimitiveValue[LangTextValue] {
+  //  override def deepCopy(): LangTextValue = LangTextValue(context, value.deepCopy().asInstanceOf[TmplID])
 
-  override def getContext: Null = context
+  override def getContext: Option[ContextContent] = context
 
 
   override def getElement: LangTextValue = this
@@ -20,13 +18,16 @@ case class LangTextValue(context: Null, var value: TmplID) extends LangPrimitive
 
   override def toString: String = value.toString
 
-  override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, LangTextValue.modelName)),
+  override def toEntity: AstEntity = AstEntity(context,
+    Some(LangTextValue.model),
     Some(List(
-      BuildLang.createAttrEntity(context, "value", value.toEntity),
+      //      BuildAstTmpl.createAttrEntity(context, "value", value.toEntity),
     ))
   )
 
+  override def getName: String = getClass.getSimpleName
+
+  override def toModel: AstModel = LangTextValue.model
 }
 
 object LangTextValue {
@@ -35,7 +36,7 @@ object LangTextValue {
 
   val modelName: Type = ManualType(getClass.getPackageName, name)
 
-  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
-    ModelSetAttribute(Null.empty(), Some("value"), ModelSetType(Null.empty(), TmplID.TYPE)),
+  val model: AstModel = AstModel(None, modelName, Some(LangModel.langNode), None, Some(List(
+    BuildAstTmpl.createModelAttrTmplID(None, Some("value")),
   )))
 }

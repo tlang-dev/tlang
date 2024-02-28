@@ -1,29 +1,30 @@
 package dev.tlang.tlang.tmpl.doc.ast
 
-import dev.tlang.tlang.ast.common.value.EntityValue
-import dev.tlang.tlang.ast.common.{ManualType, ObjType}
-import dev.tlang.tlang.ast.model.set.ModelSetEntity
-import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
-import tlang.core.{Null, Type}
+import dev.tlang.tlang.ast.common.ManualType
+import dev.tlang.tlang.tmpl.{AstEntity, AstModel, BuildAstTmpl}
+import tlang.core.Type
 import tlang.internal.ContextContent
 
-case class DocList(context: Null, order: String, contents: List[DocContent]) extends DocTextType[DocList] {
-//  override def deepCopy(): DocList = DocList(context, new String(order), contents.map(_.deepCopy()))
+case class DocList(context: Option[ContextContent], order: String, contents: List[DocContent]) extends DocTextType[DocList] {
+  //  override def deepCopy(): DocList = DocList(context, new String(order), contents.map(_.deepCopy()))
 
-  override def getContext: Null = context
+  override def getContext: Option[ContextContent] = context
 
   override def getElement: DocList = this
 
   override def getType: Type = DocList.modelName
 
-  override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, DocList.modelName)),
+  override def toEntity: AstEntity = AstEntity(context,
+    Some(DocList.model),
     Some(List(
-      BuildLang.createAttrStr(context, "order", order),
-//      BuildLang.createArray(context, "contents", contents.map(_.toEntity))
+      BuildAstTmpl.createAttrStr(context, "order", order),
+      //      BuildLang.createArray(context, "contents", contents.map(_.toEntity))
     ))
   )
 
+  override def getName: String = getClass.getSimpleName
+
+  override def toModel: AstModel = DocList.model
 }
 
 object DocList {
@@ -32,6 +33,6 @@ object DocList {
 
   val modelName: Type = ManualType(DocModel.pkg, name)
 
-  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, Some(ObjType(Null.empty(), None, DocModel.docModel.name)), None, Some(List(
+  val model: AstModel = AstModel(None, modelName, Some(DocModel.docModel), None, Some(List(
   )))
 }

@@ -1,35 +1,30 @@
 package dev.tlang.tlang.tmpl.lang.ast
 
-import dev.tlang.tlang.ast.common.value.EntityValue
-import dev.tlang.tlang.ast.common.{ManualType, ObjType}
-import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
+import dev.tlang.tlang.ast.common.ManualType
 import dev.tlang.tlang.tmpl.lang.ast.func.LangAnnotationParam
-import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
-import tlang.core.{Null, Type}
-import tlang.internal.{AstContext, ContextContent, TmplID}
+import dev.tlang.tlang.tmpl.{AstEntity, AstModel, BuildAstTmpl}
+import tlang.core.Type
+import tlang.internal.{Context, ContextContent, TmplID}
 
-case class LangAnnotation(context: Null, var name: TmplID, var values: Option[List[LangAnnotationParam]]) extends LangContent[LangAnnotation] with AstContext {
-//  override def deepCopy(): LangAnnotation = LangAnnotation(context, name.deepCopy().asInstanceOf[TmplID],
-//    if (values.isDefined) Some(values.get.map(_.deepCopy())) else None)
+case class LangAnnotation(context: Option[ContextContent], var name: TmplID, var values: Option[List[LangAnnotationParam]]) extends LangContent[LangAnnotation] with Context {
+  //  override def deepCopy(): LangAnnotation = LangAnnotation(context, name.deepCopy().asInstanceOf[TmplID],
+  //    if (values.isDefined) Some(values.get.map(_.deepCopy())) else None)
 
-  override def getContext: Null = context
+  override def getContext: Option[ContextContent] = context
 
   override def getElement: LangAnnotation = this
 
   override def getType: Type = LangAnnotation.modelName
 
-  override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, LangAnnotation.modelName)),
+  override def toEntity: AstEntity = AstEntity(context,
+    Some(LangAnnotation.model),
     Some(List(
-      BuildLang.createAttrEntity(context, "name", name.toEntity),
-//      BuildLang.createAttrNull(context, "values",
-//        if (values.isDefined) Null.of(ArrayValue(context, Some(values.get.map(value => ComplexAttribute(context, None, None, Operation(context, None, Right(value.toEntity))))))) else Null.empty(),
-//        None
-//      )
+      //      BuildAstTmpl.createAttrEntity(context, "name", Some(TmplID.model.getType), name.toEntity),
+      BuildAstTmpl.createAttrNullList(context, "values", values.map(_.map(_.toEntity)))
     ))
   )
 
-//  override def toModel: ModelSetEntity = LangAnnotation.model
+  //  override def toModel: ModelSetEntity = LangAnnotation.model
 }
 
 object LangAnnotation {
@@ -38,8 +33,8 @@ object LangAnnotation {
 
   val modelName: Type = ManualType(getClass.getPackageName, name)
 
-  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
-    ModelSetAttribute(Null.empty(), Some("name"), ModelSetType(Null.empty(), TmplID.TYPE)),
-    ModelSetAttribute(Null.empty(), Some("values"), ModelSetType(Null.empty(), Null.TYPE)),
+  val model: AstModel = AstModel(None, modelName, Some(LangModel.langNode), None, Some(List(
+    BuildAstTmpl.createModelAttrTmplID(None, Some("name")),
+    BuildAstTmpl.createModelAttrNull(None, Some("values")),
   )))
 }

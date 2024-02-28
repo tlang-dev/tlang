@@ -1,13 +1,11 @@
-package dev.tlang.tlang.tmpl.lang.astbuilder
+package dev.tlang.tlang.tmpl
 
-import dev.tlang.tlang.ast.common.call.ComplexValueStatement
-import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value._
-import tlang.core.{Bool, Entity, Null, Value}
-import tlang.internal.{ContextContent, TmplNode}
 import tlang.core
+import tlang.core.Type
+import tlang.internal.{ContextContent, TmplID}
 
-object BuildLang {
+object BuildAstTmpl {
 
   /* def buildLangBlock(resource: ContextResource, block: TmplLangContext): EntityValue = {
      val context = addContext(resource, block)
@@ -60,55 +58,90 @@ object BuildLang {
         ))
     }*/
 
-  def createAttrStr(context: Null, name: String, value: String): ComplexAttribute = {
-    ComplexAttribute(context, Some(name), None, Operation(
-      context, None, Right(new TLangString(context, value))
-    ))
+  def createAttrStr(context: Option[ContextContent], name: String, value: String): AstEntityAttr = {
+    AstEntityAttr(context, Some(name), Some(core.String.TYPE), Some(new TLangString(None, value)))
   }
 
-  def createAttrInt(context: Null, name: String, value: Int): ComplexAttribute = {
-    ComplexAttribute(context, Some(name), None, Operation(
-      context, None, Right(new TLangLong(context, new core.Long(value)))
-    ))
+  def createAttrTLangStr(context: Option[ContextContent], name: String, value: TLangString): AstEntityAttr = {
+    AstEntityAttr(context, Some(name), Some(core.String.TYPE), Some(value))
   }
 
-  def createAttrLong(context: Null, name: String, value: Long): ComplexAttribute = {
-    ComplexAttribute(context, Some(name), None, Operation(
-      context, None, Right(new TLangLong(context, new core.Long(value)))
-    ))
+  //  def createAttrInt(context: Option[ContextContent], name: String, value: TLang): AstEntityAttr = {
+  //    AstEntityAttr(context, Some(name), None, Some(value))
+  //  }
+
+  def createAttrLong(context: Option[ContextContent], name: String, value: TLangLong): AstEntityAttr = {
+    AstEntityAttr(context, Some(name), Some(core.Long.TYPE), Some(value))
   }
 
-  def createAttrDouble(context: Null, name: String, value: Double): ComplexAttribute = {
-    ComplexAttribute(context, Some(name), None, Operation(
-      context, None, Right(new TLangDouble(context, value))
-    ))
+  def createAttrDouble(context: Option[ContextContent], name: String, value: TLangDouble): AstEntityAttr = {
+    AstEntityAttr(context, Some(name), Some(core.Double.TYPE), Some(value))
   }
 
-  def createAttrBool(context: Null, name: String, value: Boolean): ComplexAttribute = {
-    ComplexAttribute(context, Some(name), None, Operation(
-      context, None, Right(new TLangBool(context, new Bool(value)))
-    ))
+  def createAttrBool(context: Option[ContextContent], name: String, value: TLangBool): AstEntityAttr = {
+    AstEntityAttr(context, Some(name), Some(core.Bool.TYPE), Some(value))
   }
 
-  def createAttrNull(context: Null, name: String, value: Null, valueType: Option[TLangType]): ComplexAttribute = {
-    ComplexAttribute(context, Some(name), None, Operation(
-      context, None, Right(new NullValue(context,
-        //        if (value.isNotNull.get()) Null.of(value.get.getElement.toEntity) else Null.empty(),
-        Null.empty(),
-        valueType))
-    ))
+  def createAttrList(context: Option[ContextContent], name: String, value: List[AstValue]): AstEntityAttr = {
+    AstEntityAttr(context, Some(name), Some(core.Null.TYPE),
+      Some(AstListValue(context, value)))
   }
 
-  def createAttrEntity(context: Null, name: String, value: Entity): ComplexAttribute = {
-    ComplexAttribute(context, Some(name), None, Operation(
-      context, None, Right(value.asInstanceOf[ComplexValueStatement[_]]
-      )))
+  def createAttrNull(context: Option[ContextContent], name: String, value: Option[AstValue]): AstEntityAttr = {
+    AstEntityAttr(context, Some(name), Some(core.Null.TYPE), value)
   }
 
-  def createArray(context: Null, name: String, values: List[Entity]): ComplexAttribute = {
-    ComplexAttribute(context, Some(name),
-      None, Operation(context, None, Right(ArrayValue(context, Some(values.map(value => ComplexAttribute(context, None, None, Operation(context, None, Right(value.asInstanceOf[ComplexValueStatement[_]]))))))))
-    )
+  def createAttrNullList(context: Option[ContextContent], name: String, value: Option[List[AstValue]]): AstEntityAttr = {
+    AstEntityAttr(context, Some(name), Some(core.Null.TYPE),
+      if (value.isDefined) Some(AstListValue(context, value.get)) else None)
+  }
+
+  def createAttrEntity(context: Option[ContextContent], name: String, `type`: Option[Type], value: AstEntity): AstEntityAttr = {
+    AstEntityAttr(context, Some(name), `type`, Some(value))
+  }
+
+  def createArray(context: Option[ContextContent], name: String, values: ArrayValue): AstEntityAttr = {
+    AstEntityAttr(context, Some(name), Some(core.Array.TYPE), Some(values))
+  }
+
+  def createModelAttrStr(context: Option[ContextContent], name: Option[String]): AstEntityAttr = {
+    AstEntityAttr(context, name, Some(core.String.TYPE), None)
+  }
+
+  def createModelAttrInt(context: Option[ContextContent], name: Option[String]): AstEntityAttr = {
+    AstEntityAttr(context, name, Some(core.Int.TYPE), None)
+  }
+
+  def createModelAttrLong(context: Option[ContextContent], name: Option[String]): AstEntityAttr = {
+    AstEntityAttr(context, name, Some(core.Long.TYPE), None)
+  }
+
+  def createModelAttrDouble(context: Option[ContextContent], name: Option[String]): AstEntityAttr = {
+    AstEntityAttr(context, name, Some(core.Double.TYPE), None)
+  }
+
+  def createModelAttrFloat(context: Option[ContextContent], name: Option[String]): AstEntityAttr = {
+    AstEntityAttr(context, name, Some(core.Float.TYPE), None)
+  }
+
+  def createModelAttrBool(context: Option[ContextContent], name: Option[String]): AstEntityAttr = {
+    AstEntityAttr(context, name, Some(core.Bool.TYPE), None)
+  }
+
+  def createModelAttrArray(context: Option[ContextContent], name: Option[String]): AstEntityAttr = {
+    AstEntityAttr(context, name, Some(core.Array.TYPE), None)
+  }
+
+  def createModelAttrEntity(context: Option[ContextContent], name: Option[String], `type`: Type): AstEntityAttr = {
+    AstEntityAttr(context, name, Some(`type`), None)
+  }
+
+  def createModelAttrNull(context: Option[ContextContent], name: Option[String]): AstEntityAttr = {
+    AstEntityAttr(context, name, Some(core.Null.TYPE), None)
+  }
+
+  def createModelAttrTmplID(context: Option[ContextContent], name: Option[String]): AstEntityAttr = {
+    AstEntityAttr(context, name, Some(TmplID.TYPE), None)
   }
 
   /*def buildContents(resource: ContextResource, content: List[TmplContentContext]): List[EntityValue] = {

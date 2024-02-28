@@ -3,7 +3,7 @@ package tlang.internal;
 import tlang.core.Null;
 import tlang.core.Type;
 
-public interface AstContext {
+public interface Context {
 
     Null getContext();
 

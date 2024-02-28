@@ -1,38 +1,38 @@
 package dev.tlang.tlang.tmpl.lang.ast.func
 
-import dev.tlang.tlang.ast.common.operation.Operation
-import dev.tlang.tlang.ast.common.value.{ArrayValue, ComplexAttribute, EntityValue, TLangString}
-import dev.tlang.tlang.ast.common.{ManualType, ObjType}
-import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetType}
+import dev.tlang.tlang.ast.common.ManualType
 import dev.tlang.tlang.tmpl.lang.ast.{LangModel, LangParam}
-import dev.tlang.tlang.tmpl.lang.astbuilder.BuildLang
-import tlang.core.{Null, Type}
+import dev.tlang.tlang.tmpl.{AstEntity, AstModel, AstTmplNode, BuildAstTmpl}
+import tlang.core.Type
 import tlang.internal.{ContextContent, TmplNode}
 
-case class LangFuncParam(context: Null, params: Option[List[LangParam]], var `type`: String) extends TmplNode[LangFuncParam] {
+case class LangFuncParam(context: Option[ContextContent], params: Option[List[LangParam]], var `type`: String) extends AstTmplNode {
 
   override def getElement: LangFuncParam = this
 
   override def getType: Type = LangFuncParam.modelName
 
-  override def getContext: Null = context
+  override def getContext: Option[ContextContent] = context
 
-//  override def deepCopy(): LangFuncParam = LangFuncParam(context,
-//    if (params.isDefined) Some(params.get.map(_.deepCopy())) else None,
-//    `type`
-//  )
+  //  override def deepCopy(): LangFuncParam = LangFuncParam(context,
+  //    if (params.isDefined) Some(params.get.map(_.deepCopy())) else None,
+  //    `type`
+  //  )
 
-  override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, LangFuncParam.modelName)),
+  override def toEntity: AstEntity = AstEntity(context,
+    Some(LangFuncParam.model),
     Some(List(
-//      BuildLang.createAttrNull(context, "params",
-//        if (params.isDefined) Some(ArrayValue(context, Some(params.get.map(value => ComplexAttribute(context, None, None, Operation(context, None, Right(value.toEntity))))))) else None,
-//        None
-//      ),
-      BuildLang.createAttrStr(context, "tType", `type`),
+      //      BuildLang.createAttrNull(context, "params",
+      //        if (params.isDefined) Some(ArrayValue(context, Some(params.get.map(value => ComplexAttribute(context, None, None, Operation(context, None, Right(value.toEntity))))))) else None,
+      //        None
+      //      ),
+      BuildAstTmpl.createAttrStr(context, "tType", `type`),
     ))
   )
 
+  override def getName: String = getClass.getSimpleName
+
+  override def toModel: AstModel = LangFuncParam.model
 }
 
 object LangFuncParam {
@@ -40,8 +40,8 @@ object LangFuncParam {
 
   val modelName: Type = ManualType(getClass.getPackageName, name)
 
-  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, Some(ObjType(Null.empty(), None, LangModel.langNode.name)), None, Some(List(
-    ModelSetAttribute(Null.empty(), Some("params"), ModelSetType(Null.empty(), Null.TYPE)),
-    ModelSetAttribute(Null.empty(), Some("tType"), ModelSetType(Null.empty(), TLangString.getType)),
+  val model: AstModel = AstModel(None, modelName, Some(LangModel.langNode), None, Some(List(
+    BuildAstTmpl.createModelAttrNull(None, Some("params")),
+    BuildAstTmpl.createModelAttrStr(None, Some("tType")),
   )))
 }

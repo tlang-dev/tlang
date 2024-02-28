@@ -1,19 +1,18 @@
 package dev.tlang.tlang.tmpl.doc.ast
 
 import dev.tlang.tlang.ast.common.ManualType
-import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity}
 import dev.tlang.tlang.tmpl.lang.ast.LangModel
-import tlang.core.Null
+import dev.tlang.tlang.tmpl.{AstModel, BuildAstTmpl}
 
 object DocModel {
 
   val pkg = "tlang.tmpl.dpc"
 
-  val docModel: ModelSetEntity = ModelSetEntity(Null.empty(), ManualType(pkg, "DocNode"), None, None, Some(List(
-    ModelSetAttribute(Null.empty(), Some("context"), LangModel.langContext)
+  val docModel: AstModel = AstModel(None, ManualType(pkg, "DocNode"), None, None, Some(List(
+    BuildAstTmpl.createModelAttrEntity(None, Some("context"), LangModel.langContext.getType)
   )))
 
-  val getAll: List[ModelSetEntity] = List(
+  val getAll: List[AstModel] = List(
     DocAnyLevel.model,
     DocAsIs.model,
     DocBlock.model,
