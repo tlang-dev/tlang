@@ -23,6 +23,8 @@ class TLangString(context: Option[ContextContent], value: String) extends Primit
   override def toModel: AstModel = AstModel(context, getType, None, Some(List()), Some(List()))
 
   override def getElement: AstValue = this
+
+  override def getValue: String = value
 }
 
 object TLangString extends TLangType {

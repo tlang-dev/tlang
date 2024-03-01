@@ -1,13 +1,12 @@
 package dev.tlang.tlang.tmpl.common.ast
 
 import dev.tlang.tlang.ast.common.ManualType
-import dev.tlang.tlang.ast.common.value.EntityValue
-import dev.tlang.tlang.ast.model.set.ModelSetEntity
-import tlang.core.{Null, Type}
-import tlang.internal.{ContextContent, TmplNode}
+import dev.tlang.tlang.tmpl.{AstEntity, AstModel, AstTmplNode, AstValue}
+import tlang.core.Type
+import tlang.internal.ContextContent
 
-case class NativeType[T](context: Null, statement: T) extends TmplNode[T] {
-  override def toEntity: EntityValue = EntityValue(context, None, None)
+case class NativeType[T](context: Option[ContextContent], statement: T) extends AstTmplNode {
+  override def toEntity: AstEntity = AstEntity(context, None, None)
 
   //  override def toModel: ModelSetEntity = NativeType.model
 
@@ -15,9 +14,13 @@ case class NativeType[T](context: Null, statement: T) extends TmplNode[T] {
 
   //  override def deepCopy(): NativeType[_] = NativeType(context, statement)
 
-  override def getContext: Null = context
+  override def getContext: Option[ContextContent] = context
 
-  override def getElement: T = statement
+  override def getName: String = getClass.getSimpleName
+
+  override def toModel: AstModel = NativeType.model
+
+  override def getElement: AstValue = this
 }
 
 object NativeType {
@@ -26,5 +29,5 @@ object NativeType {
 
   val modelName: Type = ManualType(getClass.getPackageName, name)
 
-  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, None, None, None)
+  val model: AstModel = AstModel(None, modelName, None, None, None)
 }

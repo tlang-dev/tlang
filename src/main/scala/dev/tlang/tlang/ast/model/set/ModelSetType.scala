@@ -1,10 +1,11 @@
 package dev.tlang.tlang.ast.model.set
 
-import tlang.core.{Null, Type}
-import tlang.internal.{Context, ContextContent}
+import dev.tlang.tlang.tmpl.AstContext
+import tlang.core.Type
+import tlang.internal.ContextContent
 
-case class ModelSetType(context: Null, `type`: Type) extends ModelSetValueType[ModelSetType] with Context {
-  override def getContext: Null = context
+case class ModelSetType(context: Option[ContextContent], `type`: Type) extends ModelSetValueType[ModelSetType] with AstContext {
+  override def getContext: Option[ContextContent] = context
 
   override def getType: Type = `type`
 }

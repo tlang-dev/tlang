@@ -14,13 +14,12 @@ import dev.tlang.tlang.tmpl.lang.ast.func.{LangAnonFunc, LangFunc}
 import dev.tlang.tlang.tmpl.lang.ast.loop.{LangDoWhile, LangFor, LangWhile}
 import dev.tlang.tlang.tmpl.lang.ast.primitive._
 import tlang.core
-import tlang.internal._
 
 import scala.collection.mutable.ListBuffer
 
 object ResolveTmpl {
 
-  def resolveTmpl(block: AnyTmplBlock[_], module: Module, uses: List[DomainUse], currentResource: Resource): Either[List[ResolverError], Unit] = {
+  def resolveTmpl(block: AstAnyTmplBlock, module: Module, uses: List[DomainUse], currentResource: Resource): Either[List[ResolverError], Unit] = {
     block match {
       case lang: LangBlock => resolveLangBlock(lang, module, uses, currentResource)
       case doc: DocBlock => resolveDocBlock(doc, module, uses, currentResource)
@@ -61,12 +60,12 @@ object ResolveTmpl {
 
   def resolveLangs(block: AnyTmplInterpretedBlock[_], module: Module, uses: List[DomainUse], currentResource: Resource): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
-    block.getLangs.getValue.getRecords.foreach(lang =>
-      resolveLang(block, lang.getValue.asInstanceOf[core.String], module, uses, currentResource) match {
-        case Left(error) => errors.addAll(error)
-        case _ =>
-      }
-    )
+    //    block.getLangs.getValue.getRecords.foreach(lang =>
+    //      resolveLang(block, lang.getValue.asInstanceOf[core.String], module, uses, currentResource) match {
+    //        case Left(error) => errors.addAll(error)
+    //        case _ =>
+    //      }
+    //    )
     if (errors.nonEmpty) Left(errors.toList)
     else Right(())
   }
@@ -107,7 +106,7 @@ object ResolveTmpl {
     else Right(())
   }
 
-  def resolveContent(content: TmplNode[_], module: Module, uses: List[DomainUse], currentResource: Resource, scope: Scope): Either[List[ResolverError], Unit] = {
+  def resolveContent(content: AstTmplNode, module: Module, uses: List[DomainUse], currentResource: Resource, scope: Scope): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
     content match {
       case func: LangFunc => checkRet(errors, resolveFunc(func, module, uses, currentResource, scope))
@@ -144,12 +143,12 @@ object ResolveTmpl {
   def resolveExprContent(expr: LangExprContent[_], module: Module, uses: List[DomainUse], currentResource: Resource, scope: Scope): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
     expr match {
-      case exprs: LangExprBlock => exprs.exprs.foreach(expression => {
-        resolveContent(expression, module, uses, currentResource, scope) match {
-          case Left(error) => errors.addAll(error)
-          case _ =>
-        }
-      })
+      //      case exprs: LangExprBlock => exprs.exprs.foreach(expression => {
+      //        resolveContent(expression, module, uses, currentResource, scope) match {
+      //          case Left(error) => errors.addAll(error)
+      //          case _ =>
+      //        }
+      //      })
       case expression: LangExpression[_] => resolveExpr(expression, module, uses, currentResource, scope) match {
         case Left(error) => errors.addAll(error)
         case _ =>
@@ -161,7 +160,7 @@ object ResolveTmpl {
 
   def resolveExprBlock(content: Option[LangExprBlock], module: Module, uses: List[DomainUse], currentResource: Resource, scope: Scope): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
-    content.foreach(_.exprs.foreach(expr => checkRet(errors, resolveContent(expr, module, uses, currentResource, scope))))
+    //    content.foreach(_.exprs.foreach(expr => checkRet(errors, resolveContent(expr, module, uses, currentResource, scope))))
     if (errors.nonEmpty) Left(errors.toList)
     else Right(())
   }
@@ -266,7 +265,7 @@ object ResolveTmpl {
     else Right(())
   }
 
-  def resolveInclSetAttribute(setAttribute: TmplNode[_], module: Module, uses: List[DomainUse], currentResource: Resource, scope: Scope): Either[List[ResolverError], Unit] = {
+  def resolveInclSetAttribute(setAttribute: AstTmplNode, module: Module, uses: List[DomainUse], currentResource: Resource, scope: Scope): Either[List[ResolverError], Unit] = {
     setAttribute match {
       case attribute: LangSetAttribute => resolveSetAttribute(attribute, module, uses, currentResource, scope)
       case incl: LangInclude => resolveInclude(incl, module, uses, currentResource, scope)
@@ -482,8 +481,8 @@ object ResolveTmpl {
   def resolveTmplId(tmplID: TmplID, module: Module, uses: List[DomainUse], currentResource: Resource, scope: Scope): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
     tmplID match {
-      case intr: TmplInterpretedId => resolveCallObj(intr.getNativeType.getNativeElement.asInstanceOf[CallObject], module, uses, currentResource, scope)
-      case block: TmplBlockId => resolveTmpl(block.getBlock, module, uses, currentResource)
+      case intr: TmplInterpretedID => resolveCallObj(intr.call, module, uses, currentResource, scope)
+      case block: TmplBlockID => resolveTmpl(block.block, module, uses, currentResource)
       case _ =>
     }
     if (errors.nonEmpty) Left(errors.toList)
@@ -505,7 +504,7 @@ object ResolveTmpl {
         if (callFuncObject.name.isDefined && BuiltIntLibs.buildIntLibs.contains(callFuncObject.name.get)) {
           val func = BuiltIntLibs.buildIntLibs(callFuncObject.name.get)
           scope.functions.addOne(func.name, func)
-          BrowseHelperStatement.browseCallFuncObjectParams(callFuncObject.currying, func, module, uses, scope, currentResource)
+          //          BrowseHelperStatement.browseCallFuncObjectParams(callFuncObject.currying, func, module, uses, scope, currentResource)
           Right(())
         } else FollowCallObject.followCallObject(call, module, uses, scope, currentResource)
       case _ => FollowCallObject.followCallObject(call, module, uses, scope, currentResource)

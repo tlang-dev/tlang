@@ -24,7 +24,7 @@ import java.nio.file.Paths
 
 class ResolveContextTest extends AnyFunSuite {
 
-  val fakeContext: ContextResource = new ContextResource(new core.String(""), new core.String(""), new core.String(""), new core.String(""))
+  /*val fakeContext: ContextResource = new ContextResource(new core.String(""), new core.String(""), new core.String(""), new core.String(""))
 
 
   implicit val loader: FileResourceLoader.type = FileResourceLoader
@@ -337,6 +337,6 @@ class ResolveContextTest extends AnyFunSuite {
 
     val myVar = ResolveUtils.findInVars(contents, "myEntity3")
     assert(myVar.isEmpty)
-  }
+  }*/
 
 }

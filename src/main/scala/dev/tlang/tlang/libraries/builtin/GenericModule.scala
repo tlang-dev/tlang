@@ -3,6 +3,7 @@ package dev.tlang.tlang.libraries.builtin
 import dev.tlang.tlang.ast.helper.HelperFunc
 import dev.tlang.tlang.ast.model.ModelContent
 import dev.tlang.tlang.libraries.ModulePattern
+import dev.tlang.tlang.tmpl.AstModel
 
 import scala.collection.mutable.ListBuffer
 
@@ -19,6 +20,6 @@ case class GenericModule(
 
   override def getFunctions: List[HelperFunc] = functions.toList
 
-  override def getModels: List[ModelContent[_]] = models.toList
 
+  override def getModels: List[AstModel] = List()
 }

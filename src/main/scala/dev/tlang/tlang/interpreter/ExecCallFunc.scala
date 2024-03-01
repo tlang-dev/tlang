@@ -4,7 +4,7 @@ import dev.tlang.tlang.ast.common.call.{CallFuncObject, CallFuncParam, CallRefFu
 import dev.tlang.tlang.ast.common.value.LazyValue
 import dev.tlang.tlang.ast.helper.{HelperFunc, HelperStatement}
 import dev.tlang.tlang.interpreter.context.{Context, ContextUtils, MutableContext, Scope}
-import dev.tlang.tlang.tmpl.AnyTmplInterpretedBlock
+import dev.tlang.tlang.tmpl.{AnyTmplInterpretedBlock, AstContext}
 import dev.tlang.tlang.tmpl.lang.ast.LangBlockAsValue
 import tlang.core.{Null, Value}
 
@@ -13,12 +13,13 @@ import scala.collection.mutable.ListBuffer
 
 object ExecCallFunc extends Executor {
 
-  override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value]]] = {
+  override def run(statement: HelperStatement, context: AstContext): Either[ExecError, Option[List[Value]]] = {
     val caller = statement.asInstanceOf[CallFuncObject]
     ContextUtils.findFunc(context, caller.name.get) match {
       case Some(func) =>
-        val newContext = manageParameters(caller, func, MutableContext.toMutable(context).removeLocalScopes().toContext())
-        ExecFunc.run(func, newContext)
+//        val newContext = manageParameters(caller, func, MutableContext.toMutable(context).removeLocalScopes().toContext())
+//        ExecFunc.run(func, newContext)
+        ExecFunc.run(func, context)
       case None => ContextUtils.findTmpl(context, caller.name.get) match {
         case Some(tmpl) =>
 //          val tmplCopy = tmpl.deepCopy().asInstanceOf[AnyTmplInterpretedBlock[_]]
@@ -27,9 +28,9 @@ object ExecCallFunc extends Executor {
           Right(None)
         case None => //Left(CallableNotFound(caller.name.get))
           ContextUtils.findRefFunc(context, caller.name.get) match {
-            case Some(refFunc) =>
-              val newCaller = mergeCallers(caller, refFunc)
-              ExecCallRefFunc.run(newCaller, MutableContext.toMutable(context).removeLocalScopes().addScope(refFunc.scope).toContext())
+//            case Some(refFunc) =>
+//              val newCaller = mergeCallers(caller, refFunc)
+//              ExecCallRefFunc.run(newCaller, MutableContext.toMutable(context).removeLocalScopes().addScope(refFunc.scope).toContext())
             //                      refFunc.func.get match {
             //                        case Left(func) =>
             //                          val newCaller = mergeCallers(caller, refFunc)
@@ -46,51 +47,51 @@ object ExecCallFunc extends Executor {
     }
   }
 
-  def manageParameters(caller: CallFuncObject, helperFunc: HelperFunc, context: Context): Context = {
-    val vars: mutable.Map[String, Value] = mutable.Map()
-    val refFuncs: mutable.Map[String, CallRefFuncObject] = mutable.Map()
-    if (caller.currying.isDefined) {
-      caller.currying.get.zipWithIndex.foreach(param => {
-        param._1.params.foreach(_.zipWithIndex.foreach(attr => {
-          ExecOperation.run(attr._1.value, context) match {
-            case Left(value) =>
-              println("Error:" + value.toString)
-            case Right(optionVal) => optionVal match {
-              case Some(value) => if (value.size == 1) {
-                value.head match {
-                  case refFuncObject: CallRefFuncObject => refFuncs.put(findParamName(param._2, attr._2, helperFunc), refFuncObject)
-                  case _ => vars.put(findParamName(param._2, attr._2, helperFunc), value.head)
-                }
-              }
-              case None =>
-            }
-          }
-        }))
-      })
-    }
-    Context(context.scopes :+ Scope(variables = vars, refFunctions = refFuncs) :+ helperFunc.scope)
-  }
+//  def manageParameters(caller: CallFuncObject, helperFunc: HelperFunc, context: AstContext): Context = {
+//    val vars: mutable.Map[String, Value] = mutable.Map()
+//    val refFuncs: mutable.Map[String, CallRefFuncObject] = mutable.Map()
+//    if (caller.currying.isDefined) {
+//      caller.currying.get.zipWithIndex.foreach(param => {
+//        param._1.params.foreach(_.zipWithIndex.foreach(attr => {
+//          ExecOperation.run(attr._1.value, context) match {
+//            case Left(value) =>
+//              println("Error:" + value.toString)
+//            case Right(optionVal) => optionVal match {
+//              case Some(value) => if (value.size == 1) {
+//                value.head match {
+//                  case refFuncObject: CallRefFuncObject => refFuncs.put(findParamName(param._2, attr._2, helperFunc), refFuncObject)
+//                  case _ => vars.put(findParamName(param._2, attr._2, helperFunc), value.head)
+//                }
+//              }
+//              case None =>
+//            }
+//          }
+//        }))
+//      })
+//    }
+//    Context(context.scopes :+ Scope(variables = vars, refFunctions = refFuncs) :+ helperFunc.scope)
+//  }
 
   def findParamName(curryPos: Int, paramPos: Int, helperFunc: HelperFunc): String = {
     helperFunc.currying.get(curryPos).params(paramPos).param.getOrElse(paramPos.toString)
   }
 
-  def manageTmplParameters(caller: CallFuncObject, tmpl: AnyTmplInterpretedBlock[_], context: Context): Context = {
-    val vars: mutable.Map[String, Value] = mutable.Map()
-    val funcs: mutable.Map[String, HelperFunc] = mutable.Map()
-    if (tmpl.getParams.isDefined) {
-      for (param <- tmpl.getParams.get.zipWithIndex) {
-        ExecStatement.run(caller.currying.get.head.params.get(param._2).value, context) match {
-          case Left(_) =>
-          case Right(optionVal) => optionVal match {
-            case None =>
-            case Some(value) => if (value.size == 1) vars.put(findTmplParamName(param._2, tmpl), value.head)
-          }
-        }
-      }
-    }
-    Context(context.scopes :+ Scope(variables = vars, functions = funcs) :+ tmpl.getScope)
-  }
+//  def manageTmplParameters(caller: CallFuncObject, tmpl: AnyTmplInterpretedBlock[_], context: AstContext): Context = {
+//    val vars: mutable.Map[String, Value] = mutable.Map()
+//    val funcs: mutable.Map[String, HelperFunc] = mutable.Map()
+//    if (tmpl.getParams.isDefined) {
+//      for (param <- tmpl.getParams.get.zipWithIndex) {
+//        ExecStatement.run(caller.currying.get.head.params.get(param._2).value, context) match {
+//          case Left(_) =>
+//          case Right(optionVal) => optionVal match {
+//            case None =>
+//            case Some(value) => if (value.size == 1) vars.put(findTmplParamName(param._2, tmpl), value.head)
+//          }
+//        }
+//      }
+//    }
+//    Context(context.scopes :+ Scope(variables = vars, functions = funcs) :+ tmpl.getScope)
+//  }
 
   def findTmplParamName(paramPos: Int, tmplBlock: AnyTmplInterpretedBlock[_]): String = {
     tmplBlock.getParams.get(paramPos).param.getOrElse(paramPos.toString)
@@ -112,12 +113,12 @@ object ExecCallFunc extends Executor {
                 params.addOne(param)
               }
             }
-            newCurry.addOne(CallFuncParam(Null.empty(), Some(params.toList)))
-          } else newCurry.addOne(CallFuncParam(Null.empty(), None))
+            newCurry.addOne(CallFuncParam(None, Some(params.toList)))
+          } else newCurry.addOne(CallFuncParam(None, None))
         }
       }
-      CallRefFuncObject(Null.empty(), refFuncCaller.name, Some(newCurry.toList), refFuncCaller.func)
-    } else CallRefFuncObject(Null.empty(), refFuncCaller.name, None, refFuncCaller.func)
+      CallRefFuncObject(None, refFuncCaller.name, Some(newCurry.toList), refFuncCaller.func)
+    } else CallRefFuncObject(None, refFuncCaller.name, None, refFuncCaller.func)
   }
 
 }

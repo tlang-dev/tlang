@@ -1,12 +1,12 @@
 package dev.tlang.tlang.libraries
 
-import dev.tlang.tlang.ast.helper.{HelperBlock, HelperFunc}
+import dev.tlang.tlang.ast.helper.HelperFunc
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.ast.model.{ModelBlock, ModelContent}
 import dev.tlang.tlang.ast.{DomainExpose, DomainHeader, DomainModel}
 import dev.tlang.tlang.loader.manifest.{Dependency, Manifest}
 import dev.tlang.tlang.loader.{Module, Resource}
-import tlang.core.{Array, Null}
+import dev.tlang.tlang.tmpl.AstModel
 
 import scala.collection.mutable.ListBuffer
 
@@ -28,23 +28,24 @@ abstract class ModulePattern {
 
 
   protected def getMainResource: Resource = {
-    Resource("", "", "", getMain, DomainModel(Null.empty(), Some(DomainHeader(Null.empty(), Some(exposeFunctions), None)), List(
-//      HelperBlock(Null.empty(), Null.of(getFunctions)),
-      ModelBlock(Null.empty(), getModelContent)
+    Resource("", "", "", getMain, DomainModel(None, Some(DomainHeader(None, Some(exposeFunctions), None)), List(
+      //      HelperBlock(Null.empty(), Null.of(getFunctions)),
+//      ModelBlock(None, getModelContent)
     )))
   }
 
-  private def getModelContent: Option[List[ModelContent[_]]] = {
+  private def getModelContent: Option[List[AstModel]] = {
     if (getModels.nonEmpty) Some(getModels)
     else None
   }
 
-  def getModels: List[ModelContent[_]]
+  def getModels: List[AstModel]
 
   private def exposeFunctions: List[DomainExpose] = {
     val exposes = ListBuffer.empty[DomainExpose]
-    exposes ++= getFunctions.map(func => DomainExpose(Null.empty(), func.getValue.asInstanceOf[HelperFunc].name))
-    if (getModelContent.isDefined) exposes ++= getModelContent.get.filter(_.isInstanceOf[ModelSetEntity]).map(entity => DomainExpose(Null.empty(), entity.asInstanceOf[ModelSetEntity].name.getSimpleType.toString))
+    exposes ++= getFunctions.map(func => DomainExpose(None, func.getElement.asInstanceOf[HelperFunc].name))
+    if (getModelContent.isDefined) exposes ++= getModelContent.get.filter(_.isInstanceOf[AstModel]).map(entity => DomainExpose(None, entity.asInstanceOf[ModelSetEntity].name.getSimpleType.toString)
+    )
     exposes.toList
   }
 

@@ -3,6 +3,7 @@ package dev.tlang.tlang.libraries.generator
 import dev.tlang.tlang.ast.helper.HelperFunc
 import dev.tlang.tlang.ast.model.ModelContent
 import dev.tlang.tlang.libraries.ModulePattern
+import dev.tlang.tlang.tmpl.AstModel
 
 object GenModule extends ModulePattern{
 
@@ -14,5 +15,5 @@ object GenModule extends ModulePattern{
 //    Generator.generateFunc
   )
 
-  override def getModels: List[ModelContent[_]] = List()
+  override def getModels: List[AstModel] = List()
 }

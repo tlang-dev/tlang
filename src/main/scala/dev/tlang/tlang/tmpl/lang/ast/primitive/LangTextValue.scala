@@ -2,9 +2,9 @@ package dev.tlang.tlang.tmpl.lang.ast.primitive
 
 import dev.tlang.tlang.ast.common.ManualType
 import dev.tlang.tlang.tmpl.lang.ast.LangModel
-import dev.tlang.tlang.tmpl.{AstEntity, AstModel, BuildAstTmpl}
+import dev.tlang.tlang.tmpl.{AstEntity, AstModel, BuildAstTmpl, TmplID}
 import tlang.core.Type
-import tlang.internal.{ContextContent, TmplID}
+import tlang.internal.ContextContent
 
 case class LangTextValue(context: Option[ContextContent], var value: TmplID) extends LangPrimitiveValue[LangTextValue] {
   //  override def deepCopy(): LangTextValue = LangTextValue(context, value.deepCopy().asInstanceOf[TmplID])

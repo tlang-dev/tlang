@@ -5,9 +5,9 @@ import dev.tlang.tlang.tmpl.lang.ast.LangModel
 import dev.tlang.tlang.tmpl.{AstEntity, AstModel, AstValue}
 import tlang.core
 import tlang.core.Type
-import tlang.internal.{Context, ContextContent}
+import tlang.internal.ContextContent
 
-class TLangLong(context: Option[ContextContent], value: Long) extends PrimitiveValue[core.Long] with Context {
+class TLangLong(context: Option[ContextContent], value: Long) extends PrimitiveValue[Long] {
 
   override def getType: Type = TLangLong.getType
 
@@ -28,6 +28,8 @@ class TLangLong(context: Option[ContextContent], value: Long) extends PrimitiveV
   override def getName: String = getClass.getSimpleName
 
   override def getElement: AstValue = this
+
+  override def getValue: Long = value
 }
 
 object TLangLong extends TLangType {

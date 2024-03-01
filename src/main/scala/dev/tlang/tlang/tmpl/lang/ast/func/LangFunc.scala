@@ -2,12 +2,12 @@ package dev.tlang.tlang.tmpl.lang.ast.func
 
 import dev.tlang.tlang.ast.common.ManualType
 import dev.tlang.tlang.tmpl.lang.ast._
-import dev.tlang.tlang.tmpl.{AstEntity, AstModel, BuildAstTmpl}
+import dev.tlang.tlang.tmpl.{AstEntity, AstModel, BuildAstTmpl, TmplID}
 import tlang.core.Type
-import tlang.internal.{Context, ContextContent, TmplID}
+import tlang.internal.ContextContent
 
 case class LangFunc(context: Option[ContextContent], var annots: Option[List[LangAnnotation]] = None, var props: Option[LangProp] = None, var preNames: Option[List[TmplID]] = None, var name: TmplID, var curries: Option[List[LangFuncParam]], var content: Option[LangExprContent[_]],
-                    var ret: Option[List[LangType]] = None, postPros: Option[LangProp] = None) extends LangExpression[LangFunc] with LangContent[LangFunc] with Context {
+                    var ret: Option[List[LangType]] = None, postPros: Option[LangProp] = None) extends LangExpression[LangFunc] with LangContent[LangFunc] {
   //  override def deepCopy(): LangFunc = LangFunc(context,
   //    if (annots.isDefined) Some(annots.get.map(_.deepCopy())) else None,
   //    if (props.isDefined) Some(props.get.deepCopy()) else None,

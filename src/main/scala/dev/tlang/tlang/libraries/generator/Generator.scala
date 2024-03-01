@@ -28,7 +28,7 @@ object Generator {
     ))))*/
 
   def generate(block: LangBlockAsValue, context: Context): Either[ExecError, TLangString] = {
-    Right(new TLangString(Null.empty(), "Generator not yet done"))
+    Right(new TLangString(None, "Generator not yet done"))
   }
 
   /*private def generateAfterMapping(block: LangBlockAsValue, context: Context): Either[ExecError, TLangString] = {

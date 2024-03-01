@@ -1,10 +1,11 @@
 package dev.tlang.tlang.ast.helper
 
-import tlang.core.{Null, Type}
-import tlang.internal.{Context, ClassType, ContextContent}
+import dev.tlang.tlang.tmpl.AstContext
+import tlang.core.Type
+import tlang.internal.{ClassType, ContextContent}
 
-case class HelperContent(context: Null, content: Option[List[HelperStatement]]) extends HelperStatement with Context {
-  override def getContext: Null = context
+case class HelperContent(context: Option[ContextContent], content: Option[List[HelperStatement]]) extends HelperStatement with AstContext {
+  override def getContext: Option[ContextContent] = context
 
   override def getType: Type = ClassType.of(this.getClass)
 }

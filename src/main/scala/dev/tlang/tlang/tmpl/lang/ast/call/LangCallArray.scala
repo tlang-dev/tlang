@@ -3,9 +3,9 @@ package dev.tlang.tlang.tmpl.lang.ast.call
 import dev.tlang.tlang.ast.common.ManualType
 import dev.tlang.tlang.tmpl.lang.ast.LangModel
 import dev.tlang.tlang.tmpl.lang.ast.condition.LangOperation
-import dev.tlang.tlang.tmpl.{AstEntity, AstModel, BuildAstTmpl}
+import dev.tlang.tlang.tmpl.{AstEntity, AstModel, BuildAstTmpl, TmplID}
 import tlang.core.Type
-import tlang.internal.{ContextContent, TmplID}
+import tlang.internal.ContextContent
 
 case class LangCallArray(context: Option[ContextContent], var name: TmplID, var elem: LangOperation) extends LangCallObjType[LangCallArray] {
   //  override def deepCopy(): LangCallArray = LangCallArray(context, name.deepCopy().asInstanceOf[TmplID], elem.deepCopy())
@@ -23,6 +23,10 @@ case class LangCallArray(context: Option[ContextContent], var name: TmplID, var 
   )
 
   override def getContext: Option[ContextContent] = context
+
+  override def getName: String = getClass.getSimpleName
+
+  override def toModel: AstModel = LangCallArray.model
 }
 
 object LangCallArray {

@@ -4,11 +4,11 @@ import dev.tlang.tlang.ast.common.ManualType
 import dev.tlang.tlang.ast.common.value.ArrayValue
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetType}
 import dev.tlang.tlang.tmpl.doc.ast.DocModel
-import dev.tlang.tlang.tmpl.{AstEntity, AstModel, BuildAstTmpl}
-import tlang.core.{Null, Type}
-import tlang.internal.{ContextContent, TmplID, TmplNode}
+import dev.tlang.tlang.tmpl.{AstEntity, AstModel, AstTmplNode, TmplID}
+import tlang.core.Type
+import tlang.internal.ContextContent
 
-case class LangPkg(context: Option[ContextContent], var parts: List[TmplID]) extends TmplNode[LangPkg] {
+case class LangPkg(context: Option[ContextContent], var parts: List[TmplID]) extends AstTmplNode {
   //  override def deepCopy(): LangPkg = {
   //    LangPkg(context, parts.map(_.deepCopy().asInstanceOf[TmplID]))
   //  }
@@ -17,7 +17,7 @@ case class LangPkg(context: Option[ContextContent], var parts: List[TmplID]) ext
     AstEntity(context,
       Some(LangPkg.model),
       Some(List(
-//        BuildAstTmpl.createAttrList(context, "parts", parts.map(_.toEntity))
+        //        BuildAstTmpl.createAttrList(context, "parts", parts.map(_.toEntity))
       )))
   }
 
@@ -27,6 +27,10 @@ case class LangPkg(context: Option[ContextContent], var parts: List[TmplID]) ext
   override def getElement: LangPkg = this
 
   override def getType: Type = LangPkg.modelName
+
+  override def getName: String = getClass.getSimpleName
+
+  override def toModel: AstModel = LangPkg.model
 }
 
 object LangPkg {
@@ -37,6 +41,6 @@ object LangPkg {
 
   val model: AstModel = AstModel(None, modelName, Some(LangModel.langNode), None, Some(List(
   )))
-  ModelSetAttribute(Null.empty(), Some("parts"), ModelSetType(Null.empty(), ArrayValue.getType))
+  ModelSetAttribute(None, Some("parts"), ModelSetType(None, ArrayValue.getType))
 
 }

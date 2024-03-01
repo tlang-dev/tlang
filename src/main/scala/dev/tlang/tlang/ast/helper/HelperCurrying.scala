@@ -1,10 +1,11 @@
 package dev.tlang.tlang.ast.helper
 
-import tlang.core.{Null, Type}
-import tlang.internal.{Context, ClassType, ContextContent}
+import dev.tlang.tlang.tmpl.AstContext
+import tlang.core.Type
+import tlang.internal.{ClassType, ContextContent}
 
-case class HelperCurrying(context: Null, params: List[HelperParam]) extends Context {
-  override def getContext: Null = context
+case class HelperCurrying(context: Option[ContextContent], params: List[HelperParam]) extends AstContext {
+  override def getContext: Option[ContextContent] = context
 
   override def getType: Type = ClassType.of(this.getClass)
 }

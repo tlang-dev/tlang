@@ -1,26 +1,29 @@
 package dev.tlang.tlang.tmpl.cmd.ast
 
-import dev.tlang.tlang.ast.common.{ManualType, ObjType}
-import dev.tlang.tlang.ast.common.value.EntityValue
-import dev.tlang.tlang.ast.model.set.ModelSetEntity
-import tlang.core.{Null, Type}
-import tlang.internal.{ContextContent, TmplNode}
+import dev.tlang.tlang.ast.common.ManualType
+import dev.tlang.tlang.tmpl.{AstEntity, AstModel, AstTmplNode}
+import tlang.core.Type
+import tlang.internal.ContextContent
 
-case class CmdCallFuncArgs(context: Null) extends TmplNode[CmdCallFuncArgs] {
-  override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, CmdCallFuncArgs.modelName)),
+case class CmdCallFuncArgs(context: Option[ContextContent]) extends AstTmplNode {
+  override def toEntity: AstEntity = AstEntity(context,
+    Some(CmdCallFuncArgs.model),
     Some(List())
   )
 
-//  override def toModel: ModelSetEntity = CmdCallFuncArgs.model
+  //  override def toModel: ModelSetEntity = CmdCallFuncArgs.model
 
   override def getType: Type = CmdCallFuncArgs.modelName
 
-  override def getContext: Null = context
+  override def getContext: Option[ContextContent] = context
 
-//  override def deepCopy(): CmdCallFuncArgs = CmdCallFuncArgs(context)
+  //  override def deepCopy(): CmdCallFuncArgs = CmdCallFuncArgs(context)
 
   override def getElement: CmdCallFuncArgs = this
+
+  override def getName: String = getClass.getSimpleName
+
+  override def toModel: AstModel = CmdCallFuncArgs.model
 }
 
 object CmdCallFuncArgs {
@@ -29,6 +32,6 @@ object CmdCallFuncArgs {
 
   val modelName: Type = ManualType(getClass.getPackageName, name)
 
-  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, Some(ObjType(Null.empty(), None, CmdModel.cmdModel.name)), None, Some(List(
+  val model: AstModel = AstModel(None, modelName, Some(CmdModel.cmdModel), None, Some(List(
   )))
 }

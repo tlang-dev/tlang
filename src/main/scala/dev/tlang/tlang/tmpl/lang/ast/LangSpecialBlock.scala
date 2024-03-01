@@ -4,9 +4,9 @@ import dev.tlang.tlang.ast.common.ManualType
 import dev.tlang.tlang.tmpl.lang.ast.func.LangFuncParam
 import dev.tlang.tlang.tmpl.{AstEntity, AstModel, BuildAstTmpl}
 import tlang.core.Type
-import tlang.internal.{Context, ContextContent}
+import tlang.internal.ContextContent
 
-case class LangSpecialBlock(context: Option[ContextContent], var `type`: String, var curries: Option[List[LangFuncParam]], var content: Option[LangExprContent[_]]) extends LangExpression[LangSpecialBlock] with LangContent[LangSpecialBlock] with Context {
+case class LangSpecialBlock(context: Option[ContextContent], var `type`: String, var curries: Option[List[LangFuncParam]], var content: Option[LangExprContent[_]]) extends LangExpression[LangSpecialBlock] with LangContent[LangSpecialBlock] {
   override def getContext: Option[ContextContent] = context
 
   //  override def deepCopy(): LangSpecialBlock = LangSpecialBlock(

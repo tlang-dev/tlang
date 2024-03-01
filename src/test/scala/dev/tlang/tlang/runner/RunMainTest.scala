@@ -5,6 +5,7 @@ import dev.tlang.tlang.ast.helper.{HelperBlock, HelperContent, HelperFunc, Helpe
 import dev.tlang.tlang.interpreter.context.Context
 import dev.tlang.tlang.loader.manifest.{Manifest, Stability}
 import dev.tlang.tlang.loader.{Module, Resource}
+import dev.tlang.tlang.tmpl.AstContext
 import org.scalatest.funsuite.AnyFunSuite
 import tlang.core.Null
 
@@ -13,10 +14,10 @@ import scala.collection.immutable
 class RunMainTest extends AnyFunSuite {
 
   test("Find main in helper") {
-    val helper = HelperBlock(Null.empty(), Some(List(
-      HelperFunc(Null.empty(), "func1", None, None, HelperContent(Null.empty(), None)),
-      HelperFunc(Null.empty(), "main", None, None, HelperContent(Null.empty(), None)),
-      HelperFunc(Null.empty(), "func2", None, None, HelperContent(Null.empty(), None)),
+    val helper = HelperBlock(None, Some(List(
+      HelperFunc(None, "func1", None, None, HelperContent(None, None)),
+      HelperFunc(None, "main", None, None, HelperContent(None, None)),
+      HelperFunc(None, "func2", None, None, HelperContent(None, None)),
     )))
 
     val func = RunMain.findMainInHelper(helper).get
@@ -25,14 +26,14 @@ class RunMainTest extends AnyFunSuite {
 
   test("Run main file") {
     var mainFuncRan = false
-    val content = Some(List(HelperInternalFunc((_: Context) => {
+    val content = Some(List(HelperInternalFunc((_: AstContext) => {
       mainFuncRan = true
       Right(None)
     })))
-    val helper = HelperBlock(Null.empty(), Some(List(
-      HelperFunc(Null.empty(), "main", None, None, HelperContent(Null.empty(), content)),
+    val helper = HelperBlock(None, Some(List(
+      HelperFunc(None, "main", None, None, HelperContent(None, content)),
     )))
-    val ast = DomainModel(Null.empty(), None, List(helper))
+    val ast = DomainModel(None, None, List(helper))
     val resource = Resource("Root", "", "", "Main", ast)
     val manifest = Manifest("Org", "Proj", "Prog", "1.0.0", Some(Stability.FINAL), 1, None, None)
     val module = Module("Root", manifest, immutable.Map("Main" -> resource), None, "Main")

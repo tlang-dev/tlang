@@ -2,11 +2,11 @@ package dev.tlang.tlang.tmpl.lang.ast
 
 import dev.tlang.tlang.ast.common.ManualType
 import dev.tlang.tlang.tmpl.lang.ast.condition.LangOperation
-import dev.tlang.tlang.tmpl.{AstEntity, AstModel, BuildAstTmpl}
+import dev.tlang.tlang.tmpl._
 import tlang.core.Type
-import tlang.internal.{ContextContent, TmplID, TmplNode}
+import tlang.internal.ContextContent
 
-case class LangSetAttribute(context: Option[ContextContent], var name: Option[TmplID], var value: LangOperation) extends TmplNode[LangSetAttribute] {
+case class LangSetAttribute(context: Option[ContextContent], var name: Option[TmplID], var value: LangOperation) extends AstTmplNode {
   //  override def deepCopy(): LangSetAttribute = LangSetAttribute(context,
   //    if (name.isDefined) Some(name.get.deepCopy().asInstanceOf[TmplID]) else None, value.deepCopy())
 
@@ -26,6 +26,10 @@ case class LangSetAttribute(context: Option[ContextContent], var name: Option[Tm
     )))
 
   override def getContext: Option[ContextContent] = context
+
+  override def getName: String = getClass.getSimpleName
+
+  override def toModel: AstModel = LangSetAttribute.model
 }
 
 object LangSetAttribute {

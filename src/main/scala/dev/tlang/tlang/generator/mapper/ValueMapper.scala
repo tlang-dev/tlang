@@ -19,7 +19,7 @@ import scala.collection.mutable.ListBuffer
 
 object ValueMapper {
 
-  def mapBlockAsValue(blockAsValue: LangBlockAsValue): LangBlockAsValue = {
+  /*def mapBlockAsValue(blockAsValue: LangBlockAsValue): LangBlockAsValue = {
     val block = blockAsValue.block
     val con = blockAsValue.context
     block match {
@@ -57,9 +57,9 @@ object ValueMapper {
     use
   }
 
-  def mapContents(content: Option[List[TmplNode[_]]], context: Context): Option[List[TmplNode[_]]] = {
+  def mapContents(content: Option[List[AstTmplNode]], context: Context): Option[List[AstTmplNode]] = {
     if (content.isDefined) {
-      val newContent = ListBuffer.empty[TmplNode[_]]
+      val newContent = ListBuffer.empty[AstTmplNode]
 
       content.get.foreach {
         case func: LangFunc => newContent += mapFunc(func, context)
@@ -198,7 +198,7 @@ object ValueMapper {
   }
 
   def mapExprBlock(block: LangExprBlock, context: Context): LangExprBlock = {
-    val exprs = ListBuffer.empty[TmplNode[_]]
+    val exprs = ListBuffer.empty[AstTmplNode]
     //    block.exprs.foreach(_.getType)
     block.exprs.foreach {
       case block: LangBlock => exprs += mapFullBlock(block.content, context)
@@ -433,6 +433,6 @@ object ValueMapper {
     //        pos = ret.indexOf("${", pos + (newVal.length - (search.length + 3)))
     //      }
     //      ret.toString
-  }
+  }*/
 
 }

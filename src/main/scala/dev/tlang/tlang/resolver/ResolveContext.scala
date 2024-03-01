@@ -37,7 +37,7 @@ object ResolveContext {
 //                if (funcs.isNotNull.get())
 //                  extractErrors(errors, BrowseFunc.resolveFuncs(funcs.get().getElement.getRecords.toList, module, uses, resource._2))
               case model: ModelBlock => extractErrors(errors, ResolveModel.resolveModel(model, module, uses, resource._2))
-              case tmpl: AnyTmplInterpretedBlock[_] => extractErrors(errors, ResolveTmpl.resolveTmpl(tmpl, module, uses, resource._2))
+//              case tmpl: AnyTmplInterpretedBlock[_] => extractErrors(errors, ResolveTmpl.resolveTmpl(tmpl, module, uses, resource._2))
             }
         }
       })
@@ -97,12 +97,12 @@ object ResolveContext {
 //          case None =>
 //        }
 //      }
-      case ModelBlock(_, contents) => if (contents.isDefined) {
-        ResolveUtils.findInVars(contents.get, name) match {
-//          case Some(variable) => elem = Null.of(variable.value)
-          case None =>
-        }
-      }
+//      case ModelBlock(_, contents) => if (contents.isDefined) {
+//        ResolveUtils.findInVars(contents.get, name) match {
+////          case Some(variable) => elem = Null.of(variable.value)
+//          case None =>
+//        }
+//      }
       case tmpl: AnyTmplInterpretedBlock[_] => findInTmpl(tmpl, name) match {
         case Right(value) => elem = value
         case Left(errs) => errors.addAll(errs)
@@ -116,8 +116,8 @@ object ResolveContext {
     val errors = ListBuffer.empty[ResolverError]
     var elem: Null = Null.empty().asInstanceOf[Null]
     tmpl match {
-      case doc: DocBlock => if (doc.name == name) elem = Null.of(LangBlockAsValue(doc.context, doc, Context())).asInstanceOf[Null]
-      case lang: LangBlock => if (lang.name == name) elem = Null.of(LangBlockAsValue(lang.context, lang, Context())).asInstanceOf[Null]
+//      case doc: DocBlock => if (doc.name == name) elem = Null.of(LangBlockAsValue(doc.context, doc, Context())).asInstanceOf[Null]
+//      case lang: LangBlock => if (lang.name == name) elem = Null.of(LangBlockAsValue(lang.context, lang, Context())).asInstanceOf[Null]
       case _ => println("ResolveContext: TmplBlock type not yet implemented")
     }
     if (errors.nonEmpty) Left(errors.toList)
@@ -129,7 +129,8 @@ object ResolveContext {
       case Left(error) => Left(error)
       case Right(value) => if (value.isNotNull.get()) {
         addValueInScope(lastName, value.get, previousNames, scope)
-      } else Left(List(ResourceNotFound(Null.empty(), if (previousNames.nonEmpty) BuildModuleTree.createPkg(previousNames.mkString("/"), lastName) else lastName)))
+      }
+      else Left(List(ResourceNotFound(None, if (previousNames.nonEmpty) BuildModuleTree.createPkg(previousNames.mkString("/"), lastName) else lastName)))
     }
   }
 

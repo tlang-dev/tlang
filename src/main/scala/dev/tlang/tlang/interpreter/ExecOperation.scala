@@ -4,6 +4,7 @@ import dev.tlang.tlang.ast.common.operation.{Operation, Operator}
 import dev.tlang.tlang.ast.common.value.{PrimitiveValue, TLangBool}
 import dev.tlang.tlang.ast.helper.HelperStatement
 import dev.tlang.tlang.interpreter.context.Context
+import dev.tlang.tlang.tmpl.AstContext
 import tlang.core.{Bool, Null, Value}
 
 import scala.annotation.tailrec
@@ -11,12 +12,12 @@ import scala.collection.mutable.ListBuffer
 
 object ExecOperation extends Executor {
 
-  override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value]]] = {
+  override def run(statement: HelperStatement, context: AstContext): Either[ExecError, Option[List[Value]]] = {
     val block = statement.asInstanceOf[Operation]
     execOperation(block, context, newLevel = true)
   }
 
-  private def execOperation(block: Operation, context: Context, newLevel: Boolean): Either[ExecError, Option[List[Value]]] = {
+  private def execOperation(block: Operation, context: AstContext, newLevel: Boolean): Either[ExecError, Option[List[Value]]] = {
     val value = block.content match {
       case Left(op) => execOperation(op, context, newLevel = true)
       case Right(value) => ExecComplexValue.run(value, context)
@@ -41,7 +42,7 @@ object ExecOperation extends Executor {
   //  }
 
   @tailrec
-  private def flatten(operator: Operator.operator, operation: Operation, ops: ListBuffer[(Option[Operator.operator], Value)], context: Context): Either[ExecError, List[(Option[Operator.operator], Value)]] = {
+  private def flatten(operator: Operator.operator, operation: Operation, ops: ListBuffer[(Option[Operator.operator], Value)], context: AstContext): Either[ExecError, List[(Option[Operator.operator], Value)]] = {
     execOperation(operation, context, newLevel = false) match {
       case Left(err) => Left(err)
       case Right(value) =>

@@ -2,14 +2,14 @@ package dev.tlang.tlang.tmpl.lang.ast.primitive
 
 import dev.tlang.tlang.ast.common.ManualType
 import dev.tlang.tlang.tmpl.lang.ast.{LangModel, LangType}
-import dev.tlang.tlang.tmpl.{AstEntity, AstModel, BuildAstTmpl}
+import dev.tlang.tlang.tmpl.{AstEntity, AstModel, AstTmplNode, BuildAstTmpl}
 import tlang.core.Type
-import tlang.internal.{ContextContent, TmplNode}
+import tlang.internal.ContextContent
 
-case class LangArrayValue(context: Option[ContextContent], var `type`: Option[LangType] = None, var params: Option[List[TmplNode[_]]]) extends LangPrimitiveValue[LangArrayValue] {
+case class LangArrayValue(context: Option[ContextContent], var `type`: Option[LangType] = None, var params: Option[List[AstTmplNode]]) extends LangPrimitiveValue[LangArrayValue] {
   //  override def deepCopy(): LangArrayValue = LangArrayValue(context,
   //    if (`type`.isDefined) Some(`type`.get.deepCopy()) else None,
-  //    if (params.isDefined) Some(params.get.map(_.deepCopy().asInstanceOf[TmplNode[_]])) else None)
+  //    if (params.isDefined) Some(params.get.map(_.deepCopy().asInstanceOf[AstTmplNode])) else None)
 
 
   override def getElement: LangArrayValue = this

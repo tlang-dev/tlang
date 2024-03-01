@@ -2,11 +2,11 @@ package dev.tlang.tlang.tmpl.lang.ast
 
 import dev.tlang.tlang.ast.common.ManualType
 import dev.tlang.tlang.tmpl.doc.ast.DocModel
-import dev.tlang.tlang.tmpl.{AstEntity, AstModel, BuildAstTmpl}
+import dev.tlang.tlang.tmpl.{AstEntity, AstModel, AstTmplNode, BuildAstTmpl}
 import tlang.core.Type
-import tlang.internal.{ContextContent, TmplNode}
+import tlang.internal.ContextContent
 
-case class LangGeneric(context: Option[ContextContent], var types: List[LangType]) extends TmplNode[LangGeneric] {
+case class LangGeneric(context: Option[ContextContent], var types: List[LangType]) extends AstTmplNode {
   //  override def deepCopy(): LangGeneric = LangGeneric(context, types.map(_.deepCopy()))
 
   override def getContext: Option[ContextContent] = context
@@ -23,6 +23,10 @@ case class LangGeneric(context: Option[ContextContent], var types: List[LangType
   override def getElement: LangGeneric = this
 
   override def getType: Type = LangGeneric.modelName
+
+  override def getName: String = getClass.getSimpleName
+
+  override def toModel: AstModel = LangGeneric.model
 }
 
 object LangGeneric {

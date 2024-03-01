@@ -5,9 +5,9 @@ import dev.tlang.tlang.tmpl.doc.ast.DocModel
 import dev.tlang.tlang.tmpl.lang.ast.condition.LangOperation
 import dev.tlang.tlang.tmpl.{AstEntity, AstModel, BuildAstTmpl}
 import tlang.core.{Entity, Type}
-import tlang.internal.{Context, ContextContent}
+import tlang.internal.ContextContent
 
-case class LangIf(context: Option[ContextContent], cond: LangOperation, content: LangExprContent[_], elseBlock: Option[Either[LangExprContent[_], LangIf]]) extends LangExpression[LangIf] with Context {
+case class LangIf(context: Option[ContextContent], cond: LangOperation, content: LangExprContent[_], elseBlock: Option[Either[LangExprContent[_], LangIf]]) extends LangExpression[LangIf] {
   //  override def deepCopy(): LangIf = LangIf(context, cond.deepCopy(), content.deepCopy().asInstanceOf[LangExprContent[_]],
   //    if (elseBlock.isDefined) elseBlock.get match {
   //      case Left(value) => Some(Left(value.deepCopy().asInstanceOf[LangExprContent[_]]))

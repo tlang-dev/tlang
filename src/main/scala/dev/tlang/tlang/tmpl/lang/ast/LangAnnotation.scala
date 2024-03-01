@@ -2,11 +2,11 @@ package dev.tlang.tlang.tmpl.lang.ast
 
 import dev.tlang.tlang.ast.common.ManualType
 import dev.tlang.tlang.tmpl.lang.ast.func.LangAnnotationParam
-import dev.tlang.tlang.tmpl.{AstEntity, AstModel, BuildAstTmpl}
+import dev.tlang.tlang.tmpl.{AstEntity, AstModel, BuildAstTmpl, TmplID}
 import tlang.core.Type
-import tlang.internal.{Context, ContextContent, TmplID}
+import tlang.internal.ContextContent
 
-case class LangAnnotation(context: Option[ContextContent], var name: TmplID, var values: Option[List[LangAnnotationParam]]) extends LangContent[LangAnnotation] with Context {
+case class LangAnnotation(context: Option[ContextContent], var name: TmplID, var values: Option[List[LangAnnotationParam]]) extends LangContent[LangAnnotation] {
   //  override def deepCopy(): LangAnnotation = LangAnnotation(context, name.deepCopy().asInstanceOf[TmplID],
   //    if (values.isDefined) Some(values.get.map(_.deepCopy())) else None)
 
@@ -25,6 +25,10 @@ case class LangAnnotation(context: Option[ContextContent], var name: TmplID, var
   )
 
   //  override def toModel: ModelSetEntity = LangAnnotation.model
+
+  override def getName: String = getClass.getSimpleName
+
+  override def toModel: AstModel = LangAnnotation.model
 }
 
 object LangAnnotation {

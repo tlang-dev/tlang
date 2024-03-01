@@ -2,15 +2,15 @@ package dev.tlang.tlang.tmpl.lang.ast.primitive
 
 import dev.tlang.tlang.ast.common.ManualType
 import dev.tlang.tlang.tmpl.lang.ast._
-import dev.tlang.tlang.tmpl.{AstEntity, AstModel, BuildAstTmpl}
+import dev.tlang.tlang.tmpl._
 import tlang.core.Type
-import tlang.internal.{ContextContent, TmplID, TmplNode}
+import tlang.internal.ContextContent
 
-case class LangEntityValue(context: Option[ContextContent], var name: Option[TmplID], var params: Option[List[TmplNode[_]]], var attrs: Option[List[TmplNode[_]]]) extends LangPrimitiveValue[LangEntityValue] {
+case class LangEntityValue(context: Option[ContextContent], var name: Option[TmplID], var params: Option[List[AstTmplNode]], var attrs: Option[List[AstTmplNode]]) extends LangPrimitiveValue[LangEntityValue] {
   //  override def deepCopy(): LangEntityValue = LangEntityValue(context,
   //    if (name.isDefined) Some(name.get.deepCopy().asInstanceOf[TmplID]) else None,
-  //    if (params.isDefined) Some(params.get.map(_.deepCopy().asInstanceOf[TmplNode[_]])) else None,
-  //    if (attrs.isDefined) Some(attrs.get.map(_.deepCopy().asInstanceOf[TmplNode[_]])) else None
+  //    if (params.isDefined) Some(params.get.map(_.deepCopy().asInstanceOf[AstTmplNode])) else None,
+  //    if (attrs.isDefined) Some(attrs.get.map(_.deepCopy().asInstanceOf[AstTmplNode])) else None
   //  )
 
   override def getElement: LangEntityValue = this

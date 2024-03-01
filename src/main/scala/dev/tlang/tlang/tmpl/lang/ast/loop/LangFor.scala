@@ -3,9 +3,9 @@ package dev.tlang.tlang.tmpl.lang.ast.loop
 import dev.tlang.tlang.ast.common.ManualType
 import dev.tlang.tlang.tmpl.lang.ast.condition.LangOperation
 import dev.tlang.tlang.tmpl.lang.ast.{LangExprContent, LangExpression, LangModel}
-import dev.tlang.tlang.tmpl.{AstEntity, AstModel, BuildAstTmpl}
+import dev.tlang.tlang.tmpl.{AstEntity, AstModel, BuildAstTmpl, TmplID}
 import tlang.core.Type
-import tlang.internal.{ContextContent, TmplID}
+import tlang.internal.ContextContent
 
 case class LangFor(context: Option[ContextContent], var variable: TmplID, var start: Option[LangOperation], forType: ForType.ForType, var cond: LangOperation, var content: LangExprContent[_]) extends LangExpression[LangFor] {
   //  override def deepCopy(): LangFor = LangFor(context,

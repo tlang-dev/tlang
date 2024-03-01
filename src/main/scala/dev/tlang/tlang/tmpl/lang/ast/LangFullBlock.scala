@@ -2,10 +2,10 @@ package dev.tlang.tlang.tmpl.lang.ast
 
 import dev.tlang.tlang.ast.common.ManualType
 import dev.tlang.tlang.interpreter.context.Scope
+import dev.tlang.tlang.tmpl._
 import dev.tlang.tlang.tmpl.doc.ast.DocModel
-import dev.tlang.tlang.tmpl.{AstEntity, AstEntityAttr, AstModel, BuildAstTmpl}
 import tlang.core.Type
-import tlang.internal.{ContextContent, DomainBlock, TmplNode}
+import tlang.internal.{ContextContent, DomainBlock}
 
 import scala.collection.mutable.ListBuffer
 
@@ -13,15 +13,15 @@ case class LangFullBlock(context: Option[ContextContent],
                          var pkg: Option[LangPkg] = None,
                          var uses: Option[List[LangUse]] = None,
                          var specialised: Boolean = false,
-                         var content: Option[List[TmplNode[_]]] = None,
-                         scope: Scope = Scope()) extends DomainBlock with TmplNode[LangFullBlock] {
+                         var content: Option[List[AstTmplNode]] = None,
+                         scope: Scope = Scope()) extends DomainBlock with AstTmplNode {
 
   //  override def deepCopy(): LangFullBlock =
   //    LangFullBlock(context,
   //      if (pkg.isDefined) Some(pkg.get.deepCopy()) else None,
   //      if (uses.isDefined) Some(uses.get.map(_.deepCopy())) else None,
   //      specialised,
-  //      if (content.isDefined) Some(content.get.map(_.deepCopy().asInstanceOf[TmplNode[_]])) else None,
+  //      if (content.isDefined) Some(content.get.map(_.deepCopy().asInstanceOf[AstTmplNode])) else None,
   //      scope)
 
   override def getContext: Option[ContextContent] = context
@@ -46,6 +46,10 @@ case class LangFullBlock(context: Option[ContextContent],
   override def getElement: LangFullBlock = this
 
   override def getType: Type = LangFullBlock.modelName
+
+  override def getName: String = getClass.getSimpleName
+
+  override def toModel: AstModel = LangFullBlock.model
 }
 
 object LangFullBlock {

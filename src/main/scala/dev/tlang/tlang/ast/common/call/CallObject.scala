@@ -3,11 +3,11 @@ package dev.tlang.tlang.ast.common.call
 import dev.tlang.tlang.ast.common.value.TLangType
 import dev.tlang.tlang.ast.common.{ManualType, ObjType, ValueType}
 import dev.tlang.tlang.tmpl.lang.ast.LangModel
-import dev.tlang.tlang.tmpl.{AstEntity, AstModel, BuildAstTmpl}
+import dev.tlang.tlang.tmpl.{AstEntity, AstModel, AstTmplNode, BuildAstTmpl}
 import tlang.core.Type
-import tlang.internal.{ContextContent, TmplNode}
+import tlang.internal.ContextContent
 
-case class CallObject(context: Option[ContextContent], statements: List[CallObjectType]) extends ComplexValueStatement[CallObject] with TmplNode[CallObject] {
+case class CallObject(context: Option[ContextContent], statements: List[CallObjectType]) extends ComplexValueStatement[CallObject] with AstTmplNode {
 
   override def getType: Type = CallObject.getType
 
@@ -20,6 +20,10 @@ case class CallObject(context: Option[ContextContent], statements: List[CallObje
   override def getContext: Option[ContextContent] = context
 
   override def getElement: CallObject = this
+
+  override def getName: String = getClass.getSimpleName
+
+  override def toModel: AstModel = CallObject.model
 }
 
 object CallObject extends TLangType {

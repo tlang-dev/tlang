@@ -1,27 +1,30 @@
 package dev.tlang.tlang.tmpl.data.ast
 
-import dev.tlang.tlang.ast.common.value.EntityValue
-import dev.tlang.tlang.ast.common.{ManualType, ObjType}
-import dev.tlang.tlang.ast.model.set.ModelSetEntity
-import tlang.core.{Null, Type}
-import tlang.internal.{ContextContent, TmplNode}
+import dev.tlang.tlang.ast.common.ManualType
+import dev.tlang.tlang.tmpl.{AstEntity, AstModel, AstTmplNode}
+import tlang.core.Type
+import tlang.internal.ContextContent
 
-case class DataInclude(context: Null) extends TmplNode[DataInclude] {
-  override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, DataInclude.modelName)),
+case class DataInclude(context: Option[ContextContent]) extends AstTmplNode {
+  override def toEntity: AstEntity = AstEntity(context,
+    Some(DataInclude.model),
     Some(List(
     ))
   )
 
-//  override def toModel: ModelSetEntity = DataInclude.model
+  //  override def toModel: ModelSetEntity = DataInclude.model
 
   override def getType: Type = DataInclude.modelName
 
-//  override def deepCopy(): Any = DataInclude(context)
+  //  override def deepCopy(): Any = DataInclude(context)
 
-  override def getContext: Null = context
+  override def getContext: Option[ContextContent] = context
 
   override def getElement: DataInclude = this
+
+  override def getName: String = getClass.getSimpleName
+
+  override def toModel: AstModel = DataInclude.model
 }
 
 object DataInclude {
@@ -30,6 +33,6 @@ object DataInclude {
 
   val modelName: Type = ManualType(getClass.getPackageName, name)
 
-  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, Some(ObjType(Null.empty(), None, DataModel.dataModel.name)), None, Some(List(
+  val model: AstModel = AstModel(None, modelName, Some(DataModel.dataModel), None, Some(List(
   )))
 }

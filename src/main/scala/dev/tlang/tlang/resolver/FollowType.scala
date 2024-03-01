@@ -17,7 +17,7 @@ object FollowType {
   def followType(valueType: ValueType, module: Module, uses: List[DomainUse], scope: Scope, currentResource: Resource): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
     valueType match {
-      case ArrayType(context, preType, name) => findInside(context, preType, name)(module, uses, scope, currentResource)
+//      case ArrayType(context, preType, name) => findInside(context, preType, name)(module, uses, scope, currentResource)
 //      case ObjType(context, preType, name) => findInside(context, preType, name)(module, uses, scope, currentResource)
       case _ =>
     }
@@ -25,7 +25,7 @@ object FollowType {
     else Right(())
   }
 
-  def findInside(context: Null, preType: Option[String], name: String, addPreType: Option[String] = None)(module: Module, uses: List[DomainUse], scope: Scope, currentResource: Resource): Either[List[ResolverError], Unit] = {
+  def findInside(context: Option[ContextContent], preType: Option[String], name: String, addPreType: Option[String] = None)(module: Module, uses: List[DomainUse], scope: Scope, currentResource: Resource): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
     if (preType.isEmpty) {
       browseModel(name, currentResource) match {
@@ -42,7 +42,7 @@ object FollowType {
     else Right(())
   }
 
-  def findOutside(context: Null, preType: String, name: String)(module: Module, uses: List[DomainUse], scope: Scope): Either[List[ResolverError], Unit] = {
+  def findOutside(context: Option[ContextContent], preType: String, name: String)(module: Module, uses: List[DomainUse], scope: Scope): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
     uses.foreach(use => {
       if (use.parts.last == preType) {
@@ -62,12 +62,12 @@ object FollowType {
     val errors = ListBuffer.empty[ResolverError]
     var elem: Option[ModelSetEntity] = None
     resource.ast.body.foreach {
-      case ModelBlock(_, contents) => if (contents.isDefined) {
-        ResolveUtils.findInModels(contents.get, name) match {
-          case Some(model) => elem = Some(model)
-          case None =>
-        }
-      }
+//      case ModelBlock(_, contents) => if (contents.isDefined) {
+//        ResolveUtils.findInModels(contents.get, name) match {
+//          case Some(model) => elem = Some(model)
+//          case None =>
+//        }
+//      }
       case _ =>
     }
     if (errors.nonEmpty) Left(errors.toList)

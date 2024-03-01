@@ -5,7 +5,7 @@ import dev.tlang.tlang.tmpl.{AstEntity, AstModel, BuildAstTmpl}
 import tlang.core.Type
 import tlang.internal.{Context, ContextContent}
 
-case class LangMultiValue(context: Option[ContextContent], var values: List[LangValueType[_]]) extends LangValueType[LangMultiValue] with Context {
+case class LangMultiValue(context: Option[ContextContent], var values: List[LangValueType[_]]) extends LangValueType[LangMultiValue] {
   //  override def deepCopy(): LangMultiValue = LangMultiValue(context, values.map(_.deepCopy().asInstanceOf[LangValueType[_]]))
 
   override def getContext: Option[ContextContent] = context

@@ -66,7 +66,7 @@ object DartGeneratorGen3 {
 //    str.toString()
 //  }
 //
-//  def generate(node: TmplNode[_], str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter): Indent = {
+//  def generate(node: AstTmplNode, str: StringBuilder, indent: Indent, rules: List[FormatRule], params: GenParameter): Indent = {
 //    var _ind = indent
 //    blocks.get(node.getClass.getTypeName).foreach(block => _ind = block.generate(node, str, indent, rules, params, this.generate))
 //    _ind

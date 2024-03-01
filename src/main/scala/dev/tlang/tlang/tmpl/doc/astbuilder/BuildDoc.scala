@@ -14,10 +14,8 @@ import scala.jdk.CollectionConverters._
 object BuildDoc {
 
   def buildTmplDoc(resource: ContextResource, block: TmplDocContext): DocBlock = {
-    val langs = new mutable.List()
-    //    block.langs.asScala.foreach(str => langs.add(new core.String(str.getText)))
     val content = block.content.tmplDocContent()
-    DocBlock(addContext(resource, block), block.name.getText, langs.toArray.get().get().getValue.asInstanceOf[Array],
+    DocBlock(addContext(resource, block), block.name.getText, block.langs.asScala.toList.map(_.toString),
       if (block.params != null && !block.params.isEmpty) Some(BuildHelperBlock.buildParams(resource, block.params.asScala.toList).map(param => NativeType(param.context, param))) else None,
       buildDocContent(resource, content))
   }

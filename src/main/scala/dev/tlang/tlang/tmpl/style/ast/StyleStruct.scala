@@ -1,9 +1,9 @@
 package dev.tlang.tlang.tmpl.style.ast
 
 import dev.tlang.tlang.ast.common.ManualType
-import dev.tlang.tlang.tmpl.{AstEntity, AstModel, AstTmplNode, BuildAstTmpl}
+import dev.tlang.tlang.tmpl._
 import tlang.core.Type
-import tlang.internal.{ContextContent, TmplID}
+import tlang.internal.ContextContent
 
 case class StyleStruct(context: Option[ContextContent], name: Option[TmplID], params: Option[List[StyleAttribute[_]]], attrs: Option[List[StyleAttribute[_]]]) extends AstTmplNode {
   override def toEntity: AstEntity = AstEntity(context,

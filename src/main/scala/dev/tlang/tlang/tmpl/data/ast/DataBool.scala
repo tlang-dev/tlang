@@ -1,25 +1,28 @@
 package dev.tlang.tlang.tmpl.data.ast
 
-import dev.tlang.tlang.ast.common.value.EntityValue
-import dev.tlang.tlang.ast.common.{ManualType, ObjType}
-import dev.tlang.tlang.ast.model.set.ModelSetEntity
-import tlang.core.{Null, Type}
-import tlang.internal.{ContextContent, TmplNode}
+import dev.tlang.tlang.ast.common.ManualType
+import dev.tlang.tlang.tmpl.{AstEntity, AstModel, AstTmplNode}
+import tlang.core.Type
+import tlang.internal.ContextContent
 
-case class DataBool(context: Null) extends TmplNode[DataBool] {
-  override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, DataBool.modelName)),
+case class DataBool(context: Option[ContextContent]) extends AstTmplNode {
+  override def toEntity: AstEntity = AstEntity(context,
+    Some(DataBool.model),
     Some(List(
     ))
   )
 
-//  override def toModel: ModelSetEntity = DataBool.model
+  //  override def toModel: ModelSetEntity = DataBool.model
 
   override def getType: Type = DataBool.modelName
 
-  override def getContext: Null = context
+  override def getContext: Option[ContextContent] = context
 
   override def getElement: DataBool = this
+
+  override def getName: String = getClass.getSimpleName
+
+  override def toModel: AstModel = DataBool.model
 }
 
 object DataBool {
@@ -28,6 +31,6 @@ object DataBool {
 
   val modelName: Type = ManualType(getClass.getPackageName, name)
 
-  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, Some(ObjType(Null.empty(), None, DataModel.dataModel.name)), None, Some(List(
+  val model: AstModel = AstModel(None, modelName, Some(DataModel.dataModel), None, Some(List(
   )))
 }

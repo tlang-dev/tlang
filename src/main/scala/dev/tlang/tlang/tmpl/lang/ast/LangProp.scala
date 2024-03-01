@@ -1,11 +1,11 @@
 package dev.tlang.tlang.tmpl.lang.ast
 
 import dev.tlang.tlang.ast.common.ManualType
-import dev.tlang.tlang.tmpl.{AstEntity, AstModel, AstTmplNode, BuildAstTmpl}
+import dev.tlang.tlang.tmpl._
 import tlang.core.Type
-import tlang.internal._
+import tlang.internal.ContextContent
 
-case class LangProp(context: Option[ContextContent], var props: List[TmplID]) extends Context with AstTmplNode {
+case class LangProp(context: Option[ContextContent], var props: List[TmplID]) extends AstTmplNode {
   //  override def deepCopy(): LangProp = LangProp(context, props.map(_.deepCopy().asInstanceOf[TmplID]))
 
   override def getContext: Option[ContextContent] = context
@@ -21,6 +21,9 @@ case class LangProp(context: Option[ContextContent], var props: List[TmplID]) ex
     ))
   )
 
+  override def getName: String = getClass.getSimpleName
+
+  override def toModel: AstModel = LangProp.model
 }
 
 object LangProp {

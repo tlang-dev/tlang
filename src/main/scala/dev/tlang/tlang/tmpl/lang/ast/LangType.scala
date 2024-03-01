@@ -2,11 +2,11 @@ package dev.tlang.tlang.tmpl.lang.ast
 
 import dev.tlang.tlang.ast.common.ManualType
 import dev.tlang.tlang.tmpl.lang.ast.call.LangCallFuncParam
-import dev.tlang.tlang.tmpl.{AstEntity, AstModel, BuildAstTmpl}
+import dev.tlang.tlang.tmpl._
 import tlang.core.Type
-import tlang.internal.{ContextContent, TmplID, TmplNode}
+import tlang.internal.ContextContent
 
-case class LangType(context: Option[ContextContent], var name: TmplID, var generic: Option[LangGeneric] = None, isArray: Boolean = false, var currying: Option[List[LangCallFuncParam]] = None) extends TmplNode[LangType] {
+case class LangType(context: Option[ContextContent], var name: TmplID, var generic: Option[LangGeneric] = None, isArray: Boolean = false, var currying: Option[List[LangCallFuncParam]] = None) extends AstTmplNode {
   //  override def deepCopy(): LangType = LangType(context, name.deepCopy().asInstanceOf[TmplID],
   //    if (generic.isDefined) Some(generic.get.deepCopy()) else None,
   //    if (isArray) true else false,
@@ -29,6 +29,10 @@ case class LangType(context: Option[ContextContent], var name: TmplID, var gener
   override def getElement: LangType = this
 
   override def getType: Type = LangType.modelName
+
+  override def getName: String = getClass.getSimpleName
+
+  override def toModel: AstModel = LangType.model
 }
 
 object LangType {

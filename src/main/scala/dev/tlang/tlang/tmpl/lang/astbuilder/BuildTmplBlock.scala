@@ -3,6 +3,7 @@ package dev.tlang.tlang.tmpl.lang.astbuilder
 import dev.tlang.tlang.TLang._
 import dev.tlang.tlang.astbuilder.BuildAst.addContext
 import dev.tlang.tlang.astbuilder._
+import dev.tlang.tlang.tmpl.{AstAnyTmplBlock, AstTmplNode}
 import dev.tlang.tlang.tmpl.common.ast.NativeType
 import dev.tlang.tlang.tmpl.common.astbuilder.BuildCommonTmpl
 import dev.tlang.tlang.tmpl.doc.astbuilder.BuildDoc
@@ -22,7 +23,7 @@ import scala.jdk.CollectionConverters._
 
 object BuildTmplBlock {
 
-  def build(resource: ContextResource, tmpl: TmplBlockContext): AnyTmplBlock[_] = {
+  def build(resource: ContextResource, tmpl: TmplBlockContext): AstAnyTmplBlock = {
 
     tmpl match {
       case lang@_ if lang.tmplLang() != null => buildLangBlock(resource, tmpl.tmplLang())
@@ -39,8 +40,7 @@ object BuildTmplBlock {
     val langs = new mutable.List()
     tmpl.langs.asScala.foreach(str => langs.add(new core.String(str.getText)))
     val content = buildFullBlock(resource, tmpl.tmplFullBlock())
-    LangBlock(addContext(resource, tmpl), tmpl.name.getText, langs.toArray.get().get().getValue.asInstanceOf[Array]
-      ,
+    LangBlock(addContext(resource, tmpl), tmpl.name.getText, tmpl.langs.asScala.map(_.getText).toList,
       if (tmpl.params != null && !tmpl.params.isEmpty) Some(BuildHelperBlock.buildParams(resource, tmpl.params.asScala.toList).map(param => NativeType(param.context, param))) else None,
       content)
   }
@@ -106,7 +106,7 @@ object BuildTmplBlock {
     )
   }
 
-  def buildSpecializedContent(resource: ContextResource, content: TmplSpecialisedContentContext): TmplNode[_] = {
+  def buildSpecializedContent(resource: ContextResource, content: TmplSpecialisedContentContext): AstTmplNode = {
     content match {
       case content@_ if content.tmplContent() != null => buildContent(resource, content.tmplContent())
       case attr@_ if attr.tmplAttribute() != null => buildAttribute(resource, attr.tmplAttribute())
@@ -261,7 +261,7 @@ object BuildTmplBlock {
       buildOperation(resource, param.value))
   }
 
-  def buildInclSetAttribute(resource: ContextResource, attr: TmplInclSetAttributeContext): TmplNode[_] = {
+  def buildInclSetAttribute(resource: ContextResource, attr: TmplInclSetAttributeContext): AstTmplNode = {
     attr match {
       case incl@_ if incl.tmplInclude() != null => buildInclude(resource, incl.tmplInclude())
       case attr@_ if attr.tmplSetAttribute() != null => buildSetAttribute(resource, attr.tmplSetAttribute())
@@ -282,7 +282,7 @@ object BuildTmplBlock {
       if (block.op != null) Some(BuildCommon.buildOperator(block.op.getText), buildOperation(resource, block.next)) else None)
   }
 
-  def buildInclAttribute(resource: ContextResource, attr: TmplInclAttributeContext): TmplNode[_] = {
+  def buildInclAttribute(resource: ContextResource, attr: TmplInclAttributeContext): AstTmplNode= {
     attr match {
       case incl@_ if incl.tmplInclude() != null => buildInclude(resource, incl.tmplInclude())
       case attr@_ if attr.tmplAttribute() != null => buildAttribute(resource, attr.tmplAttribute())

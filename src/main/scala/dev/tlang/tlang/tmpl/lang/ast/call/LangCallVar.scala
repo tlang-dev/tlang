@@ -2,9 +2,9 @@ package dev.tlang.tlang.tmpl.lang.ast.call
 
 import dev.tlang.tlang.ast.common.ManualType
 import dev.tlang.tlang.tmpl.lang.ast.LangModel
-import dev.tlang.tlang.tmpl.{AstEntity, AstModel, BuildAstTmpl}
+import dev.tlang.tlang.tmpl.{AstEntity, AstModel, BuildAstTmpl, TmplID}
 import tlang.core.Type
-import tlang.internal.{ContextContent, TmplID}
+import tlang.internal.ContextContent
 
 case class LangCallVar(context: Option[ContextContent], var name: TmplID) extends LangCallObjType[LangCallVar] {
   //  override def deepCopy(): LangCallVar = LangCallVar(context, name.deepCopy().asInstanceOf[TmplID])

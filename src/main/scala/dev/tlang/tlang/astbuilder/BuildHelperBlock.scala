@@ -42,7 +42,7 @@ object BuildHelperBlock {
   }
 
   def buildFuncType(resource: ContextResource, func: HelperFuncTypeContext): HelperFuncType = {
-    HelperFuncType(Null.empty(),
+    HelperFuncType(None,
       if (func.currying != null && !func.currying.isEmpty) Some(buildCurrying(resource, func.currying.asScala.toList)) else None,
       if (func.retVals != null && !func.retVals.isEmpty) Some(func.retVals.asScala.toList.map(retVal => buildParamType(resource, retVal))) else None)
   }

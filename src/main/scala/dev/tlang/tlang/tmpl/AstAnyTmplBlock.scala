@@ -1,6 +1,8 @@
 package dev.tlang.tlang.tmpl
 
-trait AstAnyTmplBlock extends AstTmplNode {
+import tlang.internal.DomainBlock
+
+trait AstAnyTmplBlock extends AstTmplNode with DomainBlock {
 
   def getLangs: List[String]
 

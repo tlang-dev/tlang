@@ -1,19 +1,18 @@
 package dev.tlang.tlang.tmpl.data.ast
 
 import dev.tlang.tlang.ast.common.ManualType
-import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity}
 import dev.tlang.tlang.tmpl.lang.ast.LangModel
-import tlang.core.Null
+import dev.tlang.tlang.tmpl.{AstModel, BuildAstTmpl}
 
 object DataModel {
 
   val pkg = "tlang.tmpl.data"
 
-  val dataModel: ModelSetEntity = ModelSetEntity(Null.empty(), ManualType(pkg, "DataNode"), None, None, Some(List(
-    ModelSetAttribute(Null.empty(), Some("context"), LangModel.langContext)
+  val dataModel: AstModel = AstModel(None, ManualType(pkg, "DataNode"), None, None, Some(List(
+    BuildAstTmpl.createModelAttrEntity(None, Some("context"), LangModel.langContext.getType)
   )))
 
-  val getAll: List[ModelSetEntity] = List(
+  val getAll: List[AstModel] = List(
     DataArray.model,
     DataAttribute.model,
     DataBlock.model,

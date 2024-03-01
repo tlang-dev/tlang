@@ -18,16 +18,16 @@ object FollowSetRef {
     val errors = ListBuffer.empty[ResolverError]
     val callParts = ListBuffer.empty[CallObjectType]
     if (setRef.refs.size > 1) {
-      callParts.addOne(CallVarObject(Null.empty(), setRef.refs.head))
+      callParts.addOne(CallVarObject(None, setRef.refs.head))
     }
     var callFunc: Option[CallRefFuncObject] = None
     if (setRef.currying.isDefined) {
       extractErrors(errors, followRefCurrying(setRef.currying.get, module, uses, setRef.scope, currentResource))
-      callFunc = Some(CallRefFuncObject(Null.empty(), Some(setRef.refs.last), None))
+      callFunc = Some(CallRefFuncObject(None, Some(setRef.refs.last), None))
       callParts.addOne(callFunc.get)
     }
-    else callParts.addOne(CallVarObject(Null.empty(), setRef.refs.last))
-    val caller = CallObject(Null.empty(), callParts.toList)
+    else callParts.addOne(CallVarObject(None, setRef.refs.last))
+    val caller = CallObject(None, callParts.toList)
     FollowCallObject.followCallObject(caller, module, uses, setRef.scope, currentResource)
     if (callFunc.isDefined) setRef.func = callFunc.get.func
     if (errors.nonEmpty) Left(errors.toList)

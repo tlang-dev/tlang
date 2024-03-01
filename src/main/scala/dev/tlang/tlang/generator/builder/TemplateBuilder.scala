@@ -18,7 +18,7 @@ import scala.collection.mutable.ListBuffer
 
 object TemplateBuilder {
 
-  def buildBlockAsValue(blockAsValue: LangBlockAsValue): Either[ExecError, LangBlockAsValue] = {
+ /* def buildBlockAsValue(blockAsValue: LangBlockAsValue): Either[ExecError, LangBlockAsValue] = {
     buildBlock(blockAsValue.block, blockAsValue.context) match {
       case Left(error) => Left(error)
       case Right(newBLock) =>
@@ -82,17 +82,17 @@ object TemplateBuilder {
     } else Right(None)
   }
 
-  def buildContents(tmplContents: Option[List[TmplNode[_]]], context: Context): Either[ExecError, Option[List[TmplNode[_]]]] = {
+  def buildContents(tmplContents: Option[List[AstTmplNode]], context: Context): Either[ExecError, Option[List[AstTmplNode]]] = {
     if (tmplContents.isDefined) optionalForEach(tmplContents.get, context)
     else Right(None)
   }
 
-  def buildInclAttributes(nodes: Option[List[TmplNode[_]]], context: Context): Either[ExecError, Option[List[TmplNode[_]]]] = {
+  def buildInclAttributes(nodes: Option[List[AstTmplNode]], context: Context): Either[ExecError, Option[List[AstTmplNode]]] = {
     if (nodes.isDefined) optionalForEach(nodes.get, context)
     else Right(None)
   }
 
-  def callObject(callObject: CallObject, context: Context): Either[ExecError, List[TmplNode[_]]] = {
+  def callObject(callObject: CallObject, context: Context): Either[ExecError, List[AstTmplNode]] = {
     ExecCallObject.run(callObject, context) match {
       case Left(error) => Left(error)
       case Right(value) => value match {
@@ -238,7 +238,7 @@ object TemplateBuilder {
     //      }
     //      case func: TmplFunc => toList[TmplExpression[_]](FuncBuilder.buildFunc(func, context))
     //      case ret: TmplReturn => toList[TmplExpression[_]](buildReturn(ret, context))
-    //      case _: TmplNode[_] => Right(List(expr))
+    //      case _: AstTmplNode => Right(List(expr))
     //    }
     visitNode(expr, context) match {
       case Left(value) => Left(value)
@@ -272,10 +272,10 @@ object TemplateBuilder {
     }
   }
 
-  def includeTmplInclude(tmplInclude: LangInclude, context: Context): Either[ExecError, List[TmplNode[_]]] = {
+  def includeTmplInclude(tmplInclude: LangInclude, context: Context): Either[ExecError, List[AstTmplNode]] = {
     var err: Option[ExecError] = None
     var i = 0
-    val newNodes = ListBuffer.empty[TmplNode[_]]
+    val newNodes = ListBuffer.empty[AstTmplNode]
     while (err.isEmpty && i < tmplInclude.calls.length) {
       callObject(tmplInclude.calls(i), context) match {
         case Left(error) => err = Some(error)
@@ -287,7 +287,7 @@ object TemplateBuilder {
     else Right(newNodes.toList)
   }
 
-  def includeTmplId(tmplID: TmplID, context: Context): Either[ExecError, List[TmplNode[_]]] = {
+  def includeTmplId(tmplID: TmplID, context: Context): Either[ExecError, List[AstTmplNode]] = {
     tmplID match {
 //      case inter: TmplInterpretedId => ExecCallObject.run(inter.call, context) match {
 //        case Left(error) => Left(error)
@@ -310,10 +310,10 @@ object TemplateBuilder {
     }
   }
 
-  def buildValues(values: List[Value]): Either[ExecError, List[TmplNode[_]]] = {
+  def buildValues(values: List[Value]): Either[ExecError, List[AstTmplNode]] = {
     var err: Option[ExecError] = None
     var i = 0
-    val newNodes = ListBuffer.empty[TmplNode[_]]
+    val newNodes = ListBuffer.empty[AstTmplNode]
     while (err.isEmpty && i < values.length) {
       buildValue(values(i)) match {
         case Left(error) => err = Some(error)
@@ -325,11 +325,11 @@ object TemplateBuilder {
     else Right(newNodes.toList)
   }
 
-  def buildValue(value: Value): Either[ExecError, TmplNode[_]] = {
+  def buildValue(value: Value): Either[ExecError, AstTmplNode] = {
     value match {
       case valueBlock: LangBlockAsValue =>
         buildBlockAsValue(valueBlock)
-      case value: Value => Right(value.asInstanceOf[TmplNode[_]])
+      case value: Value => Right(value.asInstanceOf[AstTmplNode])
     }
   }
 
@@ -340,17 +340,17 @@ object TemplateBuilder {
         Right(ret)
     }
 
-  def optionalForEach(nodes: List[TmplNode[_]], context: Context): Either[ExecError, Option[List[TmplNode[_]]]] = {
+  def optionalForEach(nodes: List[AstTmplNode], context: Context): Either[ExecError, Option[List[AstTmplNode]]] = {
     forEach(nodes, context) match {
       case Left(err) => Left(err)
       case Right(nodes) => Right(Some(nodes))
     }
   }
 
-  def forEach(nodes: List[TmplNode[_]], context: Context): Either[ExecError, List[TmplNode[_]]] = {
+  def forEach(nodes: List[AstTmplNode], context: Context): Either[ExecError, List[AstTmplNode]] = {
     var err: Option[ExecError] = None
     var i = 0
-    val newNodes = ListBuffer.empty[TmplNode[_]]
+    val newNodes = ListBuffer.empty[AstTmplNode]
     while (err.isEmpty && i < nodes.length) {
       nodes(i) match {
         case tmplID: TmplID => includeTmplId(tmplID, context) match {
@@ -361,7 +361,7 @@ object TemplateBuilder {
           case Left(error) => err = Some(error)
           case Right(values) => newNodes.addAll(values)
         }
-        case node: TmplNode[_] =>
+        case node: AstTmplNode =>
           visitNode(node, context) match {
             case Left(error) => err = Some(error)
             case Right(visitedNode) => newNodes.addAll(visitedNode)
@@ -406,10 +406,10 @@ object TemplateBuilder {
     else Right(variable)
   }
 
-  def visitNodes(nodes: List[TmplNode[_]], context: Context): Either[ExecError, List[TmplNode[_]]] = {
+  def visitNodes(nodes: List[AstTmplNode], context: Context): Either[ExecError, List[AstTmplNode]] = {
     var err: Option[ExecError] = None
     var i = 0
-    val visitedNodes = ListBuffer.empty[TmplNode[_]]
+    val visitedNodes = ListBuffer.empty[AstTmplNode]
     while (err.isEmpty && i < nodes.length) {
       visitNode(nodes(i), context) match {
         case Left(error) => err = Some(error)
@@ -421,7 +421,7 @@ object TemplateBuilder {
     else Right(visitedNodes.toList)
   }
 
-  def visitNode(node: TmplNode[_], context: Context): Either[ExecError, List[TmplNode[_]]] = {
+  def visitNode(node: AstTmplNode, context: Context): Either[ExecError, List[AstTmplNode]] = {
     node match {
       case entity: LangEntityValue => toList(EntityBuilder.buildEntity(entity, context))
       case impl: LangImpl => toList(ImplBuilder.buildImpl(impl, context))
@@ -438,15 +438,15 @@ object TemplateBuilder {
       case stringValue: LangStringValue => toList(buildStringValue(stringValue, context))
       case variable: LangVar => toList(buildVar(variable, context))
       //case expr: TmplExpression[_] => buildExpression(expr, context)
-      case _: TmplNode[_] => Right(List(node))
+      case _: AstTmplNode => Right(List(node))
     }
   }
 
-  def toList[TYPE](either: Either[ExecError, TmplNode[_]]): Either[ExecError, List[TYPE]] = {
+  def toList[TYPE](either: Either[ExecError, AstTmplNode]): Either[ExecError, List[TYPE]] = {
     either match {
       case Left(error) => Left(error)
       case Right(value) => Right(List(value.asInstanceOf[TYPE]))
     }
-  }
+  }*/
 
 }

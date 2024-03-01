@@ -44,13 +44,13 @@ object DartGenerator {
     str.build()
   }
 
-  def genContents(impls: List[TmplNode[_]], addEndOfStatement: Boolean = false): Iterable[Seq] = {
+  def genContents(impls: List[AstTmplNode], addEndOfStatement: Boolean = false): Iterable[Seq] = {
     val str: Array[Seq] = Array.ofDim[Seq](impls.size)
     impls.zipWithIndex.foreach(impl => str(impl._2) = genContent(impl._1, addEndOfStatement))
     str
   }
 
-  def genContent(impl: TmplNode[_], addEndOfStatement: Boolean = false): Seq = {
+  def genContent(impl: AstTmplNode, addEndOfStatement: Boolean = false): Seq = {
     impl match {
       case func: LangFunc => genFunc(func)
       case expr: LangExpression[_] => genExpression(expr, addEndOfStatement)
@@ -453,7 +453,7 @@ object DartGenerator {
     str
   }
 
-  def genEntityValueAttribute(attrs: Option[List[TmplNode[_]]]): Seq = {
+  def genEntityValueAttribute(attrs: Option[List[AstTmplNode]]): Seq = {
     val str = Seq()
     attrs.foreach(_.foreach { attr =>
       attr match {

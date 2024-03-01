@@ -4,9 +4,9 @@ import dev.tlang.tlang.ast.common.ManualType
 import dev.tlang.tlang.tmpl.lang.ast.condition.LangOperation
 import dev.tlang.tlang.tmpl.{AstEntity, AstModel, BuildAstTmpl}
 import tlang.core.Type
-import tlang.internal.{Context, ContextContent, TmplID}
+import tlang.internal.{ContextContent, TmplID}
 
-case class LangVal(context: Option[ContextContent], var annots: Option[List[LangAnnotation]] = None, var props: Option[LangProp] = None, var name: TmplID, var `type`: Option[LangType], var value: Option[LangOperation], isOptional: Boolean) extends LangExpression[LangVal] with Context {
+case class LangVal(context: Option[ContextContent], var annots: Option[List[LangAnnotation]] = None, var props: Option[LangProp] = None, var name: TmplID, var `type`: Option[LangType], var value: Option[LangOperation], isOptional: Boolean) extends LangExpression[LangVal] {
   //  override def deepCopy(): LangVal = LangVal(context,
   //    if (annots.isDefined) Some(annots.get.map(_.deepCopy())) else None,
   //    if (props.isDefined) Some(props.get.deepCopy()) else None,
@@ -45,6 +45,10 @@ case class LangVal(context: Option[ContextContent], var annots: Option[List[Lang
   override def getElement: LangVal = this
 
   override def getType: Type = LangVal.modelName
+
+  override def getName: String = getClass.getSimpleName
+
+  override def toModel: AstModel = LangVar.model
 }
 
 object LangVal {

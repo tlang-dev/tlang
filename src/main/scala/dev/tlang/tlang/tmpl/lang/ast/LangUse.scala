@@ -1,11 +1,11 @@
 package dev.tlang.tlang.tmpl.lang.ast
 
 import dev.tlang.tlang.ast.common.ManualType
-import dev.tlang.tlang.tmpl.{AstEntity, AstModel, BuildAstTmpl}
+import dev.tlang.tlang.tmpl._
 import tlang.core.Type
-import tlang.internal.{ContextContent, TmplID, TmplNode}
+import tlang.internal.ContextContent
 
-case class LangUse(context: Option[ContextContent], var parts: List[TmplID], var alias: Option[TmplID] = None) extends TmplNode[LangUse] {
+case class LangUse(context: Option[ContextContent], var parts: List[TmplID], var alias: Option[TmplID] = None) extends AstTmplNode {
   //  override def deepCopy(): LangUse = LangUse(context, parts.map(_.deepCopy().asInstanceOf[TmplID]),
   //    if (alias.isDefined) Some(alias.get.deepCopy().asInstanceOf[TmplID]) else None)
 
@@ -18,7 +18,7 @@ case class LangUse(context: Option[ContextContent], var parts: List[TmplID], var
     AstEntity(context,
       Some(LangUse.model),
       Some(List(
-//        BuildAstTmpl.createAttrList(context, "parts", parts.map(part => part.toEntity)),
+        //        BuildAstTmpl.createAttrList(context, "parts", parts.map(part => part.toEntity)),
         //        BuildLang.createAttrNull(context, "alias",
         //          if (alias.isDefined) Null.of(alias.get.toEntity) else Null.empty(),
         //          None
@@ -28,6 +28,10 @@ case class LangUse(context: Option[ContextContent], var parts: List[TmplID], var
   }
 
   override def getContext: Option[ContextContent] = context
+
+  override def getName: String = getClass.getSimpleName
+
+  override def toModel: AstModel = LangUse.model
 }
 
 object LangUse {

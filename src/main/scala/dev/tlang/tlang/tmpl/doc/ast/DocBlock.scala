@@ -5,10 +5,10 @@ import dev.tlang.tlang.ast.helper.HelperParam
 import dev.tlang.tlang.interpreter.context.Scope
 import dev.tlang.tlang.tmpl.common.ast.NativeType
 import dev.tlang.tlang.tmpl.{AnyTmplInterpretedBlock, AstEntity, AstModel, BuildAstTmpl}
-import tlang.core.{Array, Type}
+import tlang.core.Type
 import tlang.internal.{ContextContent, DomainBlock}
 
-case class DocBlock(context: Option[ContextContent], name: String, langs: Array,
+case class DocBlock(context: Option[ContextContent], name: String, langs: List[String],
                     var params: Option[List[NativeType[HelperParam]]], content: DocContent, scope: Scope = Scope()) extends DomainBlock with AnyTmplInterpretedBlock[DocBlock] {
   override def toEntity: AstEntity = AstEntity(context,
     Some(DocBlock.model),
@@ -32,6 +32,12 @@ case class DocBlock(context: Option[ContextContent], name: String, langs: Array,
   override def getScope: Scope = scope
 
   override def getElement: DocBlock = this
+
+  override def getLangs: List[String] = langs
+
+  override def getName: String = getClass.getSimpleName
+
+  override def toModel: AstModel = DocBlock.model
 }
 
 object DocBlock {

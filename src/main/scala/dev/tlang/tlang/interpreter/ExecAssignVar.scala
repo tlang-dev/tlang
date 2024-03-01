@@ -3,11 +3,12 @@ package dev.tlang.tlang.interpreter
 import dev.tlang.tlang.ast.common.value.{AssignVar, MultiValue}
 import dev.tlang.tlang.ast.helper.HelperStatement
 import dev.tlang.tlang.interpreter.context.Context
+import dev.tlang.tlang.tmpl.AstContext
 import tlang.core.{Null, Value}
 
 object ExecAssignVar extends Executor {
 
-  override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value]]] = {
+  override def run(statement: HelperStatement, context: AstContext): Either[ExecError, Option[List[Value]]] = {
     val varStatement = statement.asInstanceOf[AssignVar]
 
     ExecOperation.run(varStatement.value, context) match {
@@ -18,11 +19,11 @@ object ExecAssignVar extends Executor {
         case Some(value) =>
           if (value.isEmpty) Left(NoValue("Value to assign was empty", varStatement.context))
           else if (value.size == 1) {
-            context.scopes.last.variables.addOne(varStatement.name -> value.head)
+//            context.scopes.last.variables.addOne(varStatement.name -> value.head)
             Right(Some(List(value.head)))
           } else {
-            val values = MultiValue(Null.empty(), value)
-            context.scopes.last.variables.addOne(varStatement.name -> values.asInstanceOf[Value])
+            val values = MultiValue(None, value)
+//            context.scopes.last.variables.addOne(varStatement.name -> values.asInstanceOf[Value])
             Right(Some(value))
           }
       }

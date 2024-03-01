@@ -3,30 +3,27 @@ package dev.tlang.tlang.tmpl.style.astbuilder
 import dev.tlang.tlang.TLang._
 import dev.tlang.tlang.astbuilder.BuildAst.addContext
 import dev.tlang.tlang.astbuilder.{BuildHelperBlock, BuildHelperStatement}
+import dev.tlang.tlang.tmpl.AstTmplNode
 import dev.tlang.tlang.tmpl.common.ast.NativeType
 import dev.tlang.tlang.tmpl.common.astbuilder.BuildCommonTmpl
 import dev.tlang.tlang.tmpl.style.ast._
-import tlang.core.Array
-import tlang.{core, mutable}
-import tlang.internal.{ContextResource, TmplNode}
+import tlang.internal.ContextResource
 
 import scala.jdk.CollectionConverters._
 
 object BuildStyle {
 
   def buildStyle(resource: ContextResource, style: TmplStyleContext): StyleBlock = {
-    val langs = new mutable.List()
-        style.langs.asScala.foreach(str => langs.add(new core.String(str.getText)))
-    StyleBlock(addContext(resource, style), style.name.getText, langs.toArray.get().get().getValue.asInstanceOf[Array],
+    StyleBlock(addContext(resource, style), style.name.getText, style.langs.asScala.map(_.getText).toList,
       if (style.params != null && !style.params.isEmpty) Some(BuildHelperBlock.buildParams(resource, style.params.asScala.toList).map(param => NativeType(param.context, param))) else None,
       style.content.blocks.asScala.map(buildStyleStruct(resource, _)).toList)
   }
 
-//  def buildStyleBlock(resource: ContextResource, block: StyleSetAttribute): List[StyleStruct] = {
-//    StyleStruct(addContext(resource, block), block.name.getText, block.langs.asScala.map(_.getText).toList,
-//      if (block.params != null && !block.params.isEmpty) Some(BuildHelperBlock.buildParams(resource, block.params.asScala.toList).map(param => NativeType(param.context, param))) else None,
-//      buildStyleStruct(resource, block.content))
-//  }
+  //  def buildStyleBlock(resource: ContextResource, block: StyleSetAttribute): List[StyleStruct] = {
+  //    StyleStruct(addContext(resource, block), block.name.getText, block.langs.asScala.map(_.getText).toList,
+  //      if (block.params != null && !block.params.isEmpty) Some(BuildHelperBlock.buildParams(resource, block.params.asScala.toList).map(param => NativeType(param.context, param))) else None,
+  //      buildStyleStruct(resource, block.content))
+  //  }
 
   def buildStyleStruct(resource: ContextResource, struct: StyleStructContext): StyleStruct = {
     StyleStruct(addContext(resource, struct), BuildCommonTmpl.buildOptionId(resource, struct.name), if (struct.params != null && !struct.params.isEmpty) Some(struct.params.asScala.map(BuildStyle.buildStyleAttribute(resource, _)).toList) else None,
@@ -49,7 +46,7 @@ object BuildStyle {
     StyleInclude(context, NativeType(context, BuildHelperStatement.buildCallObject(resource, incl.callObj())))
   }
 
-  def buildStyleValue(resource: ContextResource, attr: StyleValueContext): TmplNode[_] = {
+  def buildStyleValue(resource: ContextResource, attr: StyleValueContext): AstTmplNode = {
     attr match {
       case array@_ if array.styleArrayValue() != null => buildArray(resource, attr.styleArrayValue())
       case number@_ if number.tmplNumberValue() != null => BuildCommonTmpl.buildNumber(resource, number.tmplNumberValue())

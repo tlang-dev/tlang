@@ -29,7 +29,9 @@ class TLangDouble(context: Option[ContextContent], value: Double) extends Primit
 
   override def getName: String = getClass.getSimpleName
 
-  override def getElement: AstValue = this
+  override def getElement: TLangDouble = this
+
+  override def getValue: Double = value
 }
 
 object TLangDouble extends TLangType {

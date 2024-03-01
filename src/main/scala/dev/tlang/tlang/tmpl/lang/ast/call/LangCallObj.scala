@@ -24,12 +24,16 @@ case class LangCallObj(context: Option[ContextContent], var props: Option[LangPr
       //        if (props.isDefined) Some(props.get.toEntity) else None,
       //        None
       //      ),
-//      BuildAstTmpl.createAttrEntity(context, "firstCall", firstCall.toEntity),
+      //      BuildAstTmpl.createAttrEntity(context, "firstCall", firstCall.toEntity),
       //      BuildLang.createArray(context, "calls", calls.map(_.toEntity))
     ))
   )
 
   override def getContext: Option[ContextContent] = context
+
+  override def getName: String = getClass.getSimpleName
+
+  override def toModel: AstModel = LangCallObj.model
 }
 
 object LangCallObj {
@@ -40,7 +44,7 @@ object LangCallObj {
 
   val model: AstModel = AstModel(None, modelName, Some(LangModel.langNode), None, Some(List(
     BuildAstTmpl.createModelAttrNull(None, Some("props")),
-//    BuildAstTmpl.createModelAttrEntity(None, Some("firstCall"), LangCallObjType.model),
+    //    BuildAstTmpl.createModelAttrEntity(None, Some("firstCall"), LangCallObjType.model),
     BuildAstTmpl.createModelAttrArray(None, Some("calls")),
   )))
 }

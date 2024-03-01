@@ -29,7 +29,7 @@ case class StyleBlock(context: Option[ContextContent], name: String, langs: List
 
   //  override def deepCopy(): StyleBlock = StyleBlock(context, new String(name), langs.map(new String(_)), params, contents.map(_.deepCopy()), scope)
 
-  override def getParams: Option[List[HelperParam]] = params.map(_.map(_.getElement))
+  override def getParams: Option[List[HelperParam]] = params.map(_.map(_.getElement.asInstanceOf[HelperParam]))
 
 
   override def getScope: Scope = scope

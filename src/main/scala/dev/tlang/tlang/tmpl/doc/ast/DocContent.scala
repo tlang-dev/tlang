@@ -1,11 +1,11 @@
 package dev.tlang.tlang.tmpl.doc.ast
 
 import dev.tlang.tlang.ast.common.ManualType
-import dev.tlang.tlang.tmpl.{AstEntity, AstModel, BuildAstTmpl}
+import dev.tlang.tlang.tmpl.{AstEntity, AstModel, AstTmplNode, BuildAstTmpl}
 import tlang.core.Type
-import tlang.internal.{ContextContent, TmplNode}
+import tlang.internal.ContextContent
 
-case class DocContent(context: Option[ContextContent], contents: List[DocContentType[_]]) extends TmplNode[DocContent] {
+case class DocContent(context: Option[ContextContent], contents: List[DocContentType[_]]) extends AstTmplNode {
   //  override def deepCopy(): DocContent = DocContent(context, contents.map(_.deepCopy().asInstanceOf[DocContentType[_]]))
 
   override def getContext: Option[ContextContent] = context
@@ -20,6 +20,10 @@ case class DocContent(context: Option[ContextContent], contents: List[DocContent
   override def getType: Type = DocContent.modelName
 
   override def getElement: DocContent = this
+
+  override def getName: String = getClass.getSimpleName
+
+  override def toModel: AstModel = DocContent.model
 }
 
 object DocContent {

@@ -1,8 +1,7 @@
 package dev.tlang.tlang.ast.model.set
 
-import tlang.core.{Null, Type}
-import tlang.internal.{ClassType, ContextContent}
+import tlang.internal.ContextContent
 
-case class ModelSetImplArray(context: Null, var modelSetEntity: Option[ModelSetEntity]) extends ModelSetValueType[ModelSetImplArray] {
+case class ModelSetImplArray(context: Option[ContextContent], var modelSetEntity: Option[ModelSetEntity]) extends ModelSetValueType[ModelSetImplArray] {
 
 }

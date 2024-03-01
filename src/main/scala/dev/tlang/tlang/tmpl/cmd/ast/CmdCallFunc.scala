@@ -1,14 +1,13 @@
 package dev.tlang.tlang.tmpl.cmd.ast
 
-import dev.tlang.tlang.ast.common.value.EntityValue
-import dev.tlang.tlang.ast.common.{ManualType, ObjType}
-import dev.tlang.tlang.ast.model.set.ModelSetEntity
-import tlang.core.{Null, Type}
-import tlang.internal.{ContextContent, TmplNode}
+import dev.tlang.tlang.ast.common.ManualType
+import dev.tlang.tlang.tmpl.{AstEntity, AstModel, AstTmplNode}
+import tlang.core.Type
+import tlang.internal.ContextContent
 
-case class CmdCallFunc(context: Null) extends TmplNode[CmdCallFunc] {
-  override def toEntity: EntityValue = EntityValue(context,
-    Some(ObjType(context, None, CmdCallFunc.modelName)),
+case class CmdCallFunc(context: Option[ContextContent]) extends AstTmplNode {
+  override def toEntity: AstEntity = AstEntity(context,
+    Some(CmdCallFunc.model),
     Some(List())
   )
 
@@ -16,11 +15,15 @@ case class CmdCallFunc(context: Null) extends TmplNode[CmdCallFunc] {
 
   override def getType: Type = CmdCallFunc.modelName
 
-  override def getContext: Null = context
+  override def getContext: Option[ContextContent] = context
 
   //  override def deepCopy(): CmdCallFunc = CmdCallFunc(context)
 
   override def getElement: CmdCallFunc = this
+
+  override def getName: String = getClass.getSimpleName
+
+  override def toModel: AstModel = CmdCallFunc.model
 }
 
 object CmdCallFunc {
@@ -29,6 +32,6 @@ object CmdCallFunc {
 
   val modelName: Type = ManualType(getClass.getPackageName, name)
 
-  val model: ModelSetEntity = ModelSetEntity(Null.empty(), modelName, Some(ObjType(Null.empty(), None, CmdModel.cmdModel.name)), None, Some(List(
+  val model: AstModel = AstModel(None, modelName, Some(CmdModel.cmdModel), None, Some(List(
   )))
 }

@@ -1,11 +1,12 @@
 package dev.tlang.tlang.ast.helper
 
 import dev.tlang.tlang.ast.common.ValueType
-import tlang.core.{Null, Type}
-import tlang.internal.{Context, ClassType, ContextContent}
+import dev.tlang.tlang.tmpl.AstContext
+import tlang.core.Type
+import tlang.internal.{ClassType, ContextContent}
 
-case class HelperParam(context: Null, param: Option[String], `type`: ValueType) extends Context {
-  override def getContext: Null = context
+case class HelperParam(context: Option[ContextContent], param: Option[String], `type`: ValueType) extends AstContext {
+  override def getContext: Option[ContextContent] = context
 
   override def getType: Type = ClassType.of(this.getClass)
 }

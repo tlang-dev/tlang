@@ -6,7 +6,7 @@ import dev.tlang.tlang.tmpl.lang.astbuilder.BuildTmplBlock
 import org.antlr.v4.runtime.ParserRuleContext
 import tlang.core.Int
 import tlang.internal
-import tlang.internal.{ContextContent, ContextResource}
+import tlang.internal.{ContextContent, ContextResource, DomainBlock}
 
 import scala.jdk.CollectionConverters._
 
@@ -23,7 +23,7 @@ object BuildAst {
       if (header.uses != null && !header.uses.isEmpty) Some(header.uses.asScala.toList.map(use => buildUse(resource, use))) else None)
   }
 
-  def buildBody(resource: ContextResource, bodies: List[DomainBlockContext]): List[internal.DomainBlock] = {
+  def buildBody(resource: ContextResource, bodies: List[DomainBlockContext]): List[DomainBlock] = {
     bodies.map {
       case body@_ if body.modelBlock() != null => BuildModelBlock.build(resource, body.modelBlock())
       case body@_ if body.helperBlock() != null => BuildHelperBlock.build(resource, body.helperBlock())

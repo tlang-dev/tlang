@@ -2,12 +2,12 @@ package dev.tlang.tlang.tmpl.lang.ast
 
 import dev.tlang.tlang.ast.common.ManualType
 import dev.tlang.tlang.tmpl.doc.ast.DocModel
-import dev.tlang.tlang.tmpl.{AstEntity, AstModel, BuildAstTmpl}
+import dev.tlang.tlang.tmpl.{AstEntity, AstModel, AstTmplNode, BuildAstTmpl}
 import tlang.core.Type
-import tlang.internal.{Context, ContextContent, TmplNode}
+import tlang.internal.{ContextContent, TmplNode}
 
-case class LangExprBlock(context: Option[ContextContent], var exprs: List[TmplNode[_]]) extends LangExprContent[LangExprBlock] with Context {
-  //  override def deepCopy(): LangExprBlock = LangExprBlock(context, exprs.map(_.deepCopy().asInstanceOf[TmplNode[_]]))
+case class LangExprBlock(context: Option[ContextContent], var exprs: List[AstTmplNode]) extends LangExprContent[LangExprBlock] {
+  //  override def deepCopy(): LangExprBlock = LangExprBlock(context, exprs.map(_.deepCopy().asInstanceOf[AstTmplNode]))
 
   override def toEntity: AstEntity = AstEntity(context,
     Some(LangExprBlock.model),

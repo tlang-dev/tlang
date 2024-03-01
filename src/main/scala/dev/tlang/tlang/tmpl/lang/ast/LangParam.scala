@@ -2,11 +2,11 @@ package dev.tlang.tlang.tmpl.lang.ast
 
 import dev.tlang.tlang.ast.common.ManualType
 import dev.tlang.tlang.tmpl.doc.ast.DocModel
-import dev.tlang.tlang.tmpl.{AstEntity, AstModel, BuildAstTmpl}
+import dev.tlang.tlang.tmpl._
 import tlang.core.Type
-import tlang.internal.{ContextContent, TmplID, TmplNode}
+import tlang.internal.ContextContent
 
-case class LangParam(context: Option[ContextContent], var annots: Option[List[LangAnnotation]] = None, var name: TmplID, var `type`: Option[LangType]) extends TmplNode[LangParam] {
+case class LangParam(context: Option[ContextContent], var annots: Option[List[LangAnnotation]] = None, var name: TmplID, var `type`: Option[LangType]) extends AstTmplNode {
   //  override def deepCopy(): LangParam = LangParam(context,
   //    if (annots.isDefined) Some(annots.get.map(_.deepCopy())) else None,
   //    name.deepCopy().asInstanceOf[TmplID],
@@ -20,7 +20,7 @@ case class LangParam(context: Option[ContextContent], var annots: Option[List[La
       //        if (annots.isDefined) Some(ArrayValue(context, Some(annots.get.map(value => ComplexAttribute(context, None, None, Operation(context, None, Right(value.toEntity))))))) else None,
       //        None
       //      ),
-//      BuildAstTmpl.createAttrEntity(context, "name", Some(TmplID.TYPE), name.toEntity),
+      //      BuildAstTmpl.createAttrEntity(context, "name", Some(TmplID.TYPE), name.toEntity),
       //      BuildLang.createAttrNull(context, "tType",
       //        if (`type`.isDefined) Some(`type`.get.toEntity) else None,
       //        None
@@ -33,6 +33,10 @@ case class LangParam(context: Option[ContextContent], var annots: Option[List[La
   override def getElement: LangParam = this
 
   override def getType: Type = LangParam.modelName
+
+  override def getName: String = getClass.getSimpleName
+
+  override def toModel: AstModel = LangParam.model
 }
 
 object LangParam {

@@ -19,18 +19,18 @@ object ResolveUtils {
     func
   }
 
-  def findInVars(contents: List[ModelContent[_]], name: String): Option[AssignVar] = {
-    var i = 0
-    var entity: Option[AssignVar] = None
-    while (entity.isEmpty && i < contents.size) {
-      contents(i) match {
-        case newEntity: AssignVar => if (newEntity.name == name) entity = Some(newEntity)
-        case _ =>
-      }
-      i += 1
-    }
-    entity
-  }
+//  def findInVars(contents: List[AstM], name: String): Option[AssignVar] = {
+//    var i = 0
+//    var entity: Option[AssignVar] = None
+//    while (entity.isEmpty && i < contents.size) {
+//      contents(i) match {
+//        case newEntity: AssignVar => if (newEntity.name == name) entity = Some(newEntity)
+//        case _ =>
+//      }
+//      i += 1
+//    }
+//    entity
+//  }
 
   def findInModels(contents: List[ModelContent[_]], name: String): Option[ModelSetEntity] = {
     var i = 0

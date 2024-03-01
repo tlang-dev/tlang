@@ -24,24 +24,30 @@ case class EntityValue(context: Option[ContextContent],
     Some(List())
   )
 
-  def getAttrByName(name: core.String): Null = {
-    if (attrs.isEmpty) Null.empty()
-    else {
-      val attr = attrs.get.find(attr => new core.String(attr.attr.orNull).isEqual(name).get())
-      if (attr.isEmpty) Null.empty()
-      else {
-        val op = attr.get.value
-        ExecOperation.run(op, Context(List(scope))) match {
-          case Left(value) => Null.empty()
-          //          case Right(value) => Null.of(value.get.head)
-        }
-      }
-    }
-  }
+//  def getAttrByName(name: core.String): Null = {
+//    if (attrs.isEmpty) Null.empty()
+//    else {
+//      val attr = attrs.get.find(attr => new core.String(attr.attr.orNull).isEqual(name).get())
+//      if (attr.isEmpty) Null.empty()
+//      else {
+//        val op = attr.get.value
+//        ExecOperation.run(op, Context(List(scope))) match {
+//          case Left(value) => Null.empty()
+//          //          case Right(value) => Null.of(value.get.head)
+//        }
+//      }
+//    }
+//  }
 
   override def getContext: Option[ContextContent] = context
 
   override def getElement: EntityValue = this
+
+  override def getValue: EntityValue = this
+
+  override def getName: String = getClass.getSimpleName
+
+  override def toModel: AstModel = EntityValue.model
 }
 
 object EntityValue {

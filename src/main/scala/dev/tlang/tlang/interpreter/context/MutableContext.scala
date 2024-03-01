@@ -1,5 +1,7 @@
 package dev.tlang.tlang.interpreter.context
 
+import dev.tlang.tlang.tmpl.AstContext
+
 import scala.collection.mutable.ListBuffer
 
 class MutableContext(scopes: ListBuffer[Scope]) {
@@ -29,7 +31,8 @@ class MutableContext(scopes: ListBuffer[Scope]) {
 
 object MutableContext {
 
-  def toMutable(context: Context): MutableContext = {
-    new MutableContext(context.scopes.to(ListBuffer))
+  def toMutable(context: AstContext): MutableContext = {
+//    new MutableContext(context.scopes.to(ListBuffer))
+    new MutableContext(ListBuffer())
   }
 }

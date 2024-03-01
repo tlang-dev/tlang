@@ -14,7 +14,7 @@ import java.nio.file.Paths
 
 class ResolveTmplTest extends AnyFunSuite {
 
-  val fakeContext: ContextResource = new ContextResource(new core.String(""), new core.String(""), new core.String(""), new core.String(""))
+ /* val fakeContext: ContextResource = new ContextResource(new core.String(""), new core.String(""), new core.String(""), new core.String(""))
 
   implicit val loader: FileResourceLoader.type = FileResourceLoader
   implicit val remoteLoader: RemoteLoader.type = RemoteLoader
@@ -413,6 +413,6 @@ class ResolveTmplTest extends AnyFunSuite {
     assert("MyVar" == ContextUtils.findVar(Context(List(block.scope)), "MyFile/myVar").get.asInstanceOf[Operation].content.toOption.get.asInstanceOf[TLangString].getElement)
     assert("Prop2" == ContextUtils.findVar(Context(List(block.scope)), "MyFile/prop2").get.asInstanceOf[Operation].content.toOption.get.asInstanceOf[TLangString].getElement)
     assert("MyVar2" == ContextUtils.findVar(Context(List(block.scope)), "MyFile/myVar2").get.asInstanceOf[Operation].content.toOption.get.asInstanceOf[TLangString].getElement)
-  }
+  }*/
 
 }

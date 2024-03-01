@@ -4,13 +4,14 @@ import dev.tlang.tlang.ast.common.call.{CallFuncParam, EmbeddedValue, SetAttribu
 import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.helper.HelperStatement
 import dev.tlang.tlang.ast.model.set.{ModelSetRef, ModelSetRefCurrying, ModelSetRefValue}
-import dev.tlang.tlang.interpreter.context.{Context, ContextUtils}
-import tlang.core.{Null, Value}
+import dev.tlang.tlang.interpreter.context.ContextUtils
+import dev.tlang.tlang.tmpl.AstContext
+import tlang.core.Value
 
 import scala.collection.mutable.ListBuffer
 
 object ExecModelSetRef extends Executor {
-  override def run(statement: HelperStatement, context: Context): Either[ExecError, Option[List[Value]]] = {
+  override def run(statement: HelperStatement, context: AstContext): Either[ExecError, Option[List[Value]]] = {
     val ref = statement.asInstanceOf[ModelSetRef]
     if (ref.func.isDefined) {
       if (ref.currying.isEmpty) ExecCallRefFunc.runCallFunc(ref.func, None, context)
@@ -28,7 +29,7 @@ object ExecModelSetRef extends Executor {
     }
   }
 
-  def mapCurrying(curry: List[ModelSetRefCurrying], context: Context): Either[ExecError, List[CallFuncParam]] = {
+  def mapCurrying(curry: List[ModelSetRefCurrying], context: AstContext): Either[ExecError, List[CallFuncParam]] = {
     var i = 0
     var error: Option[ExecError] = None
     val curries = ListBuffer.empty[CallFuncParam]
@@ -43,7 +44,7 @@ object ExecModelSetRef extends Executor {
     else Right(curries.toList)
   }
 
-  def mapSetRefCurrying(curry: ModelSetRefCurrying, context: Context): Either[ExecError, CallFuncParam] = {
+  def mapSetRefCurrying(curry: ModelSetRefCurrying, context: AstContext): Either[ExecError, CallFuncParam] = {
     if (curry.values.isEmpty) Right(CallFuncParam(curry.context, None))
     else {
       var i = 0
@@ -61,7 +62,7 @@ object ExecModelSetRef extends Executor {
     }
   }
 
-  def mapSetAttribute(param: ModelSetRefValue, context: Context): Either[ExecError, SetAttribute] = {
+  def mapSetAttribute(param: ModelSetRefValue, context: AstContext): Either[ExecError, SetAttribute] = {
     param match {
       case setRef: ModelSetRef => ExecModelSetRef.run(setRef, context) match {
         case Left(err) => Left(err)
@@ -70,7 +71,7 @@ object ExecModelSetRef extends Executor {
           else Right(SetAttribute(setRef.context, None, Operation(setRef.context, None, Right(EmbeddedValue(setRef.context, value.get.head)))))
       }
       case operation: Operation => Right(SetAttribute(operation.context, None, operation))
-      case _ => Left(NotImplemented("Should be a ref or an operation", Null.empty()))
+      case _ => Left(NotImplemented("Should be a ref or an operation", None))
     }
   }
 }

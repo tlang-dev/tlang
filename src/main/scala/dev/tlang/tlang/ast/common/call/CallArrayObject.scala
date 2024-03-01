@@ -1,11 +1,12 @@
 package dev.tlang.tlang.ast.common.call
 
 import dev.tlang.tlang.ast.common.operation.Operation
-import tlang.core.{Null, Type}
-import tlang.internal.{Context, ClassType, ContextContent}
+import dev.tlang.tlang.tmpl.AstContext
+import tlang.core.Type
+import tlang.internal.{ClassType, ContextContent}
 
-case class CallArrayObject(context: Null, name: String, position: Operation) extends CallObjectType with Context {
-  override def getContext: Null = context
+case class CallArrayObject(context: Option[ContextContent], name: String, position: Operation) extends CallObjectType with AstContext {
+  override def getContext: Option[ContextContent] = context
 
   override def getType: Type = ClassType.of(this.getClass)
 }

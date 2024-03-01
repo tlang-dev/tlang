@@ -12,8 +12,8 @@ import dev.tlang.tlang.interpreter.instruction
 import dev.tlang.tlang.interpreter.instruction._
 import dev.tlang.tlang.tmpl.lang.ast.LangBlock
 import tlang.core
+import tlang.core.Lazy
 import tlang.core.func.FuncRet
-import tlang.core.{Lazy, Null}
 import tlang.internal.{AnyTmplBlock, ContextContent, DomainBlock}
 
 object BuildProgram {
@@ -37,7 +37,7 @@ object BuildProgram {
   }
 
   def buildModel(context: BuilderContext, model: ModelBlock): Unit = {
-    val label = model.context.get().getValue.asInstanceOf[ContextContent].getResource.getPkg + "." + model.context.get().getValue.asInstanceOf[ContextContent].getResource.getName
+    val label = model.context.get.getValue.getResource.getPkg + "." + model.context.get.getValue.getResource.getName
     val boxBuilder = new BoxBuilder()
     boxBuilder.setBoxId(label)
     context.section.addInstruction(StartStaticBox(label))
@@ -177,22 +177,22 @@ object BuildProgram {
   }
 
   def buildBool(context: BuilderContext, bool: TLangBool): Unit = {
-    context.section.addInstruction(Set(Some(new core.Bool(bool.getElement.get()))))
+    context.section.addInstruction(Set(Some(new core.Bool(bool.getValue))))
     context.section.addInstruction(Put(popFromBox = true))
   }
 
   def buildString(context: BuilderContext, str: TLangString): Unit = {
-    context.section.addInstruction(Set(Some(new core.String(str.getElement))))
+    context.section.addInstruction(Set(Some(new core.String(str.getValue))))
     context.section.addInstruction(Put(popFromBox = true))
   }
 
   def buildLong(context: BuilderContext, long: TLangLong): Unit = {
-    context.section.addInstruction(Set(Some(new core.Long(long.getElement.get()))))
+    context.section.addInstruction(Set(Some(new core.Long(long.getValue.intValue()))))
     context.section.addInstruction(Put(popFromBox = true))
   }
 
   def buildDouble(context: BuilderContext, double: TLangDouble): Unit = {
-    context.section.addInstruction(Set(Some(new core.Double(double.getElement))))
+    context.section.addInstruction(Set(Some(new core.Double(double.getValue))))
     context.section.addInstruction(Put(popFromBox = true))
   }
 
@@ -234,12 +234,12 @@ object BuildProgram {
 
   }
 
-  def getContentType(context: Null, name: Option[String] = None): String = {
+  def getContentType(context: Option[ContextContent], name: Option[String] = None): String = {
     var pkg = ""
     var newName = name.getOrElse("")
-    if (context.isNotNull.get()) {
-      pkg = context.get().getValue.asInstanceOf[ContextContent].getResource.getPkg.toString
-      if (name.isEmpty) newName = context.get().getValue.asInstanceOf[ContextContent].getResource.getName.toString
+    if (context.isDefined) {
+      pkg = context.get.getValue.getResource.getPkg.toString
+      if (name.isEmpty) newName = context.get.getValue.getResource.getName.toString
     }
     if (pkg.isEmpty) newName
     else pkg + "." + newName

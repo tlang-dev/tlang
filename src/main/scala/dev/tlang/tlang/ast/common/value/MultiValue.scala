@@ -2,15 +2,16 @@ package dev.tlang.tlang.ast.common.value
 
 import dev.tlang.tlang.ast.common.call.ComplexValueStatement
 import dev.tlang.tlang.ast.common.{ObjType, ValueType}
-import tlang.core.{Null, Type, Value}
-import tlang.internal.{Context, ClassType, ContextContent}
+import dev.tlang.tlang.tmpl.AstContext
+import tlang.core.{Type, Value}
+import tlang.internal.{ClassType, ContextContent}
 
-case class MultiValue(context: Null, values: List[Value]) extends ComplexValueStatement[MultiValue] with Context {
+case class MultiValue(context: Option[ContextContent], values: List[Value]) extends ComplexValueStatement[MultiValue] with AstContext {
 
   override def getType: Type = MultiValue.getType
 
 
-  override def getContext: Null = context
+  override def getContext: Option[ContextContent] = context
 }
 
 object MultiValue extends TLangType {

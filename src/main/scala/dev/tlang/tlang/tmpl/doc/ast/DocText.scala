@@ -1,7 +1,7 @@
 package dev.tlang.tlang.tmpl.doc.ast
 
 import dev.tlang.tlang.ast.common.ManualType
-import dev.tlang.tlang.tmpl.{AstEntity, AstModel, BuildAstTmpl}
+import dev.tlang.tlang.tmpl.{AstEntity, AstModel}
 import tlang.core.Type
 import tlang.internal.ContextContent
 
@@ -13,7 +13,7 @@ case class DocText(context: Option[ContextContent], text: DocTextType[_]) extend
   override def toEntity: AstEntity = AstEntity(context,
     Some(DocText.model),
     Some(List(
-//      BuildAstTmpl.createAttrEntity(context, "text", text.toEntity),
+      //      BuildAstTmpl.createAttrEntity(context, "text", text.toEntity),
     ))
   )
 
@@ -22,6 +22,10 @@ case class DocText(context: Option[ContextContent], text: DocTextType[_]) extend
   override def getElement: DocText = this
 
   override def getType: Type = DocText.modelName
+
+  override def getName: String = getClass.getSimpleName
+
+  override def toModel: AstModel = DocText.model
 }
 
 object DocText {

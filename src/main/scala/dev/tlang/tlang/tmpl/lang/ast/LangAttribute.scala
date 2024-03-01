@@ -3,9 +3,9 @@ package dev.tlang.tlang.tmpl.lang.ast
 import dev.tlang.tlang.ast.common.ManualType
 import dev.tlang.tlang.tmpl.doc.ast.DocModel
 import dev.tlang.tlang.tmpl.lang.ast.condition.LangOperation
-import dev.tlang.tlang.tmpl.{AstEntity, AstModel, AstTmplNode, BuildAstTmpl}
+import dev.tlang.tlang.tmpl._
 import tlang.core.Type
-import tlang.internal.{ContextContent, TmplID}
+import tlang.internal.ContextContent
 
 case class LangAttribute(context: Option[ContextContent], var attr: Option[TmplID], var `type`: Option[LangType], var value: LangOperation) extends AstTmplNode {
   //  override def deepCopy(): LangAttribute = LangAttribute(context,

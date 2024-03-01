@@ -39,8 +39,8 @@ class ResolveModelTest extends AnyFunSuite {
       }
     }
     val module = BuildModuleTree.build(Paths.get("Root"), "").toOption.get
-    val entity = ModelSetEntity(Null.empty(), ManualType("", "MyEntity"), None, Some(List(ModelSetAttribute(Null.empty(), Some("param1"), ModelSetRef(Null.empty(), List("Main", "myBool"), None)))), Some(List(ModelSetAttribute(Null.empty(), Some("attr1"), ModelSetRef(Null.empty(), List("Main", "myString"), None)))))
-    ResolveModel.resolveSetEntity(entity, module, List(), Resource("Root", "", "", "", DomainModel(Null.empty(), None, List())))
+    val entity = ModelSetEntity(None, ManualType("", "MyEntity"), None, Some(List(ModelSetAttribute(None, Some("param1"), ModelSetRef(None, List("Main", "myBool"), None)))), Some(List(ModelSetAttribute(None, Some("attr1"), ModelSetRef(None, List("Main", "myString"), None)))))
+    ResolveModel.resolveSetEntity(entity, module, List(), Resource("Root", "", "", "", DomainModel(None, None, List())))
     //    assert(ContextUtils.findVar(Context(List(entity.scope)), "attr1").get.asInstanceOf[TLangBool].getElement)
     //    assert("myString" == ContextUtils.findVar(Context(List(entity.scope)), "param1").get.asInstanceOf[TLangString].getElement)
   }

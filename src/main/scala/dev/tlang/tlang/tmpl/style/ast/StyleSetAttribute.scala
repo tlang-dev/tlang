@@ -1,11 +1,11 @@
 package dev.tlang.tlang.tmpl.style.ast
 
 import dev.tlang.tlang.ast.common.ManualType
-import dev.tlang.tlang.tmpl.{AstEntity, AstModel, BuildAstTmpl}
+import dev.tlang.tlang.tmpl._
 import tlang.core.Type
-import tlang.internal.{ContextContent, TmplID, TmplNode}
+import tlang.internal.{ContextContent, TmplNode}
 
-case class StyleSetAttribute(context: Option[ContextContent], name: Option[TmplID], value: TmplNode[_]) extends StyleAttribute[StyleSetAttribute] {
+case class StyleSetAttribute(context: Option[ContextContent], name: Option[TmplID], value: AstTmplNode) extends StyleAttribute[StyleSetAttribute] {
   override def toEntity: AstEntity = AstEntity(context,
     Some(StyleSetAttribute.model),
     Some(List(
@@ -23,7 +23,7 @@ case class StyleSetAttribute(context: Option[ContextContent], name: Option[TmplI
 
   //  override def deepCopy(): StyleSetAttribute = StyleSetAttribute(context,
   //    if (name.isDefined) Some(name.get.deepCopy().asInstanceOf[TmplID]) else None,
-  //    value.deepCopy().asInstanceOf[TmplNode[_]]
+  //    value.deepCopy().asInstanceOf[AstTmplNode]
   //  )
 
   override def getContext: Option[ContextContent] = context
