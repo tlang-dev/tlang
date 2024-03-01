@@ -38,7 +38,7 @@ modelSetValueType: modelSetType | modelSetArray | modelSetFuncDef | modelSetRef 
 
 modelSetType: type=ID;
 
-modelSetArray: array=ID '[' RSQUARE;
+modelSetArray: array=ID LSQUARE RSQUARE;
 
 modelSetFuncDef: '(' (paramTypes+=modelSetValueType (',' paramTypes+=modelSetValueType)*)? ')' (':'  '(' retTypes+=modelSetValueType (',' retTypes+=modelSetValueType)* ')' )?;
 

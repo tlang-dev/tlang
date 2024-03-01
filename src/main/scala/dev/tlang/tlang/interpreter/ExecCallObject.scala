@@ -7,7 +7,7 @@ import dev.tlang.tlang.ast.common.value._
 import dev.tlang.tlang.ast.helper.{HelperFunc, HelperStatement}
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetEntity, ModelSetRef}
 import dev.tlang.tlang.interpreter.context.{Context, ContextUtils, Scope}
-import dev.tlang.tlang.tmpl.AstContext
+import dev.tlang.tlang.tmpl.{AstContext, AstValue}
 import tlang.core.{Null, Value}
 import tlang.internal.ContextContent
 
@@ -19,10 +19,11 @@ object ExecCallObject extends Executor {
 
   override def run(statement: HelperStatement, context: AstContext): Either[ExecError, Option[List[Value]]] = {
     val arg1 = statement.asInstanceOf[CallObject]
-    loopOverStatement(arg1.statements, context)
+//    loopOverStatement(arg1.statements, context)
+    Right(None)
   }
 
-  @tailrec
+ /* @tailrec
   private def loopOverStatement(statements: List[CallObjectType], context: AstContext, index: Int = 0, callable: Option[List[Value]] = None): Either[ExecError, Option[List[Value]]] = {
     if (index >= statements.size) Right(callable)
     else {
@@ -64,7 +65,7 @@ object ExecCallObject extends Executor {
     }
   }
 
-  private def findInContext(statement: CallObjectType, context: AstContext): Either[ExecError, Option[List[Value]]] = {
+  private def findInContext(statement: CallObjectType, context: AstContext): Either[ExecError, Option[List[AstValue]]] = {
     statement match {
       case CallArrayObject(contextContent, name, position) => ContextUtils.findVar(context, name) match {
         case Some(array) => resolveArray(position, array.asInstanceOf[ArrayValue], context)
@@ -88,7 +89,7 @@ object ExecCallObject extends Executor {
     }
   }
 
-  private def findInCallable(statement: CallObjectType, callable: Option[List[Value]], context: AstContext): Either[ExecError, Option[List[Value]]] = {
+  private def findInCallable(statement: CallObjectType, callable: Option[List[AstValue]], context: AstContext): Either[ExecError, Option[List[Value]]] = {
     statement match {
       case callArray: CallArrayObject => resolveArrayInCallable(callArray, callable, context)
       case caller: CallFuncObject => resolveFunc(caller, callable, context)
@@ -98,7 +99,7 @@ object ExecCallObject extends Executor {
     }
   }
 
-  def resolveCallVar(name: String, callable: Option[List[Value]], context: AstContext, caller: CallObjectType): Either[ExecError, Option[List[Value]]] = {
+  def resolveCallVar(name: String, callable: Option[List[AstValue]], context: AstContext, caller: CallObjectType): Either[ExecError, Option[List[Value]]] = {
     pickFirst(callable) match {
       case Left(error) => Left(error)
       case Right(value) => value match {
@@ -109,7 +110,7 @@ object ExecCallObject extends Executor {
     }
   }
 
-  def resolveArray(position: Operation, array: ArrayValue, context: AstContext): Either[ExecError, Option[List[Value]]] = {
+  def resolveArray(position: Operation, array: ArrayValue, context: AstContext): Either[ExecError, Option[List[AstValue]]] = {
 
     def resolve(posValue: Value): Either[ExecError, Option[List[Value]]] = {
       array.tbl match {
@@ -145,7 +146,7 @@ object ExecCallObject extends Executor {
   }
 
   //  @tailrec
-  private def resolveArrayInCallable(call: CallArrayObject, callable: Option[List[Value]], context: AstContext): Either[ExecError, Option[List[Value]]] = {
+  private def resolveArrayInCallable(call: CallArrayObject, callable: Option[List[AstValue]], context: AstContext): Either[ExecError, Option[List[Value]]] = {
     pickFirst(callable) match {
       case Left(error) => Left(error)
       case Right(value) => value match {
@@ -163,7 +164,7 @@ object ExecCallObject extends Executor {
     }
   }
 
-  def findInImpl(name: String, impl: EntityImpl, context: AstContext): Either[ExecError, Option[List[Value]]] = {
+  def findInImpl(name: String, impl: EntityImpl, context: AstContext): Either[ExecError, Option[List[AstValue]]] = {
     if (impl.attrs.isDefined) findInAttrs(name, impl.attrs.get, context)
     else Left(CallableNotFound(name, impl.context))
   }
@@ -186,7 +187,7 @@ object ExecCallObject extends Executor {
     else findModelInEntity(name, entity, context, caller)
   }
 
-  def findInAttrs(name: String, attrs: List[ComplexAttribute], context: AstContext): Either[ExecError, Option[List[Value]]] = {
+  def findInAttrs(name: String, attrs: List[ComplexAttribute], context: AstContext): Either[ExecError, Option[List[AstValue]]] = {
     attrs.find(_.attr.getOrElse(false).equals(name)) match {
       case Some(value) => value.value match {
         case operation: Operation => ExecOperation.run(operation, context)
@@ -318,6 +319,6 @@ object ExecCallObject extends Executor {
     if (error.isDefined) Left(error.get)
     else if (values.isEmpty) Right(None)
     else Right(Some(values.toList))
-  }
+  }*/
 
 }

@@ -31,8 +31,8 @@ object LangModel {
   )))
 
   val getAll: List[AstModel] = List(
-    LangBlock.model,
     LangFullBlock.model,
+    LangBlock.model,
     LangPkg.model,
     LangUse.model,
     LangContent.model,

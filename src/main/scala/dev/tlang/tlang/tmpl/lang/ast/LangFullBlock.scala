@@ -45,7 +45,7 @@ case class LangFullBlock(context: Option[ContextContent],
 
   override def getElement: LangFullBlock = this
 
-  override def getType: Type = LangFullBlock.modelName
+  override def getType: Type = LangFullBlock.modelType
 
   override def getName: String = getClass.getSimpleName
 
@@ -55,9 +55,9 @@ case class LangFullBlock(context: Option[ContextContent],
 object LangFullBlock {
   val name: String = this.getClass.getSimpleName.replace("$", "")
 
-  val modelName: Type = ManualType(DocModel.pkg, name)
+  val modelType: Type = ManualType(LangModel.pkg, name)
 
-  val model: AstModel = AstModel(None, modelName, Some(LangModel.langNode), None, Some(List(
+  val model: AstModel = AstModel(None, modelType, Some(LangModel.langNode), None, Some(List(
     BuildAstTmpl.createModelAttrNull(None, Some("tPkg")),
     BuildAstTmpl.createModelAttrNull(None, Some("uses")),
     BuildAstTmpl.createModelAttrBool(None, Some("specialized")),

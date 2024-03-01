@@ -22,7 +22,7 @@ object ExecAssignVar extends Executor {
 //            context.scopes.last.variables.addOne(varStatement.name -> value.head)
             Right(Some(List(value.head)))
           } else {
-            val values = MultiValue(None, value)
+//            val values = MultiValue(None, value)
 //            context.scopes.last.variables.addOne(varStatement.name -> values.asInstanceOf[Value])
             Right(Some(value))
           }

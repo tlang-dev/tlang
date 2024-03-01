@@ -8,12 +8,12 @@ import scala.collection.mutable
 
 object TLangModuleList {
 
-  def getClass(name: String, project: Option[String] = None): TLangClass = {
+  def getClass(name: String, project: Option[String] = None): Option[TLangClass] = {
     if (project.isDefined) {
       val module = modules(project.get)
-      if (module.classes.contains(name)) return module.classes(name)
+      if (module.classes.contains(name)) return module.classes.get(name)
     }
-    coreClasses(name)
+    coreClasses.get(name)
   }
 
   val coreClasses: mutable.Map[String, TLangClass] = {

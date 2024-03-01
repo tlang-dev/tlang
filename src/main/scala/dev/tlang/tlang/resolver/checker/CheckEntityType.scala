@@ -3,6 +3,7 @@ package dev.tlang.tlang.resolver.checker
 import dev.tlang.tlang.ast.common.value.EntityValue
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.resolver.{ResolverError, TypeError}
+import dev.tlang.tlang.tmpl.AstValue
 import tlang.core.Value
 
 import scala.collection.mutable.ListBuffer
@@ -29,7 +30,7 @@ object CheckEntityType {
     else Right(())
   }
 
-  private def checkType(errors: ListBuffer[ResolverError], valType: String, value: Value): Unit = {
+  private def checkType(errors: ListBuffer[ResolverError], valType: String, value: AstValue): Unit = {
     CheckType.checkType(valType, value) match {
       case Left(errs) => errors.addAll(errs)
       case Right(_) =>

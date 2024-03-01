@@ -39,7 +39,7 @@ class RunnerTest extends AnyFunSuiteLike {
     val parameter = Parameter(0, 7, logger)
     new Runner().run(context.program, parameter)
     val logs = logger.getLogs
-    assert(logs(17) == "Jumping to: 0:2")
+    assert(logs(19) == "Jumping to: 0:2")
   }
 
   test("test run model") {
@@ -110,7 +110,7 @@ class RunnerTest extends AnyFunSuiteLike {
     val parameter = Parameter(0, 0, logger)
     new Runner().run(context.program, parameter)
     val logs = logger.getLogs
-    assert(logs(20) == "Jumping to: 0:20")
+    assert(logs(20) == "Jumping to: 0:21")
   }
 
   test("test call func with return") {
@@ -136,9 +136,9 @@ class RunnerTest extends AnyFunSuiteLike {
     val parameter = Parameter(0, 0, logger)
     new Runner().run(context.program, parameter)
     val logs = logger.getLogs
-    assert(logs(15) == "[RefFuncSet] Section n°: 0, Instruction n°: 14")
-    assert(logs(18) == "Jumping to: 0:6")
-    assert(logs(19) == "[RefFuncGet] Section n°: 0, Instruction n°: 6")
+    assert(logs(15) == "[RefFuncSet] Section n°: 0, Instruction n°: 15")
+    assert(logs(20) == "Jumping back to: 0:6")
+    assert(logs(21) == "[RefFuncGet] Section n°: 0, Instruction n°: 6")
   }
 
   test("test call Terminal") {
@@ -149,7 +149,7 @@ class RunnerTest extends AnyFunSuiteLike {
         |helper {
         |
         |func myFunc {
-        |  Terminal.println("This is a test")
+        |  Terminal.println("This is a test! If it's working, you should see this in terminal")
         |}
         |
         |}
@@ -163,7 +163,43 @@ class RunnerTest extends AnyFunSuiteLike {
     val parameter = Parameter(0, 0, logger)
     new Runner().run(context.program, parameter)
     val logs = logger.getLogs
-    assert(logs(6) == "[CallCore] Section n°: 0, Instruction n°: 4")
+    assert(logs(8) == "[CallCore] Section n°: 0, Instruction n°: 6")
   }
+
+  test("test call attr in entity") {
+    val lexer = new CommonLexer(CharStreams.fromString(
+      """
+        |use io.Terminal
+        |
+        |helper {
+        |func myFunc {
+        |  Terminal.println(myEntity.attr1)
+        |}
+        |
+        |}
+        |
+        |model {
+        |
+        |let myEntity = {
+        |  attr1 = "If you see this in terminal, it's working"
+        |}
+        |
+        |}
+        |
+        |""".stripMargin))
+    val tokens = new CommonTokenStream(lexer)
+    val parser = new TLang(tokens)
+    val domain = BuildAst.build(fakeContext, parser.domainModel())
+    val context = BuilderContext(module = Module("test", fakeManifest, Map(), None, ""), resource = Resource("test", "test", "test", "test", domain))
+    BuildProgram.buildProgram(context, domain)
+    val logger = new TestLogger
+    val parameter = Parameter(0, 2, logger)
+    new Runner().run(context.program, parameter)
+    val logs = logger.getLogs
+    //assert(logs(9) == "[Label] New label: tlang.tmpl.lang.LangBlock.name")
+    //assert(logs(logs.length-2) == "End of label:tlang.tmpl.lang.LangBlock")
+  }
+
+
 
 }

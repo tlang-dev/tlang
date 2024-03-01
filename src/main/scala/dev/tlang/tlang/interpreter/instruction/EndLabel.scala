@@ -1,12 +1,11 @@
 package dev.tlang.tlang.interpreter.instruction
 
 import dev.tlang.tlang.interpreter.ExecError
-import dev.tlang.tlang.interpreter.context.{JumpIndex, State}
+import dev.tlang.tlang.interpreter.context.State
 
-case class Back(pos: JumpIndex) extends Instruction with ExecJump {
-
+case class EndLabel(name: String) extends Instruction with GotoBack {
   override def run(state: State): Either[ExecError, Unit] = {
-    state.jumpBackTo(pos)
+    state.getLogger.debug("End of label:" + name)
     Right(())
   }
 }

@@ -1,7 +1,7 @@
 package dev.tlang.tlang.interpreter.recipe
 
 import dev.tlang.tlang.ast.DomainModel
-import dev.tlang.tlang.ast.common.call.{CallFuncObject, CallObject, CallVarObject, ComplexValueStatement}
+import dev.tlang.tlang.ast.common.call._
 import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value._
 import dev.tlang.tlang.ast.helper._
@@ -10,21 +10,24 @@ import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.interpreter.context.JumpIndex
 import dev.tlang.tlang.interpreter.instruction
 import dev.tlang.tlang.interpreter.instruction._
+import dev.tlang.tlang.tmpl.AstAnyTmplBlock
 import dev.tlang.tlang.tmpl.lang.ast.LangBlock
 import tlang.core
 import tlang.core.Lazy
 import tlang.core.func.FuncRet
-import tlang.internal.{AnyTmplBlock, ContextContent, DomainBlock}
+import tlang.internal.{ContextContent, DomainBlock}
 
 object BuildProgram {
 
   def buildProgram(context: BuilderContext, domain: DomainModel): Unit = {
     context.program.addSection(context.section)
-    context.section.addInstruction(Label(domain.getType.getType.toString))
+    val label = domain.getType.getType.toString
+    context.section.addInstruction(Label(label))
     context.labels.addOne(domain.getType.getType.toString -> JumpIndex(context.sectionPos, context.instrPos))
     context.section.addInstruction(StartBlock())
     buildBody(context, domain.body)
     context.section.addInstruction(EndBlock())
+    context.section.addInstruction(EndLabel(label))
     context.program.setLabels(context.labels.toMap)
   }
 
@@ -32,7 +35,7 @@ object BuildProgram {
     bodies.foreach {
       case model: ModelBlock => buildModel(context, model)
       case helper: HelperBlock => buildHelper(context, helper)
-      case tmpl: AnyTmplBlock[_] => buildTmpl(context, tmpl)
+      case tmpl: AstAnyTmplBlock => buildTmpl(context, tmpl)
     }
   }
 
@@ -43,8 +46,8 @@ object BuildProgram {
     context.section.addInstruction(StartStaticBox(label))
     model.content.foreach(_.foreach {
       case assignVar: AssignVar => buildAssignVarInModel(context, boxBuilder, assignVar)
-      case setEntity: ModelSetEntity => ???
-      case _ =>
+      case setEntity: ModelSetEntity => BuildStaticModel.buildStaticModel(context, setEntity)
+      case _ => println(getClass.getName + ": Not implemented yet")
     })
     context.section.addInstruction(EndStaticBox(label))
   }
@@ -62,6 +65,7 @@ object BuildProgram {
     context.section.addInstruction(SetLazyStatic(boxBuilder.getBoxId, lazyVar.pos))
     callOnce.getIndex = JumpIndex(context.sectionPos, context.instrPos + 1)
     context.section.addInstruction(GetLazyStatic(boxBuilder.getBoxId, lazyVar.pos))
+    context.section.addInstruction(EndLabel(label))
   }
 
   def buildHelper(context: BuilderContext, helper: HelperBlock): Unit = {
@@ -75,7 +79,7 @@ object BuildProgram {
     context.section.addInstruction(StartBox())
 
     func.currying.foreach(_.foreach(_.params.foreach(_ => {
-      context.section.addInstruction(Label(func.getType.getType.toString))
+      //context.section.addInstruction(Label(func.getType.getType.toString))
     })))
 
     if (func.block.content.isDefined) {
@@ -86,6 +90,7 @@ object BuildProgram {
     context.section.addInstruction(Put(popFromBox = true))
 
     context.section.addInstruction(EndBox())
+    context.section.addInstruction(EndLabel(label))
   }
 
   def buildContent(context: BuilderContext, content: HelperContent): Unit = {
@@ -151,11 +156,31 @@ object BuildProgram {
     if (head.isInstanceOf[CallVarObject]) {
       val callVar = head.asInstanceOf[CallVarObject]
       val use = context.resource.ast.header.get.uses.get.filter(part => part.parts.last == callVar.name)
-      val clazz = if (use.isEmpty) TLangModuleList.getClass(callVar.name)
-      else TLangModuleList.getClass(callVar.name, Some(use.head.parts.head))
-      val callFunc = callObject.statements(1).asInstanceOf[CallFuncObject]
-      context.section.addInstruction(CallCore(clazz.className, callFunc.name.get, new core.Array(Array(new core.String("This is a super test")))))
+      val optCclazz = {
+        if (use.isEmpty) TLangModuleList.getClass(callVar.name)
+        else TLangModuleList.getClass(callVar.name, Some(use.head.parts.head))
+      }
+      if (optCclazz.isDefined) {
+        val clazz = optCclazz.get
+        val callFunc = callObject.statements(1).asInstanceOf[CallFuncObject]
+
+        var totParam = 0
+        callFunc.currying.foreach(_.foreach(_.params.foreach(params => params.foreach(attr => {
+          buildSetAttribute(context, attr)
+          totParam += 1
+        }))))
+
+        context.section.addInstruction(CallCore(clazz.className, callFunc.name.get, totParam))
+      } else {
+        context.section.addInstruction(GotoLabel(getContentType(callVar.context, Some(callVar.name))))
+        context.section.addInstruction(Back(JumpIndex(context.sectionPos, context.instrPos + 2)))
+        //        context.section.addInstruction(Set())
+      }
     }
+  }
+
+  def buildSetAttribute(context: BuilderContext, setAttribute: SetAttribute): Unit = {
+    buildOperation(context, setAttribute.value)
   }
 
   def buildCallFunc(context: BuilderContext, func: CallFuncObject, hasOtherCallAfterwards: Boolean = false): Unit = {
@@ -223,7 +248,7 @@ object BuildProgram {
     //    context.section.addInstruction(ForInstruction(forStatement.condition, forStatement.content))
   }
 
-  def buildTmpl(context: BuilderContext, tmpl: AnyTmplBlock[_]): Unit = {
+  def buildTmpl(context: BuilderContext, tmpl: AstAnyTmplBlock): Unit = {
     tmpl match {
       case block: LangBlock => buildLang(context, block)
       case _ =>
@@ -231,7 +256,13 @@ object BuildProgram {
   }
 
   def buildLang(context: BuilderContext, lang: LangBlock): Unit = {
-
+    val label = getContentType(lang.context, Some(lang.name))
+    context.section.addInstruction(Label(label))
+    context.labels.addOne(label -> JumpIndex(context.sectionPos, context.instrPos))
+    context.section.addInstruction(StartBox())
+    BuildAstEntity.buildAstEntity(context, lang.toEntity)
+    context.section.addInstruction(EndBox())
+    context.section.addInstruction(EndLabel(label))
   }
 
   def getContentType(context: Option[ContextContent], name: Option[String] = None): String = {
@@ -243,5 +274,12 @@ object BuildProgram {
     }
     if (pkg.isEmpty) newName
     else pkg + "." + newName
+  }
+
+  def addLabel(context: BuilderContext, name: String, instrPos: Int, isStatic: Boolean = false): Unit = {
+    val jumpIndex = JumpIndex(context.sectionPos, instrPos)
+    context.section.addInstruction(Label(name))
+    context.labels.addOne(name -> jumpIndex)
+    if (isStatic) context.section.addStaticLabel(jumpIndex)
   }
 }

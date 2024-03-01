@@ -9,6 +9,8 @@ class State {
 
   private val jumps = mutable.Stack[JumpIndex]()
 
+  private val jumpBacks = mutable.Stack[JumpIndex]()
+
   private val gotos = mutable.Stack[String]()
 
   private val boxes = mutable.Stack[Box]()
@@ -27,6 +29,14 @@ class State {
     jumps.pop()
   }
 
+  def jumpBackTo(index: JumpIndex): Unit = {
+    jumpBacks.prepend(index)
+  }
+
+  def getJumpBack: JumpIndex = {
+    jumpBacks.pop()
+  }
+
   def goto(label: String): Unit = {
     gotos.prepend(label)
   }
@@ -37,6 +47,10 @@ class State {
 
   def hasJump: Boolean = {
     jumps.nonEmpty
+  }
+
+  def hasJumpBack: Boolean = {
+    jumpBacks.nonEmpty
   }
 
   def hasGoto: Boolean = {
