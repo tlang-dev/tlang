@@ -7,7 +7,7 @@ import dev.tlang.tlang.tmpl.{AstEntity, AstModel, AstTmplNode, BuildAstTmpl}
 import tlang.core.Type
 import tlang.internal.ContextContent
 
-case class CallObject(context: Option[ContextContent], statements: List[CallObjectType]) extends ComplexValueStatement[CallObject] with AstTmplNode {
+case class CallObject(context: Option[ContextContent], statements: List[CallObjectType], var path: Option[String] = None) extends ComplexValueStatement[CallObject] with AstTmplNode {
 
   override def getType: Type = CallObject.getType
 

@@ -28,7 +28,7 @@ class buildProgramTest extends AnyFunSuiteLike {
     val parser = new TLang(tokens)
     val domain = BuildAst.build(fakeContext, parser.domainModel())
     val context = BuilderContext(module = Module("test", fakeManifest, Map(), None, ""), resource = Resource("test", "test", "test", "test", domain))
-    BuildProgram.buildProgram(context, domain)
+    BuildProgram.buildProgram(context)
     context
   }
 

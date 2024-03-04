@@ -13,7 +13,7 @@ public class ClassType implements Type {
 
     @Override
     public String getType() {
-        return new String((clazz.getPackageName() + "/" + clazz.getSimpleName()));
+        return new String((clazz.getPackageName().replace(".", "/") + "/" + clazz.getSimpleName()));
     }
 
     @Override
@@ -23,7 +23,7 @@ public class ClassType implements Type {
 
     @Override
     public String getPkg() {
-        return new String(clazz.getPackageName());
+        return new String(clazz.getPackageName().replace(".", "/"));
     }
 
     public static Type of(Class<?> clazz) {

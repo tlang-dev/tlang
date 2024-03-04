@@ -14,7 +14,7 @@ object BuildStaticEntity {
     boxBuilder.setBoxId(label)
     //    context.section.addInstruction(Label(label))
     //    context.labels.addOne(label -> JumpIndex(context.sectionPos, context.instrPos))
-    BuildProgram.addLabel(context, label, context.instrPos, isStatic = true)
+    BuildProgram.addLabel(context, label, context.instrPos)
     context.section.addInstruction(StartStaticBox(label))
     entity.attrs.foreach(_.zipWithIndex.foreach(attr => buildStaticEntityAttr(context, boxBuilder, entity, attr._1, attr._2)))
     context.section.addInstruction(EndStaticBox(label))

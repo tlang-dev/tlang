@@ -2,11 +2,13 @@ package dev.tlang.tlang.interpreter.instruction
 
 import dev.tlang.tlang.interpreter.ExecError
 import dev.tlang.tlang.interpreter.context.State
+import tlang.core
 
-case class EndStaticBox(id: String) extends Instruction with EndSeq {
-
+case class CallNextVar(name: String) extends Instruction {
   override def run(state: State): Either[ExecError, Unit] = {
-    state.removeBox()
+    val value = state.getStack.pop()
+    val nextVal = value.getAttr(new core.String(name))
+    state.getStack.push(nextVal)
     Right(())
   }
 }

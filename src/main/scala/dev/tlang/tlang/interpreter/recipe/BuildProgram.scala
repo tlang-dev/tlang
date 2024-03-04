@@ -1,6 +1,5 @@
 package dev.tlang.tlang.interpreter.recipe
 
-import dev.tlang.tlang.ast.DomainModel
 import dev.tlang.tlang.ast.common.call._
 import dev.tlang.tlang.ast.common.operation.Operation
 import dev.tlang.tlang.ast.common.value._
@@ -19,13 +18,16 @@ import tlang.internal.{ContextContent, DomainBlock}
 
 object BuildProgram {
 
-  def buildProgram(context: BuilderContext, domain: DomainModel): Unit = {
+  def buildProgram(context: BuilderContext): Unit = {
+//    ReferenceFinder.addUses(context)
+//    ReferenceFinder.addCallables(context)
+
     context.program.addSection(context.section)
-    val label = domain.getType.getType.toString
+    val label = context.resource.ast.getType.getType.toString
     context.section.addInstruction(Label(label))
-    context.labels.addOne(domain.getType.getType.toString -> JumpIndex(context.sectionPos, context.instrPos))
+    context.labels.addOne(context.resource.ast.getType.getType.toString -> JumpIndex(context.sectionPos, context.instrPos))
     context.section.addInstruction(StartBlock())
-    buildBody(context, domain.body)
+    buildBody(context, context.resource.ast.body)
     context.section.addInstruction(EndBlock())
     context.section.addInstruction(EndLabel(label))
     context.program.setLabels(context.labels.toMap)
@@ -43,6 +45,8 @@ object BuildProgram {
     val label = model.context.get.getValue.getResource.getPkg + "." + model.context.get.getValue.getResource.getName
     val boxBuilder = new BoxBuilder()
     boxBuilder.setBoxId(label)
+    val jumpIndex = JumpIndex(context.sectionPos, context.instrPos + 1)
+    context.section.addStaticLabel(jumpIndex)
     context.section.addInstruction(StartStaticBox(label))
     model.content.foreach(_.foreach {
       case assignVar: AssignVar => buildAssignVarInModel(context, boxBuilder, assignVar)
@@ -56,7 +60,8 @@ object BuildProgram {
     implicit val isStatic: Boolean = true
     val label = getContentType(assignVar.context, Some(assignVar.name))
     context.section.addInstruction(Label(label))
-    context.labels.addOne(label -> JumpIndex(context.sectionPos, context.instrPos))
+    val jumpIndex = JumpIndex(context.sectionPos, context.instrPos)
+    context.labels.addOne(label -> jumpIndex)
     val callOnce = CallOnce(assignVar.value, JumpIndex(context.sectionPos, context.instrPos + 3), JumpIndex(context.sectionPos, context.instrPos + 3))
     val lazyVar = boxBuilder.addVar("lazy" + assignVar.name.capitalize)
     context.section.addInstruction(instruction.SetStatic(boxBuilder.getBoxId, Some(new Lazy())))
@@ -133,7 +138,7 @@ object BuildProgram {
 
   def buildComplexValue(context: BuilderContext, value: ComplexValueStatement[_])(implicit isStatic: Boolean = false): Unit = {
     value match {
-      case callObj: CallObject => buildCallObject(context, callObj)
+      case callObj: CallObject => BuildCall.buildCallObject(context, callObj)
       case primitive: PrimitiveValue[_] => buildPrimitive(context, primitive)
       case multiValue: MultiValue => buildMultiValue(context, multiValue)
       case lazyVal: LazyValue[_] => buildLazyValue(context, lazyVal)
@@ -142,53 +147,13 @@ object BuildProgram {
     }
   }
 
-  def buildCallObject(context: BuilderContext, callObject: CallObject): Unit = {
-    if (callObject.statements.size == 1) {
-      callObject.statements.head match {
-        case call: CallObject => buildCallObject(context, call)
-        case func: CallFuncObject => buildCallFunc(context, func)
-      }
-    } else buildCallObjectChained(context, callObject)
-  }
 
-  def buildCallObjectChained(context: BuilderContext, callObject: CallObject): Unit = {
-    val head = callObject.statements.head
-    if (head.isInstanceOf[CallVarObject]) {
-      val callVar = head.asInstanceOf[CallVarObject]
-      val use = context.resource.ast.header.get.uses.get.filter(part => part.parts.last == callVar.name)
-      val optCclazz = {
-        if (use.isEmpty) TLangModuleList.getClass(callVar.name)
-        else TLangModuleList.getClass(callVar.name, Some(use.head.parts.head))
-      }
-      if (optCclazz.isDefined) {
-        val clazz = optCclazz.get
-        val callFunc = callObject.statements(1).asInstanceOf[CallFuncObject]
-
-        var totParam = 0
-        callFunc.currying.foreach(_.foreach(_.params.foreach(params => params.foreach(attr => {
-          buildSetAttribute(context, attr)
-          totParam += 1
-        }))))
-
-        context.section.addInstruction(CallCore(clazz.className, callFunc.name.get, totParam))
-      } else {
-        context.section.addInstruction(GotoLabel(getContentType(callVar.context, Some(callVar.name))))
-        context.section.addInstruction(Back(JumpIndex(context.sectionPos, context.instrPos + 2)))
-        //        context.section.addInstruction(Set())
-      }
-    }
-  }
 
   def buildSetAttribute(context: BuilderContext, setAttribute: SetAttribute): Unit = {
     buildOperation(context, setAttribute.value)
   }
 
-  def buildCallFunc(context: BuilderContext, func: CallFuncObject, hasOtherCallAfterwards: Boolean = false): Unit = {
-    //func.currying.foreach(_.foreach(_.params.foreach(_.foreach(buildOperation(context, _)))))
-    context.section.addInstruction(GotoLabel(getContentType(func.context, func.name)))
-    context.section.addInstruction(Back(JumpIndex(context.sectionPos, context.instrPos + 2)))
-    if (!hasOtherCallAfterwards) context.section.addInstruction(RefFuncGet())
-  }
+
 
   def buildPrimitive(context: BuilderContext, primitive: PrimitiveValue[_])(implicit isStatic: Boolean = false): Unit = {
     primitive match {
@@ -273,7 +238,7 @@ object BuildProgram {
       if (name.isEmpty) newName = context.get.getValue.getResource.getName.toString
     }
     if (pkg.isEmpty) newName
-    else pkg + "." + newName
+    else pkg + "/" + newName
   }
 
   def addLabel(context: BuilderContext, name: String, instrPos: Int, isStatic: Boolean = false): Unit = {

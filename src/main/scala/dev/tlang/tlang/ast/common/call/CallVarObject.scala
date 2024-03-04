@@ -8,4 +8,6 @@ case class CallVarObject(context: Option[ContextContent], name: String) extends 
   override def getContext: Option[ContextContent] = context
 
   override def getType: Type = ClassType.of(this.getClass)
+
+  override def getName: String = name
 }

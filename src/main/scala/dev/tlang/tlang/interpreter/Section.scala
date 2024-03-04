@@ -24,4 +24,8 @@ class Section {
   def addStaticLabel(index: JumpIndex): Unit = {
     statics.addOne(index)
   }
+
+  def getStatics: List[JumpIndex] = {
+    statics.toList
+  }
 }

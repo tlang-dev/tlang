@@ -9,4 +9,6 @@ case class CallArrayObject(context: Option[ContextContent], name: String, positi
   override def getContext: Option[ContextContent] = context
 
   override def getType: Type = ClassType.of(this.getClass)
+
+  override def getName: String = name
 }

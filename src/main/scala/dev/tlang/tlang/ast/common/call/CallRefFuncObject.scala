@@ -17,6 +17,8 @@ case class CallRefFuncObject(context: Option[ContextContent], name: Option[Strin
   override def compareTo(value: core.Value): Int = new Int(0)
 
   override def getContext: Option[ContextContent] = context
+
+  override def getName: String = name.getOrElse("")
 }
 
 object CallRefFuncObject extends TLangType {

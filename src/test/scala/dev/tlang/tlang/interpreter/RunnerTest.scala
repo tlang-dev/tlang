@@ -3,6 +3,7 @@ package dev.tlang.tlang.interpreter
 import dev.tlang.tlang.astbuilder.BuildAst
 import dev.tlang.tlang.interpreter.recipe.{BuildProgram, BuilderContext, Parameter}
 import dev.tlang.tlang.loader.{Module, Resource, manifest}
+import dev.tlang.tlang.resolver.{BuildLinkTree, ResolverContext}
 import dev.tlang.tlang.{CommonLexer, TLang}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuiteLike
@@ -34,7 +35,9 @@ class RunnerTest extends AnyFunSuiteLike {
     val parser = new TLang(tokens)
     val domain = BuildAst.build(fakeContext, parser.domainModel())
     val context = BuilderContext(module = Module("test", fakeManifest, Map(), None, ""), resource = Resource("test", "test", "test", "test", domain))
-    BuildProgram.buildProgram(context, domain)
+    val resContext = ResolverContext(module = Module("test", fakeManifest, Map(), None, ""), resource = Resource("test", "test", "test", "test", domain))
+    BuildLinkTree.buildLinkTree(resContext)
+    BuildProgram.buildProgram(context)
     val logger = new TestLogger
     val parameter = Parameter(0, 7, logger)
     new Runner().run(context.program, parameter)
@@ -54,7 +57,7 @@ class RunnerTest extends AnyFunSuiteLike {
     val parser = new TLang(tokens)
     val domain = BuildAst.build(fakeContext, parser.domainModel())
     val context = BuilderContext(module = Module("test", fakeManifest, Map(), None, ""), resource = Resource("test", "test", "test", "test", domain))
-    BuildProgram.buildProgram(context, domain)
+    BuildProgram.buildProgram(context)
     val logger = new TestLogger
     val parameter = Parameter(0, 0, logger)
     new Runner().run(context.program, parameter)
@@ -77,7 +80,7 @@ class RunnerTest extends AnyFunSuiteLike {
     val parser = new TLang(tokens)
     val domain = BuildAst.build(fakeContext, parser.domainModel())
     val context = BuilderContext(module = Module("test", fakeManifest, Map(), None, ""), resource = Resource("test", "test", "test", "test", domain))
-    BuildProgram.buildProgram(context, domain)
+    BuildProgram.buildProgram(context)
     val logger = new TestLogger
     val parameter = Parameter(0, 0, logger)
     new Runner().run(context.program, parameter)
@@ -105,7 +108,7 @@ class RunnerTest extends AnyFunSuiteLike {
     val parser = new TLang(tokens)
     val domain = BuildAst.build(fakeContext, parser.domainModel())
     val context = BuilderContext(module = Module("test", fakeManifest, Map(), None, ""), resource = Resource("test", "test", "test", "test", domain))
-    BuildProgram.buildProgram(context, domain)
+    BuildProgram.buildProgram(context)
     val logger = new TestLogger
     val parameter = Parameter(0, 0, logger)
     new Runner().run(context.program, parameter)
@@ -131,7 +134,7 @@ class RunnerTest extends AnyFunSuiteLike {
     val parser = new TLang(tokens)
     val domain = BuildAst.build(fakeContext, parser.domainModel())
     val context = BuilderContext(module = Module("test", fakeManifest, Map(), None, ""), resource = Resource("test", "test", "test", "test", domain))
-    BuildProgram.buildProgram(context, domain)
+    BuildProgram.buildProgram(context)
     val logger = new TestLogger
     val parameter = Parameter(0, 0, logger)
     new Runner().run(context.program, parameter)
@@ -158,7 +161,7 @@ class RunnerTest extends AnyFunSuiteLike {
     val parser = new TLang(tokens)
     val domain = BuildAst.build(fakeContext, parser.domainModel())
     val context = BuilderContext(module = Module("test", fakeManifest, Map(), None, ""), resource = Resource("test", "test", "test", "test", domain))
-    BuildProgram.buildProgram(context, domain)
+    BuildProgram.buildProgram(context)
     val logger = new TestLogger
     val parameter = Parameter(0, 0, logger)
     new Runner().run(context.program, parameter)
@@ -191,7 +194,7 @@ class RunnerTest extends AnyFunSuiteLike {
     val parser = new TLang(tokens)
     val domain = BuildAst.build(fakeContext, parser.domainModel())
     val context = BuilderContext(module = Module("test", fakeManifest, Map(), None, ""), resource = Resource("test", "test", "test", "test", domain))
-    BuildProgram.buildProgram(context, domain)
+    BuildProgram.buildProgram(context)
     val logger = new TestLogger
     val parameter = Parameter(0, 2, logger)
     new Runner().run(context.program, parameter)
@@ -199,7 +202,6 @@ class RunnerTest extends AnyFunSuiteLike {
     //assert(logs(9) == "[Label] New label: tlang.tmpl.lang.LangBlock.name")
     //assert(logs(logs.length-2) == "End of label:tlang.tmpl.lang.LangBlock")
   }
-
 
 
 }
