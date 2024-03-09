@@ -1,7 +1,7 @@
 package dev.tlang.tlang.resolver
 
 import dev.tlang.tlang.astbuilder.BuildAst
-import dev.tlang.tlang.interpreter.value.{InterEntity, InterFunction, InterModel, InterResource}
+import dev.tlang.tlang.interpreter.value.{InterEntity, InterFunc, InterModel, InterResource}
 import dev.tlang.tlang.loader.{Module, Resource, manifest}
 import dev.tlang.tlang.{CommonLexer, TLang}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
@@ -34,8 +34,8 @@ class BuildLinkTreeTest extends AnyFunSuiteLike {
     val context = ResolverContext(module = Module("test", fakeManifest, Map(), None, ""), resource = Resource("RootDir", "FromRoot", "Pkg", "ResName", domain))
     val tree = BuildLinkTree.buildLinkTree(context).toOption.get
     assert(tree("FromRoot/Pkg/ResName").isInstanceOf[InterResource])
-    assert(tree("FromRoot/Pkg/ResName/myFunc").isInstanceOf[InterFunction])
-    assert(tree("FromRoot/Pkg/ResName/myFunc2").isInstanceOf[InterFunction])
+    assert(tree("FromRoot/Pkg/ResName/myFunc").isInstanceOf[InterFunc])
+    assert(tree("FromRoot/Pkg/ResName/myFunc2").isInstanceOf[InterFunc])
   }
 
 

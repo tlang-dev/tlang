@@ -9,7 +9,7 @@ import dev.tlang.tlang.tmpl.AstValue
 import tlang.core.Type
 import tlang.internal.{ClassType, ContextContent}
 
-case class Operation(context: Option[ContextContent], expectedType: Option[ValueType],
+case class Operation(context: Option[ContextContent], var expectedType: Option[Type],
                      content: Either[Operation, ComplexValueStatement[_]],
                      next: Option[(Operator.operator, Operation)] = None)
   extends HelperStatement with AstValue with ModelSetRefValue {

@@ -42,7 +42,7 @@ object BuildProgram {
   }
 
   def buildModel(context: BuilderContext, model: ModelBlock): Unit = {
-    val label = model.context.get.getValue.getResource.getPkg + "." + model.context.get.getValue.getResource.getName
+    val label = model.context.get.getValue.getResource.getPkg + "/" + model.context.get.getValue.getResource.getName
     val boxBuilder = new BoxBuilder()
     boxBuilder.setBoxId(label)
     val jumpIndex = JumpIndex(context.sectionPos, context.instrPos + 1)

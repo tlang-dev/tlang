@@ -15,9 +15,10 @@ object BuildCall {
   private def findValue(context: BuilderContext, callObject: CallObject, callIndex: Int): Unit = {
     val currentCall = callObject.statements(callIndex)
     val name = currentCall.getName
-    val fullPath = callObject.path.get + "/" + name
-    val callable = findCallable(context, fullPath)
-    if (callable.isDefined) applyValue(context, callable.get, callObject, callIndex)
+    val fullPath = callObject.resolved.get.pathToFirstUsefulCall
+    val callable = callObject.resolved.get.value
+    //    val callable = findCallable(context, fullPath)
+    applyValue(context, callable, callObject, callObject.resolved.get.nextCallIndex)
   }
 
   private def applyNext(context: BuilderContext, callObject: CallObject, callIndex: Int): Unit = {
@@ -25,7 +26,7 @@ object BuildCall {
     nextCall match {
       case array: CallArrayObject => ???
       case func: CallFuncObject => applyNextFunc(context, func, callIndex)
-      case refFunc: CallRefFuncObject => ???
+      case _: CallRefFuncObject => ???
       case callVar: CallVarObject => context.section.addInstruction(CallNextVar(callVar.name))
       case _ => println(getClass.getName + ": Does not exist")
     }
@@ -42,8 +43,9 @@ object BuildCall {
 
   private def applyValue(context: BuilderContext, value: InterValue, callObject: CallObject, callIndex: Int): Unit = {
     value match {
-      case func: InterFunction => applyFunc(context, func, callObject, callIndex)
-      case entity: InterEntity =>
+      case func: InterFunc => applyFunc(context, func, callObject, callIndex)
+      case entity: InterEntity => BuildCallEntity.applyEntity(context, entity, callObject, callIndex)
+      //      case jvm: InterJVM => BuildCallJVM.applyJVM(context, jvm, callObject, callIndex)
       case jvm: InterJVM => BuildCallJVM.applyJVM(context, jvm, callObject, callIndex)
       //      case string: InterString => applySimpleValue(context, string, callObject, callIndex)
       //      case long: InterValue => applySimpleValue(context, long, callObject, callIndex)
@@ -53,11 +55,11 @@ object BuildCall {
       case array: InterArray => applyArray(context, array, callObject, callIndex)
       case variable: InterVar => applyVar(context, variable, callObject, callIndex)
       case param: InterParam => applyParam(context, param, callObject, callIndex)
-      case attr: InterAttr =>
+      case attr: InterAttr => applyAttr(context, attr, callObject, callIndex)
     }
   }
 
-  private def applyFunc(context: BuilderContext, value: InterFunction, callObject: CallObject, callIndex: Int): Unit = {
+  private def applyFunc(context: BuilderContext, value: InterFunc, callObject: CallObject, callIndex: Int): Unit = {
     context.section.addInstruction(GotoLabel(value.getFullName))
     context.section.addInstruction(Back(JumpIndex(context.sectionPos, context.instrPos + 2)))
     if (callIndex < callObject.statements.size - 1) {
@@ -76,6 +78,13 @@ object BuildCall {
 
   private def applyParam(context: BuilderContext, value: InterParam, callObject: CallObject, callIndex: Int): Unit = {
     context.section.addInstruction(Get(value.pos))
+    if (callIndex < callObject.statements.size - 1) {
+      findValue(context, callObject, callIndex + 1)
+    }
+  }
+
+  private def applyAttr(context: BuilderContext, value: InterAttr, callObject: CallObject, callIndex: Int): Unit = {
+    //    context.section.addInstruction(Get(value.pos))
     if (callIndex < callObject.statements.size - 1) {
       findValue(context, callObject, callIndex + 1)
     }
@@ -126,7 +135,7 @@ object BuildCall {
             buildSetAttribute(context, attr)
             totParam += 1
           }))))
-          context.section.addInstruction(CallCore(clazz.className, callFunc.name.get, totParam))
+          // context.section.addInstruction(CallCore(clazz.className, callFunc.name.get, totParam))
         }
       }
     }
@@ -142,10 +151,7 @@ object BuildCall {
   private def findCallable(context: BuilderContext, name: String): Option[InterValue] = {
     context.callables.get(name) match {
       case Some(value) => Some(value)
-      case None => context.callables.get(name) match {
-        case Some(value) => Some(value)
-        case None => None
-      }
+      case None => None
     }
   }
 }

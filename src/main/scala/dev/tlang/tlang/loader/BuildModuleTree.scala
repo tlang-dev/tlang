@@ -86,7 +86,7 @@ object BuildModuleTree {
 
   def buildResourceAST(root: String, fromRoot: String, pkg: String, name: String, content: String): Resource = {
     val parser = new TLang(new CommonTokenStream(new CommonLexer(CharStreams.fromString(content))))
-    Resource(root, fromRoot, pkg, name, BuildAst.build(new ContextResource(new core.String(root), new core.String(fromRoot), new core.String(pkg), new core.String(name)), parser.domainModel()))
+    Resource(root, fromRoot, pkg, name, BuildAst.build(new ContextResource(new core.String(root), new core.String(fromRoot), new core.String(pkg.replace(".", "/")), new core.String(name)), parser.domainModel()))
   }
 
   def createPkg(parts: String*): String = {

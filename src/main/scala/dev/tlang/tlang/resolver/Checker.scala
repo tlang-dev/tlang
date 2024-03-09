@@ -6,7 +6,7 @@ import dev.tlang.tlang.ast.common.value.AssignVar
 import dev.tlang.tlang.ast.helper.HelperBlock
 import dev.tlang.tlang.ast.model.ModelBlock
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
-import dev.tlang.tlang.interpreter.value.{InterEntity, InterFunction, InterModel, InterResource, InterValue}
+import dev.tlang.tlang.interpreter.value.{InterEntity, InterFunc, InterModel, InterResource, InterValue}
 import dev.tlang.tlang.resolver.BuildLinkTree.{buildBody, buildHeader, combine, getClass}
 import dev.tlang.tlang.tmpl.AstAnyTmplBlock
 import tlang.internal.DomainBlock

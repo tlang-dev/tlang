@@ -1,6 +1,7 @@
 package tlang.internal;
 
 import tlang.core.Int;
+import tlang.core.String;
 import tlang.core.Type;
 import tlang.core.Value;
 
@@ -43,7 +44,22 @@ public class ContextContent implements Value, DeepCopy {
 
     @Override
     public Type getType() {
-        return null;
+        return new Type() {
+            @Override
+            public String getType() {
+                return new String(getPkg() + "/" + getSimpleType());
+            }
+
+            @Override
+            public String getSimpleType() {
+                return getResource().getName();
+            }
+
+            @Override
+            public String getPkg() {
+                return getResource().getPkg();
+            }
+        };
     }
 
 }

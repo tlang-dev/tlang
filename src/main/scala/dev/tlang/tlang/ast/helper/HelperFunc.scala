@@ -10,7 +10,7 @@ import tlang.internal.ContextContent
 case class HelperFunc(context: Option[ContextContent], name: String, currying: Option[List[HelperCurrying]] = None,
                       returns: Option[List[ValueType]] = None, block: HelperContent, scope: Scope = Scope()) extends HelperStatement with AstValue {
 
-  override def getType: Type = if (context.isDefined) ManualType(context.get.getValue.getResource.getPkg.toString, name) else HelperFunc.getType
+  override def getType: Type = if (context.isDefined) ManualType(context.get.getType.getType.toString, name) else HelperFunc.getType
 
   override def getContext: Option[ContextContent] = context
 

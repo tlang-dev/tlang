@@ -33,7 +33,7 @@ object BuildCommon {
     val next =
       if (operation.op != null && !operation.op.isEmpty) Some((buildOperator(operation.op.getText), buildOperation(resource, expectedType, operation.next)))
       else None
-    Operation(None, expectedType, content, next)
+    Operation(None, if (expectedType.isDefined) Some(expectedType.get.getType) else None, content, next)
   }
 
   def buildOperator(opType: String): Operator.operator = {
@@ -86,7 +86,7 @@ object BuildCommon {
   //  }
 
   def buildEntityValue(resource: ContextResource, `type`: Option[ValueType] = None, entity: EntityValueContext): EntityValue = {
-    EntityValue(addContext(resource, entity), `type`,
+    EntityValue(addContext(resource, entity), if (`type`.isDefined) Some(`type`.get.getType) else None, None,
       buildComplexAttributes(resource, entity.attrs.asScala.toList))
   }
 

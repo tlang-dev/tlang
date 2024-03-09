@@ -1,5 +1,7 @@
 package dev.tlang.tlang.interpreter.recipe
 
-case class TLangModule(name: String, project: String, classes: Map[String, TLangClass]) {
+import dev.tlang.tlang.interpreter.value.InterJVM
+
+case class TLangModule(name: String, project: String, classes: Map[String, InterJVM]) {
 
 }

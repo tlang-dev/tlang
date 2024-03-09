@@ -45,8 +45,8 @@ object BrowseHelperStatement {
     assignVar.value.content match {
       case Left(_) => browseStatement(assignVar.value, module, uses, scope, currentResource)
       case Right(value) => value match {
-        case entityValue: EntityValue => entityValue.`type` = assignVar.`type`
-          browseStatement(assignVar.value, module, uses, scope, currentResource)
+//        case entityValue: EntityValue => entityValue.extType = assignVar.`type`
+//          browseStatement(assignVar.value, module, uses, scope, currentResource)
         case _ => browseStatement(assignVar.value, module, uses, scope, currentResource)
       }
     }

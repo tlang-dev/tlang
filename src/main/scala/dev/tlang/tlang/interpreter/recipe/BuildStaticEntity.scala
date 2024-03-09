@@ -9,14 +9,16 @@ import tlang.core.Lazy
 object BuildStaticEntity {
 
   def buildStaticEntity(context: BuilderContext, entity: EntityValue): Unit = {
-    val label = entity.getType.getType.toString
+    val entityName = entity.getType.getSimpleType.toString
+    //    val label = BuildProgram.getContentType(entity.context) + "/" + entityName
+    val label = BuildProgram.getContentType(entity.context) + "/" + entityName
     val boxBuilder = new BoxBuilder()
     boxBuilder.setBoxId(label)
     //    context.section.addInstruction(Label(label))
     //    context.labels.addOne(label -> JumpIndex(context.sectionPos, context.instrPos))
     BuildProgram.addLabel(context, label, context.instrPos)
     context.section.addInstruction(StartStaticBox(label))
-    entity.attrs.foreach(_.zipWithIndex.foreach(attr => buildStaticEntityAttr(context, boxBuilder, entity, attr._1, attr._2)))
+    entity.attrs.foreach(_.zipWithIndex.foreach(attr => buildStaticEntityAttr(context, boxBuilder, label, attr._1, attr._2)))
     context.section.addInstruction(EndStaticBox(label))
 
     //Just to have something to return, could be a representation of the entity in the future
@@ -24,19 +26,21 @@ object BuildStaticEntity {
     context.section.addInstruction(Put())
   }
 
-  def buildStaticEntityAttr(context: BuilderContext, boxBuilder: BoxBuilder, entity: EntityValue, attr: ComplexAttribute, index: Int): Unit = {
+  def buildStaticEntityAttr(context: BuilderContext, boxBuilder: BoxBuilder, entityLabel: String, attr: ComplexAttribute, index: Int): Unit = {
     attr.attr.foreach(attr => {
-      context.section.addInstruction(Label(entity.getType.getType.toString + "." + attr))
-      context.labels.addOne(entity.getType.getType.toString -> JumpIndex(context.sectionPos, context.instrPos))
+      val label = entityLabel + "/" + attr
+      BuildProgram.addLabel(context, label, context.instrPos)
+      //      context.section.addInstruction(Label(label))
+      //      context.labels.addOne(label -> JumpIndex(context.sectionPos, context.instrPos))
     })
-    val indexLabel = entity.getType.getType.toString + "." + index.toString
+    val indexLabel = entityLabel + "/" + index.toString
     context.section.addInstruction(Label(indexLabel))
-    context.labels.addOne(entity.getType.getType.toString + "." + index.toString -> JumpIndex(context.sectionPos, context.instrPos))
-    val callOnce = CallOnce(attr.value, JumpIndex(context.sectionPos, context.instrPos + 3), JumpIndex(context.sectionPos, context.instrPos))
+    context.labels.addOne(entityLabel + "/" + index.toString -> JumpIndex(context.sectionPos, context.instrPos))
+    val callOnce = CallOnce(attr.value, JumpIndex(context.sectionPos, context.instrPos + 2), JumpIndex(context.sectionPos, context.instrPos))
     val lazyVar = boxBuilder.addVar("lazy" + index.toString)
-    context.section.addInstruction(instruction.SetStatic(boxBuilder.getBoxId, Some(new Lazy())))
     context.section.addInstruction(callOnce)
-    BuildProgram.buildOperation(context, attr.value)
+    BuildProgram.buildOperation(context, attr.value)(isStatic = true)
+    context.section.addInstruction(instruction.SetStatic(boxBuilder.getBoxId, Some(new Lazy())))
     context.section.addInstruction(SetLazyStatic(boxBuilder.getBoxId, lazyVar.pos))
     callOnce.getIndex = JumpIndex(context.sectionPos, context.instrPos + 1)
     context.section.addInstruction(GetLazyStatic(boxBuilder.getBoxId, lazyVar.pos))
