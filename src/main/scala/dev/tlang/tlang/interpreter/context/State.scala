@@ -1,25 +1,18 @@
 package dev.tlang.tlang.interpreter.context
 
 import dev.tlang.tlang.interpreter.recipe.{DefaultLogger, Logger}
-import dev.tlang.tlang.interpreter.{Box, Stack}
+import dev.tlang.tlang.interpreter.{Box, Program, Stack}
 
 import scala.collection.mutable
 
-class State {
-
-  private val jumps = mutable.Stack[JumpIndex]()
-
-  private val jumpBacks = mutable.Stack[JumpIndex]()
-
-  private val gotos = mutable.Stack[String]()
-
-  private val boxes = mutable.Stack[Box]()
-
-  private val staticBoxes = mutable.Map[String, Box]()
-
-  private val stack = new Stack
-
-  private var logger: Logger = new DefaultLogger
+case class State(jumps: mutable.Stack[JumpIndex] = mutable.Stack.empty,
+                 jumpBacks: mutable.Stack[JumpIndex] = mutable.Stack.empty,
+                 gotos: mutable.Stack[String] = mutable.Stack.empty,
+                 boxes: mutable.Stack[Box] = mutable.Stack.empty,
+                 staticBoxes: mutable.Map[String, Box] = mutable.Map.empty,
+                 stack: Stack = new Stack,
+                 program: Program,
+                 var logger: Logger = new DefaultLogger) {
 
   def jumpTo(index: JumpIndex): Unit = {
     jumps.prepend(index)

@@ -133,16 +133,21 @@ object BuildCallObjectLink {
   private def searchInInternalClasses(context: PathContext, call: CallObject): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
     val name = call.statements.head.getName
+    var found = false;
     context.resource.ast.header.foreach(_.uses.foreach(_.foreach(use => {
       val useName = use.alias.getOrElse(use.parts.last)
       if (name == useName) {
         val fullName = "TLang/" + use.parts.mkString("/")
-        val allClasses = TLangModuleList.internalClasses
         val optClass = TLangModuleList.internalClasses.get(fullName)
-        if (optClass.isDefined) call.resolved = Some(CallResolved(fullName, fullName, 1, optClass.get))
-        else combine(searchInCoreClasses(context, call), errors)
+        if (optClass.isDefined) {
+          call.resolved = Some(CallResolved(fullName, fullName, 1, optClass.get))
+          found = true
+        }
       }
     })))
+
+    if (!found) combine(searchInCoreClasses(context, call), errors)
+
     if (errors.nonEmpty) Left(errors.toList)
     else Right(())
   }
@@ -163,7 +168,7 @@ object BuildCallObjectLink {
 
   private def searchInCoreClasses(context: PathContext, call: CallObject): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
-    val fullName = "tlang.core." + call.statements.head.getName.toLowerCase()
+    val fullName = "TLang/Core/" + call.statements.head.getName
     val optClass = TLangModuleList.internalClasses.get(fullName)
     if (optClass.isDefined) call.resolved = Some(CallResolved(fullName, fullName, 1, optClass.get))
     else errors += ResourceNotFound(call.context, call.statements.head.getName)

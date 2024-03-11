@@ -6,4 +6,8 @@ case class InterParam(`type`: Type, pos: Int) extends InterValue(InterValueType.
   override def getType: Type = `type`
 
   override def getValue: InterParam = this
+
+  override def getAttrPath(name: String): String = ???
+
+  override def getAttrPathByPos(pos: Int): String = ???
 }

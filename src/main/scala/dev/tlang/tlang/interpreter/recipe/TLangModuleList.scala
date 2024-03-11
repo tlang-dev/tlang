@@ -37,6 +37,7 @@ object TLangModuleList {
     classes += getClassDef(pkg, classOf[core.Long])
     classes += getClassDef(pkg, classOf[core.Loop])
     classes += getClassDef(pkg, classOf[core.Match])
+    classes += getClassDef(pkg, classOf[core.Echo])
   }
 
   val mutableClasses: mutable.Map[String, InterJVM] = {

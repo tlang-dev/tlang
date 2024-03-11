@@ -6,4 +6,8 @@ case class InterModel(`type`: Type) extends InterValue(InterValueType.Model) {
   override def getType: Type = `type`
 
   override def getValue: InterModel = this
+
+  override def getAttrPath(name: String): String = ???
+
+  override def getAttrPathByPos(pos: Int): String = ???
 }

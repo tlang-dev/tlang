@@ -4,10 +4,12 @@ import dev.tlang.tlang.interpreter.ExecError
 import dev.tlang.tlang.interpreter.context.State
 import tlang.core.func.FuncRet
 
-case class RefFuncSet() extends Instruction {
+case class AfterCallGet() extends Instruction {
+
   override def run(state: State): Either[ExecError, Unit] = {
-    val value = state.getStack.pop()
-    state.getBox.set(FuncRet.of(value))
+    val ret = state.getStack.pop().asInstanceOf[FuncRet]
+    state.getStack.push(ret.get())
     Right(())
   }
+
 }

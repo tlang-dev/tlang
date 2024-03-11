@@ -13,7 +13,7 @@ object BuildCallJVM {
       case array: CallArrayObject => ???
       case func: CallFuncObject => applyFunc(context, func, value)
       case CallRefFuncObject(context, name, currying, func, scope) => ???
-      case CallVarObject(context, name) => ???
+      case callVar: CallVarObject => applyVar(context, callVar, value)
       case _ => ???
     }
   }
@@ -25,5 +25,9 @@ object BuildCallJVM {
       totParam += 1
     }))))
     context.section.addInstruction(CallJVM(value, callFunc.name.get, totParam))
+  }
+
+  private def applyVar(context: BuilderContext, callVar: CallVarObject, value: InterJVM): Unit = {
+
   }
 }

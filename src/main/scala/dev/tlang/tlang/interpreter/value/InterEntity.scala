@@ -12,4 +12,10 @@ case class InterEntity(`type`: Type) extends InterValue(InterValueType.Entity) {
   override def getAttr(name: core.String): Value = {
     null
   }
+
+  override def getAttrPath(name: String): String = {
+    `type`.getType.toString + "/" + name
+  }
+
+  override def getAttrPathByPos(pos: Int): String = `type`.getType.toString + "/" + pos
 }

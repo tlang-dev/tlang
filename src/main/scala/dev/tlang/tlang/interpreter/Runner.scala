@@ -9,14 +9,13 @@ class Runner {
   private var sectionPos: Int = 0
   private var instrPos: Int = 0
   private var error: Option[ExecError] = None
-  private val state = new State
 
-  def run(program: Program, parameter: Parameter): Either[ExecError, Unit] = {
-    initStatic(program, parameter)
-    runProgram(program, parameter)
+  def run(state: State, parameter: Parameter): Either[ExecError, Unit] = {
+    initStatic(state.program, parameter, state)
+    runProgram(state.program, parameter, state)
   }
 
-  private def runProgram(program: Program, parameter: Parameter): Either[ExecError, Unit] = {
+  private def runProgram(program: Program, parameter: Parameter, state: State): Either[ExecError, Unit] = {
     sectionPos = parameter.sectionStart
     instrPos = parameter.instrStart
     val logger = parameter.logger
@@ -53,10 +52,10 @@ class Runner {
     else Right(())
   }
 
-  private def initStatic(program: Program, parameter: Parameter): Either[ExecError, Unit] = {
+  private def initStatic(program: Program, parameter: Parameter, state: State): Either[ExecError, Unit] = {
     program.getSections.foreach { static =>
       static.getStatics.foreach { index =>
-        runProgram(program, Parameter(index.section, index.instruction, parameter.logger))
+        runProgram(program, Parameter(index.section, index.instruction, parameter.logger), state)
       }
     }
     Right(())

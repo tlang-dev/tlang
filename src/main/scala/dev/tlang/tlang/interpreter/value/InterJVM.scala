@@ -21,4 +21,8 @@ case class InterJVM(clazz: Class[_]) extends InterValue(InterValueType.JVM) {
   private def invokeJavaMethodWithVarargs(method: Method, args: Array[Value]): Any = {
     method.invoke(null, args: _*)
   }
+
+  override def getAttrPath(name: String): String = ???
+
+  override def getAttrPathByPos(pos: Int): String = ???
 }

@@ -6,4 +6,8 @@ case class InterStaticVar(`type`: Type) extends InterValue(InterValueType.Static
   override def getType: Type = `type`
 
   override def getValue: InterStaticVar = this
+
+  override def getAttrPath(name: String): String = ???
+
+  override def getAttrPathByPos(pos: Int): String = ???
 }

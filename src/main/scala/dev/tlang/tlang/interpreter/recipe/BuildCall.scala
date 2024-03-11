@@ -63,7 +63,7 @@ object BuildCall {
     context.section.addInstruction(GotoLabel(value.getFullName))
     context.section.addInstruction(Back(JumpIndex(context.sectionPos, context.instrPos + 2)))
     if (callIndex < callObject.statements.size - 1) {
-      context.section.addInstruction(RefFuncGet())
+      context.section.addInstruction(AfterCallGet())
       findValue(context, callObject, callIndex + 1)
     }
   }
@@ -145,7 +145,7 @@ object BuildCall {
     //func.currying.foreach(_.foreach(_.params.foreach(_.foreach(buildOperation(context, _)))))
     context.section.addInstruction(GotoLabel(getContentType(func.context, func.name)))
     context.section.addInstruction(Back(JumpIndex(context.sectionPos, context.instrPos + 2)))
-    if (!hasOtherCallAfterwards) context.section.addInstruction(RefFuncGet())
+    if (!hasOtherCallAfterwards) context.section.addInstruction(AfterCallGet())
   }
 
   private def findCallable(context: BuilderContext, name: String): Option[InterValue] = {

@@ -8,4 +8,8 @@ abstract class InterValue(valueType: InterValueType.Value) extends Value {
   def getFullName: String = getType.getType.toString
 
   def getType: Type
+
+  def getAttrPath(name: String): String
+
+  def getAttrPathByPos(pos: Int): String
 }

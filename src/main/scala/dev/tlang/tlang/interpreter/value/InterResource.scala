@@ -6,4 +6,8 @@ case class InterResource(`type`: Type) extends InterValue(InterValueType.String)
   override def getType: Type = `type`
 
   override def getValue: InterResource = this
+
+  override def getAttrPath(name: String): String = ???
+
+  override def getAttrPathByPos(pos: Int): String = ???
 }

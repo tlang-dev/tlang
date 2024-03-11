@@ -62,11 +62,11 @@ object BuildProgram {
     context.section.addInstruction(Label(label))
     val jumpIndex = JumpIndex(context.sectionPos, context.instrPos)
     context.labels.addOne(label -> jumpIndex)
-    val callOnce = CallOnce(assignVar.value, JumpIndex(context.sectionPos, context.instrPos + 3), JumpIndex(context.sectionPos, context.instrPos + 3))
+    val callOnce = CallOnce(assignVar.value, JumpIndex(context.sectionPos, context.instrPos + 2), JumpIndex(context.sectionPos, context.instrPos))
     val lazyVar = boxBuilder.addVar("lazy" + assignVar.name.capitalize)
-    context.section.addInstruction(instruction.SetStatic(boxBuilder.getBoxId, Some(new Lazy())))
     context.section.addInstruction(callOnce)
     BuildProgram.buildOperation(context, assignVar.value)
+    context.section.addInstruction(instruction.SetStatic(boxBuilder.getBoxId, Some(new Lazy())))
     context.section.addInstruction(SetLazyStatic(boxBuilder.getBoxId, lazyVar.pos))
     callOnce.getIndex = JumpIndex(context.sectionPos, context.instrPos + 1)
     context.section.addInstruction(GetLazyStatic(boxBuilder.getBoxId, lazyVar.pos))
@@ -89,7 +89,7 @@ object BuildProgram {
 
     if (func.block.content.isDefined) {
       func.block.content.get.foreach(buildStatement(context, _))
-      context.section.addInstruction(RefFuncSet())
+      context.section.addInstruction(FuncRetSet())
     } else context.section.addInstruction(Set(Some(FuncRet.VOID)))
 
     context.section.addInstruction(Put(popFromBox = true))
