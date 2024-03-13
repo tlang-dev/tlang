@@ -105,7 +105,7 @@ public class FuncRet implements Entity {
         return null;
     }
 
-    @Override
+/*    @Override
     public Bool hasAttrs() {
         return null;
     }
@@ -113,14 +113,14 @@ public class FuncRet implements Entity {
     @Override
     public Bool exists(tlang.core.String name) {
         return null;
-    }
+    }*/
 
     @Override
     public Null getAttr(Int index) {
         return null;
     }
 
-    @Override
+    /*@Override
     public Bool exists(Int index) {
         return null;
     }
@@ -141,7 +141,7 @@ public class FuncRet implements Entity {
             case 1 -> onError.call(args);
             default -> null;
         };
-    }
+    }*/
 
     @Override
     public Type getType() {

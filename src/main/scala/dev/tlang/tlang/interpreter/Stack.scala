@@ -20,4 +20,6 @@ class Stack {
 
   def delete(): Unit = stack.pop()
 
+  def isNonEmpty: Boolean = stack.nonEmpty
+
 }

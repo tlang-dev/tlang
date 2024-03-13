@@ -5,9 +5,15 @@ import dev.tlang.tlang.interpreter.context.State
 
 case class StartStaticBox(id: String) extends Instruction {
 
+  private var isInit = false
+
   override def run(state: State): Either[ExecError, Unit] = {
-    state.newStaticBox(id)
-    state.newBox()
+    if (!isInit) {
+      state.newStaticBox(id)
+      state.newBox()
+      isInit = true
+    }
+    state.levels.staticBox += 1
     Right(())
   }
 }

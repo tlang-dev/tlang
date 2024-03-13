@@ -12,11 +12,11 @@ public interface Value {
 
     Type getType();
 
-    default Value getAttr(String name) {
+    default Null getAttr(String name) {
         return Null.empty();
     }
 
-    default Value getAttr(Int index) {
+    default Null getAttr(Int index) {
         return Null.empty();
     }
 

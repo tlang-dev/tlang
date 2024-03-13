@@ -1,7 +1,7 @@
 package dev.tlang.tlang.interpreter.recipe
 
 import dev.tlang.tlang.ast.common.value.{ComplexAttribute, EntityValue}
-import dev.tlang.tlang.interpreter.context.{EntityLabel, JumpIndex}
+import dev.tlang.tlang.interpreter.context.JumpIndex
 import dev.tlang.tlang.interpreter.instruction
 import dev.tlang.tlang.interpreter.instruction._
 import dev.tlang.tlang.interpreter.value.InterEntity
@@ -45,7 +45,13 @@ object BuildStaticEntity {
     context.section.addInstruction(SetLazyStatic(boxBuilder.getBoxId, lazyVar.pos))
     callOnce.getIndex = JumpIndex(context.sectionPos, context.instrPos + 1)
     context.section.addInstruction(GetLazyStatic(boxBuilder.getBoxId, lazyVar.pos))
+
+    // End Labels
     context.section.addInstruction(EndLabel(indexLabel))
+    attr.attr.foreach(attr => {
+      val label = entityLabel + "/" + attr
+      context.section.addInstruction(EndLabel(label))
+    })
   }
 
 }

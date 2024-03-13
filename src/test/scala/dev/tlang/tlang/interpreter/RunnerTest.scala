@@ -9,6 +9,7 @@ import dev.tlang.tlang.{CommonLexer, TLang}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuiteLike
 import tlang.core
+import tlang.core.func.FuncRet
 import tlang.internal.ContextResource
 
 class RunnerTest extends AnyFunSuiteLike {
@@ -44,7 +45,7 @@ class RunnerTest extends AnyFunSuiteLike {
     BuildProgram.buildProgram(context)
     val logger = new TestLogger
     val parameter = Parameter(0, 7, logger)
-    new Runner().run(State(program = context.program), parameter)
+    new Runner().initAndRun(State(program = context.program), parameter)
     val logs = logger.getLogs
     assert(logs(19) == "Jumping to: 0:2")
   }
@@ -64,9 +65,9 @@ class RunnerTest extends AnyFunSuiteLike {
     BuildProgram.buildProgram(context)
     val logger = new TestLogger
     val parameter = Parameter(0, 0, logger)
-    new Runner().run(State(program = context.program), parameter)
+    new Runner().initAndRun(State(program = context.program), parameter)
     val logs = logger.getLogs
-    assert(logs(5) == "Jumping to: 0:6")
+    assert(logs(4) == "Jumping to: 0:5")
     assert(logs(9) == "SetLazyStatic: [TLang/Runner/RunnerTest] replaced at 0")
   }
 
@@ -87,10 +88,10 @@ class RunnerTest extends AnyFunSuiteLike {
     BuildProgram.buildProgram(context)
     val logger = new TestLogger
     val parameter = Parameter(0, 0, logger)
-    new Runner().run(State(program = context.program), parameter)
+    new Runner().initAndRun(State(program = context.program), parameter)
     val logs = logger.getLogs
-    assert(logs(5) == "Jumping to: 0:6")
-    assert(logs(14) == "Jumping to: 0:11")
+    assert(logs(4) == "Jumping to: 0:5")
+    assert(logs(13) == "Jumping to: 0:10")
   }
 
   test("test call func below") {
@@ -120,7 +121,7 @@ class RunnerTest extends AnyFunSuiteLike {
     BuildProgram.buildProgram(context)
     val logger = new TestLogger
     val parameter = Parameter(0, 0, logger)
-    new Runner().run(State(program = context.program), parameter)
+    new Runner().initAndRun(State(program = context.program), parameter)
     val logs = logger.getLogs
     assert(logs(20) == "Jumping to: 0:20")
   }
@@ -151,7 +152,7 @@ class RunnerTest extends AnyFunSuiteLike {
     BuildProgram.buildProgram(context)
     val logger = new TestLogger
     val parameter = Parameter(0, 0, logger)
-    new Runner().run(State(program = context.program), parameter)
+    new Runner().initAndRun(State(program = context.program), parameter)
     val logs = logger.getLogs
     assert(logs(15) == "[FuncRetSet] Section n°: 0, Instruction n°: 14")
     assert(logs(20) == "Jumping back to: 0:6")
@@ -183,7 +184,7 @@ class RunnerTest extends AnyFunSuiteLike {
     BuildProgram.buildProgram(context)
     val logger = new TestLogger
     val parameter = Parameter(0, 0, logger)
-    new Runner().run(State(program = context.program), parameter)
+    new Runner().initAndRun(State(program = context.program), parameter)
     val logs = logger.getLogs
     assert(logs(8) == "[CallJVM] Section n°: 0, Instruction n°: 6")
   }
@@ -221,10 +222,10 @@ class RunnerTest extends AnyFunSuiteLike {
     BuildProgram.buildProgram(context)
     val logger = new TestLogger
     val parameter = Parameter(0, 2, logger)
-    new Runner().run(State(program = context.program), parameter)
+    new Runner().initAndRun(State(program = context.program), parameter)
     val logs = logger.getLogs
-    assert(logs(40) == "Jumping back to: 0:6")
-    assert(logs(42) == "[FuncRetSet] Section n°: 0, Instruction n°: 7")
+    assert(logs(49) == "Jumping back to: 0:6")
+    assert(logs(51) == "[FuncRetSet] Section n°: 0, Instruction n°: 7")
   }
 
   test("test call attr from Echo in JVM") {
@@ -259,11 +260,8 @@ class RunnerTest extends AnyFunSuiteLike {
     BuildProgram.buildProgram(context)
     val logger = new TestLogger
     val parameter = Parameter(0, 2, logger)
-    new Runner().run(State(program = context.program), parameter)
-    val logs = logger.getLogs
-    assert(logs(40) == "Jumping back to: 0:6")
-    assert(logs(42) == "[FuncRetSet] Section n°: 0, Instruction n°: 7")
+    val ret = new Runner().initAndRun(State(program = context.program), parameter)
+    assert("If you see this in terminal, echo from JVM works!" == ret.toOption.get.get.asInstanceOf[FuncRet].get().get().toString)
   }
-
 
 }

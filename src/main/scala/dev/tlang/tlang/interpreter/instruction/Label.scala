@@ -5,7 +5,8 @@ import dev.tlang.tlang.interpreter.context.State
 
 case class Label(name: String) extends Instruction {
   override def run(state: State): Either[ExecError, Unit] = {
-    state.getLogger.debug("[Label] New label: " + name)
+    state.getLogger.debug("[Label] Enter label: " + name)
+    state.levels.label += 1
     Right(())
   }
 }

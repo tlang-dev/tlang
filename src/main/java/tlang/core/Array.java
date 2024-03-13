@@ -57,7 +57,7 @@ public class Array implements Entity {
         return null;
     }
 
-    @Override
+ /*   @Override
     public Bool hasAttrs() {
         return null;
     }
@@ -65,14 +65,14 @@ public class Array implements Entity {
     @Override
     public Bool exists(String name) {
         return null;
-    }
+    }*/
 
     @Override
     public Null getAttr(Int index) {
         return null;
     }
 
-    @Override
+   /* @Override
     public Bool exists(Int index) {
         return null;
     }
@@ -85,7 +85,7 @@ public class Array implements Entity {
     @Override
     public FuncRet call(Int index, Array args) {
         return null;
-    }
+    }*/
 
     @Override
     public Type getType() {

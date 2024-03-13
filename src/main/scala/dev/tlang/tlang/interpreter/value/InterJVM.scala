@@ -14,8 +14,12 @@ case class InterJVM(clazz: Class[_]) extends InterValue(InterValueType.JVM) {
   override def getValue: InterJVM = this
 
   override def callFunc(name: core.String, args: core.Array): FuncRet = {
-    val method = clazz.getMethod(name.toString, classOf[Value])
+    val method = getMethod(name.toString, args.getRecords.map(arg => arg.getClass.asInstanceOf[Class[Value]]))
     invokeJavaMethodWithVarargs(method, args.getRecords).asInstanceOf[FuncRet]
+  }
+
+  private def getMethod(name: String, args: Array[Class[Value]]): Method = {
+    clazz.getMethods.array.find(method => method.getName == name).get
   }
 
   private def invokeJavaMethodWithVarargs(method: Method, args: Array[Value]): Any = {

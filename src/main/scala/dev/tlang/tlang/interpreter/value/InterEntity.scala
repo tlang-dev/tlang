@@ -1,7 +1,7 @@
 package dev.tlang.tlang.interpreter.value
 
 import tlang.core
-import tlang.core.{Type, Value}
+import tlang.core.{Null, Type, Value}
 
 case class InterEntity(`type`: Type) extends InterValue(InterValueType.Entity) {
 
@@ -9,8 +9,8 @@ case class InterEntity(`type`: Type) extends InterValue(InterValueType.Entity) {
 
   override def getValue: InterEntity = this
 
-  override def getAttr(name: core.String): Value = {
-    null
+  override def getAttr(name: core.String): Null = {
+    Null.empty()
   }
 
   override def getAttrPath(name: String): String = {

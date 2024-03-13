@@ -7,7 +7,8 @@ import tlang.core.func.FuncRet
 case class FuncRetSet() extends Instruction {
   override def run(state: State): Either[ExecError, Unit] = {
     val value = state.getStack.pop()
-    state.getBox.set(FuncRet.of(value))
+    if (value.isInstanceOf[FuncRet]) state.getBox.set(value)
+    else state.getBox.set(FuncRet.of(value))
     Right(())
   }
 }

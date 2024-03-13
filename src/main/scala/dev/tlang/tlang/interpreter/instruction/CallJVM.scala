@@ -11,12 +11,12 @@ import scala.collection.mutable.ListBuffer
 
 case class CallJVM(value: InterJVM, methodName: String, totParams: Int) extends Instruction {
   override def run(state: State): Either[ExecError, Unit] = {
-    val args = ListBuffer[Value]()
+    val mapParams = ListBuffer[Value]()
     for (_ <- 0 until totParams) {
-      args += state.getStack.pop()
+      mapParams += state.getStack.pop()
     }
-    args.reverse.map {
-      case interValue: InterValue => JvmCapsule(state.program, state.getBox, state.staticBoxes, interValue)
+    val args = mapParams.reverse.map {
+      case interValue: InterValue => JvmCapsule(state.program, state.logger, state.getBox, state.staticBoxes, interValue)
       case arg => arg
     }
 
