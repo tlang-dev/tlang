@@ -22,12 +22,11 @@ object BuildStaticEntity {
     entity.attrs.foreach(_.zipWithIndex.foreach(attr => buildStaticEntityAttr(context, boxBuilder, label, attr._1, attr._2)))
     context.section.addInstruction(EndStaticBox(label))
 
-    //Just to have something to return, could be a representation of the entity in the future
     context.section.addInstruction(Set(Some(InterEntity(entity.getType))))
     context.section.addInstruction(Put())
   }
 
-  def buildStaticEntityAttr(context: BuilderContext, boxBuilder: BoxBuilder, entityLabel: String, attr: ComplexAttribute, index: Int): Unit = {
+  private def buildStaticEntityAttr(context: BuilderContext, boxBuilder: BoxBuilder, entityLabel: String, attr: ComplexAttribute, index: Int): Unit = {
     attr.attr.foreach(attr => {
       val label = entityLabel + "/" + attr
       BuildProgram.addLabel(context, label, context.instrPos + 1)

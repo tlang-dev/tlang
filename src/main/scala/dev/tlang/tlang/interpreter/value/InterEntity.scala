@@ -1,9 +1,10 @@
 package dev.tlang.tlang.interpreter.value
 
+import dev.tlang.tlang.interpreter.Box
 import tlang.core
 import tlang.core.{Null, Type, Value}
 
-case class InterEntity(`type`: Type) extends InterValue(InterValueType.Entity) {
+case class InterEntity(`type`: Type, box: Box = Box()) extends InterValue(InterValueType.Entity) {
 
   override def getType: Type = `type`
 

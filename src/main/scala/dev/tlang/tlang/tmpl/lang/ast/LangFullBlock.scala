@@ -29,7 +29,7 @@ case class LangFullBlock(context: Option[ContextContent],
   override def toEntity: AstEntity = {
     val elems = ListBuffer.empty[AstEntityAttr]
 
-    //    if (pkg.nonEmpty) elems += ComplexAttribute(context, Some("tpkg"),
+        if (pkg.nonEmpty) elems += BuildAstTmpl.createAttrEntity(context, "tPkg", Some(LangPkg.modelName), pkg.get.toEntity)
     //      Some(LangPkg.model), Operation(context, None, Right(pkg.get.toEntity)))
     //
     ////    elems += createArray(context, "uses", if (uses.isDefined) uses.get.map(_.toEntity) else List())

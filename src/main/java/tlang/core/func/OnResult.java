@@ -1,5 +1,5 @@
 package tlang.core.func;
 
-public interface OnResult extends Func {
+public interface OnResult extends FuncDef {
 
 }

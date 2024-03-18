@@ -5,7 +5,7 @@ import dev.tlang.tlang.tmpl.{AstEntity, AstModel, AstTmplNode}
 import tlang.core.Type
 import tlang.internal.ContextContent
 
-case class CmdBlock(context: Option[ContextContent]) extends AstTmplNode {
+case class CmdBlock(context: Option[ContextContent], name: String) extends AstTmplNode {
   override def toEntity: AstEntity = AstEntity(context,
     Some(CmdBlock.model),
     Some(List())

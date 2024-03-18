@@ -17,7 +17,7 @@ public class Instance {
         if (model.getType().getType().isEqual(type).get()) {
             return FuncRet.of(Bool.TRUE);
         } else {
-            return FuncRet.of(new Bool(model.getModel().isNotNull().get() && ((Bool) Instance.isModelOf((Model) model.getModel().get().getValue(), type).get().get().getValue()).get()));
+            return FuncRet.of(new Bool(model.getModel().isNotNull().get() && ((Bool) Instance.isModelOf((Model) model.getModel().get().getValue(), type).get().getValue().getValue()).get()));
         }
     }
 

@@ -261,7 +261,7 @@ class RunnerTest extends AnyFunSuiteLike {
     val logger = new TestLogger
     val parameter = Parameter(0, 2, logger)
     val ret = new Runner().initAndRun(State(program = context.program), parameter)
-    assert("If you see this in terminal, echo from JVM works!" == ret.toOption.get.get.asInstanceOf[FuncRet].get().get().toString)
+    assert("If you see this in terminal, echo from JVM works!" == ret.toOption.get.get.asInstanceOf[FuncRet].get().getValue.toString)
   }
 
 }

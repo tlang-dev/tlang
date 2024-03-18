@@ -16,7 +16,7 @@ tmplFullBlock: LBRACE
 
 tmplSpecialisedBlock: Spec LBRACE content=tmplSpecialisedContent RBRACE;
 
-//tmplSpecialisedTypes: 'impl' | 'func' | 'expr' | 'attr' | 'setAttr' | 'param';
+//tmplSpecialisedTypes: 'impl' | 'funcDef' | 'expr' | 'attr' | 'setAttr' | 'param';
 
 tmplSpecialisedContent: tmplContent | tmplAttribute | 'setAttr' tmplSetAttribute | tmplParam;
 

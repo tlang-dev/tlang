@@ -5,6 +5,7 @@ import dev.tlang.tlang.interpreter.context.JumpIndex
 import dev.tlang.tlang.interpreter.instruction._
 import dev.tlang.tlang.interpreter.recipe.BuildProgram.{buildSetAttribute, getContentType}
 import dev.tlang.tlang.interpreter.value._
+import tlang.core
 
 object BuildCall {
 
@@ -21,13 +22,13 @@ object BuildCall {
     applyValue(context, callable, callObject, callObject.resolved.get.nextCallIndex)
   }
 
-  private def applyNext(context: BuilderContext, callObject: CallObject, callIndex: Int): Unit = {
+  private def applyNext(context: BuilderContext, callObject: CallObject, callIndex: Int, value: InterValue): Unit = {
     val nextCall = callObject.statements(callIndex)
     nextCall match {
       case array: CallArrayObject => ???
       case func: CallFuncObject => applyNextFunc(context, func, callIndex)
       case _: CallRefFuncObject => ???
-      case callVar: CallVarObject => context.section.addInstruction(CallNextVar(callVar.name))
+      case callVar: CallVarObject => applyNextVar(context, callVar, callIndex, value)
       case _ => println(getClass.getName + ": Does not exist")
     }
   }
@@ -39,6 +40,16 @@ object BuildCall {
       totalArgs += 1
     }))))
     context.section.addInstruction(CallNextFunc(callObject.getName, totalArgs))
+  }
+
+  private def applyNextVar(context: BuilderContext, callVar: CallVarObject, callIndex: Int, value: InterValue): Unit = {
+    value match {
+      case tmpl: InterTmpl =>
+        val label = value.getAttrPath( callVar.name)
+        context.section.addInstruction(GotoLabel(label))
+        context.section.addInstruction(Back(JumpIndex(context.sectionPos, context.instrPos + 2)))
+      case _ => context.section.addInstruction(CallNextVar(callVar.name))
+    }
   }
 
   private def applyValue(context: BuilderContext, value: InterValue, callObject: CallObject, callIndex: Int): Unit = {
@@ -56,6 +67,7 @@ object BuildCall {
       case variable: InterVar => applyVar(context, variable, callObject, callIndex)
       case param: InterParam => applyParam(context, param, callObject, callIndex)
       case attr: InterAttr => applyAttr(context, attr, callObject, callIndex)
+      case tmpl: InterTmpl => applyTmpl(context, tmpl, callObject, callIndex)
     }
   }
 
@@ -87,6 +99,14 @@ object BuildCall {
     //    context.section.addInstruction(Get(value.pos))
     if (callIndex < callObject.statements.size - 1) {
       findValue(context, callObject, callIndex + 1)
+    }
+  }
+
+  private def applyTmpl(context: BuilderContext, value: InterTmpl, callObject: CallObject, callIndex: Int): Unit = {
+    context.section.addInstruction(Set(Some(value)))
+    context.section.addInstruction(Put())
+    if (callIndex < callObject.statements.size - 1) {
+      applyNext(context, callObject, callIndex, value)
     }
   }
 

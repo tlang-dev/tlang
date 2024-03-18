@@ -3,7 +3,6 @@ package tlang.core.func;
 import tlang.core.Error;
 import tlang.core.*;
 import tlang.internal.ClassType;
-import tlang.internal.FuncImpl;
 
 import java.lang.String;
 
@@ -30,28 +29,28 @@ public class FuncRet implements Entity {
         this.error = Null.of(error);
     }
 
-    public Null get() {
-        return ret;
+    public Value get() {
+        return ret.get();
     }
 
-    private Null getError() {
-        return error;
+    private Error getError() {
+        return (Error) error.get();
     }
 
-    public final Func onResult = new FuncImpl(FuncRet.class,
+   /* public final FuncDef onResult = new FuncImpl(FuncRet.class,
             args -> {
                 get().ifNotNull(value -> ((OnResult) args.get(new Int(0)).getValue()).call(new Array(new Value[]{value})));
                 return FuncRet.VOID;
             }).getValue();
 
-    public final Func onError = new FuncImpl(FuncRet.class,
+    public final FuncDef onError = new FuncImpl(FuncRet.class,
             args -> {
                 getError().ifNotNull(value -> ((OnError) args.get(new Int(0)).getValue()).call(new Array(new Value[]{value})));
                 return FuncRet.VOID;
-            }).getValue();
+            }).getValue();*/
 
-    public FuncRet isError() {
-        return FuncRet.of(error.isNull().get() ? Bool.FALSE : Bool.TRUE);
+    public boolean isError() {
+        return (error.isNull().get() ? Bool.FALSE : Bool.TRUE).get();
     }
 
     public FuncRet inAllCase(ApplyVoidFunc func) {
@@ -59,8 +58,12 @@ public class FuncRet implements Entity {
         return FuncRet.VOID;
     }
 
-    public FuncRet isVoid() {
-        return FuncRet.of(new Bool(ret.isNull().get() && error.isNull().get()));
+    public boolean isVoid() {
+        return ret.isNull().get() && error.isNull().get();
+    }
+
+    public boolean isSuccess() {
+        return ret.isNotNull().get() && error.isNull().get();
     }
 
     public static FuncRet of(Value args) {

@@ -12,4 +12,5 @@ case class AstEntity(context: Option[ContextContent], model: Option[AstModel], a
   override def getElement: AstValue = this
 
   override def getContext: Option[ContextContent] = context
+
 }

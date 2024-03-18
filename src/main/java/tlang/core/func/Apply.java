@@ -1,8 +1,8 @@
 package tlang.core.func;
 
-import tlang.core.Void;
+import tlang.core.Value;
 
-public interface Apply {
+public interface Apply extends Value {
 
     FuncRet apply();
 }

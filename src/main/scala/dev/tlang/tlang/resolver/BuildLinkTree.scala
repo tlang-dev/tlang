@@ -10,7 +10,12 @@ import dev.tlang.tlang.ast.model.ModelBlock
 import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.interpreter.value._
 import dev.tlang.tlang.loader.Resource
-import dev.tlang.tlang.tmpl.AstAnyTmplBlock
+import dev.tlang.tlang.tmpl.cmd.ast.CmdBlock
+import dev.tlang.tlang.tmpl.data.ast.DataBlock
+import dev.tlang.tlang.tmpl.doc.ast.DocBlock
+import dev.tlang.tlang.tmpl.lang.ast.LangBlock
+import dev.tlang.tlang.tmpl.style.ast.StyleBlock
+import dev.tlang.tlang.tmpl.{AnyTmplInterpretedBlock, AstAnyTmplBlock}
 import tlang.core.{Type, Value}
 import tlang.internal.DomainBlock
 
@@ -205,36 +210,55 @@ object BuildLinkTree {
 
   private def buildTmplLink(context: ResolverContext, tmpl: AstAnyTmplBlock, links: mutable.Map[String, InterValue], currentPath: String): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
+    tmpl match {
+      case block: AnyTmplInterpretedBlock[_] => ???
+      case lang: LangBlock => buildTmplLangLink(context, lang, links, currentPath)
+      case doc: DocBlock => buildTmplDocLink(context, doc, links, currentPath)
+      case style: StyleBlock => buildTmplStyleLink(context, style, links, currentPath)
+      case cmd: CmdBlock => buildTmplCmdLink(context, cmd, links, currentPath)
+      case data: DataBlock => buildTmplDataLink(context, data, links, currentPath)
+      case _ => ???
+    }
     if (errors.nonEmpty) Left(errors.toList)
     else Right(())
   }
 
-  private def buildTmplLangLink(context: ResolverContext, tmpl: AstAnyTmplBlock, links: mutable.Map[String, InterValue], currentPath: String): Either[List[ResolverError], Unit] = {
+  private def buildTmplLangLink(context: ResolverContext, tmpl: LangBlock, links: mutable.Map[String, InterValue], currentPath: String): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
+    val fullName = currentPath + "/" + tmpl.name
+    links += (fullName -> InterTmpl(tmpl.toEntity))
     if (errors.nonEmpty) Left(errors.toList)
     else Right(())
   }
 
-  private def buildTmplDocLink(context: ResolverContext, tmpl: AstAnyTmplBlock, links: mutable.Map[String, InterValue], currentPath: String): Either[List[ResolverError], Unit] = {
+  private def buildTmplDocLink(context: ResolverContext, tmpl: DocBlock, links: mutable.Map[String, InterValue], currentPath: String): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
+    val fullName = currentPath + "/" + tmpl.name
+    links += (fullName -> InterEntity(ManualType(currentPath, tmpl.name)))
     if (errors.nonEmpty) Left(errors.toList)
     else Right(())
   }
 
-  private def buildTmplDataLink(context: ResolverContext, tmpl: AstAnyTmplBlock, links: mutable.Map[String, InterValue], currentPath: String): Either[List[ResolverError], Unit] = {
+  private def buildTmplDataLink(context: ResolverContext, tmpl: DataBlock, links: mutable.Map[String, InterValue], currentPath: String): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
+    val fullName = currentPath + "/" + tmpl.name
+    links += (fullName -> InterEntity(ManualType(currentPath, tmpl.name)))
     if (errors.nonEmpty) Left(errors.toList)
     else Right(())
   }
 
-  private def buildTmplStyleLink(context: ResolverContext, tmpl: AstAnyTmplBlock, links: mutable.Map[String, InterValue], currentPath: String): Either[List[ResolverError], Unit] = {
+  private def buildTmplStyleLink(context: ResolverContext, tmpl: StyleBlock, links: mutable.Map[String, InterValue], currentPath: String): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
+    val fullName = currentPath + "/" + tmpl.name
+    links += (fullName -> InterEntity(ManualType(currentPath, tmpl.name)))
     if (errors.nonEmpty) Left(errors.toList)
     else Right(())
   }
 
-  private def buildTmplCmdLink(context: ResolverContext, tmpl: AstAnyTmplBlock, links: mutable.Map[String, InterValue], currentPath: String): Either[List[ResolverError], Unit] = {
+  private def buildTmplCmdLink(context: ResolverContext, tmpl: CmdBlock, links: mutable.Map[String, InterValue], currentPath: String): Either[List[ResolverError], Unit] = {
     val errors = ListBuffer.empty[ResolverError]
+    val fullName = currentPath + "/" + tmpl.name
+    links += (fullName -> InterEntity(ManualType(currentPath, tmpl.name)))
     if (errors.nonEmpty) Left(errors.toList)
     else Right(())
   }

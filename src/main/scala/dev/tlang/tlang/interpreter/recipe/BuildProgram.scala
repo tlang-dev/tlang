@@ -9,6 +9,7 @@ import dev.tlang.tlang.ast.model.set.ModelSetEntity
 import dev.tlang.tlang.interpreter.context.JumpIndex
 import dev.tlang.tlang.interpreter.instruction
 import dev.tlang.tlang.interpreter.instruction._
+import dev.tlang.tlang.interpreter.value.{InterEntity, InterTmpl}
 import dev.tlang.tlang.tmpl.AstAnyTmplBlock
 import dev.tlang.tlang.tmpl.lang.ast.LangBlock
 import tlang.core
@@ -226,6 +227,10 @@ object BuildProgram {
     context.labels.addOne(label -> JumpIndex(context.sectionPos, context.instrPos))
     context.section.addInstruction(StartBox())
     BuildAstEntity.buildAstEntity(context, lang.toEntity)
+
+    context.section.addInstruction(Set(Some(InterTmpl(lang.toEntity))))
+    context.section.addInstruction(Put())
+
     context.section.addInstruction(EndBox())
     context.section.addInstruction(EndLabel(label))
   }
