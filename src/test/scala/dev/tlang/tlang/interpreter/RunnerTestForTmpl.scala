@@ -1,11 +1,11 @@
 package dev.tlang.tlang.interpreter
 
-import dev.tlang.tlang.{CommonLexer, TLang}
 import dev.tlang.tlang.astbuilder.BuildAst
 import dev.tlang.tlang.interpreter.context.State
 import dev.tlang.tlang.interpreter.recipe.{BuildProgram, BuilderContext, Parameter}
 import dev.tlang.tlang.loader.{Module, Resource, manifest}
 import dev.tlang.tlang.resolver.{BuildCallObjectLink, BuildLinkTree, PathContext, ResolverContext}
+import dev.tlang.tlang.{CommonLexer, TLang}
 import org.antlr.v4.runtime.{CharStreams, CommonTokenStream}
 import org.scalatest.funsuite.AnyFunSuiteLike
 import tlang.core
@@ -17,7 +17,6 @@ class RunnerTestForTmpl extends AnyFunSuiteLike {
   val fakeContext: ContextResource = new ContextResource(new core.String(""), new core.String(""), new core.String("TLang/Runner"), new core.String("RunnerTest"))
 
   val fakeManifest: manifest.Manifest = manifest.Manifest("RunnerTest", "Runner", "TLang", "0.0.0", None, 0, None, None)
-
 
 
   test("test call lang tmpl") {
@@ -32,7 +31,7 @@ class RunnerTestForTmpl extends AnyFunSuiteLike {
         |}
         |
         |lang [Kotlin] myTmpl() {
-        | use test.test2
+        | pkg test.test2
         |}
         |
         |""".stripMargin))
@@ -47,7 +46,7 @@ class RunnerTestForTmpl extends AnyFunSuiteLike {
     context.callables ++= callables
     BuildProgram.buildProgram(context)
     val logger = new TestLogger
-    val parameter = Parameter(0, 2, logger)
+    val parameter = Parameter(startLabel = Some("TLang/Runner/RunnerTest/myFunc"), logger = logger)
     val ret = new Runner().initAndRun(State(program = context.program), parameter)
     assert("If you see this in terminal, echo from JVM works!" == ret.toOption.get.get.asInstanceOf[FuncRet].get().getValue.toString)
   }

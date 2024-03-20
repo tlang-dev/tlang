@@ -10,7 +10,7 @@ import dev.tlang.tlang.tmpl.{AstModel, BuildAstTmpl}
 
 object LangModel {
 
-  val pkg = "tlang.tmpl.lang"
+  val pkg = "TLang/Tmpl/Lang"
 
   val langResource: AstModel = AstModel(None, ManualType(pkg, "LangResource"), None, None, Some(List(
     BuildAstTmpl.createModelAttrStr(None, Some("rootDir")),

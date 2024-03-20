@@ -5,7 +5,7 @@ import tlang.core.String;
 import tlang.core.Type;
 import tlang.core.Value;
 
-public class ContextContent implements Value, DeepCopy {
+public class ContextContent implements Value {
 
     private final ContextResource resource;
 
@@ -13,11 +13,20 @@ public class ContextContent implements Value, DeepCopy {
 
     private final Int charPos;
 
+    private final Type type;
 
     public ContextContent(ContextResource resource, Int line, Int charPos) {
         this.resource = resource;
         this.line = line;
         this.charPos = charPos;
+        this.type = null;
+    }
+
+    public ContextContent(ContextResource resource, Int line, Int charPos, Type type) {
+        this.resource = resource;
+        this.line = line;
+        this.charPos = charPos;
+        this.type = type;
     }
 
     public ContextResource getResource() {
@@ -33,17 +42,15 @@ public class ContextContent implements Value, DeepCopy {
     }
 
     @Override
-    public Value deepCopy() {
-        return null;
-    }
-
-    @Override
     public ContextContent getValue() {
         return this;
     }
 
     @Override
     public Type getType() {
+        if (type != null) {
+            return type;
+        }
         return new Type() {
             @Override
             public String getType() {

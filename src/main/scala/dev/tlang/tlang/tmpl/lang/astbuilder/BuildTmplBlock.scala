@@ -1,9 +1,9 @@
 package dev.tlang.tlang.tmpl.lang.astbuilder
 
 import dev.tlang.tlang.TLang._
+import dev.tlang.tlang.ast.common.ManualType
 import dev.tlang.tlang.astbuilder.BuildAst.addContext
 import dev.tlang.tlang.astbuilder._
-import dev.tlang.tlang.tmpl.{AstAnyTmplBlock, AstTmplNode}
 import dev.tlang.tlang.tmpl.common.ast.NativeType
 import dev.tlang.tlang.tmpl.common.astbuilder.BuildCommonTmpl
 import dev.tlang.tlang.tmpl.doc.astbuilder.BuildDoc
@@ -15,8 +15,8 @@ import dev.tlang.tlang.tmpl.lang.ast.loop.ForType.ForType
 import dev.tlang.tlang.tmpl.lang.ast.loop.{ForType, LangFor}
 import dev.tlang.tlang.tmpl.lang.ast.primitive._
 import dev.tlang.tlang.tmpl.style.astbuilder.BuildStyle
-import tlang.core.Array
-import tlang.internal.{AnyTmplBlock, ContextResource, TmplNode}
+import dev.tlang.tlang.tmpl.{AstAnyTmplBlock, AstTmplNode}
+import tlang.internal.ContextResource
 import tlang.{core, mutable}
 
 import scala.jdk.CollectionConverters._
@@ -25,10 +25,12 @@ object BuildTmplBlock {
 
   def build(resource: ContextResource, tmpl: TmplBlockContext): AstAnyTmplBlock = {
 
+    val baseType = BuildAst.getResourceType(resource)
+
     tmpl match {
-      case lang@_ if lang.tmplLang() != null => buildLangBlock(resource, tmpl.tmplLang())
-      case doc@_ if doc.tmplDoc() != null => BuildDoc.buildTmplDoc(resource, tmpl.tmplDoc())
-      case style@_ if style.tmplStyle() != null => BuildStyle.buildStyle(resource, style.tmplStyle())
+      case lang@_ if lang.tmplLang() != null => buildLangBlock(resource, tmpl.tmplLang(), baseType)
+      case doc@_ if doc.tmplDoc() != null => BuildDoc.buildTmplDoc(resource, tmpl.tmplDoc(), baseType)
+      case style@_ if style.tmplStyle() != null => BuildStyle.buildStyle(resource, style.tmplStyle(), baseType)
       //      case data@_ if data.tmplData() != null => EntityValue(None, None)
       //      case cmd@_ if cmd.tmplCmd() != null => EntityValue(None, None)
     }
@@ -36,11 +38,12 @@ object BuildTmplBlock {
 
   }
 
-  def buildLangBlock(resource: ContextResource, tmpl: TmplLangContext): LangBlock = {
+  def buildLangBlock(resource: ContextResource, tmpl: TmplLangContext, baseType: String): LangBlock = {
     val langs = new mutable.List()
+    val newBaseType = baseType+"/"+tmpl.name.getText
     tmpl.langs.asScala.foreach(str => langs.add(new core.String(str.getText)))
-    val content = buildFullBlock(resource, tmpl.tmplFullBlock())
-    LangBlock(addContext(resource, tmpl), tmpl.name.getText, tmpl.langs.asScala.map(_.getText).toList,
+    val content = buildFullBlock(resource, tmpl.tmplFullBlock(), newBaseType)
+    LangBlock(addContext(resource, tmpl, Some(ManualType(baseType, tmpl.name.getText))), tmpl.name.getText, tmpl.langs.asScala.map(_.getText).toList,
       if (tmpl.params != null && !tmpl.params.isEmpty) Some(BuildHelperBlock.buildParams(resource, tmpl.params.asScala.toList).map(param => NativeType(param.context, param))) else None,
       content)
   }
@@ -50,10 +53,10 @@ object BuildTmplBlock {
      else buildSpecialisedBlock(resource, tmpl, tmpl.block.tmplSpecialisedBlock())
    }*/
 
-  def buildFullBlock(resource: ContextResource, full: TmplFullBlockContext): LangFullBlock = {
+  def buildFullBlock(resource: ContextResource, full: TmplFullBlockContext, baseType: String): LangFullBlock = {
     val pkg = if (full.tmplPkg() != null && !full.tmplPkg().isEmpty) Some(buildPkg(resource, full.tmplPkg())) else None
     val uses: List[LangUse] = buildUses(resource, full.tmplUses.asScala.toList)
-    LangFullBlock(addContext(resource, full),
+    LangFullBlock(addContext(resource, full, Some(ManualType(baseType, LangFullBlock.name))),
       pkg, Some(uses), specialised = false,
       buildContents(resource, full.tmplContents.asScala.toList))
   }
@@ -282,7 +285,7 @@ object BuildTmplBlock {
       if (block.op != null) Some(BuildCommon.buildOperator(block.op.getText), buildOperation(resource, block.next)) else None)
   }
 
-  def buildInclAttribute(resource: ContextResource, attr: TmplInclAttributeContext): AstTmplNode= {
+  def buildInclAttribute(resource: ContextResource, attr: TmplInclAttributeContext): AstTmplNode = {
     attr match {
       case incl@_ if incl.tmplInclude() != null => buildInclude(resource, incl.tmplInclude())
       case attr@_ if attr.tmplAttribute() != null => buildAttribute(resource, attr.tmplAttribute())

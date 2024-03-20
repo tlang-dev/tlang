@@ -5,9 +5,11 @@ import tlang.internal.{ClassType, ContextContent}
 
 case class AstEntity(context: Option[ContextContent], model: Option[AstModel], attrs: Option[List[AstEntityAttr]]) extends AstValue {
 
-  override def getType: Type =
-    if (model.isDefined) model.get.getType
+  override def getType: Type = {
+    if (context.isDefined) context.get.getType
+    else if (model.isDefined) model.get.getType
     else ClassType.of(classOf[Entity])
+  }
 
   override def getElement: AstValue = this
 

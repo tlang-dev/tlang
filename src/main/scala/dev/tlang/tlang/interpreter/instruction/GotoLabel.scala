@@ -7,6 +7,7 @@ case class GotoLabel(label: String) extends Instruction {
   override def run(state: State): Either[ExecError, Unit] = {
     state.goto(label)
     state.getLogger.debug("Set Goto to: " + label)
+    state.runTil.prepend(label)
     Right(())
   }
 }

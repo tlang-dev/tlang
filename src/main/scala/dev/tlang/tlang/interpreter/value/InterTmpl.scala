@@ -13,4 +13,6 @@ case class InterTmpl(entity: AstEntity) extends InterValue(InterValueType.Tmpl) 
 
   override def getValue: InterTmpl = this
 
+  def getAstAttrByName(name:String):InterTmpl = InterTmpl(entity.attrs.get.find(attr => attr.name.get == name).get.value.get.asInstanceOf[AstEntity])
+
 }

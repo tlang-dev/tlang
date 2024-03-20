@@ -13,7 +13,7 @@ case class State(jumps: mutable.Stack[JumpIndex] = mutable.Stack.empty,
                  stack: Stack = new Stack,
                  program: Program,
                  var logger: Logger = new DefaultLogger,
-                 levels: Levels = Levels()) {
+                 runTil: mutable.Stack[String] = mutable.Stack.empty) {
 
   def jumpTo(index: JumpIndex): Unit = {
     jumps.prepend(index)

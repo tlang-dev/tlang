@@ -1,7 +1,7 @@
 package dev.tlang.tlang.interpreter
 
 import dev.tlang.tlang.interpreter.context.State
-import dev.tlang.tlang.interpreter.instruction.{EndSeq, ExecJump, GotoBack, Instruction}
+import dev.tlang.tlang.interpreter.instruction.{EndLabel, ExecJump, GotoBack, Instruction}
 import dev.tlang.tlang.interpreter.recipe.Parameter
 import tlang.core.Value
 
@@ -21,8 +21,9 @@ class Runner {
   }
 
   private def runProgram(program: Program, parameter: Parameter, state: State): Either[ExecError, Option[Value]] = {
-    sectionPos = parameter.sectionStart
-    instrPos = parameter.instrStart
+    val startPos = startPoint(program, parameter, state)
+    sectionPos = startPos._1
+    instrPos = startPos._2
     val logger = parameter.logger
     state.setLogger(logger)
     do {
@@ -40,7 +41,7 @@ class Runner {
               sectionPos = jump.section
               instrPos = jump.instruction
               logger.debug("Jumping to: " + sectionPos + ":" + instrPos)
-            case _: GotoBack if state.hasJumpBack =>
+            case _: GotoBack if state.hasJumpBack && wasLastInstruction(state, instr) =>
               val jump = state.getJumpBack
               sectionPos = jump.section
               instrPos = jump.instruction
@@ -59,16 +60,29 @@ class Runner {
   }
 
   private def wasLastInstruction(state: State, instr: Instruction): Boolean = {
-    instr.isInstanceOf[EndSeq] && state.levels.label == 0 && state.levels.box == 0
+    instr match {
+      case label: EndLabel if state.runTil.nonEmpty && state.runTil.head == label.name =>
+        state.runTil.pop()
+        true
+      case _ => false
+    }
   }
 
   private def initStatic(program: Program, parameter: Parameter, state: State): Either[ExecError, Unit] = {
     program.getSections.foreach { static =>
       static.getStatics.foreach { index =>
-        runProgram(program, Parameter(index.section, index.instruction, parameter.logger), state)
+        runProgram(program, Parameter(index.section, index.instruction, None, parameter.logger), state)
       }
     }
     Right(())
+  }
+
+  private def startPoint(program: Program, parameter: Parameter, state: State): (Int, Int) = {
+    if (parameter.startLabel.isDefined) {
+      val startJump = program.getLabel(parameter.startLabel.get)
+      state.runTil += parameter.startLabel.get
+      (startJump.section, startJump.instruction)
+    } else (parameter.sectionStart, parameter.instrStart)
   }
 
 }

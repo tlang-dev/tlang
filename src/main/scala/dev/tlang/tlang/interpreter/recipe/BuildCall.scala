@@ -5,7 +5,6 @@ import dev.tlang.tlang.interpreter.context.JumpIndex
 import dev.tlang.tlang.interpreter.instruction._
 import dev.tlang.tlang.interpreter.recipe.BuildProgram.{buildSetAttribute, getContentType}
 import dev.tlang.tlang.interpreter.value._
-import tlang.core
 
 object BuildCall {
 
@@ -28,7 +27,7 @@ object BuildCall {
       case array: CallArrayObject => ???
       case func: CallFuncObject => applyNextFunc(context, func, callIndex)
       case _: CallRefFuncObject => ???
-      case callVar: CallVarObject => applyNextVar(context, callVar, callIndex, value)
+      case callVar: CallVarObject => applyNextVar(context, callObject, callVar, callIndex, value)
       case _ => println(getClass.getName + ": Does not exist")
     }
   }
@@ -42,12 +41,15 @@ object BuildCall {
     context.section.addInstruction(CallNextFunc(callObject.getName, totalArgs))
   }
 
-  private def applyNextVar(context: BuilderContext, callVar: CallVarObject, callIndex: Int, value: InterValue): Unit = {
+  private def applyNextVar(context: BuilderContext, callObject: CallObject, callVar: CallVarObject, callIndex: Int, value: InterValue): Unit = {
     value match {
       case tmpl: InterTmpl =>
-        val label = value.getAttrPath( callVar.name)
+        val label = value.getAttrPath(callVar.name)
         context.section.addInstruction(GotoLabel(label))
         context.section.addInstruction(Back(JumpIndex(context.sectionPos, context.instrPos + 2)))
+        if (callIndex < callObject.statements.size - 1) {
+          applyNext(context, callObject, callIndex + 1, tmpl.getAstAttrByName(callVar.name))
+        }
       case _ => context.section.addInstruction(CallNextVar(callVar.name))
     }
   }

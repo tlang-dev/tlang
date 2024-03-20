@@ -44,7 +44,7 @@ class RunnerTest extends AnyFunSuiteLike {
     context.callables ++= callables
     BuildProgram.buildProgram(context)
     val logger = new TestLogger
-    val parameter = Parameter(0, 7, logger)
+    val parameter = Parameter(0, 7, None, logger)
     new Runner().initAndRun(State(program = context.program), parameter)
     val logs = logger.getLogs
     assert(logs(19) == "Jumping to: 0:2")
@@ -64,7 +64,7 @@ class RunnerTest extends AnyFunSuiteLike {
     val context = BuilderContext(module = Module("test", fakeManifest, Map(), None, ""), resource = Resource("test", "test", "test", "test", domain))
     BuildProgram.buildProgram(context)
     val logger = new TestLogger
-    val parameter = Parameter(0, 0, logger)
+    val parameter = Parameter(0, 0, None, logger)
     new Runner().initAndRun(State(program = context.program), parameter)
     val logs = logger.getLogs
     assert(logs(4) == "Jumping to: 0:5")
@@ -87,7 +87,7 @@ class RunnerTest extends AnyFunSuiteLike {
     val context = BuilderContext(module = Module("test", fakeManifest, Map(), None, ""), resource = Resource("test", "test", "test", "test", domain))
     BuildProgram.buildProgram(context)
     val logger = new TestLogger
-    val parameter = Parameter(0, 0, logger)
+    val parameter = Parameter(0, 0, None, logger)
     new Runner().initAndRun(State(program = context.program), parameter)
     val logs = logger.getLogs
     assert(logs(4) == "Jumping to: 0:5")
@@ -120,7 +120,7 @@ class RunnerTest extends AnyFunSuiteLike {
     context.callables ++= callables
     BuildProgram.buildProgram(context)
     val logger = new TestLogger
-    val parameter = Parameter(0, 0, logger)
+    val parameter = Parameter(0, 0, None, logger)
     new Runner().initAndRun(State(program = context.program), parameter)
     val logs = logger.getLogs
     assert(logs(20) == "Jumping to: 0:20")
@@ -151,7 +151,7 @@ class RunnerTest extends AnyFunSuiteLike {
     context.callables ++= callables
     BuildProgram.buildProgram(context)
     val logger = new TestLogger
-    val parameter = Parameter(0, 0, logger)
+    val parameter = Parameter(0, 0, None, logger)
     new Runner().initAndRun(State(program = context.program), parameter)
     val logs = logger.getLogs
     assert(logs(15) == "[FuncRetSet] Section n°: 0, Instruction n°: 14")
@@ -183,7 +183,7 @@ class RunnerTest extends AnyFunSuiteLike {
     context.callables ++= callables
     BuildProgram.buildProgram(context)
     val logger = new TestLogger
-    val parameter = Parameter(0, 0, logger)
+    val parameter = Parameter(0, 0, None, logger)
     new Runner().initAndRun(State(program = context.program), parameter)
     val logs = logger.getLogs
     assert(logs(8) == "[CallJVM] Section n°: 0, Instruction n°: 6")
@@ -221,7 +221,7 @@ class RunnerTest extends AnyFunSuiteLike {
     context.callables ++= callables
     BuildProgram.buildProgram(context)
     val logger = new TestLogger
-    val parameter = Parameter(0, 2, logger)
+    val parameter = Parameter(0, 2, None, logger)
     new Runner().initAndRun(State(program = context.program), parameter)
     val logs = logger.getLogs
     assert(logs(49) == "Jumping back to: 0:6")
@@ -259,7 +259,7 @@ class RunnerTest extends AnyFunSuiteLike {
     context.callables ++= callables
     BuildProgram.buildProgram(context)
     val logger = new TestLogger
-    val parameter = Parameter(0, 2, logger)
+    val parameter = Parameter(0, 2, None, logger)
     val ret = new Runner().initAndRun(State(program = context.program), parameter)
     assert("If you see this in terminal, echo from JVM works!" == ret.toOption.get.get.asInstanceOf[FuncRet].get().getValue.toString)
   }

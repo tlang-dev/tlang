@@ -12,7 +12,7 @@ case class EndStaticBox(id: String) extends Instruction with EndSeq {
       state.removeBox()
       isInit = true
     }
-    state.levels.staticBox -= 1
+//    state.levels.staticBox -= 1
     Right(())
   }
 }

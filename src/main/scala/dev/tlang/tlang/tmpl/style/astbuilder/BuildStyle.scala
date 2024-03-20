@@ -13,7 +13,7 @@ import scala.jdk.CollectionConverters._
 
 object BuildStyle {
 
-  def buildStyle(resource: ContextResource, style: TmplStyleContext): StyleBlock = {
+  def buildStyle(resource: ContextResource, style: TmplStyleContext, baseType:String): StyleBlock = {
     StyleBlock(addContext(resource, style), style.name.getText, style.langs.asScala.map(_.getText).toList,
       if (style.params != null && !style.params.isEmpty) Some(BuildHelperBlock.buildParams(resource, style.params.asScala.toList).map(param => NativeType(param.context, param))) else None,
       style.content.blocks.asScala.map(buildStyleStruct(resource, _)).toList)

@@ -6,7 +6,7 @@ import dev.tlang.tlang.interpreter.{Box, ExecError, Program, Stack}
 case class StartBox() extends Instruction {
   override def run(state: State): Either[ExecError, Unit] = {
     state.newBox()
-    state.levels.box += 1
+//    state.levels.box += 1
     Right(())
   }
 }

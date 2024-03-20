@@ -4,7 +4,7 @@ import dev.tlang.tlang.ast.common.ManualType
 import dev.tlang.tlang.ast.common.value.ArrayValue
 import dev.tlang.tlang.ast.model.set.{ModelSetAttribute, ModelSetType}
 import dev.tlang.tlang.tmpl.doc.ast.DocModel
-import dev.tlang.tlang.tmpl.{AstEntity, AstModel, AstTmplNode, TmplID}
+import dev.tlang.tlang.tmpl._
 import tlang.core.Type
 import tlang.internal.ContextContent
 
@@ -17,7 +17,7 @@ case class LangPkg(context: Option[ContextContent], var parts: List[TmplID]) ext
     AstEntity(context,
       Some(LangPkg.model),
       Some(List(
-        //        BuildAstTmpl.createAttrList(context, "parts", parts.map(_.toEntity))
+        BuildAstTmpl.createAttrList(context, "parts", parts.map(_.toEntity))
       )))
   }
 

@@ -24,7 +24,7 @@ class BuildLangBlockTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val tmpl = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock().tmplLang())
+    val tmpl = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock().tmplLang(), "")
     assert("myTmpl" == tmpl.name)
     assert("scala" == tmpl.langs.head)
 
@@ -38,7 +38,7 @@ class BuildLangBlockTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val tmpl = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock().tmplLang())
+    val tmpl = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock().tmplLang(), "")
     assert("myTmpl" == tmpl.name)
     assert("param1" == tmpl.params.get.head.statement.param.get)
     assert("String" == tmpl.params.get.head.statement.`type`.asInstanceOf[ObjType].name)
@@ -129,7 +129,7 @@ class BuildLangBlockTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val res = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock().tmplLang()).content.content.get.head.asInstanceOf[LangVar]
+    val res = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock().tmplLang(), "").content.content.get.head.asInstanceOf[LangVar]
     assert("myVar" == res.name.toString)
     assert("String" == res.`type`.get.name.toString)
     assert("myValue" == res.value.get.content.toOption.get.asInstanceOf[LangStringValue].value.toString)
@@ -142,7 +142,7 @@ class BuildLangBlockTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val res = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock().tmplLang()).content.content.get.head.asInstanceOf[LangCallObj].calls.head.asInstanceOf[LangCallVar]
+    val res = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock().tmplLang(), "").content.content.get.head.asInstanceOf[LangCallObj].calls.head.asInstanceOf[LangCallVar]
     assert("myVar" == res.name.toString)
   }
 
@@ -153,7 +153,7 @@ class BuildLangBlockTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val res = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock().tmplLang()).content.content.get.head.asInstanceOf[LangCallObj].calls.head.asInstanceOf[LangCallArray]
+    val res = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock().tmplLang(), "").content.content.get.head.asInstanceOf[LangCallObj].calls.head.asInstanceOf[LangCallArray]
     assert("myArray" == res.name.toString)
     assert(1 == res.elem.content.toOption.get.asInstanceOf[LangLongValue].value)
   }
@@ -165,7 +165,7 @@ class BuildLangBlockTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val res = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock().tmplLang()).content.content.get.head.asInstanceOf[LangCallObj].calls.head.asInstanceOf[LangCallFunc]
+    val res = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock().tmplLang(), "").content.content.get.head.asInstanceOf[LangCallObj].calls.head.asInstanceOf[LangCallFunc]
     assert("myFunc" == res.name.toString)
     assert(1 == res.currying.get.head.params.get.head.asInstanceOf[LangSetAttribute].value.content.toOption.get.asInstanceOf[LangLongValue].value)
     assert("param2" == res.currying.get.last.params.get.head.asInstanceOf[LangSetAttribute].value.content.toOption.get.asInstanceOf[LangStringValue].value.toString)
@@ -181,7 +181,7 @@ class BuildLangBlockTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val res = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock().tmplLang()).content.content.get.head.asInstanceOf[LangIf].cond
+    val res = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock().tmplLang(), "").content.content.get.head.asInstanceOf[LangIf].cond
     val trueVal = res.content.left.toOption.get.content.left.toOption.get
     val andMyVar = res.content.left.toOption.get.content.left.toOption.get.next.get
     val eqMyVar2 = res.content.left.toOption.get.content.left.toOption.get.next.get._2.next.get
@@ -204,7 +204,7 @@ class BuildLangBlockTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val res = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock().tmplLang()).content.content.get.head.asInstanceOf[LangMultiValue]
+    val res = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock().tmplLang(), "").content.content.get.head.asInstanceOf[LangMultiValue]
     val array = res.values.last.asInstanceOf[LangArrayValue]
     assert(1 == res.values.head.asInstanceOf[LangLongValue].value)
     assert("value2" == res.values(1).asInstanceOf[LangStringValue].value.toString)
@@ -222,7 +222,7 @@ class BuildLangBlockTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val res = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock().tmplLang()).content.content.get.head.asInstanceOf[LangEntityValue]
+    val res = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock().tmplLang(), "").content.content.get.head.asInstanceOf[LangEntityValue]
     val attr1 = res.attrs.get.head
     assert(1 == res.params.get.head.asInstanceOf[LangAttribute].value.content.toOption.get.asInstanceOf[LangLongValue].value)
     assert("param2" == res.params.get.last.asInstanceOf[LangAttribute].attr.get.toString)
@@ -242,7 +242,7 @@ class BuildLangBlockTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val ifStmt = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock().tmplLang()).content.content.get.head.asInstanceOf[LangIf]
+    val ifStmt = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock().tmplLang(), "").content.content.get.head.asInstanceOf[LangIf]
     val cond = ifStmt.cond
     assert(Operator.EQUAL == cond.next.get._1)
     assert(1 == cond.content.toOption.get.asInstanceOf[LangLongValue].value)
@@ -260,7 +260,7 @@ class BuildLangBlockTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val ifStmt = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock().tmplLang()).content.content.get.head.asInstanceOf[LangIf]
+    val ifStmt = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock().tmplLang(), "").content.content.get.head.asInstanceOf[LangIf]
     val cond = ifStmt.cond
     val block = ifStmt.content.asInstanceOf[LangExprBlock]
     assert(Operator.EQUAL == cond.next.get._1)
@@ -277,7 +277,7 @@ class BuildLangBlockTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val ifStmt = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock().tmplLang()).content.content.get.head.asInstanceOf[LangIf]
+    val ifStmt = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock().tmplLang(), "").content.content.get.head.asInstanceOf[LangIf]
     val cond = ifStmt.cond
     val elseBlock = ifStmt.elseBlock.get.left.toOption.get
     assert(Operator.EQUAL == cond.next.get._1)
@@ -294,7 +294,7 @@ class BuildLangBlockTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val ifStmt = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock().tmplLang()).content.content.get.head.asInstanceOf[LangIf]
+    val ifStmt = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock().tmplLang(), "").content.content.get.head.asInstanceOf[LangIf]
     val cond = ifStmt.cond
     val elseIf = ifStmt.elseBlock.get.toOption.get
     val cond2 = elseIf.cond

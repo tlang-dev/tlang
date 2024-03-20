@@ -4,8 +4,7 @@ import dev.tlang.tlang.TLang._
 import dev.tlang.tlang.ast._
 import dev.tlang.tlang.tmpl.lang.astbuilder.BuildTmplBlock
 import org.antlr.v4.runtime.ParserRuleContext
-import tlang.core.Int
-import tlang.internal
+import tlang.core.{Int, Type}
 import tlang.internal.{ContextContent, ContextResource, DomainBlock}
 
 import scala.jdk.CollectionConverters._
@@ -39,8 +38,18 @@ object BuildAst {
     DomainUse(addContext(resource, use), use.uses.asScala.toList.map(_.getText), AstBuilderUtils.getText(use.alias))
   }
 
-  def addContext(resource: ContextResource, parser: ParserRuleContext): Option[ContextContent] = {
-    Some(new ContextContent(resource, new Int(parser.getStart.getLine), new Int(parser.getStart.getCharPositionInLine)))
+  def addContext(resource: ContextResource, parser: ParserRuleContext, basType: Option[Type] = None): Option[ContextContent] = {
+    if (basType.isDefined) Some(new ContextContent(resource, new Int(parser.getStart.getLine), new Int(parser.getStart.getCharPositionInLine), basType.get))
+    else Some(new ContextContent(resource, new Int(parser.getStart.getLine), new Int(parser.getStart.getCharPositionInLine)))
+  }
+
+  def getResourceType(resource: ContextResource, name: Option[String] = None): String = {
+    var pkg = ""
+    var newName = name.getOrElse("")
+    pkg = resource.getPkg.toString
+    if (name.isEmpty) newName = resource.getName.toString
+    if (pkg.isEmpty) newName
+    else pkg + "/" + newName
   }
 
 }

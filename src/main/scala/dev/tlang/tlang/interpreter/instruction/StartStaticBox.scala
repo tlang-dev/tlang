@@ -13,7 +13,7 @@ case class StartStaticBox(id: String) extends Instruction {
       state.newBox()
       isInit = true
     }
-    state.levels.staticBox += 1
+//    state.levels.staticBox += 1
     Right(())
   }
 }

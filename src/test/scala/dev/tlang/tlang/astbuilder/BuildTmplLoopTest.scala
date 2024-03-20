@@ -24,7 +24,7 @@ class BuildTmplLoopTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val loop = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock().tmplLang()).content.content.get.head.asInstanceOf[LangWhile]
+    val loop = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock().tmplLang(), "").content.content.get.head.asInstanceOf[LangWhile]
     val cond = loop.cond
     assert(Operator.EQUAL == cond.next.get._1)
     assert(1 == cond.content.toOption.get.asInstanceOf[LangLongValue].value)
@@ -42,7 +42,7 @@ class BuildTmplLoopTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val loop = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock().tmplLang()).content.content.get.head.asInstanceOf[LangWhile]
+    val loop = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock().tmplLang(), "").content.content.get.head.asInstanceOf[LangWhile]
     val cond = loop.cond
     val block = loop.content.asInstanceOf[LangExprBlock]
     assert(Operator.EQUAL == cond.next.get._1)
@@ -60,7 +60,7 @@ class BuildTmplLoopTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val loop = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock().tmplLang()).content.content.get.head.asInstanceOf[LangDoWhile]
+    val loop = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock().tmplLang(), "").content.content.get.head.asInstanceOf[LangDoWhile]
     val cond = loop.cond
     assert(Operator.EQUAL == cond.next.get._1)
     assert(1 == cond.content.toOption.get.asInstanceOf[LangLongValue].value)
@@ -78,7 +78,7 @@ class BuildTmplLoopTest extends AnyFunSuite {
         |}""".stripMargin))
     val tokens = new CommonTokenStream(lexer)
     val parser = new TLang(tokens)
-    val loop = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock().tmplLang()).content.content.get.head.asInstanceOf[LangDoWhile]
+    val loop = BuildTmplBlock.buildLangBlock(fakeContext, parser.tmplBlock().tmplLang(), "").content.content.get.head.asInstanceOf[LangDoWhile]
     val cond = loop.cond
     val block = loop.content.asInstanceOf[LangExprBlock]
     assert(Operator.EQUAL == cond.next.get._1)
