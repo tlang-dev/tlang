@@ -19,8 +19,8 @@ object BuildCallEntity {
 
   private def applyVar(context: BuilderContext, callVar: CallVarObject, value: InterEntity): Unit = {
     val label = value.`type`.getType.toString
-    context.section.addInstruction(GotoLabel(label))
-    context.section.addInstruction(Back(JumpIndex(context.sectionPos, context.instrPos + 2)))
+    context.section.getCurrentInstructionBlock.get.addInstruction(GotoLabel(label))
+    context.section.getCurrentInstructionBlock.get.addInstruction(Back(JumpIndex(context.sectionPos, context.instrPos + 2)))
   }
 
   private def applyFunc(context: BuilderContext, callFunc: CallFuncObject, value: InterEntity): Unit = {

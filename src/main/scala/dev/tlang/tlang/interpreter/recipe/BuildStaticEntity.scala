@@ -17,39 +17,39 @@ object BuildStaticEntity {
     boxBuilder.setBoxId(label)
     //    context.section.addInstruction(Label(label))
     //    context.labels.addOne(label -> JumpIndex(context.sectionPos, context.instrPos))
-    BuildProgram.addLabel(context, label, context.instrPos)
-    context.section.addInstruction(StartStaticBox(label))
+    //    BuildProgram.addLabel(context, label, context.instrPos)
+    val instructionBlock = context.section.newInstructionBlock(label)
+    instructionBlock.addInstruction(StartStaticBox(label))
     entity.attrs.foreach(_.zipWithIndex.foreach(attr => buildStaticEntityAttr(context, boxBuilder, label, attr._1, attr._2)))
-    context.section.addInstruction(EndStaticBox(label))
+    instructionBlock.addInstruction(EndStaticBox(label))
 
-    context.section.addInstruction(Set(Some(InterEntity(entity.getType))))
-    context.section.addInstruction(Put())
+    instructionBlock.addInstruction(Set(Some(InterEntity(entity.getType))))
+    instructionBlock.addInstruction(Put())
   }
 
   private def buildStaticEntityAttr(context: BuilderContext, boxBuilder: BoxBuilder, entityLabel: String, attr: ComplexAttribute, index: Int): Unit = {
+    val indexLabel = entityLabel + "/" + index.toString
+    val instructionBlock = context.section.newInstructionBlock(indexLabel)
     attr.attr.foreach(attr => {
       val label = entityLabel + "/" + attr
-      BuildProgram.addLabel(context, label, context.instrPos + 1)
-      //      context.section.addInstruction(Label(label))
+      instructionBlock.addInstruction(Label(label))
       //      context.labels.addOne(label -> JumpIndex(context.sectionPos, context.instrPos))
     })
-    val indexLabel = entityLabel + "/" + index.toString
-    context.section.addInstruction(Label(indexLabel))
+
     context.labels.addOne(entityLabel + "/" + index.toString -> JumpIndex(context.sectionPos, context.instrPos + 1))
     val callOnce = CallOnce(attr.value, JumpIndex(context.sectionPos, context.instrPos + 2), JumpIndex(context.sectionPos, context.instrPos))
     val lazyVar = boxBuilder.addVar("lazy" + index.toString)
-    context.section.addInstruction(callOnce)
+    instructionBlock.addInstruction(callOnce)
     BuildProgram.buildOperation(context, attr.value)(isStatic = false)
-    context.section.addInstruction(instruction.SetStatic(boxBuilder.getBoxId, Some(new Lazy())))
-    context.section.addInstruction(SetLazyStatic(boxBuilder.getBoxId, lazyVar.pos))
+    instructionBlock.addInstruction(instruction.SetStatic(boxBuilder.getBoxId, Some(new Lazy())))
+    instructionBlock.addInstruction(SetLazyStatic(boxBuilder.getBoxId, lazyVar.pos))
     callOnce.getIndex = JumpIndex(context.sectionPos, context.instrPos + 1)
-    context.section.addInstruction(GetLazyStatic(boxBuilder.getBoxId, lazyVar.pos))
+    instructionBlock.addInstruction(GetLazyStatic(boxBuilder.getBoxId, lazyVar.pos))
 
     // End Labels
-    context.section.addInstruction(EndLabel(indexLabel))
     attr.attr.foreach(attr => {
       val label = entityLabel + "/" + attr
-      context.section.addInstruction(EndLabel(label))
+      instructionBlock.addInstruction(EndLabel(label))
     })
   }
 

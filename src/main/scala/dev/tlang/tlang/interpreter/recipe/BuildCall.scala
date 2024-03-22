@@ -38,19 +38,19 @@ object BuildCall {
       BuildProgram.buildOperation(context, param.value)
       totalArgs += 1
     }))))
-    context.section.addInstruction(CallNextFunc(callObject.getName, totalArgs))
+    context.section.getCurrentInstructionBlock.get.addInstruction(CallNextFunc(callObject.getName, totalArgs))
   }
 
   private def applyNextVar(context: BuilderContext, callObject: CallObject, callVar: CallVarObject, callIndex: Int, value: InterValue): Unit = {
     value match {
       case tmpl: InterTmpl =>
         val label = value.getAttrPath(callVar.name)
-        context.section.addInstruction(GotoLabel(label))
-        context.section.addInstruction(Back(JumpIndex(context.sectionPos, context.instrPos + 2)))
+        context.section.getCurrentInstructionBlock.get.addInstruction(GotoLabel(label))
+        context.section.getCurrentInstructionBlock.get.addInstruction(Back(JumpIndex(context.sectionPos, context.instrPos + 2)))
         if (callIndex < callObject.statements.size - 1) {
           applyNext(context, callObject, callIndex + 1, tmpl.getAstAttrByName(callVar.name))
         }
-      case _ => context.section.addInstruction(CallNextVar(callVar.name))
+      case _ => context.section.getCurrentInstructionBlock.get.addInstruction(CallNextVar(callVar.name))
     }
   }
 
@@ -74,39 +74,39 @@ object BuildCall {
   }
 
   private def applyFunc(context: BuilderContext, value: InterFunc, callObject: CallObject, callIndex: Int): Unit = {
-    context.section.addInstruction(GotoLabel(value.getFullName))
-    context.section.addInstruction(Back(JumpIndex(context.sectionPos, context.instrPos + 2)))
+    context.section.getCurrentInstructionBlock.get.addInstruction(GotoLabel(value.getFullName))
+    context.section.getCurrentInstructionBlock.get.addInstruction(Back(JumpIndex(context.sectionPos, context.instrPos + 2)))
     if (callIndex < callObject.statements.size - 1) {
-      context.section.addInstruction(AfterCallGet())
+      context.section.getCurrentInstructionBlock.get.addInstruction(AfterCallGet())
       findValue(context, callObject, callIndex + 1)
     }
   }
 
   // Local var in func
   private def applyVar(context: BuilderContext, value: InterVar, callObject: CallObject, callIndex: Int): Unit = {
-    context.section.addInstruction(Get(value.pos))
+    context.section.getCurrentInstructionBlock.get.addInstruction(Get(value.pos))
     if (callIndex < callObject.statements.size - 1) {
       findValue(context, callObject, callIndex + 1)
     }
   }
 
   private def applyParam(context: BuilderContext, value: InterParam, callObject: CallObject, callIndex: Int): Unit = {
-    context.section.addInstruction(Get(value.pos))
+    context.section.getCurrentInstructionBlock.get.addInstruction(Get(value.pos))
     if (callIndex < callObject.statements.size - 1) {
       findValue(context, callObject, callIndex + 1)
     }
   }
 
   private def applyAttr(context: BuilderContext, value: InterAttr, callObject: CallObject, callIndex: Int): Unit = {
-    //    context.section.addInstruction(Get(value.pos))
+    //    context.section.getCurrentInstructionBlock.get.addInstruction(Get(value.pos))
     if (callIndex < callObject.statements.size - 1) {
       findValue(context, callObject, callIndex + 1)
     }
   }
 
   private def applyTmpl(context: BuilderContext, value: InterTmpl, callObject: CallObject, callIndex: Int): Unit = {
-    context.section.addInstruction(Set(Some(value)))
-    context.section.addInstruction(Put())
+    context.section.getCurrentInstructionBlock.get.addInstruction(Set(Some(value)))
+    context.section.getCurrentInstructionBlock.get.addInstruction(Put())
     if (callIndex < callObject.statements.size - 1) {
       applyNext(context, callObject, callIndex, value)
     }
@@ -115,11 +115,11 @@ object BuildCall {
   private def applyArray(context: BuilderContext, value: InterArray, callObject: CallObject, callIndex: Int): Unit = {
     callObject.statements(callIndex) match {
       case callVar: CallVarObject =>
-        context.section.addInstruction(GotoLabel(value.getFullName))
-        context.section.addInstruction(Back(JumpIndex(context.sectionPos, context.instrPos + 2)))
+        context.section.getCurrentInstructionBlock.get.addInstruction(GotoLabel(value.getFullName))
+        context.section.getCurrentInstructionBlock.get.addInstruction(Back(JumpIndex(context.sectionPos, context.instrPos + 2)))
       case callArray: CallArrayObject =>
-        context.section.addInstruction(GotoLabel(value.getFullName + "/" + callArray.name))
-        context.section.addInstruction(Back(JumpIndex(context.sectionPos, context.instrPos + 2)))
+        context.section.getCurrentInstructionBlock.get.addInstruction(GotoLabel(value.getFullName + "/" + callArray.name))
+        context.section.getCurrentInstructionBlock.get.addInstruction(Back(JumpIndex(context.sectionPos, context.instrPos + 2)))
     }
     if (callIndex < callObject.statements.size - 1) {
       findValue(context, callObject, callIndex + 1)
@@ -140,8 +140,8 @@ object BuildCall {
       val callVar = head.asInstanceOf[CallVarObject]
       val callable = findCallable(context, callVar.name)
       if (callable.isDefined) {
-        //        context.section.addInstruction(GotoLabel(callable.get))
-        context.section.addInstruction(Back(JumpIndex(context.sectionPos, context.instrPos + 2)))
+        //        context.section.getCurrentInstructionBlock.get.addInstruction(GotoLabel(callable.get))
+        context.section.getCurrentInstructionBlock.get.addInstruction(Back(JumpIndex(context.sectionPos, context.instrPos + 2)))
       } else {
         val use = context.resource.ast.header.get.uses.get.filter(part => part.parts.last == callVar.name)
         val optClazz = {
@@ -157,7 +157,7 @@ object BuildCall {
             buildSetAttribute(context, attr)
             totParam += 1
           }))))
-          // context.section.addInstruction(CallCore(clazz.className, callFunc.name.get, totParam))
+          // context.section.getCurrentInstructionBlock.get.addInstruction(CallCore(clazz.className, callFunc.name.get, totParam))
         }
       }
     }
@@ -165,9 +165,9 @@ object BuildCall {
 
   def buildCallFunc(context: BuilderContext, func: CallFuncObject, hasOtherCallAfterwards: Boolean = false): Unit = {
     //func.currying.foreach(_.foreach(_.params.foreach(_.foreach(buildOperation(context, _)))))
-    context.section.addInstruction(GotoLabel(getContentType(func.context, func.name)))
-    context.section.addInstruction(Back(JumpIndex(context.sectionPos, context.instrPos + 2)))
-    if (!hasOtherCallAfterwards) context.section.addInstruction(AfterCallGet())
+    context.section.getCurrentInstructionBlock.get.addInstruction(GotoLabel(getContentType(func.context, func.name)))
+    context.section.getCurrentInstructionBlock.get.addInstruction(Back(JumpIndex(context.sectionPos, context.instrPos + 2)))
+    if (!hasOtherCallAfterwards) context.section.getCurrentInstructionBlock.get.addInstruction(AfterCallGet())
   }
 
   private def findCallable(context: BuilderContext, name: String): Option[InterValue] = {

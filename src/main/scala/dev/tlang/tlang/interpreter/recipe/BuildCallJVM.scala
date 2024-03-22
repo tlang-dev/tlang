@@ -24,7 +24,7 @@ object BuildCallJVM {
       buildSetAttribute(context, attr)
       totParam += 1
     }))))
-    context.section.addInstruction(CallJVM(value, callFunc.name.get, totParam))
+    context.section.getCurrentInstructionBlock.get.addInstruction(CallJVM(value, callFunc.name.get, totParam))
   }
 
   private def applyVar(context: BuilderContext, callVar: CallVarObject, value: InterJVM): Unit = {

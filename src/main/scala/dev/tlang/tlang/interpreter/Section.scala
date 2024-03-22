@@ -6,19 +6,33 @@ import dev.tlang.tlang.interpreter.instruction.Instruction
 import scala.collection.mutable.ListBuffer
 
 class Section {
-  private val instructions = ListBuffer.empty[Instruction]
+  private val instructions = ListBuffer.empty[InstructionBlock]
   private val statics = ListBuffer.empty[JumpIndex]
+  private var finalInstructions = List.empty[Instruction]
+  private var currentInstructionBlock: Option[InstructionBlock] = None
 
-  def addInstruction(instruction: Instruction): Unit = {
+  def newInstructionBlock(label: String): InstructionBlock = {
+    val instruction = new InstructionBlock(label)
     instructions.addOne(instruction)
+    currentInstructionBlock = Some(instruction)
+    instruction
   }
 
-  def getInstructions: List[Instruction] = {
-    instructions.toList
+//  def addInstruction(instruction: Instruction): Unit = {
+//    currentInstructionBlock.foreach(_.addInstruction(instruction))
+//  }
+
+  def getCurrentInstructionBlock: Option[InstructionBlock] = currentInstructionBlock
+
+  def getInstructions: List[Instruction] = finalInstructions
+
+  def build: List[Instruction] = {
+    finalInstructions = instructions.flatMap(_.build).toList
+    finalInstructions
   }
 
   def getInstr(index: Int): Instruction = {
-    instructions(index)
+    finalInstructions(index)
   }
 
   def addStaticLabel(index: JumpIndex): Unit = {

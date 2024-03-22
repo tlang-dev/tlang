@@ -13,34 +13,35 @@ object BuildAstEntity {
     val label = entity.getType.getType.toString
     val boxBuilder = new BoxBuilder()
     //    boxBuilder.setBoxId(label)
-    context.section.addInstruction(Label(label))
+    val instructionBlock = context.section.newInstructionBlock(label)
     context.labels.addOne(label -> JumpIndex(context.sectionPos, context.instrPos))
     //    context.section.addInstruction(StartBox(label))
     entity.attrs.foreach(_.zipWithIndex.foreach(attr => buildAstEntityAttr(context, boxBuilder, label, entity, attr._1, attr._2)))
     //    context.section.addInstruction(EndStaticBox(label))
 
     //Just to have something to return, could be a representation of the entity in the future
-    context.section.addInstruction(Set(Some(InterEntity(entity.getType))))
-    context.section.addInstruction(Put())
-    context.section.addInstruction(EndLabel(label))
+    instructionBlock.addInstruction(Set(Some(InterEntity(entity.getType))))
+    instructionBlock.addInstruction(Put())
   }
 
   def buildAstEntityAttr(context: BuilderContext, boxBuilder: BoxBuilder, entityLabel: String, entity: AstEntity, attr: AstEntityAttr, index: Int): Unit = {
+    val indexLabel = entity.getType.getType.toString + "." + index.toString
+    val instructionBlock = context.section.newInstructionBlock(indexLabel)
+    //    context.section.addInstruction(Label(indexLabel))
     attr.name.foreach(name => {
       val label = entityLabel + "/" + name
-      BuildProgram.addLabel(context, label, context.instrPos + 1)
+      instructionBlock.addInstruction(Label(label))
+      //      BuildProgram.addLabel(context, label, context.instrPos + 1)
     })
-    val indexLabel = entity.getType.getType.toString + "." + index.toString
-    context.section.addInstruction(Label(indexLabel))
+
     context.labels.addOne(entity.getType.getType.toString + "." + index.toString -> JumpIndex(context.sectionPos, context.instrPos))
 
     buildValue(context, boxBuilder, attr.value.get)
 
     // End Labels
-    context.section.addInstruction(EndLabel(indexLabel))
     attr.name.foreach(attr => {
       val label = entityLabel + "/" + attr
-      context.section.addInstruction(EndLabel(label))
+      instructionBlock.addInstruction(EndLabel(label))
     })
   }
 
