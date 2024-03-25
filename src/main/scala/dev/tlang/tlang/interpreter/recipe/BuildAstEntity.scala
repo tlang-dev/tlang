@@ -45,14 +45,18 @@ object BuildAstEntity {
     })
   }
 
-  def buildValue(context: BuilderContext, boxBuilder: BoxBuilder, value: AstValue): Unit = {
+  private def buildValue(context: BuilderContext, boxBuilder: BoxBuilder, value: AstValue): Unit = {
     value match {
       case operation: Operation => BuildProgram.buildOperation(context, operation)
       case primitive: PrimitiveValue[_] => BuildProgram.buildPrimitive(context, primitive)
       case entity: AstEntity => buildAstEntity(context, entity)
-      case astList: AstListValue => println("[" + getClass.getName + "]AstList not yet implemented")
+      case astList: AstListValue => buildAstList(context, boxBuilder, astList)
     }
 
+  }
+
+  private def buildAstList(context: BuilderContext, boxBuilder: BoxBuilder, list: AstListValue): Unit = {
+    list.values.foreach(buildValue(context, boxBuilder, _))
   }
 
 }
