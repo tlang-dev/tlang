@@ -11,14 +11,21 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
 
 jobs:
   generate:
     name: Generate & Deploy
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -44,22 +51,14 @@ jobs:
       - name: Add .nojekyll
         run: touch website/docs/.nojekyll
 
-      - name: Copy to docs/
-        run: |
-          rm -rf docs/index.html docs/assets docs/docs/getting-started.* docs/docs/language-spec.*
-          cp website/docs/index.html docs/index.html
-          cp -r website/docs/assets docs/assets
-          mkdir -p docs/docs
-          cp website/docs/docs/getting-started.md  docs/docs/getting-started.md
-          cp website/docs/docs/getting-started.html docs/docs/getting-started.html
-          cp website/docs/docs/language-spec.md    docs/docs/language-spec.md
-          cp website/docs/docs/language-spec.html  docs/docs/language-spec.html
-          cp website/docs/.nojekyll docs/.nojekyll
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
 
-      - name: Commit generated site
-        run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-          git add docs/index.html docs/assets docs/docs/getting-started.* docs/docs/language-spec.* docs/.nojekyll
-          git diff --staged --quiet || git commit -m "chore: regenerate website from TLang templates"
-          git push
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: website/docs
+
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
