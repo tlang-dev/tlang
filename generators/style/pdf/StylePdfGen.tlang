@@ -1,0 +1,120 @@
+// StylePdfGen — PDF theme generator.
+//
+// Reads a style leaf (which contains CSS-like structs with selectors and
+// attribute lists) and returns a key=value string encoding the resolved PDF
+// theme.  Known selectors: body, h1, h2, h3, code.
+//
+// Output format (one entry per line):
+//   bodyFont=Helvetica
+//   bodySize=12
+//   h1Size=24
+//   h2Size=18
+//   h3Size=14
+//   margin=72
+//   lineHeight=1.5
+//   codeFont=Courier
+//   codeSize=10
+
+expose render
+
+// ── Entry point ───────────────────────────────────────────────────────────────
+
+func render(leaf): String {
+    // Default theme values.
+    let bodyFont   = "Helvetica"
+    let bodySize   = "12"
+    let h1Size     = "24"
+    let h2Size     = "18"
+    let h3Size     = "14"
+    let margin     = "72"
+    let lineHeight = "1.5"
+    let codeFont   = "Courier"
+    let codeSize   = "10"
+
+    let structs = TLang.Leaf.get(leaf, "structs")
+
+    for (struct in structs) {
+        let selector = TLang.Leaf.get(struct, "selector")
+        let attrs    = TLang.Leaf.get(struct, "attrs")
+
+        if (selector == "body") {
+            let font = find_attr(attrs, "font-family")
+            if (font != "") {
+                let bodyFont = resolve_font(font)
+            }
+            let size = find_attr(attrs, "font-size")
+            if (size != "") {
+                let bodySize = size
+            }
+        }
+
+        if (selector == "h1") {
+            let size = find_attr(attrs, "font-size")
+            if (size != "") {
+                let h1Size = size
+            }
+        }
+
+        if (selector == "h2") {
+            let size = find_attr(attrs, "font-size")
+            if (size != "") {
+                let h2Size = size
+            }
+        }
+
+        if (selector == "h3") {
+            let size = find_attr(attrs, "font-size")
+            if (size != "") {
+                let h3Size = size
+            }
+        }
+
+        if (selector == "code") {
+            let font = find_attr(attrs, "font-family")
+            if (font != "") {
+                let codeFont = resolve_font(font)
+            }
+            let size = find_attr(attrs, "font-size")
+            if (size != "") {
+                let codeSize = size
+            }
+        }
+    }
+
+    let result = "bodyFont=" + bodyFont + "\n"
+    let result = result + "bodySize=" + bodySize + "\n"
+    let result = result + "h1Size=" + h1Size + "\n"
+    let result = result + "h2Size=" + h2Size + "\n"
+    let result = result + "h3Size=" + h3Size + "\n"
+    let result = result + "margin=" + margin + "\n"
+    let result = result + "lineHeight=" + lineHeight + "\n"
+    let result = result + "codeFont=" + codeFont + "\n"
+    let result = result + "codeSize=" + codeSize
+    return result
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+// find_attr — look up an attribute value by name in an attrs list.
+// Each attr is a leaf with "key" and "value" fields.
+// Returns "" if not found.
+func find_attr(attrs: List, name: String): String {
+    for (attr in attrs) {
+        let key = TLang.Leaf.get(attr, "key")
+        if (key == name) {
+            return TLang.Leaf.get(attr, "value")
+        }
+    }
+    return ""
+}
+
+// resolve_font — map generic CSS font-family names to PDF built-in font names.
+func resolve_font(css_font: String): String {
+    if (TLang.String.contains(css_font, "Helvetica")) { return "Helvetica" }
+    if (TLang.String.contains(css_font, "Arial"))     { return "Helvetica" }
+    if (TLang.String.contains(css_font, "Times"))     { return "Times-Roman" }
+    if (TLang.String.contains(css_font, "serif"))     { return "Times-Roman" }
+    if (TLang.String.contains(css_font, "Courier"))   { return "Courier" }
+    if (TLang.String.contains(css_font, "monospace")) { return "Courier" }
+    return "Helvetica"
+}

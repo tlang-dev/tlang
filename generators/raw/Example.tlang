@@ -1,0 +1,55 @@
+// Example usage of raw [AsIs] and raw [Replaced] template types.
+//
+// raw blocks let you embed arbitrary text in a .tlang generator without any
+// LSP formatting, indentation normalisation, or language-specific processing.
+//
+// raw [AsIs]      — the body is written to the output exactly as typed.
+// raw [Replaced]  — the body is written with ${param} references substituted,
+//                   but nothing else is touched.
+
+expose runExamples
+
+
+func runExamples(): String {
+// ── AsIs example ──────────────────────────────────────────────────────────
+// The body of dockerfileHeader() will appear in the output character-for-
+// character.  The ${placeholder} inside is intentionally NOT substituted.
+let header = dockerfileHeader()
+
+// ── Replaced example ──────────────────────────────────────────────────────
+// ${image} and ${port} are replaced with the supplied argument values;
+// every other character is passed through untouched.
+let body = dockerfileBody("eclipse-temurin:21-jre", "8080")
+
+return header + "\n" + body
+}
+
+
+// ── AsIs template ─────────────────────────────────────────────────────────────
+//
+// Emits a Dockerfile comment block verbatim.  Notice that ${placeholder} is
+// written literally in the output — no substitution takes place.
+
+raw [AsIs] dockerfileHeader() {
+# ──────────────────────────────────────────────────────────────────────────────
+# Auto-generated Dockerfile — do NOT edit by hand.
+# Template variable syntax: ${placeholder}  (written as-is, not substituted)
+# ──────────────────────────────────────────────────────────────────────────────
+}
+
+// ── Replaced template ─────────────────────────────────────────────────────────
+//
+// Emits the Dockerfile body with ${image} and ${port} replaced at call time.
+// No indentation or formatting rules are applied to the output.
+
+raw [Replaced] dockerfileBody(image: String, port: String) {
+FROM ${image}
+
+WORKDIR /app
+
+COPY build/libs/app.jar app.jar
+
+EXPOSE ${port}
+
+ENTRYPOINT ["java", "-jar", "app.jar"]
+}

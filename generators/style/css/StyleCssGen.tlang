@@ -1,0 +1,65 @@
+expose render
+
+use TLang.List
+use TLang.Map
+use TLang.String
+use TLang.Leaf
+
+func render(leaf): String {
+    let structs = Leaf.get(leaf, "structs")
+    return render_structs(structs)
+}
+
+func render_structs(structs): String {
+    return render_structs_rec(structs, 0, "")
+}
+
+func render_structs_rec(structs, idx, acc): String {
+    if (idx >= TLang.List.size(structs)) {
+        return acc
+    }
+    let s = TLang.List.get(structs, idx)
+    let block = render_struct(s)
+    return render_structs_rec(structs, idx + 1, TLang.String.concat(acc, block))
+}
+
+func render_struct(s): String {
+    let selector = TLang.Map.get(s, "selector")
+    let attrs = TLang.Map.get(s, "attrs")
+    let inner = render_attrs(attrs)
+    let open = TLang.String.concat(selector, " {\n")
+    return TLang.String.concat(TLang.String.concat(open, inner), "}\n")
+}
+
+func render_attrs(attrs): String {
+    return render_attrs_rec(attrs, 0, "")
+}
+
+func render_attrs_rec(attrs, idx, acc): String {
+    if (idx >= TLang.List.size(attrs)) {
+        return acc
+    }
+    let attr = TLang.List.get(attrs, idx)
+    let line = render_attr(attr)
+    return render_attrs_rec(attrs, idx + 1, TLang.String.concat(acc, line))
+}
+
+func render_attr(attr): String {
+    let type = TLang.Map.get(attr, "type")
+    if (type == "include") {
+        let expr = TLang.Map.get(attr, "expr")
+        return TLang.String.concat(TLang.String.concat("    /* include: ", expr), " */\n")
+    }
+    let name = TLang.Map.get(attr, "name")
+    let value = TLang.Map.get(attr, "value")
+    if (TLang.String.isEmpty(name)) {
+        if (TLang.String.isEmpty(value)) {
+            return ""
+        }
+        return TLang.String.concat(TLang.String.concat("    ", value), ";\n")
+    }
+    return TLang.String.concat(
+        TLang.String.concat(TLang.String.concat(TLang.String.concat("    ", name), ": "), value),
+        ";\n"
+    )
+}

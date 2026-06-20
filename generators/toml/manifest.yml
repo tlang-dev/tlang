@@ -1,0 +1,11 @@
+name: Toml
+project: TomlGen
+organisation: TLangGen
+version: 1.0.0
+stability: alpha
+releaseNumber: 1
+
+# The generator's entry point — used by `tlang package` to compile the library
+# and by consumers who want to import the whole package without knowing internal
+# file names (e.g. `use TomlGen as toml`).
+main: TomlGen

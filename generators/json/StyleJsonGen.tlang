@@ -1,0 +1,86 @@
+expose render
+
+use TLang.List
+use TLang.Map
+use TLang.String
+use TLang.Leaf
+
+func render(leaf): String {
+    let structs = Leaf.get(leaf, "structs")
+    let size = TLang.List.size(structs)
+    if (size == 0) {
+        return "{}"
+    }
+    let inner = render_structs_rec(structs, 0, size, "")
+    return TLang.String.concat(TLang.String.concat("{\n", inner), "}")
+}
+
+func render_structs_rec(structs, idx, size, acc): String {
+    if (idx >= size) {
+        return acc
+    }
+    let s = TLang.List.get(structs, idx)
+    let block = render_struct(s, idx, size)
+    return render_structs_rec(structs, idx + 1, size, TLang.String.concat(acc, block))
+}
+
+func render_struct(s, idx, total): String {
+    let selector = TLang.Map.get(s, "selector")
+    let attrs = TLang.Map.get(s, "attrs")
+    let attr_size = TLang.List.size(attrs)
+    let inner = render_attrs_rec(attrs, 0, attr_size, "")
+    let key = json_escape(selector)
+    let open = TLang.String.concat(TLang.String.concat("  \"", key), "\": {\n")
+    let close = trailing_comma("  }", idx, total)
+    return TLang.String.concat(TLang.String.concat(TLang.String.concat(open, inner), close), "\n")
+}
+
+func render_attrs_rec(attrs, idx, size, acc): String {
+    if (idx >= size) {
+        return acc
+    }
+    let attr = TLang.List.get(attrs, idx)
+    let line = render_attr(attr, idx, size)
+    return render_attrs_rec(attrs, idx + 1, size, TLang.String.concat(acc, line))
+}
+
+func render_attr(attr, idx, size): String {
+    let type = TLang.Map.get(attr, "type")
+    if (type == "include") {
+        let expr = TLang.Map.get(attr, "expr")
+        let key = json_escape(TLang.String.concat(TLang.String.concat("/* include: ", expr), " */"))
+        let entry = TLang.String.concat(TLang.String.concat("    \"", key), "\": null")
+        return TLang.String.concat(trailing_comma(entry, idx, size), "\n")
+    }
+    let name = TLang.Map.get(attr, "name")
+    let value = TLang.Map.get(attr, "value")
+    if (TLang.String.isEmpty(name)) {
+        if (TLang.String.isEmpty(value)) {
+            return ""
+        }
+        let key = json_escape(value)
+        let entry = TLang.String.concat(TLang.String.concat("    \"", key), "\": true")
+        return TLang.String.concat(trailing_comma(entry, idx, size), "\n")
+    }
+    let k = json_escape(name)
+    let v = json_escape(value)
+    let entry = TLang.String.concat(
+        TLang.String.concat(TLang.String.concat(TLang.String.concat("    \"", k), "\": \""), v),
+        "\""
+    )
+    return TLang.String.concat(trailing_comma(entry, idx, size), "\n")
+}
+
+func trailing_comma(s, idx, size): String {
+    if (idx + 1 < size) {
+        return TLang.String.concat(s, ",")
+    }
+    return s
+}
+
+func json_escape(s): String {
+    let s = TLang.String.replaceAll(s, "\\", "\\\\")
+    let s = TLang.String.replaceAll(s, "\"", "\\\"")
+    let s = TLang.String.replaceAll(s, "\n", "\\n")
+    return TLang.String.replaceAll(s, "\t", "\\t")
+}

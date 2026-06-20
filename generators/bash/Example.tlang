@@ -1,0 +1,221 @@
+use TLang.Generator
+use BashGen as bash
+use TLang.Leaf
+use TLang.Terminal
+
+lang [bash] sshDeploy(host: String, user: String, appDir: String) {
+    ssh ${user}@${host} 'cd ${appDir} && git pull --ff-only && npm ci && pm2 restart app'
+}
+
+lang [bash] sshDeployWithKey(host: String, user: String, appDir: String, key: String) {
+    ssh -i ${key} ${user}@${host} 'cd ${appDir} && git pull --ff-only && npm ci && pm2 restart app'
+}
+
+lang [bash] scpUpload(src: String, host: String, user: String, dest: String) {
+    scp -r ${src} ${user}@${host}:${dest}
+}
+
+lang [bash] rsyncDeploy(src: String, host: String, user: String, dest: String) {
+    rsync -avz --delete --exclude='.git' --exclude='node_modules' ${src} ${user}@${host}:${dest}
+}
+
+lang [bash] curlGet(url: String) {
+    curl -s -L ${url}
+}
+
+lang [bash] curlPost(url: String, body: String, contentType: String) {
+    curl -s -X POST -H 'Content-Type: ${contentType}' -d '${body}' ${url}
+}
+
+lang [bash] dockerBuild(image: String, tag: String, context: String) {
+    docker build -t ${image}:${tag} ${context}
+}
+
+lang [bash] dockerRun(image: String, tag: String, name: String, port: String) {
+    docker run -d --rm --name ${name} -p ${port} ${image}:${tag}
+}
+
+lang [bash] dockerStop(name: String) {
+    docker stop ${name}
+}
+
+lang [bash] k8sApply(namespace: String, file: String) {
+    kubectl apply -n ${namespace} -f ${file}
+}
+
+lang [bash] k8sScale(namespace: String, deployment: String, replicas: String) {
+    kubectl scale -n ${namespace} deployment/${deployment} --replicas=${replicas}
+}
+
+lang [bash] psqlQuery(host: String, port: String, user: String, db: String, query: String) {
+    psql -h ${host} -p ${port} -U ${user} -d ${db} -c '${query}'
+}
+
+lang [bash] mkdirP(path: String) {
+    mkdir -p ${path}
+}
+
+lang [bash] tarCreate(archive: String, src: String) {
+    tar -czf ${archive} ${src}
+}
+
+lang [bash] tarExtract(archive: String, dest: String) {
+    tar -xzf ${archive} -C ${dest}
+}
+
+
+func main(): String {
+// ── SSH deploy ────────────────────────────────────────────────────────────
+sshDeploy("prod.example.com", "deploy", "/var/www/app")
+
+let model  = Leaf.model()
+let inst   = Leaf.get(model, "sshDeploy_1")
+let result = Generator.generate(inst, "bash")
+
+Terminal.println("=== ssh deploy ===")
+Terminal.println(result)
+
+// ── SSH deploy with key ───────────────────────────────────────────────────
+sshDeployWithKey("prod.example.com", "deploy", "/var/www/app", "~/.ssh/id_deploy")
+
+let model2  = Leaf.model()
+let inst2   = Leaf.get(model2, "sshDeployWithKey_1")
+let result2 = Generator.generate(inst2, "bash")
+
+Terminal.println("=== ssh deploy with key ===")
+Terminal.println(result2)
+
+// ── SCP upload ────────────────────────────────────────────────────────────
+scpUpload("./dist", "prod.example.com", "deploy", "/var/www/app/dist")
+
+let model3  = Leaf.model()
+let inst3   = Leaf.get(model3, "scpUpload_1")
+let result3 = Generator.generate(inst3, "bash")
+
+Terminal.println("=== scp upload ===")
+Terminal.println(result3)
+
+// ── rsync deploy ──────────────────────────────────────────────────────────
+rsyncDeploy("./dist/", "prod.example.com", "deploy", "/var/www/app/")
+
+let model4  = Leaf.model()
+let inst4   = Leaf.get(model4, "rsyncDeploy_1")
+let result4 = Generator.generate(inst4, "bash")
+
+Terminal.println("=== rsync deploy ===")
+Terminal.println(result4)
+
+// ── curl GET ──────────────────────────────────────────────────────────────
+curlGet("https://api.example.com/health")
+
+let model5  = Leaf.model()
+let inst5   = Leaf.get(model5, "curlGet_1")
+let result5 = Generator.generate(inst5, "bash")
+
+Terminal.println("=== curl GET ===")
+Terminal.println(result5)
+
+// ── curl POST ─────────────────────────────────────────────────────────────
+curlPost("https://api.example.com/users", "{\"name\":\"alice\"}", "application/json")
+
+let model6  = Leaf.model()
+let inst6   = Leaf.get(model6, "curlPost_1")
+let result6 = Generator.generate(inst6, "bash")
+
+Terminal.println("=== curl POST ===")
+Terminal.println(result6)
+
+// ── docker build ──────────────────────────────────────────────────────────
+dockerBuild("myapp", "latest", ".")
+
+let model7  = Leaf.model()
+let inst7   = Leaf.get(model7, "dockerBuild_1")
+let result7 = Generator.generate(inst7, "bash")
+
+Terminal.println("=== docker build ===")
+Terminal.println(result7)
+
+// ── docker run ────────────────────────────────────────────────────────────
+dockerRun("myapp", "latest", "myapp-container", "8080:8080")
+
+let model8  = Leaf.model()
+let inst8   = Leaf.get(model8, "dockerRun_1")
+let result8 = Generator.generate(inst8, "bash")
+
+Terminal.println("=== docker run ===")
+Terminal.println(result8)
+
+// ── docker stop ───────────────────────────────────────────────────────────
+dockerStop("myapp-container")
+
+let model9  = Leaf.model()
+let inst9   = Leaf.get(model9, "dockerStop_1")
+let result9 = Generator.generate(inst9, "bash")
+
+Terminal.println("=== docker stop ===")
+Terminal.println(result9)
+
+// ── kubectl apply ─────────────────────────────────────────────────────────
+k8sApply("production", "k8s/deployment.yml")
+
+let model10  = Leaf.model()
+let inst10   = Leaf.get(model10, "k8sApply_1")
+let result10 = Generator.generate(inst10, "bash")
+
+Terminal.println("=== kubectl apply ===")
+Terminal.println(result10)
+
+// ── kubectl scale ─────────────────────────────────────────────────────────
+k8sScale("production", "myapp", "3")
+
+let model11  = Leaf.model()
+let inst11   = Leaf.get(model11, "k8sScale_1")
+let result11 = Generator.generate(inst11, "bash")
+
+Terminal.println("=== kubectl scale ===")
+Terminal.println(result11)
+
+// ── psql query ────────────────────────────────────────────────────────────
+psqlQuery("localhost", "5432", "admin", "mydb", "SELECT count(*) FROM users")
+
+let model12  = Leaf.model()
+let inst12   = Leaf.get(model12, "psqlQuery_1")
+let result12 = Generator.generate(inst12, "bash")
+
+Terminal.println("=== psql query ===")
+Terminal.println(result12)
+
+// ── mkdir -p ──────────────────────────────────────────────────────────────
+mkdirP("/var/www/app/uploads")
+
+let model13  = Leaf.model()
+let inst13   = Leaf.get(model13, "mkdirP_1")
+let result13 = Generator.generate(inst13, "bash")
+
+Terminal.println("=== mkdir -p ===")
+Terminal.println(result13)
+
+// ── tar create ────────────────────────────────────────────────────────────
+tarCreate("backup.tar.gz", "./dist")
+
+let model14  = Leaf.model()
+let inst14   = Leaf.get(model14, "tarCreate_1")
+let result14 = Generator.generate(inst14, "bash")
+
+Terminal.println("=== tar create ===")
+Terminal.println(result14)
+
+// ── tar extract ───────────────────────────────────────────────────────────
+tarExtract("backup.tar.gz", "/tmp/restore")
+
+let model15  = Leaf.model()
+let inst15   = Leaf.get(model15, "tarExtract_1")
+let result15 = Generator.generate(inst15, "bash")
+
+Terminal.println("=== tar extract ===")
+Terminal.println(result15)
+
+return result
+}
+
+

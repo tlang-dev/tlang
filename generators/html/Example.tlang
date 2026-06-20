@@ -1,0 +1,137 @@
+use TLang.Generator
+use HtmlGen as html
+use TLang.Leaf
+use TLang.Terminal
+
+// ── Data templates ────────────────────────────────────────────────────────────
+
+data [html] page(title: String, bodyText: String) {
+    html {
+        head {
+            meta(charset: "UTF-8"),
+            meta(name: "viewport", content: "width=device-width, initial-scale=1.0"),
+            title: "${title}"
+        },
+        body {
+            div(class: "container") {
+                h1: "${title}",
+                p: "${bodyText}"
+            }
+        }
+    }
+}
+
+data [html] card(heading: String, description: String, linkHref: String, linkText: String) {
+    div(class: "card") {
+        h2: "${heading}",
+        p: "${description}",
+        a(href: "${linkHref}") {
+            "${linkText}"
+        }
+    }
+}
+
+data [html] navBar(siteName: String) {
+    nav(class: "navbar") {
+        div(class: "navbar-brand") {
+            a(href: "/") {
+                "${siteName}"
+            }
+        },
+        ul(class: "navbar-links") {
+            li {
+                a(href: "/about"): "About"
+            },
+            li {
+                a(href: "/blog"): "Blog"
+            },
+            li {
+                a(href: "/contact"): "Contact"
+            }
+        }
+    }
+}
+
+data [html] imageWithCaption(src: String, alt: String, caption: String) {
+    figure(class: "image-figure") {
+        img(src: "${src}", alt: "${alt}"),
+        figcaption: "${caption}"
+    }
+}
+
+data [html] formInput(labelText: String, inputId: String, inputType: String, placeholder: String) {
+    div(class: "form-group") {
+        label(for: "${inputId}"): "${labelText}",
+        input(type: "${inputType}", id: "${inputId}", name: "${inputId}", placeholder: "${placeholder}")
+    }
+}
+
+// ── Main helper ───────────────────────────────────────────────────────────────
+
+
+func main(): String {
+// ── Render a full page ────────────────────────────────────────────────────
+page("Welcome to TLang", "TLang makes structured code generation simple and expressive.")
+
+let model    = Leaf.model()
+let instance = Leaf.get(model, "page_1")
+let rendered = Generator.generate(instance, "html")
+
+Terminal.println("=== Full Page ===")
+Terminal.println(rendered)
+
+// ── Render a card component ───────────────────────────────────────────────
+card(
+    "Getting Started",
+    "Follow the guide to write your first TLang template.",
+    "/docs/getting-started",
+    "Read the Docs"
+)
+
+let model2     = Leaf.model()
+let card_inst  = Leaf.get(model2, "card_1")
+let card_html  = Generator.generate(card_inst, "html")
+
+Terminal.println("=== Card Component ===")
+Terminal.println(card_html)
+
+// ── Render a navigation bar ───────────────────────────────────────────────
+navBar("MyWebsite")
+
+let model3    = Leaf.model()
+let nav_inst  = Leaf.get(model3, "navBar_1")
+let nav_html  = Generator.generate(nav_inst, "html")
+
+Terminal.println("=== Navigation Bar ===")
+Terminal.println(nav_html)
+
+// ── Render an image with caption ──────────────────────────────────────────
+imageWithCaption(
+    "/images/tlang-logo.png",
+    "TLang Logo",
+    "The official TLang project logo."
+)
+
+let model4       = Leaf.model()
+let figure_inst  = Leaf.get(model4, "imageWithCaption_1")
+let figure_html  = Generator.generate(figure_inst, "html")
+
+Terminal.println("=== Image With Caption ===")
+Terminal.println(figure_html)
+
+// ── Render a form input group ─────────────────────────────────────────────
+formInput("Email address", "email", "email", "you@example.com")
+
+let model5      = Leaf.model()
+let input_inst  = Leaf.get(model5, "formInput_1")
+let input_html  = Generator.generate(input_inst, "html")
+
+Terminal.println("=== Form Input ===")
+Terminal.println(input_html)
+
+return rendered
+}
+
+
+// No model entries needed — all data is passed directly as template
+// arguments in the main() helper above.

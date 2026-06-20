@@ -1,0 +1,146 @@
+use TLang.Generator
+use JsonGen as json
+use TLang.Leaf
+use TLang.Terminal
+
+// ── Data templates ────────────────────────────────────────────────────────────
+
+data [json] packageConfig(name: String, version: String, description: String, author: String) {
+    {
+        name: "${name}",
+        version: "${version}",
+        description: "${description}",
+        author: "${author}",
+        license: "MIT",
+        scripts: {
+            build: "tlang build",
+            test: "tlang test",
+            run: "tlang run"
+        }
+    }
+}
+
+data [json] serverConfig(host: String, port: String, debug: String) {
+    {
+        server: {
+            host: "${host}",
+            port: ${port},
+            debug: ${debug}
+        },
+        logging: {
+            level: "info",
+            format: "json"
+        },
+        cors: {
+            enabled: true,
+            origins: ["http://localhost:3000", "https://example.com"]
+        }
+    }
+}
+
+data [json] userRecord(id: String, username: String, email: String, role: String) {
+    {
+        id: ${id},
+        username: "${username}",
+        email: "${email}",
+        role: "${role}",
+        active: true,
+        preferences: {
+            theme: "dark",
+            notifications: true,
+            language: "en"
+        }
+    }
+}
+
+data [json] apiResponse(status: String, message: String, dataKey: String, dataValue: String) {
+    {
+        status: "${status}",
+        message: "${message}",
+        data: {
+            "${dataKey}": "${dataValue}"
+        },
+        meta: {
+            timestamp: "2024-01-01T00:00:00Z",
+            version: "1"
+        }
+    }
+}
+
+data [json] featureFlags(appName: String) {
+    {
+        app: "${appName}",
+        features: [
+            { name: "dark_mode",       enabled: true  },
+            { name: "beta_dashboard",  enabled: false },
+            { name: "new_onboarding",  enabled: true  },
+            { name: "analytics_v2",    enabled: false }
+        ]
+    }
+}
+
+// ── Main helper ───────────────────────────────────────────────────────────────
+
+
+func main(): String {
+// ── Render a package config ───────────────────────────────────────────────
+packageConfig(
+    "my-tlang-app",
+    "0.1.0",
+    "A sample TLang-generated project.",
+    "Jane Developer"
+)
+
+let model   = Leaf.model()
+let inst    = Leaf.get(model, "packageConfig_1")
+let result  = Generator.generate(inst, "json")
+
+Terminal.println("=== package config ===")
+Terminal.println(result)
+
+// ── Render a server config ────────────────────────────────────────────────
+serverConfig("0.0.0.0", "8080", "false")
+
+let model2  = Leaf.model()
+let inst2   = Leaf.get(model2, "serverConfig_1")
+let result2 = Generator.generate(inst2, "json")
+
+Terminal.println("=== server config ===")
+Terminal.println(result2)
+
+// ── Render a user record ──────────────────────────────────────────────────
+userRecord("42", "jdeveloper", "jane@example.com", "admin")
+
+let model3  = Leaf.model()
+let inst3   = Leaf.get(model3, "userRecord_1")
+let result3 = Generator.generate(inst3, "json")
+
+Terminal.println("=== user record ===")
+Terminal.println(result3)
+
+// ── Render an API response envelope ──────────────────────────────────────
+apiResponse("ok", "Request completed successfully.", "userId", "42")
+
+let model4  = Leaf.model()
+let inst4   = Leaf.get(model4, "apiResponse_1")
+let result4 = Generator.generate(inst4, "json")
+
+Terminal.println("=== api response ===")
+Terminal.println(result4)
+
+// ── Render feature flags ──────────────────────────────────────────────────
+featureFlags("my-tlang-app")
+
+let model5  = Leaf.model()
+let inst5   = Leaf.get(model5, "featureFlags_1")
+let result5 = Generator.generate(inst5, "json")
+
+Terminal.println("=== feature flags ===")
+Terminal.println(result5)
+
+return result
+}
+
+
+// No model entries needed — all data is passed directly as template
+// arguments in the main() helper above.

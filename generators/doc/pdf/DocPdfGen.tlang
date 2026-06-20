@@ -1,0 +1,205 @@
+// DocPdfGen — PDF document generator.
+//
+// Generates a PDF from a doc template leaf using TLang.Pdf.*.
+//
+// The leaf is expected to have:
+//   - name:  String  (used as output filename base)
+//   - title: String  (document title)
+//   - nodes: List    (doc nodes: heading, text, code, list, link, img, asis, span, section)
+//
+// expose render, render_with_theme
+
+expose render
+expose render_with_theme
+
+// ── A4 page dimensions in points (1 pt = 1/72 inch) ──────────────────────────
+// A4: 210mm × 297mm  =>  595.276pt × 841.89pt
+
+// ── Entry points ─────────────────────────────────────────────────────────────
+
+func render(leaf): String {
+    return render_with_theme(leaf, "")
+}
+
+// render_with_theme — generate a PDF from a doc leaf with an optional theme
+// string in "key=value\n..." format (as produced by StylePdfGen.render).
+func render_with_theme(leaf, theme): String {
+    // Parse theme string into individual settings.
+    let bodyFont   = "Helvetica"
+    let bodySize   = 12.0
+    let h1Size     = 24.0
+    let h2Size     = 18.0
+    let h3Size     = 14.0
+    let margin     = 72.0
+    let lineHeight = 1.5
+    let codeFont   = "Courier"
+    let codeSize   = 10.0
+
+    if (theme != "") {
+        let lines = TLang.String.split(theme, "\n")
+        for (line in lines) {
+            if (TLang.String.contains(line, "=")) {
+                let parts = TLang.String.split(line, "=")
+                let k = TLang.List.get(parts, 0)
+                let v = TLang.List.get(parts, 1)
+                if (k == "bodyFont")   { let bodyFont   = v }
+                if (k == "bodySize")   { let bodySize   = TLang.Float.parse(v) }
+                if (k == "h1Size")     { let h1Size     = TLang.Float.parse(v) }
+                if (k == "h2Size")     { let h2Size     = TLang.Float.parse(v) }
+                if (k == "h3Size")     { let h3Size     = TLang.Float.parse(v) }
+                if (k == "margin")     { let margin     = TLang.Float.parse(v) }
+                if (k == "lineHeight") { let lineHeight = TLang.Float.parse(v) }
+                if (k == "codeFont")   { let codeFont   = v }
+                if (k == "codeSize")   { let codeSize   = TLang.Float.parse(v) }
+            }
+        }
+    }
+
+    // Page dimensions (A4 in points).
+    let pageWidth  = 595.276
+    let pageHeight = 841.89
+
+    // Create PDF document.
+    let doc = TLang.Pdf.create("Document", pageWidth, pageHeight)
+    let doc = TLang.Pdf.setFont(doc, bodyFont, bodySize)
+    let doc = TLang.Pdf.setCursor(doc, pageHeight - margin)
+
+    // Get leaf fields.
+    let title = TLang.Leaf.get(leaf, "title")
+    let name  = TLang.Leaf.get(leaf, "name")
+    let nodes = TLang.Leaf.get(leaf, "nodes")
+
+    // Draw document title if present.
+    if (title != "") {
+        let doc = TLang.Pdf.setFont(doc, bodyFont + "-Bold", h1Size)
+        let doc = TLang.Pdf.drawTextLine(doc, title, margin)
+        let doc = TLang.Pdf.moveDown(doc, 8.0)
+        let doc = TLang.Pdf.setFont(doc, bodyFont, bodySize)
+    }
+
+    // Render all nodes.
+    let doc = render_nodes(doc, nodes, margin, pageWidth, pageHeight, margin, bodyFont, bodySize, h1Size, h2Size, h3Size, codeFont, codeSize, lineHeight)
+
+    // Determine output path.
+    let outName = name
+    if (outName == "") {
+        let outName = "document"
+    }
+    let outPath = "/tmp/tlang_doc_" + outName + ".pdf"
+
+    // Save and return path.
+    return TLang.Pdf.save(doc, outPath)
+}
+
+// ── Node rendering ────────────────────────────────────────────────────────────
+
+func render_nodes(doc, nodes: List, margin, pageWidth, pageHeight, bottomMargin, bodyFont, bodySize, h1Size, h2Size, h3Size, codeFont, codeSize, lineHeight): String {
+    for (node in nodes) {
+        let nodeType = TLang.Leaf.get(node, "type")
+
+        // Check if we need a new page.
+        let curY = TLang.Pdf.cursorY(doc)
+        if (curY < bottomMargin + 36.0) {
+            let doc = TLang.Pdf.addPage(doc, pageWidth, pageHeight)
+            let doc = TLang.Pdf.setFont(doc, bodyFont, bodySize)
+        }
+
+        if (nodeType == "heading") {
+            let level = TLang.Leaf.get(node, "level")
+            let title = TLang.Leaf.get(node, "title")
+            let fontSize = h3Size
+            if (level == 1) { let fontSize = h1Size }
+            if (level == 2) { let fontSize = h2Size }
+            let doc = TLang.Pdf.moveDown(doc, 8.0)
+            let doc = TLang.Pdf.setFont(doc, bodyFont, fontSize)
+            let doc = TLang.Pdf.drawTextLine(doc, title, margin)
+            let doc = TLang.Pdf.moveDown(doc, 4.0)
+            let doc = TLang.Pdf.setFont(doc, bodyFont, bodySize)
+        }
+
+        if (nodeType == "text") {
+            let content = TLang.Leaf.get(node, "content")
+            let maxWidth = pageWidth - margin * 2.0
+            let lines = TLang.Pdf.wrapText(doc, content, maxWidth)
+            for (line in lines) {
+                let curY = TLang.Pdf.cursorY(doc)
+                if (curY < bottomMargin + 18.0) {
+                    let doc = TLang.Pdf.addPage(doc, pageWidth, pageHeight)
+                    let doc = TLang.Pdf.setFont(doc, bodyFont, bodySize)
+                }
+                let doc = TLang.Pdf.drawTextLine(doc, line, margin)
+            }
+            let doc = TLang.Pdf.moveDown(doc, 6.0)
+        }
+
+        if (nodeType == "code") {
+            let code = TLang.Leaf.get(node, "code")
+            let doc  = TLang.Pdf.setFont(doc, codeFont, codeSize)
+            let codeLines = TLang.String.split(code, "\n")
+            for (codeLine in codeLines) {
+                let curY = TLang.Pdf.cursorY(doc)
+                if (curY < bottomMargin + 14.0) {
+                    let doc = TLang.Pdf.addPage(doc, pageWidth, pageHeight)
+                    let doc = TLang.Pdf.setFont(doc, codeFont, codeSize)
+                }
+                let doc = TLang.Pdf.drawTextLine(doc, codeLine, margin + 12.0)
+            }
+            let doc = TLang.Pdf.setFont(doc, bodyFont, bodySize)
+            let doc = TLang.Pdf.moveDown(doc, 6.0)
+        }
+
+        if (nodeType == "list") {
+            let ordered = TLang.Leaf.get(node, "ordered")
+            let items   = TLang.Leaf.get(node, "items")
+            let i = 0
+            for (item in items) {
+                let i = i + 1
+                let prefix = "- "
+                if (ordered == true) {
+                    let prefix = TLang.Int.toString(i) + ". "
+                }
+                let curY = TLang.Pdf.cursorY(doc)
+                if (curY < bottomMargin + 18.0) {
+                    let doc = TLang.Pdf.addPage(doc, pageWidth, pageHeight)
+                    let doc = TLang.Pdf.setFont(doc, bodyFont, bodySize)
+                }
+                let doc = TLang.Pdf.drawTextLine(doc, prefix + item, margin + 8.0)
+            }
+            let doc = TLang.Pdf.moveDown(doc, 4.0)
+        }
+
+        if (nodeType == "link") {
+            let src  = TLang.Leaf.get(node, "src")
+            let text = TLang.Leaf.get(node, "text")
+            let line = text + " (" + src + ")"
+            let doc  = TLang.Pdf.drawTextLine(doc, line, margin)
+        }
+
+        if (nodeType == "img") {
+            let src = TLang.Leaf.get(node, "src")
+            let alt = TLang.Leaf.get(node, "alt")
+            let doc = TLang.Pdf.drawTextLine(doc, "[image: " + alt + "]", margin)
+        }
+
+        if (nodeType == "asis") {
+            let content  = TLang.Leaf.get(node, "content")
+            let doc      = TLang.Pdf.setFont(doc, codeFont, codeSize)
+            let asisLines = TLang.String.split(content, "\n")
+            for (line in asisLines) {
+                let doc = TLang.Pdf.drawTextLine(doc, line, margin)
+            }
+            let doc = TLang.Pdf.setFont(doc, bodyFont, bodySize)
+        }
+
+        if (nodeType == "span") {
+            let content = TLang.Leaf.get(node, "content")
+            let doc = TLang.Pdf.drawTextLine(doc, content, margin)
+        }
+
+        if (nodeType == "section") {
+            let sectionNodes = TLang.Leaf.get(node, "nodes")
+            let doc = render_nodes(doc, sectionNodes, margin, pageWidth, pageHeight, bottomMargin, bodyFont, bodySize, h1Size, h2Size, h3Size, codeFont, codeSize, lineHeight)
+        }
+    }
+    return doc
+}

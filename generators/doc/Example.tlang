@@ -1,0 +1,79 @@
+expose main
+
+  func main(): String {
+let md = readme("md", "TLang", "0.1.0")
+let html = readme("html", "TLang", "0.1.0")
+return md
+  }
+
+doc [md, html] readme(project: String, version: String) {
+  # ${project}
+
+  Welcome to ${project} version ${version}.
+
+  A powerful template language for generating code, data, and documents
+  from a single source of truth.
+
+  [section "getting-started"
+    ## Getting Started
+
+    Install ${project} by cloning the repository and building from source.
+
+    [code "bash"
+      git clone https://github.com/example/${project}
+      cd ${project}
+      cargo build --release
+    ]
+  ]
+
+  [section "usage"
+    ## Usage
+
+    Create a `.tlang` file and run it:
+
+    [code "bash"
+      tlang run MyProgram.tlang
+    ]
+
+    A simple hello-world example:
+
+    [code "tlang"
+      helper {
+        func main(): String {
+          return "Hello, World!"
+        }
+      }
+    ]
+  ]
+
+  ## Features
+
+  [list "unordered"
+    - Multi-format document generation (Markdown, HTML)
+    - Code generation for Java, Kotlin, TypeScript, Python, and more
+    - Structured data templates for JSON, YAML, TOML, HTML, and XML
+    - Command templates for Bash, SQL, and HTTP
+    - Raw text templates with optional parameter substitution
+    - LSP support for editor integration
+  ]
+
+  ## Quick Reference
+
+  [table "Template Type" | "Keyword" | "Use Case"]
+
+  ## Links
+
+  [link "https://github.com/example/${project}" "View on GitHub"]
+
+  [img "https://img.shields.io/badge/version-${version}-blue" "Version ${version}"]
+
+  [section "license"
+    ## License
+
+    ${project} is released under the MIT License.
+
+    [asis
+MIT License — Copyright (c) 2024 TLang Contributors
+    ]
+  ]
+}

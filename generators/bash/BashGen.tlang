@@ -1,0 +1,41 @@
+expose generate_bash
+
+
+// ── Entry point ───────────────────────────────────────────────────────────────
+
+// generate_bash — public entry point.
+//
+// Accepts a lang [bash] template instance leaf and returns the resolved bash
+// command string.
+//
+// The runtime pre-parses every lang [bash] template body into a list of nodes
+// stored under the "nodes" key of the leaf.  Each node carries a "text" field
+// that already has ${param} references substituted with the caller's argument
+// values.  The generator simply collects those texts and joins them into the
+// final command string.
+func generate_bash(tmpl: Leaf): String {
+let nodes = TLang.Leaf.get(tmpl, "nodes")
+return collect_nodes(nodes)
+}
+
+// ── Node collection ───────────────────────────────────────────────────────────
+
+// collect_nodes — walks the node list and concatenates every non-empty "text"
+// value, separating entries with a newline.
+//
+// A typical single-line bash template produces exactly one node; multi-line
+// templates produce one node per non-empty line.
+func collect_nodes(nodes: List): String {
+let result = ""
+for (node in nodes) {
+    let text = TLang.Leaf.get(node, "text")
+    if (text != "") {
+        if (result != "") {
+            let result = result + "\n"
+        }
+        let result = result + text
+    }
+}
+return result
+}
+

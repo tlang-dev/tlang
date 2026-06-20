@@ -1,0 +1,152 @@
+expose render
+
+use TLang.List
+use TLang.Map
+use TLang.String
+use TLang.Leaf
+
+func render(leaf): String {
+    let nodes = Leaf.get(leaf, "nodes")
+    return render_nodes(nodes)
+}
+
+func render_nodes(nodes): String {
+    return render_nodes_rec(nodes, 0, "")
+}
+
+func render_nodes_rec(nodes, idx, acc): String {
+    if (idx >= TLang.List.size(nodes)) {
+        return acc
+    }
+    let node = TLang.List.get(nodes, idx)
+    let rendered = render_node(node)
+    return render_nodes_rec(nodes, idx + 1, TLang.String.concat(acc, rendered))
+}
+
+func render_node(node): String {
+    let type = TLang.Map.get(node, "type")
+    if (type == "heading") {
+        return render_heading(node)
+    }
+    if (type == "text") {
+        return render_text(node)
+    }
+    if (type == "code") {
+        return render_code(node)
+    }
+    if (type == "section") {
+        return render_section(node)
+    }
+    if (type == "list") {
+        return render_list(node)
+    }
+    if (type == "table") {
+        return render_table(node)
+    }
+    if (type == "link") {
+        return render_link(node)
+    }
+    if (type == "img") {
+        return render_img(node)
+    }
+    if (type == "span") {
+        return render_span(node)
+    }
+    if (type == "asis") {
+        return render_asis(node)
+    }
+    return ""
+}
+
+func render_heading(node): String {
+    let level = TLang.Map.get(node, "level")
+    let title = TLang.Map.get(node, "title")
+    let hashes = TLang.String.repeat("#", level)
+    return TLang.String.concat(TLang.String.concat(TLang.String.concat(hashes, " "), title), "\n\n")
+}
+
+func render_text(node): String {
+    let content = TLang.Map.get(node, "content")
+    return TLang.String.concat(content, "\n\n")
+}
+
+func render_code(node): String {
+    let lang = TLang.Map.get(node, "lang")
+    let code = TLang.Map.get(node, "code")
+    let fence = TLang.String.concat(TLang.String.concat("```", lang), "\n")
+    return TLang.String.concat(TLang.String.concat(fence, code), "\n```\n\n")
+}
+
+func render_section(node): String {
+    let children = TLang.Map.get(node, "nodes")
+    return render_nodes(children)
+}
+
+func render_list(node): String {
+    let ordered = TLang.Map.get(node, "ordered")
+    let items = TLang.Map.get(node, "items")
+    let inner = render_list_items_rec(items, 0, "", ordered)
+    return TLang.String.concat(inner, "\n")
+}
+
+func render_list_items_rec(items, idx, acc, ordered): String {
+    if (idx >= TLang.List.size(items)) {
+        return acc
+    }
+    let item = TLang.List.get(items, idx)
+    let line = make_list_item(item, idx, ordered)
+    return render_list_items_rec(items, idx + 1, TLang.String.concat(acc, line), ordered)
+}
+
+func make_list_item(item, idx, ordered): String {
+    if (ordered) {
+        let num = TLang.String.concat(TLang.Int.toString(idx + 1), ". ")
+        return TLang.String.concat(TLang.String.concat(num, item), "\n")
+    }
+    return TLang.String.concat(TLang.String.concat("- ", item), "\n")
+}
+
+func render_table(node): String {
+    let headers = TLang.Map.get(node, "headers")
+    let header_row = render_table_headers_rec(headers, 0, "")
+    let sep_row = render_table_sep_rec(headers, 0, "")
+    return TLang.String.concat(TLang.String.concat(TLang.String.concat("| ", header_row), "\n| "), TLang.String.concat(sep_row, "\n\n"))
+}
+
+func render_table_headers_rec(headers, idx, acc): String {
+    if (idx >= TLang.List.size(headers)) {
+        return acc
+    }
+    let h = TLang.List.get(headers, idx)
+    let entry = TLang.String.concat(h, " | ")
+    return render_table_headers_rec(headers, idx + 1, TLang.String.concat(acc, entry))
+}
+
+func render_table_sep_rec(headers, idx, acc): String {
+    if (idx >= TLang.List.size(headers)) {
+        return acc
+    }
+    return render_table_sep_rec(headers, idx + 1, TLang.String.concat(acc, "--- | "))
+}
+
+func render_link(node): String {
+    let src = TLang.Map.get(node, "src")
+    let text = TLang.Map.get(node, "text")
+    return TLang.String.concat(TLang.String.concat(TLang.String.concat(TLang.String.concat("[", text), "]("), src), ")\n\n")
+}
+
+func render_img(node): String {
+    let src = TLang.Map.get(node, "src")
+    let alt = TLang.Map.get(node, "alt")
+    return TLang.String.concat(TLang.String.concat(TLang.String.concat(TLang.String.concat("![", alt), "]("), src), ")\n\n")
+}
+
+func render_span(node): String {
+    let content = TLang.Map.get(node, "content")
+    return content
+}
+
+func render_asis(node): String {
+    let content = TLang.Map.get(node, "content")
+    return TLang.String.concat(content, "\n")
+}

@@ -1,0 +1,230 @@
+use TLang.Generator
+use YamlGen as yaml
+use TLang.Leaf
+use TLang.Terminal
+
+// ── Data templates ────────────────────────────────────────────────────────────
+
+// Kubernetes Deployment manifest
+data [yaml] k8sDeployment(appName: String, image: String, replicas: String, port: String) {
+    {
+        apiVersion: "apps/v1",
+        kind: "Deployment",
+        metadata {
+            name: "${appName}",
+            labels {
+                app: "${appName}"
+            }
+        },
+        spec {
+            replicas: ${replicas},
+            selector {
+                matchLabels {
+                    app: "${appName}"
+                }
+            },
+            template {
+                metadata {
+                    labels {
+                        app: "${appName}"
+                    }
+                },
+                spec {
+                    containers: [
+                        {
+                            name: "${appName}",
+                            image: "${image}",
+                            ports: [
+                                { containerPort: ${port} }
+                            ]
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}
+
+// GitHub Actions CI workflow
+data [yaml] githubCiWorkflow(projectName: String, nodeVersion: String) {
+    {
+        name: "${projectName} CI",
+        on {
+            push {
+                branches: ["main", "develop"]
+            },
+            pull_request {
+                branches: ["main"]
+            }
+        },
+        jobs {
+            build {
+                runs_on: "ubuntu-latest",
+                steps: [
+                    { uses: "actions/checkout@v4" },
+                    {
+                        name: "Set up Node",
+                        uses: "actions/setup-node@v4",
+                        with {
+                            node_version: "${nodeVersion}"
+                        }
+                    },
+                    {
+                        name: "Install dependencies",
+                        run: "npm ci"
+                    },
+                    {
+                        name: "Run tests",
+                        run: "npm test"
+                    }
+                ]
+            }
+        }
+    }
+}
+
+// Docker Compose service stack
+data [yaml] dockerCompose(appName: String, appImage: String, appPort: String, dbName: String, dbUser: String, dbPassword: String) {
+    {
+        version: "3.9",
+        services {
+            app {
+                image: "${appImage}",
+                ports: ["${appPort}:${appPort}"],
+                environment {
+                    DATABASE_URL: "postgres://${dbUser}:${dbPassword}@db:5432/${dbName}",
+                    NODE_ENV: "production"
+                },
+                depends_on: ["db"],
+                restart: "unless-stopped"
+            },
+            db {
+                image: "postgres:16-alpine",
+                environment {
+                    POSTGRES_DB: "${dbName}",
+                    POSTGRES_USER: "${dbUser}",
+                    POSTGRES_PASSWORD: "${dbPassword}"
+                },
+                volumes: ["pgdata:/var/lib/postgresql/data"],
+                restart: "unless-stopped"
+            }
+        },
+        volumes {
+            pgdata {}
+        }
+    }
+}
+
+// Ansible playbook task list
+data [yaml] ansiblePlaybook(hostGroup: String, appName: String, appDir: String) {
+    {
+        name: "Deploy ${appName}",
+        hosts: "${hostGroup}",
+        become: true,
+        tasks: [
+            {
+                name: "Ensure app directory exists",
+                file {
+                    path: "${appDir}",
+                    state: "directory",
+                    mode: "0755"
+                }
+            },
+            {
+                name: "Copy application files",
+                copy {
+                    src: "dist/",
+                    dest: "${appDir}",
+                    owner: "www-data",
+                    group: "www-data"
+                }
+            },
+            {
+                name: "Restart application service",
+                systemd {
+                    name: "${appName}",
+                    state: "restarted",
+                    enabled: true
+                }
+            }
+        ]
+    }
+}
+
+// Simple application config file
+data [yaml] appConfig(appName: String, env: String, logLevel: String, port: String) {
+    app {
+        name: "${appName}",
+        env: "${env}",
+        port: ${port},
+        debug: false
+    }
+}
+
+// ── Main helper ───────────────────────────────────────────────────────────────
+
+
+func main(): String {
+// ── Kubernetes Deployment ─────────────────────────────────────────────────
+k8sDeployment("my-api", "my-org/my-api:latest", "3", "8080")
+
+let model  = Leaf.model()
+let inst   = Leaf.get(model, "k8sDeployment_1")
+let result = Generator.generate(inst, "yaml")
+
+Terminal.println("=== k8s deployment.yaml ===")
+Terminal.println(result)
+
+// ── GitHub Actions workflow ───────────────────────────────────────────────
+githubCiWorkflow("my-project", "20")
+
+let model2  = Leaf.model()
+let inst2   = Leaf.get(model2, "githubCiWorkflow_1")
+let result2 = Generator.generate(inst2, "yaml")
+
+Terminal.println("=== .github/workflows/ci.yml ===")
+Terminal.println(result2)
+
+// ── Docker Compose ────────────────────────────────────────────────────────
+dockerCompose(
+    "my-app",
+    "my-org/my-app:latest",
+    "3000",
+    "myapp_db",
+    "appuser",
+    "s3cr3t"
+)
+
+let model3  = Leaf.model()
+let inst3   = Leaf.get(model3, "dockerCompose_1")
+let result3 = Generator.generate(inst3, "yaml")
+
+Terminal.println("=== docker-compose.yml ===")
+Terminal.println(result3)
+
+// ── Ansible playbook ──────────────────────────────────────────────────────
+ansiblePlaybook("webservers", "my-app", "/var/www/my-app")
+
+let model4  = Leaf.model()
+let inst4   = Leaf.get(model4, "ansiblePlaybook_1")
+let result4 = Generator.generate(inst4, "yaml")
+
+Terminal.println("=== deploy.yml (Ansible) ===")
+Terminal.println(result4)
+
+// ── App config ────────────────────────────────────────────────────────────
+appConfig("my-api", "production", "info", "8080")
+
+let model5  = Leaf.model()
+let inst5   = Leaf.get(model5, "appConfig_1")
+let result5 = Generator.generate(inst5, "yaml")
+
+Terminal.println("=== config.yaml ===")
+Terminal.println(result5)
+
+return result
+}
+
+
+// No model entries needed — all data is passed directly as template
+// arguments in the main() helper above.

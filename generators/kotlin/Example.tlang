@@ -1,0 +1,53 @@
+use TLang.Generator
+use KotlinCodegen as kotlin
+use TLang.Leaf
+use TLang.Terminal
+
+lang [kotlin] bookmark(pkg: String, className: String, extendsClass: String, annotation: String) {
+    pkg ${pkg}
+    impl[public class] ${className} {
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        var id: Long? = null
+        @Column(unique = true, nullable = false)
+        var code: String = UUID.randomUUID().toString()
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "user_id", nullable = false)
+        lateinit var user: User
+        @Column(nullable = false, length = 300)
+        lateinit var title: String
+        @Column(nullable = false, length = 2000)
+        lateinit var url: String
+        @Column(length = 1000)
+        var description: String? = null
+        @Column(name = "create_date", nullable = false)
+        var createdDate: LocalDateTime? = null
+        @Column(name = "update_date")
+        var updatedDate: LocalDateTime? = null
+        @Column
+        var favorite: Boolean = false
+    }
+}
+
+func main(): String {
+    let model   = Leaf.model()
+    let entity  = Leaf.get(model, "Bookmark")
+    let attrs   = Leaf.get(entity, "attrs")
+    let pkg     = Leaf.get(Leaf.get(attrs, "package"),    "value")
+    let cls     = Leaf.get(Leaf.get(attrs, "class_name"), "value")
+    let ext     = Leaf.get(Leaf.get(attrs, "extends"),    "value")
+    let ann     = Leaf.get(Leaf.get(attrs, "annotation"), "value")
+    bookmark(pkg, cls, ext, ann)
+    let model2   = Leaf.model()
+    let instance = Leaf.get(model2, "bookmark_1")
+    let generated = Generator.generate(instance, "kotlin")
+    Terminal.println(generated)
+    return generated
+}
+
+set Bookmark {
+    package: "com.colistor.web.bookmark",
+    class_name: "Bookmark",
+    extends: "PanacheEntityBase",
+    annotation: "@Entity"
+}

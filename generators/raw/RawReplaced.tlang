@@ -1,0 +1,63 @@
+expose generate_raw_replaced
+
+
+// ── generate_raw_replaced ─────────────────────────────────────────────────────
+//
+// Public entry point for the `raw [Replaced]` template type.
+//
+// A `raw [Replaced]` block is emitted with `${param}` references substituted
+// by the values passed at the call site, but with no other processing: no
+// indentation normalisation, no language-specific formatting, and no LSP
+// corrections.
+//
+// This is useful when you need to write free-form text that still benefits
+// from parameterisation — for example generating a config file, a shell
+// snippet, or any other textual content for which no dedicated generator
+// exists.
+//
+// The runtime has already performed the `${param}` substitution before
+// handing off to this generator.  The Leaf it receives contains one "text"
+// node per non-empty line of the body (after substitution).  This function
+// reassembles those lines into the final string.
+//
+// Usage in a .tlang file:
+//
+//   raw [Replaced] greeting(name: String, lang: String) {
+//   Hello, ${name}!
+//   This snippet was generated for the ${lang} ecosystem.
+//   }
+//
+//   helper {
+//     let out = greeting("Alice", "Kotlin")
+//     // out == "Hello, Alice!\nThis snippet was generated for the Kotlin ecosystem."
+//   }
+
+func generate_raw_replaced(tmpl: Leaf): String {
+let nodes = TLang.Leaf.get(tmpl, "nodes")
+return collect_replaced_nodes(nodes)
+}
+
+// ── collect_replaced_nodes ────────────────────────────────────────────────────
+//
+// Walks the node list produced by the runtime for a raw [Replaced] template
+// instance and concatenates every "text" entry, joining non-empty entries with
+// a newline.
+//
+// The substitution of `${param}` placeholders has already been performed by
+// the runtime before this function is called; the "text" values in each node
+// already contain the final, substituted content.
+
+func collect_replaced_nodes(nodes: List): String {
+let result = ""
+for (node in nodes) {
+    let text = TLang.Leaf.get(node, "text")
+    if (text != "") {
+        if (result != "") {
+            let result = result + "\n"
+        }
+        let result = result + text
+    }
+}
+return result
+}
+

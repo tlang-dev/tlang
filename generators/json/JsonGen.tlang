@@ -1,0 +1,204 @@
+expose generate
+
+
+// ── Entry point ───────────────────────────────────────────────────────────────
+
+// generate — public entry point.
+//
+// Accepts a data-template instance leaf (kind: "data") and returns the
+// corresponding JSON string.  The generator starts at the root bloc with
+// zero indentation.
+func generate(data: Leaf): String {
+let root = TLang.Leaf.get(data, "root")
+return render_bloc(root, "")
+}
+
+// ── Bloc rendering ────────────────────────────────────────────────────────────
+
+// render_bloc — converts a bloc leaf into a JSON object.
+// A bloc with no children renders as empty object: {}
+// Inline attrs are merged into the object alongside body children.
+func render_bloc(bloc: Leaf, indent: String): String {
+let inline_attrs = TLang.Leaf.get(bloc, "inline_attrs")
+let children     = TLang.Leaf.get(bloc, "children")
+
+let inner_indent = indent + "  "
+let entries      = ""
+
+let entries = collect_entries(inline_attrs, inner_indent, entries)
+let entries = collect_entries(children, inner_indent, entries)
+
+if (entries == "") {
+    return "{}"
+}
+
+return "{\n" + entries + indent + "}"
+}
+
+// collect_entries — iterates an attribute list and appends rendered JSON entry
+// lines to the accumulator string.  Returns the updated accumulator.
+func collect_entries(attrs: List, indent: String, acc: String): String {
+let result = acc
+for (attr in attrs) {
+    let entry = render_attr(indent, attr)
+    if (entry != "") {
+        if (result != "") {
+            let result = trim_trailing_newline(result) + ",\n"
+        }
+        let result = result + entry
+    }
+}
+return result
+}
+
+// ── Attribute rendering ───────────────────────────────────────────────────────
+
+// render_attr — renders a single attribute leaf as a JSON entry string.
+//   include  =>  a marker key  __include__: call()
+//   set      =>  key: value pair
+func render_attr(indent: String, attr: Leaf): String {
+let kind = TLang.Leaf.get(attr, "kind")
+
+if (kind == "include") {
+    let call = TLang.Leaf.get(attr, "call")
+    return indent + "\"__include__\": \"" + call + "\"\n"
+}
+
+if (kind == "set") {
+    let key   = TLang.Leaf.get(attr, "key")
+    let value = TLang.Leaf.get(attr, "value")
+    return render_set(indent, key, value)
+}
+
+return ""
+}
+
+// render_set — renders one key/value pair as a JSON entry line.
+// If the key is empty the value is rendered as a bare positional value.
+func render_set(indent: String, key: String, value: Leaf): String {
+if (key == "") {
+    return indent + render_value(value, indent) + "\n"
+}
+
+return indent + "\"" + key + "\": " + render_value(value, indent) + "\n"
+}
+
+// ── Value rendering ───────────────────────────────────────────────────────────
+
+// render_value — returns the JSON representation of a value leaf.
+//   string  =>  quoted text
+//   number  =>  bare numeric literal
+//   bool    =>  true or false
+//   array   =>  [ ... ]
+//   bloc    =>  { ... }
+func render_value(value: Leaf, indent: String): String {
+let kind = TLang.Leaf.get(value, "kind")
+
+if (kind == "string") {
+    let text = TLang.Leaf.get(value, "value")
+    return "\"" + escape_json_string(text) + "\""
+}
+
+if (kind == "number") {
+    return TLang.Leaf.get(value, "value")
+}
+
+if (kind == "bool") {
+    let b = TLang.Leaf.get(value, "value")
+    if (b == true) {
+        return "true"
+    }
+    return "false"
+}
+
+if (kind == "array") {
+    let items = TLang.Leaf.get(value, "items")
+    return render_array(items, indent)
+}
+
+if (kind == "bloc") {
+    return render_bloc(value, indent)
+}
+
+return "null"
+}
+
+// ── Array rendering ───────────────────────────────────────────────────────────
+
+// render_array — converts an array items list into a JSON array literal.
+// Positional set attrs (empty key) become plain array elements.
+// Keyed set attrs become single-key objects.
+// Include directives become  { "__include__": "call()" }  objects.
+func render_array(items: List, indent: String): String {
+let inner_indent = indent + "  "
+let parts        = ""
+
+for (item in items) {
+    let part = render_array_item(inner_indent, item)
+    if (part != "") {
+        if (parts != "") {
+            let parts = trim_trailing_newline(parts) + ",\n"
+        }
+        let parts = parts + part
+    }
+}
+
+if (parts == "") {
+    return "[]"
+}
+
+return "[\n" + parts + indent + "]"
+}
+
+// render_array_item — renders one item inside a JSON array.
+//   include            =>  object with __include__ key
+//   set with empty key =>  bare value
+//   set with key       =>  single-key object
+func render_array_item(indent: String, item: Leaf): String {
+let kind = TLang.Leaf.get(item, "kind")
+
+if (kind == "include") {
+    let call = TLang.Leaf.get(item, "call")
+    return indent + "{ \"__include__\": \"" + call + "\" }\n"
+}
+
+if (kind == "set") {
+    let key   = TLang.Leaf.get(item, "key")
+    let value = TLang.Leaf.get(item, "value")
+
+    if (key == "") {
+        return indent + render_value(value, indent) + "\n"
+    }
+
+    return indent + "{ \"" + key + "\": " + render_value(value, indent) + " }\n"
+}
+
+return ""
+}
+
+// ── String escaping ───────────────────────────────────────────────────────────
+
+// escape_json_string — escapes characters that must be escaped inside a JSON
+// string value (double-quotes only; backslash escaping requires a TLang
+// runtime that supports the backslash escape sequence in string literals).
+func escape_json_string(s: String): String {
+let s = TLang.String.replace(s, "\"", "\\\"")
+return s
+}
+
+// ── Utility ───────────────────────────────────────────────────────────────────
+
+// trim_trailing_newline — removes a single trailing newline from a string if
+// present.  Used when appending commas between JSON entries.
+func trim_trailing_newline(s: String): String {
+let len = TLang.String.length(s)
+if (len == 0) {
+    return s
+}
+let last = TLang.String.char_at(s, len - 1)
+if (last == "\n") {
+    return TLang.String.substring(s, 0, len - 1)
+}
+return s
+}
+

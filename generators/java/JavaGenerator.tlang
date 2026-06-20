@@ -1,0 +1,753 @@
+expose generate
+
+
+func java_formatter(): String {
+let fmt = TLang.Formatting.create()
+let fmt = TLang.Formatting.with_indent_text(fmt, "    ")
+
+// ── package and import ───────────────────────────────────────────────────
+let fmt = TLang.Formatting.space_between(fmt, "package_kw", "package_name")
+let fmt = TLang.Formatting.space_between(fmt, "import_kw", "import_path")
+
+// ── visibility and modifier chains ───────────────────────────────────────
+let fmt = TLang.Formatting.space_between(fmt, "visibility_kw", "modifier_kw")
+let fmt = TLang.Formatting.space_between(fmt, "visibility_kw", "class_kw")
+let fmt = TLang.Formatting.space_between(fmt, "visibility_kw", "interface_kw")
+let fmt = TLang.Formatting.space_between(fmt, "visibility_kw", "enum_kw")
+let fmt = TLang.Formatting.space_between(fmt, "visibility_kw", "method_sig")
+let fmt = TLang.Formatting.space_between(fmt, "visibility_kw", "field_decl")
+let fmt = TLang.Formatting.space_between(fmt, "modifier_kw", "modifier_kw")
+let fmt = TLang.Formatting.space_between(fmt, "modifier_kw", "class_kw")
+let fmt = TLang.Formatting.space_between(fmt, "modifier_kw", "interface_kw")
+let fmt = TLang.Formatting.space_between(fmt, "modifier_kw", "enum_kw")
+let fmt = TLang.Formatting.space_between(fmt, "modifier_kw", "method_sig")
+let fmt = TLang.Formatting.space_between(fmt, "modifier_kw", "field_decl")
+
+// ── class ────────────────────────────────────────────────────────────────
+let fmt = TLang.Formatting.space_between(fmt, "class_kw", "class_name")
+let fmt = TLang.Formatting.space_between(fmt, "class_name", "extends_kw")
+let fmt = TLang.Formatting.space_between(fmt, "extends_kw", "extends_type")
+let fmt = TLang.Formatting.space_between(fmt, "extends_type", "implements_kw")
+let fmt = TLang.Formatting.space_between(fmt, "extends_type", "open_brace")
+let fmt = TLang.Formatting.space_between(fmt, "implements_kw", "implements_type")
+let fmt = TLang.Formatting.space_between(fmt, "implements_type", "open_brace")
+let fmt = TLang.Formatting.space_between(fmt, "class_name", "implements_kw")
+let fmt = TLang.Formatting.space_between(fmt, "class_name", "open_brace")
+
+// ── interface ────────────────────────────────────────────────────────────
+let fmt = TLang.Formatting.space_between(fmt, "interface_kw", "class_name")
+
+// ── enum ─────────────────────────────────────────────────────────────────
+let fmt = TLang.Formatting.space_between(fmt, "enum_kw", "class_name")
+
+// ── method ───────────────────────────────────────────────────────────────
+let fmt = TLang.Formatting.space_between(fmt, "method_sig", "throws_kw")
+let fmt = TLang.Formatting.space_between(fmt, "throws_kw", "throws_type")
+let fmt = TLang.Formatting.space_between(fmt, "method_sig", "open_brace")
+let fmt = TLang.Formatting.space_between(fmt, "throws_type", "open_brace")
+
+// ── return / throw ───────────────────────────────────────────────────────
+let fmt = TLang.Formatting.space_between(fmt, "return_kw", "return_expr")
+let fmt = TLang.Formatting.space_between(fmt, "throw_kw", "throw_expr")
+
+// ── control flow ─────────────────────────────────────────────────────────
+let fmt = TLang.Formatting.space_between(fmt, "for_kw", "for_header")
+let fmt = TLang.Formatting.space_between(fmt, "for_header", "open_brace")
+let fmt = TLang.Formatting.space_between(fmt, "while_kw", "while_header")
+let fmt = TLang.Formatting.space_between(fmt, "while_header", "open_brace")
+let fmt = TLang.Formatting.space_between(fmt, "do_kw", "open_brace")
+let fmt = TLang.Formatting.space_between(fmt, "close_brace_do", "do_while_kw")
+let fmt = TLang.Formatting.space_between(fmt, "do_while_kw", "do_while_cond")
+let fmt = TLang.Formatting.space_between(fmt, "if_kw", "if_cond")
+let fmt = TLang.Formatting.space_between(fmt, "if_cond", "open_brace")
+let fmt = TLang.Formatting.space_between(fmt, "else_if_kw", "else_if_cond")
+let fmt = TLang.Formatting.space_between(fmt, "else_if_cond", "open_brace")
+let fmt = TLang.Formatting.space_between(fmt, "else_kw", "open_brace")
+let fmt = TLang.Formatting.space_between(fmt, "close_brace_else", "else_if_kw")
+let fmt = TLang.Formatting.space_between(fmt, "close_brace_else", "else_kw")
+
+// ── newline_after rules ───────────────────────────────────────────────────
+let fmt = TLang.Formatting.newline_after(fmt, "package_name")
+let fmt = TLang.Formatting.newline_after(fmt, "import_path")
+let fmt = TLang.Formatting.newline_after(fmt, "open_brace")
+let fmt = TLang.Formatting.newline_after(fmt, "method_sig_abs")
+let fmt = TLang.Formatting.newline_after(fmt, "field_decl")
+let fmt = TLang.Formatting.newline_after(fmt, "return_expr")
+let fmt = TLang.Formatting.newline_after(fmt, "throw_expr")
+let fmt = TLang.Formatting.newline_after(fmt, "annotation")
+let fmt = TLang.Formatting.newline_after(fmt, "expr_stmt")
+let fmt = TLang.Formatting.newline_after(fmt, "close_brace_nl")
+let fmt = TLang.Formatting.newline_after(fmt, "blank_line")
+let fmt = TLang.Formatting.newline_after(fmt, "do_while_cond")
+
+// ── indentation ───────────────────────────────────────────────────────────
+let fmt = TLang.Formatting.indent_after(fmt, "open_brace")
+let fmt = TLang.Formatting.outdent_before(fmt, "close_brace")
+let fmt = TLang.Formatting.outdent_before(fmt, "close_brace_nl")
+let fmt = TLang.Formatting.outdent_before(fmt, "close_brace_else")
+let fmt = TLang.Formatting.outdent_before(fmt, "close_brace_do")
+
+return fmt
+}
+
+// generate — public typed entry-point for the Java code generator.
+//
+// Accepts a TmplLang value (a template instance produced by calling a
+// lang [java] template) and delegates to generate_java.
+func generate(tmpl: TmplLang): String {
+return generate_java(tmpl)
+}
+
+func generate_java(tmpl: TmplLang): String {
+let pkg = TLang.Leaf.get(tmpl, "package")
+let nodes = TLang.Leaf.get(tmpl, "nodes")
+let tokens = TLang.Token.list()
+if (pkg != "") {
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("package_kw", "package"))
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("package_name", pkg + ";"))
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("blank_line", ""))
+}
+for (node in nodes) {
+    let node_tokens = gen_node_tokens(node)
+    let tokens = TLang.Token.concat(tokens, node_tokens)
+}
+let fmt = java_formatter()
+return TLang.Formatting.render_list(fmt, tokens)
+}
+
+// ── node dispatch ─────────────────────────────────────────────────────────────
+
+func gen_node_tokens(node: Leaf): String {
+let kind = TLang.Leaf.get(node, "kind")
+if (kind == "impl") {
+    return gen_impl_tokens(node)
+}
+if (kind == "func") {
+    return gen_func_tokens(node)
+}
+if (kind == "var") {
+    return gen_var_tokens(node)
+}
+if (kind == "return") {
+    return gen_return_tokens(node)
+}
+if (kind == "for") {
+    return gen_for_tokens(node)
+}
+if (kind == "while") {
+    return gen_while_tokens(node)
+}
+if (kind == "do_while") {
+    return gen_do_while_tokens(node)
+}
+if (kind == "if") {
+    return gen_if_tokens(node)
+}
+if (kind == "include") {
+    return gen_include_tokens(node)
+}
+if (kind == "raw") {
+    return gen_raw_tokens(node)
+}
+return gen_expr_tokens(node)
+}
+
+func gen_children_tokens(children: List): String {
+let tokens = TLang.Token.list()
+for (child in children) {
+    let child_tokens = gen_node_tokens(child)
+    let tokens = TLang.Token.concat(tokens, child_tokens)
+}
+return tokens
+}
+
+// ── class / interface / enum ──────────────────────────────────────────────────
+//
+// gen_impl_tokens — handles impl nodes, covering the full range of Java
+// type declarations.
+//
+// The modifier string comes from the impl[modifier] bracket in the template
+// body (e.g. impl[public class] Foo or impl[public abstract class] Bar).
+//
+//   Modifier string (in impl[…])           Java output
+//   ──────────────────────────────────────────────────────────────────────────
+//   "class"                                class Foo
+//   "public class"                         public class Foo
+//   "private class"                        private class Foo        (nested)
+//   "protected class"                      protected class Foo      (nested)
+//   "abstract class"                       abstract class Foo
+//   "public abstract class"                public abstract class Foo
+//   "final class"                          final class Foo
+//   "public final class"                   public final class Foo
+//   "static class"                         static class Foo         (nested)
+//   "public static class"                  public static class Foo  (nested)
+//   "public static final class"            public static final class Foo
+//   "interface"                            interface Foo
+//   "public interface"                     public interface Foo
+//   "private interface"                    private interface Foo    (nested)
+//   "enum"                                 enum Foo
+//   "public enum"                          public enum Foo
+//
+// The annotation field emits @Annotation on its own line before the type.
+// The extends field may encode both superclass and interfaces using the
+// convention "SuperClass implements Interface1, Interface2".  If the string
+// contains " implements ", the generator splits it automatically:
+//   extends = "AbstractFoo implements Bar, Baz"
+//     → extends_kw "extends" extends_type "AbstractFoo"
+//       implements_kw "implements" implements_type "Bar, Baz"
+//   extends = "implements Bar"          (no superclass, just interfaces)
+//     → implements_kw "implements" implements_type "Bar"
+//   extends = "AbstractFoo"            (superclass only)
+//     → extends_kw "extends" extends_type "AbstractFoo"
+
+func gen_impl_tokens(node: Leaf): String {
+let modifier = TLang.Leaf.get(node, "modifier")
+let name = TLang.Leaf.get(node, "name")
+let annotation = TLang.Leaf.get(node, "annotation")
+let raw_extends = TLang.Leaf.get(node, "extends")
+let children = TLang.Leaf.get(node, "children")
+let tokens = TLang.Token.list()
+
+// Split "SuperClass implements Interface1, Interface2" into two parts.
+let extends = raw_extends
+let implements = ""
+if (TLang.String.contains(raw_extends, " implements ")) {
+    let impl_pos = TLang.String.indexOf(raw_extends, " implements ")
+    let extends = TLang.String.substring(raw_extends, 0, impl_pos)
+    let implements = TLang.String.trimStart(TLang.String.substring(raw_extends, impl_pos + 12, TLang.String.length(raw_extends)))
+}
+// "implements Foo" with no superclass — extends field starts with "implements "
+if (TLang.String.startsWith(raw_extends, "implements ")) {
+    let extends = ""
+    let implements = TLang.String.substring(raw_extends, 11, TLang.String.length(raw_extends))
+}
+
+// Class-level annotation (@Entity, @Service, …)
+if (annotation != "") {
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("annotation", annotation))
+}
+
+// ── interface ────────────────────────────────────────────────────────────
+if (TLang.String.contains(modifier, "interface")) {
+    if (TLang.String.contains(modifier, "public")) {
+        let tokens = TLang.Token.push(tokens, TLang.Token.keyword("visibility_kw", "public"))
+    }
+    if (TLang.String.contains(modifier, "private")) {
+        let tokens = TLang.Token.push(tokens, TLang.Token.keyword("visibility_kw", "private"))
+    }
+    if (TLang.String.contains(modifier, "protected")) {
+        let tokens = TLang.Token.push(tokens, TLang.Token.keyword("visibility_kw", "protected"))
+    }
+    if (TLang.String.contains(modifier, "static")) {
+        let tokens = TLang.Token.push(tokens, TLang.Token.keyword("modifier_kw", "static"))
+    }
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("interface_kw", "interface"))
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("class_name", name))
+    // interfaces extend other interfaces (not implements)
+    if (extends != "") {
+        let tokens = TLang.Token.push(tokens, TLang.Token.keyword("extends_kw", "extends"))
+        let tokens = TLang.Token.push(tokens, TLang.Token.keyword("extends_type", extends))
+    }
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("open_brace", "{"))
+    let tokens = TLang.Token.concat(tokens, gen_children_tokens(children))
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("close_brace_nl", "}"))
+    return tokens
+}
+
+// ── enum ─────────────────────────────────────────────────────────────────
+if (TLang.String.contains(modifier, "enum")) {
+    if (TLang.String.contains(modifier, "public")) {
+        let tokens = TLang.Token.push(tokens, TLang.Token.keyword("visibility_kw", "public"))
+    }
+    if (TLang.String.contains(modifier, "private")) {
+        let tokens = TLang.Token.push(tokens, TLang.Token.keyword("visibility_kw", "private"))
+    }
+    if (TLang.String.contains(modifier, "protected")) {
+        let tokens = TLang.Token.push(tokens, TLang.Token.keyword("visibility_kw", "protected"))
+    }
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("enum_kw", "enum"))
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("class_name", name))
+    // enums may implement interfaces
+    if (implements != "") {
+        let tokens = TLang.Token.push(tokens, TLang.Token.keyword("implements_kw", "implements"))
+        let tokens = TLang.Token.push(tokens, TLang.Token.keyword("implements_type", implements))
+    }
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("open_brace", "{"))
+    let tokens = TLang.Token.concat(tokens, gen_children_tokens(children))
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("close_brace_nl", "}"))
+    return tokens
+}
+
+// ── regular class ─────────────────────────────────────────────────────────
+// Covers: plain class, abstract, final, static (nested), and combinations.
+// Visibility: public / private / protected are all emitted explicitly.
+// Java's canonical modifier order: visibility → abstract/final/static → class.
+if (TLang.String.contains(modifier, "public")) {
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("visibility_kw", "public"))
+}
+if (TLang.String.contains(modifier, "private")) {
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("visibility_kw", "private"))
+}
+if (TLang.String.contains(modifier, "protected")) {
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("visibility_kw", "protected"))
+}
+if (TLang.String.contains(modifier, "abstract")) {
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("modifier_kw", "abstract"))
+}
+if (TLang.String.contains(modifier, "final")) {
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("modifier_kw", "final"))
+}
+if (TLang.String.contains(modifier, "static")) {
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("modifier_kw", "static"))
+}
+if (TLang.String.contains(modifier, "strictfp")) {
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("modifier_kw", "strictfp"))
+}
+let tokens = TLang.Token.push(tokens, TLang.Token.keyword("class_kw", "class"))
+let tokens = TLang.Token.push(tokens, TLang.Token.keyword("class_name", name))
+if (extends != "") {
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("extends_kw", "extends"))
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("extends_type", extends))
+}
+if (implements != "") {
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("implements_kw", "implements"))
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("implements_type", implements))
+}
+let tokens = TLang.Token.push(tokens, TLang.Token.keyword("open_brace", "{"))
+let tokens = TLang.Token.concat(tokens, gen_children_tokens(children))
+let tokens = TLang.Token.push(tokens, TLang.Token.keyword("close_brace_nl", "}"))
+return tokens
+}
+
+// ── methods ───────────────────────────────────────────────────────────────────
+//
+// gen_func_tokens — handles func nodes for Java method declarations.
+//
+// Java methods have no single leading keyword; the declaration is:
+//   [visibility] [modifiers] ReturnType methodName(ParamType param, ...) [throws ExcType]
+//
+// An optional [modifier] prefix in brackets in the sig selects visibility and
+// behavioural modifiers; the rest of the sig is emitted as method_sig.
+//
+//   Template syntax                                       Java output
+//   ─────────────────────────────────────────────────────────────────────────────
+//   func void greet()                                     void greet();         (abstract)
+//   func[public] void greet() { }                         public void greet() { }
+//   func[public static] void main(String[] args) { }      public static void main(String[] args) { }
+//   func[private final] String load() { }                 private final String load() { }
+//   func[protected abstract] void draw()                  protected abstract void draw();
+//   func[public synchronized] void sync() { }             public synchronized void sync() { }
+//   func[public] void open() throws IOException { }       public void open() throws IOException { }
+//   func[public static] int add(int a, int b) { }         public static int add(int a, int b) { }
+//
+// If the modifier contains "override", an @Override annotation is emitted on
+// the line above the method (Java convention).
+//
+// Recognised modifier keywords:
+//   Visibility  : public  private  protected
+//   Behaviour   : abstract  static  final  synchronized  native  strictfp  default
+//   Meta        : override  (emits @Override annotation)
+
+func gen_func_tokens(node: Leaf): String {
+let raw_sig = TLang.Leaf.get(node, "sig")
+let has_body = TLang.Leaf.get(node, "has_body")
+let children = TLang.Leaf.get(node, "children")
+let tokens = TLang.Token.list()
+
+// Extract an optional [modifier] prefix from the sig field.
+// e.g. "[public static] void main(String[] args)" →
+//        modifier = "public static"
+//        sig      = "void main(String[] args)"
+let modifier = ""
+let sig = raw_sig
+if (TLang.String.startsWith(raw_sig, "[")) {
+    let close = TLang.String.indexOf(raw_sig, "]")
+    if (close > 0) {
+        let modifier = TLang.String.substring(raw_sig, 1, close)
+        let sig = TLang.String.trimStart(TLang.String.substring(raw_sig, close + 1, TLang.String.length(raw_sig)))
+    }
+}
+
+// @Override annotation — emitted before the method declaration
+if (TLang.String.contains(modifier, "override")) {
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("annotation", "@Override"))
+}
+
+// Visibility
+if (TLang.String.contains(modifier, "public")) {
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("visibility_kw", "public"))
+}
+if (TLang.String.contains(modifier, "private")) {
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("visibility_kw", "private"))
+}
+if (TLang.String.contains(modifier, "protected")) {
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("visibility_kw", "protected"))
+}
+
+// Behavioural modifiers in Java's canonical ordering
+if (TLang.String.contains(modifier, "abstract")) {
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("modifier_kw", "abstract"))
+}
+if (TLang.String.contains(modifier, "static")) {
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("modifier_kw", "static"))
+}
+if (TLang.String.contains(modifier, "final")) {
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("modifier_kw", "final"))
+}
+if (TLang.String.contains(modifier, "synchronized")) {
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("modifier_kw", "synchronized"))
+}
+if (TLang.String.contains(modifier, "native")) {
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("modifier_kw", "native"))
+}
+if (TLang.String.contains(modifier, "strictfp")) {
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("modifier_kw", "strictfp"))
+}
+if (TLang.String.contains(modifier, "default")) {
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("modifier_kw", "default"))
+}
+
+// Split a "throws XxxException" clause off the end of sig if present.
+// e.g. "void open() throws IOException" →
+//        clean_sig    = "void open()"
+//        throws_clause = "IOException"
+let throws_clause = ""
+let clean_sig = sig
+if (TLang.String.contains(sig, " throws ")) {
+    let throws_pos = TLang.String.indexOf(sig, " throws ")
+    let clean_sig = TLang.String.substring(sig, 0, throws_pos)
+    let throws_clause = TLang.String.trimStart(TLang.String.substring(sig, throws_pos + 8, TLang.String.length(sig)))
+}
+
+if (has_body) {
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("method_sig", clean_sig))
+    if (throws_clause != "") {
+        let tokens = TLang.Token.push(tokens, TLang.Token.keyword("throws_kw", "throws"))
+        let tokens = TLang.Token.push(tokens, TLang.Token.keyword("throws_type", throws_clause))
+    }
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("open_brace", "{"))
+    let tokens = TLang.Token.concat(tokens, gen_children_tokens(children))
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("close_brace_nl", "}"))
+    return tokens
+}
+
+// No body: abstract / interface method declaration — append semicolon.
+if (throws_clause != "") {
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("method_sig", clean_sig))
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("throws_kw", "throws"))
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("method_sig_abs", throws_clause + ";"))
+    return tokens
+}
+let tokens = TLang.Token.push(tokens, TLang.Token.keyword("method_sig_abs", clean_sig + ";"))
+return tokens
+}
+
+// ── fields (from TLang var nodes) ─────────────────────────────────────────────
+//
+// gen_var_tokens — handles Var nodes produced by the TLang `var` keyword.
+//
+// Java has no `var`/`val` distinction at the language level (ignoring Java 10+
+// local type inference). The TLang `var` keyword maps to a plain typed field
+// declaration; `var [val]` maps to a `final` field.
+//
+//   TLang syntax                    Java output
+//   ────────────────────────────────────────────────────────────
+//   var name: String = "Alice"      String name = "Alice";
+//   var [val] MAX: int = 100        final int MAX = 100;
+//
+// The `rest` text is emitted as-is as the field_decl token. Include the
+// semicolon in the rest text, or write fields as plain expression lines
+// (which go through gen_expr_tokens → gen_field_stmt_tokens).
+
+func gen_var_tokens(node: Leaf): String {
+let keyword = TLang.Leaf.get(node, "keyword")
+let rest = TLang.Leaf.get(node, "rest")
+let tokens = TLang.Token.list()
+if (keyword == "val") {
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("modifier_kw", "final"))
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("field_decl", rest))
+    return tokens
+}
+let tokens = TLang.Token.push(tokens, TLang.Token.keyword("field_decl", rest))
+return tokens
+}
+
+// ── return and throw ──────────────────────────────────────────────────────────
+
+func gen_return_tokens(node: Leaf): String {
+let expr = TLang.Leaf.get(node, "expr")
+let tokens = TLang.Token.list()
+let tokens = TLang.Token.push(tokens, TLang.Token.keyword("return_kw", "return"))
+let tokens = TLang.Token.push(tokens, TLang.Token.keyword("return_expr", expr))
+return tokens
+}
+
+// ── loops ─────────────────────────────────────────────────────────────────────
+
+func gen_for_tokens(node: Leaf): String {
+let header = TLang.Leaf.get(node, "header")
+let children = TLang.Leaf.get(node, "children")
+let tokens = TLang.Token.list()
+let tokens = TLang.Token.push(tokens, TLang.Token.keyword("for_kw", "for"))
+let tokens = TLang.Token.push(tokens, TLang.Token.keyword("for_header", header))
+let tokens = TLang.Token.push(tokens, TLang.Token.keyword("open_brace", "{"))
+let tokens = TLang.Token.concat(tokens, gen_children_tokens(children))
+let tokens = TLang.Token.push(tokens, TLang.Token.keyword("close_brace_nl", "}"))
+return tokens
+}
+
+func gen_while_tokens(node: Leaf): String {
+let header = TLang.Leaf.get(node, "header")
+let children = TLang.Leaf.get(node, "children")
+let tokens = TLang.Token.list()
+let tokens = TLang.Token.push(tokens, TLang.Token.keyword("while_kw", "while"))
+let tokens = TLang.Token.push(tokens, TLang.Token.keyword("while_header", header))
+let tokens = TLang.Token.push(tokens, TLang.Token.keyword("open_brace", "{"))
+let tokens = TLang.Token.concat(tokens, gen_children_tokens(children))
+let tokens = TLang.Token.push(tokens, TLang.Token.keyword("close_brace_nl", "}"))
+return tokens
+}
+
+func gen_do_while_tokens(node: Leaf): String {
+let condition = TLang.Leaf.get(node, "condition")
+let children = TLang.Leaf.get(node, "children")
+let tokens = TLang.Token.list()
+let tokens = TLang.Token.push(tokens, TLang.Token.keyword("do_kw", "do"))
+let tokens = TLang.Token.push(tokens, TLang.Token.keyword("open_brace", "{"))
+let tokens = TLang.Token.concat(tokens, gen_children_tokens(children))
+let tokens = TLang.Token.push(tokens, TLang.Token.keyword("close_brace_do", "}"))
+let tokens = TLang.Token.push(tokens, TLang.Token.keyword("do_while_kw", "while"))
+let tokens = TLang.Token.push(tokens, TLang.Token.keyword("do_while_cond", condition))
+return tokens
+}
+
+// ── if / else-if / else ───────────────────────────────────────────────────────
+
+func gen_if_tokens(node: Leaf): String {
+let condition = TLang.Leaf.get(node, "condition")
+let then_children = TLang.Leaf.get(node, "then_children")
+let else_chain = TLang.Leaf.get(node, "else_chain")
+let tokens = TLang.Token.list()
+let tokens = TLang.Token.push(tokens, TLang.Token.keyword("if_kw", "if"))
+let tokens = TLang.Token.push(tokens, TLang.Token.keyword("if_cond", condition))
+let tokens = TLang.Token.push(tokens, TLang.Token.keyword("open_brace", "{"))
+let tokens = TLang.Token.concat(tokens, gen_children_tokens(then_children))
+let tokens = TLang.Token.concat(tokens, gen_else_chain_tokens(else_chain))
+return tokens
+}
+
+func gen_else_chain_tokens(branches: List): String {
+let tokens = TLang.Token.list()
+for (branch in branches) {
+    let kind = TLang.Leaf.get(branch, "kind")
+    let children = TLang.Leaf.get(branch, "children")
+    if (kind == "else_if") {
+        let cond = TLang.Leaf.get(branch, "condition")
+        let tokens = TLang.Token.push(tokens, TLang.Token.keyword("close_brace_else", "}"))
+        let tokens = TLang.Token.push(tokens, TLang.Token.keyword("else_if_kw", "else if"))
+        let tokens = TLang.Token.push(tokens, TLang.Token.keyword("else_if_cond", cond))
+        let tokens = TLang.Token.push(tokens, TLang.Token.keyword("open_brace", "{"))
+        let tokens = TLang.Token.concat(tokens, gen_children_tokens(children))
+    }
+    if (kind == "else") {
+        let tokens = TLang.Token.push(tokens, TLang.Token.keyword("close_brace_else", "}"))
+        let tokens = TLang.Token.push(tokens, TLang.Token.keyword("else_kw", "else"))
+        let tokens = TLang.Token.push(tokens, TLang.Token.keyword("open_brace", "{"))
+        let tokens = TLang.Token.concat(tokens, gen_children_tokens(children))
+    }
+}
+let tokens = TLang.Token.push(tokens, TLang.Token.keyword("close_brace_nl", "}"))
+return tokens
+}
+
+// ── expression statements and smart dispatch ──────────────────────────────────
+//
+// gen_expr_tokens — catch-all for nodes that don't have a dedicated kind.
+//
+// Performs pattern-based dispatch on the raw text so that common Java
+// constructs written as plain lines in the template body receive proper
+// token roles and therefore correct formatting:
+//
+//   Text pattern                          Token(s) emitted
+//   ────────────────────────────────────────────────────────────────────────────
+//   Starts with "@"                       annotation        (newline after)
+//   Starts with "import "                 import_kw + import_path
+//   Starts with "throw "                  throw_kw + throw_expr
+//   Modifier-prefixed field lines         → gen_field_stmt_tokens
+//   Everything else                       expr_stmt         (newline after)
+//
+// Modifier-prefixed field patterns routed to gen_field_stmt_tokens:
+//   "private …"  "protected …"  "public static …"  "public final …"
+//   "static …"   "final …"      "volatile …"        "transient …"
+
+func gen_expr_tokens(node: Leaf): String {
+let text = TLang.Leaf.get(node, "text")
+let tokens = TLang.Token.list()
+
+// @Annotation — emit as annotation token so newline_after applies cleanly
+if (TLang.String.startsWith(text, "@")) {
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("annotation", text))
+    return tokens
+}
+
+// import statement
+if (TLang.String.startsWith(text, "import ")) {
+    let path = TLang.String.substring(text, 7, TLang.String.length(text))
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("import_kw", "import"))
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("import_path", path))
+    return tokens
+}
+
+// throw statement
+if (TLang.String.startsWith(text, "throw ")) {
+    let expr = TLang.String.substring(text, 6, TLang.String.length(text))
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("throw_kw", "throw"))
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("throw_expr", expr))
+    return tokens
+}
+
+// private fields / methods written as raw text
+if (TLang.String.startsWith(text, "private ")) {
+    return gen_field_stmt_tokens(text)
+}
+
+// protected fields
+if (TLang.String.startsWith(text, "protected ")) {
+    return gen_field_stmt_tokens(text)
+}
+
+// public static or public final fields / constants
+if (TLang.String.startsWith(text, "public static ") || TLang.String.startsWith(text, "public final ")) {
+    return gen_field_stmt_tokens(text)
+}
+
+// package-private static or final fields
+if (TLang.String.startsWith(text, "static ")) {
+    return gen_field_stmt_tokens(text)
+}
+if (TLang.String.startsWith(text, "final ")) {
+    return gen_field_stmt_tokens(text)
+}
+
+// volatile / transient fields
+if (TLang.String.startsWith(text, "volatile ")) {
+    return gen_field_stmt_tokens(text)
+}
+if (TLang.String.startsWith(text, "transient ")) {
+    return gen_field_stmt_tokens(text)
+}
+
+// Generic expression statement (assignments, method calls, switch
+// expressions, instanceof checks, ternary expressions, etc.)
+let tokens = TLang.Token.push(tokens, TLang.Token.keyword("expr_stmt", text))
+return tokens
+}
+
+// gen_field_stmt_tokens — tokenises a field declaration line that carries
+// explicit modifiers written directly in the template body.
+//
+// Strips zero or more visibility / type modifiers from the front of the text,
+// emitting each as a visibility_kw or modifier_kw token, then emits field_decl
+// for the remainder.
+//
+// Supported modifier prefixes (stripped left-to-right):
+//   Visibility  : public  private  protected
+//   Type        : static  final  abstract  volatile  transient
+//
+// Examples:
+//   "private String name;"
+//       → visibility_kw("private") field_decl("String name;")
+//
+//   "private static final int MAX = 100;"
+//       → visibility_kw("private") modifier_kw("static") modifier_kw("final") field_decl("int MAX = 100;")
+//
+//   "protected volatile boolean flag;"
+//       → visibility_kw("protected") modifier_kw("volatile") field_decl("boolean flag;")
+//
+//   "public static final String TAG = \"Foo\";"
+//       → visibility_kw("public") modifier_kw("static") modifier_kw("final") field_decl("String TAG = \"Foo\";")
+//
+//   "transient int temp;"
+//       → modifier_kw("transient") field_decl("int temp;")
+
+func gen_field_stmt_tokens(text: String): String {
+let tokens = TLang.Token.list()
+let remaining = text
+
+// ── visibility (at most one) ───────────────────────────────────────────────
+if (TLang.String.startsWith(remaining, "public ")) {
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("visibility_kw", "public"))
+    let remaining = TLang.String.substring(remaining, 7, TLang.String.length(remaining))
+}
+if (TLang.String.startsWith(remaining, "private ")) {
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("visibility_kw", "private"))
+    let remaining = TLang.String.substring(remaining, 8, TLang.String.length(remaining))
+}
+if (TLang.String.startsWith(remaining, "protected ")) {
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("visibility_kw", "protected"))
+    let remaining = TLang.String.substring(remaining, 10, TLang.String.length(remaining))
+}
+
+// ── type / behaviour modifiers ────────────────────────────────────────────
+if (TLang.String.startsWith(remaining, "static ")) {
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("modifier_kw", "static"))
+    let remaining = TLang.String.substring(remaining, 7, TLang.String.length(remaining))
+}
+if (TLang.String.startsWith(remaining, "final ")) {
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("modifier_kw", "final"))
+    let remaining = TLang.String.substring(remaining, 6, TLang.String.length(remaining))
+}
+if (TLang.String.startsWith(remaining, "abstract ")) {
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("modifier_kw", "abstract"))
+    let remaining = TLang.String.substring(remaining, 9, TLang.String.length(remaining))
+}
+if (TLang.String.startsWith(remaining, "volatile ")) {
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("modifier_kw", "volatile"))
+    let remaining = TLang.String.substring(remaining, 9, TLang.String.length(remaining))
+}
+if (TLang.String.startsWith(remaining, "transient ")) {
+    let tokens = TLang.Token.push(tokens, TLang.Token.keyword("modifier_kw", "transient"))
+    let remaining = TLang.String.substring(remaining, 10, TLang.String.length(remaining))
+}
+
+// ── field declaration (type + name [= initialiser] + semicolon) ──────────
+let tokens = TLang.Token.push(tokens, TLang.Token.keyword("field_decl", remaining))
+return tokens
+}
+
+// ── include ───────────────────────────────────────────────────────────────────
+//
+// gen_include_tokens — handles nodes produced by <[ call ]> template includes.
+//
+// When the runtime cannot expand an include at instantiation time (e.g. during
+// testing), the node carries:
+//   kind = "include"
+//   call = the raw call expression with template-param substitutions applied
+// We emit it as a plain expr_stmt so output is never silently lost.
+
+func gen_include_tokens(node: Leaf): String {
+let call = TLang.Leaf.get(node, "call")
+let tokens = TLang.Token.list()
+let tokens = TLang.Token.push(tokens, TLang.Token.keyword("expr_stmt", call))
+return tokens
+}
+
+// ── raw ───────────────────────────────────────────────────────────────────────
+//
+// gen_raw_tokens — handles nodes produced by `raw: text` template lines.
+//
+// The node carries:
+//   kind = "raw"
+//   text = the verbatim text after the `raw:` prefix (no substitution applied)
+//
+// Emits a single `expr_stmt` token so the formatter treats it as a plain
+// statement line, but the content is passed through completely unchanged — no
+// keyword interpretation, no `${…}` interpolation.
+
+func gen_raw_tokens(node: Leaf): String {
+let text = TLang.Leaf.get(node, "text")
+let tokens = TLang.Token.list()
+let tokens = TLang.Token.push(tokens, TLang.Token.keyword("expr_stmt", text))
+return tokens
+}
+

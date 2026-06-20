@@ -1,0 +1,385 @@
+expose generate
+
+
+// ── Entry point ───────────────────────────────────────────────────────────────
+
+// generate — public entry point.
+//
+// Accepts a data-template instance leaf (kind: "data") and returns an XML
+// document string, including the standard XML declaration header.
+//
+// XML structure rules applied here:
+//   • Named root bloc         →  `<name attrs>...children...</name>`
+//   • Anonymous root bloc     →  children emitted as a document fragment
+//   • Inline attrs on a bloc  →  XML element attributes  key="value"
+//   • Keyed scalar child      →  `<key>text</key>`
+//   • Keyed bloc child        →  element named by the bloc or by the key
+//   • Keyed array child       →  `<key><item>v</item>...</key>` wrapper
+//   • Positional scalar       →  bare text node (no element wrapper)
+//   • Positional named bloc   →  element using the bloc's own tag name
+//   • Include directive       →  XML comment  <!-- include: call() -->
+//   • Special characters      →  escaped in both attribute values and text
+func generate(data: Leaf): String {
+let root      = TLang.Leaf.get(data, "root")
+let root_name = TLang.Leaf.get(root, "name")
+let decl      = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+
+if (root_name != "") {
+    return decl + render_bloc(root, "")
+}
+
+// Anonymous root — emit children as a document fragment (no wrapper tag).
+let inline_attrs = TLang.Leaf.get(root, "inline_attrs")
+let children     = TLang.Leaf.get(root, "children")
+let body         = render_children(inline_attrs, "")
+let body         = body + render_children(children, "")
+return decl + body
+}
+
+// ── Bloc rendering ────────────────────────────────────────────────────────────
+
+// render_bloc — converts a bloc leaf into an XML element.
+//
+// A bloc with no name is rendered as an anonymous fragment: its children are
+// emitted at the current indentation level without a wrapping element.
+//
+// Empty element (no inline attrs, no children, no content):
+//   <tag/>
+//
+// Element with only inline attrs and no child content:
+//   <tag key="val"/>
+//
+// Element with children:
+//   <tag key="val">
+//     ...children...
+//   </tag>
+func render_bloc(bloc: Leaf, indent: String): String {
+let tag          = TLang.Leaf.get(bloc, "name")
+let inline_attrs = TLang.Leaf.get(bloc, "inline_attrs")
+let children     = TLang.Leaf.get(bloc, "children")
+
+// Anonymous fragment — no wrapping element.
+if (tag == "") {
+    let body = render_children(inline_attrs, indent)
+    let body = body + render_children(children, indent)
+    return body
+}
+
+let attrs_str = render_inline_attrs(inline_attrs)
+let body      = render_children(children, indent + "  ")
+
+// Self-closing element — no child content.
+if (body == "") {
+    return indent + "<" + tag + attrs_str + "/>\n"
+}
+
+return indent + "<" + tag + attrs_str + ">\n" + body + indent + "</" + tag + ">\n"
+}
+
+// ── Inline attribute rendering ────────────────────────────────────────────────
+
+// render_inline_attrs — converts the inline_attrs list of a bloc into an XML
+// attribute string, e.g. ` class="card" id="main"`.
+//
+//   set, key!=""  →  key="escaped-value"
+//   set, key==""  →  value used as a boolean/bare attribute name
+//   include       →  skipped (include directives are not valid XML attributes)
+func render_inline_attrs(attrs: List): String {
+let result = ""
+
+for (attr in attrs) {
+    let kind = TLang.Leaf.get(attr, "kind")
+
+    if (kind == "set") {
+        let key   = TLang.Leaf.get(attr, "key")
+        let value = TLang.Leaf.get(attr, "value")
+        let text  = extract_scalar_text(value)
+
+        if (key == "") {
+            // Bare / boolean attribute — the text itself is the attr name.
+            if (text != "") {
+                let result = result + " " + text
+            }
+        }
+
+        if (key != "") {
+            let result = result + " " + key + "=\"" + escape_attr(text) + "\""
+        }
+    }
+}
+
+return result
+}
+
+// ── Children rendering ────────────────────────────────────────────────────────
+
+// render_children — renders a list of attribute/child leaves at the given
+// indentation level, concatenating the results.
+func render_children(children: List, indent: String): String {
+let result = ""
+
+for (child in children) {
+    let result = result + render_attr(child, indent)
+}
+
+return result
+}
+
+// ── Single attribute rendering ────────────────────────────────────────────────
+
+// render_attr — dispatches a single attribute leaf.
+//
+//   include  →  <!-- include: call() -->
+//   set      →  render_set
+func render_attr(attr: Leaf, indent: String): String {
+let kind = TLang.Leaf.get(attr, "kind")
+
+if (kind == "include") {
+    let call = TLang.Leaf.get(attr, "call")
+    return indent + "<!-- include: " + call + " -->\n"
+}
+
+if (kind == "set") {
+    let key   = TLang.Leaf.get(attr, "key")
+    let value = TLang.Leaf.get(attr, "value")
+    return render_set(key, value, indent)
+}
+
+return ""
+}
+
+// render_set — maps one key/value attribute to its XML form.
+//
+// Dispatch table:
+//
+//   key="", string/number/bool  →  bare text node (escaped)
+//   key="", named bloc          →  element using the bloc's own tag name
+//   key="", unnamed bloc        →  anonymous fragment (children inlined)
+//   key="", array               →  sequence of <item>...</item> siblings
+//
+//   key!="", string/number/bool →  <key>text</key>  (inline element)
+//   key!="", named bloc         →  render the bloc directly (bloc owns its tag)
+//   key!="", unnamed bloc       →  <key attrs>...children...</key>
+//   key!="", array              →  <key>  with <item> children  </key>
+func render_set(key: String, value: Leaf, indent: String): String {
+let vkind = TLang.Leaf.get(value, "kind")
+
+// ── Positional (keyless) entries ──────────────────────────────────────────
+
+if (key == "") {
+    if (vkind == "bloc") {
+        return render_bloc(value, indent)
+    }
+
+    if (vkind == "array") {
+        let items = TLang.Leaf.get(value, "items")
+        return render_array_as_siblings(items, "item", indent)
+    }
+
+    // Scalar positional value → bare text node.
+    let text = extract_scalar_text(value)
+    if (text == "") {
+        return ""
+    }
+    return indent + escape_text(text) + "\n"
+}
+
+// ── Keyed entries ─────────────────────────────────────────────────────────
+
+if (vkind == "string") {
+    let text = TLang.Leaf.get(value, "value")
+    return indent + "<" + key + ">" + escape_text(text) + "</" + key + ">\n"
+}
+
+if (vkind == "number") {
+    let num = TLang.Leaf.get(value, "value")
+    return indent + "<" + key + ">" + num + "</" + key + ">\n"
+}
+
+if (vkind == "bool") {
+    let b = TLang.Leaf.get(value, "value")
+    if (b == true) {
+        return indent + "<" + key + ">true</" + key + ">\n"
+    }
+    return indent + "<" + key + ">false</" + key + ">\n"
+}
+
+if (vkind == "bloc") {
+    let bloc_name    = TLang.Leaf.get(value, "name")
+    let inline_attrs = TLang.Leaf.get(value, "inline_attrs")
+    let children     = TLang.Leaf.get(value, "children")
+
+    // Bloc already carries its own tag name — render it directly.
+    // The key is not used as an outer wrapper because the content already
+    // declares its identity (common pattern: `server { host: "x" }`).
+    if (bloc_name != "") {
+        return render_bloc(value, indent)
+    }
+
+    // Unnamed bloc with a keyed parent — the key becomes the element tag.
+    let attrs_str = render_inline_attrs(inline_attrs)
+    let body      = render_children(children, indent + "  ")
+
+    if (body == "") {
+        return indent + "<" + key + attrs_str + "/>\n"
+    }
+
+    return indent + "<" + key + attrs_str + ">\n" + body + indent + "</" + key + ">\n"
+}
+
+if (vkind == "array") {
+    let items = TLang.Leaf.get(value, "items")
+    return render_array_as_element(key, items, indent)
+}
+
+return ""
+}
+
+// ── Array rendering ───────────────────────────────────────────────────────────
+
+// render_array_as_element — wraps an array in a container element named `key`
+// and renders each item as a child element.
+//
+// Scalar items   →  <item>value</item>
+// Named bloc     →  element using the bloc's own tag name
+// Unnamed bloc   →  <item attrs>...children...</item>
+// Include        →  <!-- include: call() -->
+func render_array_as_element(key: String, items: List, indent: String): String {
+let inner = render_array_as_siblings(items, "item", indent + "  ")
+
+if (inner == "") {
+    return indent + "<" + key + "/>\n"
+}
+
+return indent + "<" + key + ">\n" + inner + indent + "</" + key + ">\n"
+}
+
+// render_array_as_siblings — renders each item in the array as a sibling
+// element at the current indent level.  Used both for keyed-array wrappers
+// and for positional array values.
+//
+// `default_tag` is the element name used for anonymous scalar items
+// (typically "item" for wrapped arrays, or ignored for positional named blocs).
+func render_array_as_siblings(items: List, default_tag: String, indent: String): String {
+let result = ""
+
+for (item in items) {
+    let result = result + render_array_item(item, default_tag, indent)
+}
+
+return result
+}
+
+// render_array_item — renders one item inside an array at the given indent.
+func render_array_item(item: Leaf, default_tag: String, indent: String): String {
+let kind = TLang.Leaf.get(item, "kind")
+
+if (kind == "include") {
+    let call = TLang.Leaf.get(item, "call")
+    return indent + "<!-- include: " + call + " -->\n"
+}
+
+if (kind == "set") {
+    let key   = TLang.Leaf.get(item, "key")
+    let value = TLang.Leaf.get(item, "value")
+    let vkind = TLang.Leaf.get(value, "kind")
+
+    // Named bloc — use its own tag regardless of key.
+    if (vkind == "bloc") {
+        let bloc_name = TLang.Leaf.get(value, "name")
+        if (bloc_name != "") {
+            return render_bloc(value, indent)
+        }
+
+        // Unnamed bloc: use key if present, else default_tag.
+        let tag          = key
+        let inline_attrs = TLang.Leaf.get(value, "inline_attrs")
+        let children     = TLang.Leaf.get(value, "children")
+        if (tag == "") {
+            let tag = default_tag
+        }
+        let attrs_str = render_inline_attrs(inline_attrs)
+        let body      = render_children(children, indent + "  ")
+
+        if (body == "") {
+            return indent + "<" + tag + attrs_str + "/>\n"
+        }
+
+        return indent + "<" + tag + attrs_str + ">\n" + body + indent + "</" + tag + ">\n"
+    }
+
+    // Scalar item: use key if present, else default_tag.
+    let tag  = key
+    if (tag == "") {
+        let tag = default_tag
+    }
+    let text = extract_scalar_text(value)
+    return indent + "<" + tag + ">" + escape_text(text) + "</" + tag + ">\n"
+}
+
+return ""
+}
+
+// ── Scalar text extraction ────────────────────────────────────────────────────
+
+// extract_scalar_text — returns the plain text representation of a scalar
+// value leaf for use in element content or attribute values.
+//
+//   string  →  the string value as-is (not yet escaped)
+//   number  →  the numeric literal string
+//   bool    →  "true" or "false"
+//   bloc    →  the bloc's tag name (useful for boolean-attribute patterns)
+//   array   →  ""  (arrays are not representable as flat text)
+func extract_scalar_text(value: Leaf): String {
+let kind = TLang.Leaf.get(value, "kind")
+
+if (kind == "string") {
+    return TLang.Leaf.get(value, "value")
+}
+
+if (kind == "number") {
+    return TLang.Leaf.get(value, "value")
+}
+
+if (kind == "bool") {
+    let b = TLang.Leaf.get(value, "value")
+    if (b == true) {
+        return "true"
+    }
+    return "false"
+}
+
+if (kind == "bloc") {
+    return TLang.Leaf.get(value, "name")
+}
+
+return ""
+}
+
+// ── XML escaping ──────────────────────────────────────────────────────────────
+
+// escape_text — escapes characters that have special meaning in XML text
+// content (between element tags).
+//
+//   &  →  &amp;   (must be first to avoid double-escaping)
+//   <  →  &lt;
+//   >  →  &gt;
+func escape_text(s: String): String {
+let s = TLang.String.replace(s, "&", "&amp;")
+let s = TLang.String.replace(s, "<", "&lt;")
+let s = TLang.String.replace(s, ">", "&gt;")
+return s
+}
+
+// escape_attr — escapes characters that have special meaning inside an XML
+// double-quoted attribute value.
+//   amp  =>  &amp;   (must be first to avoid double-escaping)
+//   lt   =>  &lt;
+//   dquote  =>  &quot;
+func escape_attr(s: String): String {
+let s = TLang.String.replace(s, "&", "&amp;")
+let s = TLang.String.replace(s, "<", "&lt;")
+let s = TLang.String.replace(s, "\"", "&quot;")
+return s
+}
+

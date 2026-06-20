@@ -1,0 +1,260 @@
+expose generate_html
+
+
+// ── Void elements ─────────────────────────────────────────────────────────────
+//
+// Void elements must not have a closing tag in HTML5.
+
+func is_void_element(tag: String): Bool {
+if (tag == "area")   { return true }
+if (tag == "base")   { return true }
+if (tag == "br")     { return true }
+if (tag == "col")    { return true }
+if (tag == "embed")  { return true }
+if (tag == "hr")     { return true }
+if (tag == "img")    { return true }
+if (tag == "input")  { return true }
+if (tag == "link")   { return true }
+if (tag == "meta")   { return true }
+if (tag == "param")  { return true }
+if (tag == "source") { return true }
+if (tag == "track")  { return true }
+if (tag == "wbr")    { return true }
+return false
+}
+
+// ── Entry point ───────────────────────────────────────────────────────────────
+
+// generate_html — public entry point called by TLang.Generator.generate for html language.
+//
+// Accepts a data-template instance leaf (kind: "data") and returns the
+// corresponding HTML markup string.  The generator always starts at the root
+// bloc with zero indentation.
+func generate_html(data: Leaf): String {
+let root = TLang.Leaf.get(data, "root")
+return render_bloc(root, "")
+}
+
+// ── Bloc rendering ────────────────────────────────────────────────────────────
+
+// render_bloc — converts a bloc leaf into an HTML element.
+//
+// A bloc with an empty name is treated as an anonymous fragment: its children
+// are emitted at the current indentation level without a wrapping element.
+func render_bloc(bloc: Leaf, indent: String): String {
+let tag          = TLang.Leaf.get(bloc, "name")
+let inline_attrs = TLang.Leaf.get(bloc, "inline_attrs")
+let children     = TLang.Leaf.get(bloc, "children")
+
+// Anonymous fragment — no wrapping element, just emit children.
+if (tag == "") {
+    return render_children(children, indent)
+}
+
+let attrs_str = render_inline_attrs(inline_attrs)
+let open_tag  = indent + "<" + tag + attrs_str + ">"
+
+// Void elements — self-closing, no children, no closing tag.
+if (is_void_element(tag)) {
+    return open_tag + "\n"
+}
+
+let inner = render_children(children, indent + "  ")
+
+// Empty element — keep on a single line.
+if (inner == "") {
+    return open_tag + "</" + tag + ">\n"
+}
+
+return open_tag + "\n" + inner + indent + "</" + tag + ">\n"
+}
+
+// ── Inline attribute rendering ────────────────────────────────────────────────
+
+// render_inline_attrs — converts the inline_attrs list of a bloc into an HTML
+// attribute string, e.g. ` class="card" id="main"`.
+//
+// Each set attr with a non-empty key becomes `key="value"`.
+// A set attr with an empty key contributes the bare value (e.g. boolean attrs
+// like `disabled` or `checked`).
+// Include directives in inline positions are emitted as data-include markers.
+func render_inline_attrs(attrs: List): String {
+let result = ""
+for (attr in attrs) {
+    let kind = TLang.Leaf.get(attr, "kind")
+
+    if (kind == "set") {
+        let key   = TLang.Leaf.get(attr, "key")
+        let value = TLang.Leaf.get(attr, "value")
+        let text  = extract_string_value(value)
+
+        if (key == "") {
+            // Boolean / bare attribute — emit the value as-is (e.g. "disabled")
+            if (text != "") {
+                let result = result + " " + text
+            }
+        }
+        if (key != "") {
+            let result = result + " " + key + "=\"" + text + "\""
+        }
+    }
+
+    if (kind == "include") {
+        // Include directives are not meaningful as HTML attributes — emit a
+        // data-include marker so authors can debug template expansion.
+        let call   = TLang.Leaf.get(attr, "call")
+        let result = result + " data-include=\"" + call + "\""
+    }
+}
+return result
+}
+
+// ── Children rendering ────────────────────────────────────────────────────────
+
+// render_children — renders a list of attribute/child leaves at the given
+// indentation level, concatenating the results in order.
+func render_children(children: List, indent: String): String {
+let result = ""
+for (child in children) {
+    let child_html = render_attr(child, indent)
+    let result     = result + child_html
+}
+return result
+}
+
+// ── Single attribute rendering ────────────────────────────────────────────────
+
+// render_attr — dispatches a single attribute leaf to the right renderer.
+//
+//   include             →  HTML comment:  <!-- include: call() -->
+//   set, key="", bloc   →  nested element (bloc's own tag name used)
+//   set, key="", scalar →  bare text node at current indent
+//   set, key!="", bloc  →  element named by key, bloc's children as content
+//   set, key!="", scalar→  <key>text</key>
+func render_attr(attr: Leaf, indent: String): String {
+let kind = TLang.Leaf.get(attr, "kind")
+
+if (kind == "include") {
+    let call = TLang.Leaf.get(attr, "call")
+    return indent + "<!-- include: " + call + " -->\n"
+}
+
+if (kind == "set") {
+    let key   = TLang.Leaf.get(attr, "key")
+    let value = TLang.Leaf.get(attr, "value")
+    return render_set(key, value, indent)
+}
+
+return ""
+}
+
+// render_set — renders one key/value child entry inside an element body.
+func render_set(key: String, value: Leaf, indent: String): String {
+let val_kind = TLang.Leaf.get(value, "kind")
+
+// ── Nested bloc ───────────────────────────────────────────────────────────
+if (val_kind == "bloc") {
+    let bloc_name = TLang.Leaf.get(value, "name")
+
+    // Bloc already carries its own tag name — render it directly.
+    if (bloc_name != "") {
+        return render_bloc(value, indent)
+    }
+
+    // Nameless bloc with a keyed parent — the key becomes the tag.
+    if (key != "") {
+        let inline_attrs = TLang.Leaf.get(value, "inline_attrs")
+        let children     = TLang.Leaf.get(value, "children")
+        let attrs_str    = render_inline_attrs(inline_attrs)
+        let open_tag     = indent + "<" + key + attrs_str + ">"
+
+        if (is_void_element(key)) {
+            return open_tag + "\n"
+        }
+
+        let inner = render_children(children, indent + "  ")
+
+        if (inner == "") {
+            return open_tag + "</" + key + ">\n"
+        }
+
+        return open_tag + "\n" + inner + indent + "</" + key + ">\n"
+    }
+
+    // Anonymous nameless bloc — emit children as a fragment.
+    let children = TLang.Leaf.get(value, "children")
+    return render_children(children, indent)
+}
+
+// ── Array ─────────────────────────────────────────────────────────────────
+// Arrays produce a sequence of sibling nodes at the current indent level.
+if (val_kind == "array") {
+    let items = TLang.Leaf.get(value, "items")
+    if (key == "") {
+        return render_children(items, indent)
+    }
+    // Keyed array — wrap all items inside a container element.
+    let open_tag = indent + "<" + key + ">"
+    let inner    = render_children(items, indent + "  ")
+    if (inner == "") {
+        return open_tag + "</" + key + ">\n"
+    }
+    return open_tag + "\n" + inner + indent + "</" + key + ">\n"
+}
+
+// ── Scalar value (string / number / bool) ─────────────────────────────────
+let text = extract_string_value(value)
+
+// Positional text node — no element wrapper, just the text.
+if (key == "") {
+    return indent + text + "\n"
+}
+
+// Void element with a scalar value — emit it as a `value` attribute.
+if (is_void_element(key)) {
+    if (text == "") {
+        return indent + "<" + key + ">\n"
+    }
+    return indent + "<" + key + " value=\"" + text + "\">\n"
+}
+
+// Regular keyed scalar — inline element: <key>text</key>
+return indent + "<" + key + ">" + text + "</" + key + ">\n"
+}
+
+// ── Value extraction ──────────────────────────────────────────────────────────
+
+// extract_string_value — returns the textual representation of a scalar value
+// leaf for use in attribute values or text content.
+//
+//   string  →  the string value as-is
+//   number  →  the numeric literal string
+//   bool    →  "true" or "false"
+//   bloc    →  the bloc's tag name (used for boolean HTML attributes)
+//   array   →  "" (arrays are not representable as flat strings)
+func extract_string_value(value: Leaf): String {
+let kind = TLang.Leaf.get(value, "kind")
+
+if (kind == "string") {
+    return TLang.Leaf.get(value, "value")
+}
+
+if (kind == "number") {
+    return TLang.Leaf.get(value, "value")
+}
+
+if (kind == "bool") {
+    let b = TLang.Leaf.get(value, "value")
+    if (b == true) {
+        return "true"
+    }
+    return "false"
+}
+
+if (kind == "bloc") {
+    return TLang.Leaf.get(value, "name")
+}
+
+return ""
+}
+

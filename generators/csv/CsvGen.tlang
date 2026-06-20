@@ -1,0 +1,131 @@
+expose generate
+expose header
+
+// generate(data) — emit one CSV row of values (no header line).
+//
+// The root bloc's set children become comma-separated cells.
+// Strings are always double-quoted with internal quotes doubled (RFC 4180).
+// Numbers and booleans are emitted bare.
+// Arrays are serialised as semicolon-joined values inside a quoted cell.
+// Nested blocs are skipped.
+func generate(data: Leaf): String {
+    let root         = TLang.Leaf.get(data, "root")
+    let inline_attrs = TLang.Leaf.get(root, "inline_attrs")
+    let children     = TLang.Leaf.get(root, "children")
+    let row = collect_values(inline_attrs, "")
+    let row = collect_values(children, row)
+    return row + "\n"
+}
+
+// header(data) — emit a CSV header row of column names.
+// Keys are emitted as bare identifiers (TLang identifiers never contain commas).
+func header(data: Leaf): String {
+    let root         = TLang.Leaf.get(data, "root")
+    let inline_attrs = TLang.Leaf.get(root, "inline_attrs")
+    let children     = TLang.Leaf.get(root, "children")
+    let row = collect_keys(inline_attrs, "")
+    let row = collect_keys(children, row)
+    return row + "\n"
+}
+
+// ── Value collection ──────────────────────────────────────────────────────────
+
+func collect_values(attrs: List, acc: String): String {
+    let result = acc
+    for (attr in attrs) {
+        let kind = TLang.Leaf.get(attr, "kind")
+        if (kind == "set") {
+            let value = TLang.Leaf.get(attr, "value")
+            let cell  = csv_value(value)
+            if (result != "") {
+                let result = result + ","
+            }
+            let result = result + cell
+        }
+    }
+    return result
+}
+
+// ── Key collection ────────────────────────────────────────────────────────────
+
+func collect_keys(attrs: List, acc: String): String {
+    let result = acc
+    for (attr in attrs) {
+        let kind = TLang.Leaf.get(attr, "kind")
+        if (kind == "set") {
+            let key = TLang.Leaf.get(attr, "key")
+            if (result != "") {
+                let result = result + ","
+            }
+            let result = result + key
+        }
+    }
+    return result
+}
+
+// ── Value rendering ───────────────────────────────────────────────────────────
+
+func csv_value(value: Leaf): String {
+    let kind = TLang.Leaf.get(value, "kind")
+    if (kind == "string") {
+        let text = TLang.Leaf.get(value, "value")
+        return csv_escape(text)
+    }
+    if (kind == "number") {
+        return TLang.Leaf.get(value, "value")
+    }
+    if (kind == "bool") {
+        let b = TLang.Leaf.get(value, "value")
+        if (b == true) { return "true" }
+        return "false"
+    }
+    if (kind == "array") {
+        let items = TLang.Leaf.get(value, "items")
+        return csv_escape(join_array(items))
+    }
+    return ""
+}
+
+// join_array — joins array items as a semicolon-separated string
+// suitable for embedding in a single CSV cell.
+func join_array(items: List): String {
+    let result = ""
+    for (item in items) {
+        let text = array_item_text(item)
+        if (result != "") {
+            let result = result + ";"
+        }
+        let result = result + text
+    }
+    return result
+}
+
+func array_item_text(item: Leaf): String {
+    let kind = TLang.Leaf.get(item, "kind")
+    if (kind == "set") {
+        let val = TLang.Leaf.get(item, "value")
+        return flat_value(val)
+    }
+    return ""
+}
+
+func flat_value(value: Leaf): String {
+    let kind = TLang.Leaf.get(value, "kind")
+    if (kind == "string") { return TLang.Leaf.get(value, "value") }
+    if (kind == "number") { return TLang.Leaf.get(value, "value") }
+    if (kind == "bool") {
+        let b = TLang.Leaf.get(value, "value")
+        if (b == true) { return "true" }
+        return "false"
+    }
+    return ""
+}
+
+// ── CSV escaping ──────────────────────────────────────────────────────────────
+
+// csv_escape — wraps a string in double-quotes and doubles internal quotes.
+// Always-quote approach is fully RFC 4180 compliant.
+func csv_escape(s: String): String {
+    let escaped = TLang.String.replace(s, "\"", "\"\"")
+    return "\"" + escaped + "\""
+}

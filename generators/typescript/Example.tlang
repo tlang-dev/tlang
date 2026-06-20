@@ -1,0 +1,304 @@
+use TLang.Generator
+use TLang.Leaf
+use TLang.Terminal
+use TypescriptGenerator as typescript
+
+lang [typescript] serializable(module: String) {
+    pkg ${module}
+    impl[export interface] Serializable {
+        toJSON(): Record<string, unknown>
+        fromJSON(data: Record<string, unknown>): this
+    }
+}
+
+lang [typescript] timestamped(module: String) {
+    pkg ${module}
+    impl[export interface] Timestamped {
+        readonly createdAt: Date
+        readonly updatedAt: Date
+    }
+}
+
+lang [typescript] roleEnum(module: String) {
+    pkg ${module}
+    impl[export const enum] Role {
+        Admin = "ADMIN",
+        User = "USER",
+        Guest = "GUEST",
+    }
+}
+
+lang [typescript] apiErrorType(module: String) {
+    pkg ${module}
+    impl[export type] ApiError {
+    }
+}
+
+lang [typescript] resultType(module: String) {
+    pkg ${module}
+    impl[export type] Result<T, E = ApiError> {
+    }
+}
+
+lang [typescript] loggerNamespace(module: String) {
+    pkg ${module}
+    impl[export namespace] Logger {
+        const levels = ["debug", "info", "warn", "error"] as const;
+        func[export function] log(level: string, message: string): void {
+            console.log(`[${level.toUpperCase()}] ${message}`);
+        }
+        func[export function] debug(message: string): void {
+            log("debug", message);
+        }
+        func[export function] info(message: string): void {
+            log("info", message);
+        }
+        func[export function] warn(message: string): void {
+            log("warn", message);
+        }
+        func[export function] error(message: string, err?: unknown): void {
+            log("error", message);
+            if (err instanceof Error) {
+                console.error(err.stack);
+            }
+        }
+    }
+}
+
+lang [typescript] baseEntity(module: String) {
+    pkg ${module}
+    impl[export abstract class] BaseEntity {
+        readonly id: string;
+        readonly createdAt: Date;
+        readonly updatedAt: Date;
+        func[protected] constructor(id: string) {
+            this.id = id;
+            this.createdAt = new Date();
+            this.updatedAt = new Date();
+        }
+        func[public abstract] toJSON(): Record<string, unknown>
+        func[public] getId(): string {
+            return this.id;
+        }
+        func[public] getCreatedAt(): Date {
+            return this.createdAt;
+        }
+        func[public] getUpdatedAt(): Date {
+            return this.updatedAt;
+        }
+        func[public override] toString(): string {
+            return JSON.stringify(this.toJSON());
+        }
+    }
+}
+
+lang [typescript] userRepository(module: String) {
+    import { User } from '${module}';
+    impl[export interface] IUserRepository {
+        findById(id: string): Promise<User | null>
+        findByEmail(email: string): Promise<User | null>
+        findAll(): Promise<User[]>
+        save(user: User): Promise<User>
+        deleteById(id: string): Promise<void>
+    }
+}
+
+lang [typescript] userEntity(module: String, annotation: String) {
+    pkg ${module}
+    ${annotation}
+    impl[export class] User {
+        private name: string;
+        private email: string;
+        private role: Role;
+        private active: boolean;
+        private passwordHash: string;
+        func[public] constructor(name: string, email: string, role: Role = Role.User) {
+            this.name = name;
+            this.email = email;
+            this.role = role;
+            this.active = true;
+            this.passwordHash = "";
+        }
+        func[public] getName(): string {
+            return this.name;
+        }
+        func[public] setName(name: string): void {
+            this.name = name;
+        }
+        func[public] getEmail(): string {
+            return this.email;
+        }
+        func[public] setEmail(email: string): void {
+            this.email = email;
+        }
+        func[public] getRole(): Role {
+            return this.role;
+        }
+        func[public] setRole(role: Role): void {
+            this.role = role;
+        }
+        func[public] isActive(): boolean {
+            return this.active;
+        }
+        func[public] setActive(active: boolean): void {
+            this.active = active;
+        }
+        func[public] isAdmin(): boolean {
+            return this.role === Role.Admin;
+        }
+        func[public override] toString(): string {
+            return `User { name: ${this.name}, email: ${this.email}, role: ${this.role} }`;
+        }
+    }
+}
+
+lang [typescript] genericRepository(module: String, annotation: String) {
+    pkg ${module}
+    ${annotation}
+    impl[export abstract class] Repository<T extends BaseEntity> {
+        private readonly items: Map<string, T>;
+        func[protected] constructor() {
+            this.items = new Map();
+        }
+        func[public async] findById(id: string): Promise<T | null> {
+            return this.items.get(id) ?? null;
+        }
+        func[public async] findAll(): Promise<T[]> {
+            return Array.from(this.items.values());
+        }
+        func[public async] save(entity: T): Promise<T> {
+            this.items.set(entity.getId(), entity);
+            return entity;
+        }
+        func[public async] deleteById(id: string): Promise<void> {
+            this.items.delete(id);
+        }
+        func[public] count(): number {
+            return this.items.size;
+        }
+    }
+}
+
+lang [typescript] userService(module: String, annotation: String) {
+    pkg ${module}
+    ${annotation}
+    impl[export class] UserService {
+        private static readonly DEFAULT_ROLE = Role.User;
+        private readonly repository: IUserRepository;
+        func[public] constructor(repository: IUserRepository) {
+            this.repository = repository;
+        }
+        func[public async] findById(id: string): Promise<User> {
+            const user = await this.repository.findById(id);
+            if (!user) {
+                throw new Error(`User not found: ${id}`);
+            }
+            return user;
+        }
+        func[public async] findByEmail(email: string): Promise<User | null> {
+            return this.repository.findByEmail(email);
+        }
+        func[public async] findAll(): Promise<User[]> {
+            return this.repository.findAll();
+        }
+        func[public async] create(name: string, email: string, role?: Role): Promise<User> {
+            const existing = await this.repository.findByEmail(email);
+            if (existing) {
+                throw new Error(`Email already in use: ${email}`);
+            }
+            const user = new User(name, email, role ?? UserService.DEFAULT_ROLE);
+            return this.repository.save(user);
+        }
+        func[public async] deactivate(id: string): Promise<void> {
+            const user = await this.findById(id);
+            user.setActive(false);
+            await this.repository.save(user);
+        }
+        func[public static] isValidEmail(email: string): boolean {
+            return typeof email === "string" && email.includes("@");
+        }
+    }
+}
+
+lang [typescript] utilFunctions(module: String) {
+    pkg ${module}
+    func[export async function] fetchWithRetry<T>(url: string, retries: number = 3): Promise<T> {
+        let lastError: Error | null = null;
+        for (let i = 0; i < retries; i++) {
+            const response = await fetch(url);
+            if (response.ok) {
+                return response.json() as Promise<T>;
+            }
+            lastError = new Error(`Request failed: ${response.status}`);
+        }
+        throw lastError ?? new Error("fetchWithRetry: unknown error");
+    }
+    func[export function] clamp(value: number, min: number, max: number): number {
+        return Math.min(Math.max(value, min), max);
+    }
+    func[export function] groupBy<T, K extends string | number | symbol>(items: T[], keyFn: (item: T) => K): Record<K, T[]> {
+        return items.reduce((acc, item) => {
+            const key = keyFn(item);
+            (acc[key] ??= []).push(item);
+            return acc;
+        }, {} as Record<K, T[]>);
+    }
+}
+
+func main(): String {
+    let module = Demo.module
+
+    // Serializable interface
+    let serial_out = Generator.generate(serializable(module))
+    Terminal.println(serial_out)
+
+    // Timestamped interface
+    let timestamped_out = Generator.generate(timestamped(module))
+    Terminal.println(timestamped_out)
+
+    // Role const enum
+    let role_out = Generator.generate(roleEnum(module))
+    Terminal.println(role_out)
+
+    // ApiError type alias
+    let error_type_out = Generator.generate(apiErrorType(module))
+    Terminal.println(error_type_out)
+
+    // Result<T, E> type alias
+    let result_type_out = Generator.generate(resultType(module))
+    Terminal.println(result_type_out)
+
+    // Logger namespace
+    let logger_out = Generator.generate(loggerNamespace(module))
+    Terminal.println(logger_out)
+
+    // BaseEntity abstract class
+    let base_out = Generator.generate(baseEntity(module))
+    Terminal.println(base_out)
+
+    // IUserRepository interface
+    let repo_iface_out = Generator.generate(userRepository(module))
+    Terminal.println(repo_iface_out)
+
+    // User entity class
+    let user_out = Generator.generate(userEntity(module, "@Entity()"))
+    Terminal.println(user_out)
+
+    // Generic Repository
+    let generic_repo_out = Generator.generate(genericRepository(module, "@Injectable()"))
+    Terminal.println(generic_repo_out)
+
+    // UserService class
+    let service_out = Generator.generate(userService(module, "@Injectable()"))
+    Terminal.println(service_out)
+
+    // Standalone utility functions
+    let utils_out = Generator.generate(utilFunctions(module))
+    Terminal.println(utils_out)
+
+    return utils_out
+}
+
+set Demo {
+    module: "./types"
+}

@@ -1,0 +1,185 @@
+use TLang.Generator
+use TomlGen as toml
+use TLang.Leaf
+use TLang.Terminal
+
+// ── Data templates ────────────────────────────────────────────────────────────
+
+// Cargo.toml-style package manifest
+data [toml] cargoManifest(name: String, version: String, edition: String, description: String) {
+    package {
+        name: "${name}",
+        version: "${version}",
+        edition: "${edition}",
+        description: "${description}"
+    }
+}
+
+// pyproject.toml-style project config with nested tool sections
+data [toml] pyProject(name: String, version: String, pythonVersion: String) {
+    {
+        project {
+            name: "${name}",
+            version: "${version}",
+            requires_python: ">=${pythonVersion}",
+            dependencies: ["requests", "pydantic", "httpx"]
+        },
+        tool {
+            ruff {
+                line_length: 88,
+                select: ["E", "F", "I"],
+                ignore: ["E501"]
+            },
+            pytest {
+                ini_options {
+                    testpaths: ["tests"],
+                    addopts: "--strict-markers -q"
+                }
+            }
+        }
+    }
+}
+
+// Server configuration with nested sections
+data [toml] serverConfig(host: String, port: String, logLevel: String) {
+    {
+        server {
+            host: "${host}",
+            port: ${port},
+            workers: 4,
+            timeout: 30
+        },
+        logging {
+            level: "${logLevel}",
+            format: "json",
+            output: "stdout"
+        },
+        tls {
+            enabled: false,
+            cert_file: "/etc/certs/server.crt",
+            key_file: "/etc/certs/server.key"
+        }
+    }
+}
+
+// Database configuration with a named top-level section
+data [toml] databaseConfig(host: String, port: String, name: String, user: String) {
+    database {
+        host: "${host}",
+        port: ${port},
+        name: "${name}",
+        user: "${user}",
+        pool_min: 2,
+        pool_max: 10,
+        ssl: false
+    }
+}
+
+// Feature flags as an array of tables
+data [toml] featureFlags(appName: String) {
+    {
+        app: "${appName}",
+        flags: [
+            { name: "dark_mode",       enabled: true,  rollout: 100 },
+            { name: "beta_dashboard",  enabled: false, rollout: 0   },
+            { name: "new_onboarding",  enabled: true,  rollout: 50  },
+            { name: "analytics_v2",    enabled: false, rollout: 10  }
+        ]
+    }
+}
+
+// Cargo-style workspace with [[bin]] targets
+data [toml] workspaceManifest(name: String, version: String) {
+    {
+        package {
+            name: "${name}",
+            version: "${version}",
+            edition: "2021"
+        },
+        dependencies {
+            serde: "1",
+            tokio: "1",
+            anyhow: "1"
+        },
+        bins: [
+            { name: "${name}-cli",    path: "src/bin/cli.rs"    },
+            { name: "${name}-server", path: "src/bin/server.rs" }
+        ]
+    }
+}
+
+// ── Main helper ───────────────────────────────────────────────────────────────
+
+
+func main(): String {
+// ── Cargo package manifest ────────────────────────────────────────────────
+cargoManifest(
+    "my-tlang-app",
+    "0.1.0",
+    "2021",
+    "A sample TLang-generated Rust project."
+)
+
+let model  = Leaf.model()
+let inst   = Leaf.get(model, "cargoManifest_1")
+let result = Generator.generate(inst, "toml")
+
+Terminal.println("=== Cargo.toml ===")
+Terminal.println(result)
+
+// ── pyproject.toml ────────────────────────────────────────────────────────
+pyProject("my-python-app", "1.0.0", "3.11")
+
+let model2  = Leaf.model()
+let inst2   = Leaf.get(model2, "pyProject_1")
+let result2 = Generator.generate(inst2, "toml")
+
+Terminal.println("=== pyproject.toml ===")
+Terminal.println(result2)
+
+// ── Server config ─────────────────────────────────────────────────────────
+serverConfig("0.0.0.0", "8080", "info")
+
+let model3  = Leaf.model()
+let inst3   = Leaf.get(model3, "serverConfig_1")
+let result3 = Generator.generate(inst3, "toml")
+
+Terminal.println("=== server.toml ===")
+Terminal.println(result3)
+
+// ── Database config ───────────────────────────────────────────────────────
+databaseConfig("localhost", "5432", "myapp_db", "appuser")
+
+let model4  = Leaf.model()
+let inst4   = Leaf.get(model4, "databaseConfig_1")
+let result4 = Generator.generate(inst4, "toml")
+
+Terminal.println("=== database.toml ===")
+Terminal.println(result4)
+
+// ── Feature flags ─────────────────────────────────────────────────────────
+featureFlags("my-tlang-app")
+
+let model5  = Leaf.model()
+let inst5   = Leaf.get(model5, "featureFlags_1")
+let result5 = Generator.generate(inst5, "toml")
+
+Terminal.println("=== features.toml ===")
+Terminal.println(result5)
+
+// ── Workspace manifest ────────────────────────────────────────────────────
+workspaceManifest("my-workspace", "0.2.0")
+
+let model6  = Leaf.model()
+let inst6   = Leaf.get(model6, "workspaceManifest_1")
+let result6 = Generator.generate(inst6, "toml")
+
+Terminal.println("=== workspace Cargo.toml ===")
+Terminal.println(result6)
+
+return result
+}
+
+
+// No model entries needed — all data is passed directly as template
+// arguments in the main() helper above.

@@ -1,0 +1,46 @@
+expose main
+
+use TLang.Generator
+use TLang.File
+use TLang.StringBuilder
+
+// Example: CSV generation from data templates.
+//
+// A data [csv] template represents one row.
+// Generator.generate(row) → values row
+// CsvGen.header(row)      → header row (import CsvGen directly for this)
+
+data [csv] employee(name: String, department: String, salary: Int, active: Bool) {
+    {
+        name:       "${name}",
+        department: "${department}",
+        salary:     "${salary}",
+        active:     "${active}"
+    }
+}
+
+data [csv] product(id: String, title: String, price: String, tags: List) {
+    {
+        id:    "${id}",
+        title: "${title}",
+        price: "${price}"
+    }
+}
+
+func main(): String {
+    // Build a CSV file with a header row followed by data rows.
+    let sb = TLang.StringBuilder.create()
+
+    // header — call the generator directly for the header row
+    let row1 = employee("Alice", "Engineering", 95000, true)
+    // Generator.generate returns the value row; for header use CsvGen.header
+    // (imported from generators/csv/CsvGen.tlang in real usage)
+
+    TLang.StringBuilder.append(sb, Generator.generate(employee("Alice", "Engineering", 95000, true)))
+    TLang.StringBuilder.append(sb, Generator.generate(employee("Bob", "Marketing", 72000, true)))
+    TLang.StringBuilder.append(sb, Generator.generate(employee("Carol", "Engineering", 88000, false)))
+
+    let csv = TLang.StringBuilder.build(sb)
+    TLang.File.write("out/employees.csv", csv, true)
+    return csv
+}

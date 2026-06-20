@@ -1,0 +1,252 @@
+expose generate
+
+// SqlGen — SQL statement generator for cmd templates.
+//
+// Accepts a cmd leaf (kind: "cmd", lang: "sql") produced by a
+// `cmd [sql] name(params) { ... }` template and returns the corresponding
+// SQL statement string terminated with a semicolon and newline.
+//
+// Supported call names:
+//   SELECT(table, cols?, where?, join?, group?, order?, limit?, offset?)
+//   INSERT(table, cols, values)
+//   INSERT-SELECT(table, cols, from, where?)
+//   UPDATE(table, set, where?)
+//   DELETE(table, where?)
+//   CREATE-TABLE(table, cols)
+//   CREATE-TABLE-IF(table, cols)       -- CREATE TABLE IF NOT EXISTS
+//   DROP-TABLE(table)
+//   DROP-TABLE-IF(table)               -- DROP TABLE IF EXISTS
+//   TRUNCATE(table)
+//   CREATE-INDEX(name, table, cols, unique?)
+//   DROP-INDEX(name)
+//   ALTER-ADD(table, col)              -- ALTER TABLE ... ADD COLUMN
+//   ALTER-DROP(table, col)             -- ALTER TABLE ... DROP COLUMN
+//
+// Bare form: the first param value is emitted as raw SQL.
+
+func generate(cmd: Leaf): String {
+    let content = TLang.Leaf.get(cmd, "content")
+    let type    = TLang.Leaf.get(content, "type")
+
+    if (type == "bare") {
+        let params = TLang.Leaf.get(cmd, "params")
+        let keys   = TLang.Leaf.keys(params)
+        if (TLang.List.size(keys) > 0) {
+            let first = TLang.List.get(keys, 0)
+            return TLang.Leaf.get(params, first) + ";\n"
+        }
+        return ""
+    }
+
+    let name = TLang.Leaf.get(content, "name")
+    let args = TLang.Leaf.get(content, "args")
+
+    if (name == "SELECT")         { return gen_select(args) }
+    if (name == "INSERT")         { return gen_insert(args) }
+    if (name == "INSERT-SELECT")  { return gen_insert_select(args) }
+    if (name == "UPDATE")         { return gen_update(args) }
+    if (name == "DELETE")         { return gen_delete(args) }
+    if (name == "CREATE-TABLE")   { return gen_create_table(args, false) }
+    if (name == "CREATE-TABLE-IF") { return gen_create_table(args, true) }
+    if (name == "DROP-TABLE")     { return gen_drop_table(args, false) }
+    if (name == "DROP-TABLE-IF")  { return gen_drop_table(args, true) }
+    if (name == "TRUNCATE")       { return gen_truncate(args) }
+    if (name == "CREATE-INDEX")   { return gen_create_index(args) }
+    if (name == "DROP-INDEX")     { return gen_drop_index(args) }
+    if (name == "ALTER-ADD")      { return gen_alter_add(args) }
+    if (name == "ALTER-DROP")     { return gen_alter_drop(args) }
+
+    return "-- unsupported cmd: " + name + "\n"
+}
+
+// ── Arg lookup ────────────────────────────────────────────────────────────────
+
+// arg(args, name) — find the value of a named argument, or "" if not found.
+func arg(args: List, name: String): String {
+    let result = ""
+    for (a in args) {
+        let aname = TLang.Leaf.get(a, "name")
+        if (aname == name) {
+            let result = TLang.Leaf.get(a, "value")
+        }
+    }
+    return result
+}
+
+// ── SELECT ────────────────────────────────────────────────────────────────────
+
+func gen_select(args: List): String {
+    let table  = arg(args, "table")
+    let cols   = arg(args, "cols")
+    let where  = arg(args, "where")
+    let join   = arg(args, "join")
+    let group  = arg(args, "group")
+    let order  = arg(args, "order")
+    let limit  = arg(args, "limit")
+    let offset = arg(args, "offset")
+
+    let colList = "*"
+    if (cols != "") {
+        let colList = cols
+    }
+
+    let sql = "SELECT " + colList + " FROM " + table
+
+    if (join != "") {
+        let sql = sql + " " + join
+    }
+    if (where != "") {
+        let sql = sql + " WHERE " + where
+    }
+    if (group != "") {
+        let sql = sql + " GROUP BY " + group
+    }
+    if (order != "") {
+        let sql = sql + " ORDER BY " + order
+    }
+    if (limit != "") {
+        let sql = sql + " LIMIT " + limit
+    }
+    if (offset != "") {
+        let sql = sql + " OFFSET " + offset
+    }
+
+    return sql + ";\n"
+}
+
+// ── INSERT ────────────────────────────────────────────────────────────────────
+
+func gen_insert(args: List): String {
+    let table  = arg(args, "table")
+    let cols   = arg(args, "cols")
+    let values = arg(args, "values")
+
+    let sql = "INSERT INTO " + table
+
+    if (cols != "") {
+        let sql = sql + " (" + cols + ")"
+    }
+
+    return sql + " VALUES (" + values + ");\n"
+}
+
+// ── INSERT … SELECT ───────────────────────────────────────────────────────────
+
+func gen_insert_select(args: List): String {
+    let table = arg(args, "table")
+    let cols  = arg(args, "cols")
+    let from  = arg(args, "from")
+    let where = arg(args, "where")
+
+    let sql = "INSERT INTO " + table + " (" + cols + ") SELECT " + cols + " FROM " + from
+
+    if (where != "") {
+        let sql = sql + " WHERE " + where
+    }
+
+    return sql + ";\n"
+}
+
+// ── UPDATE ────────────────────────────────────────────────────────────────────
+
+func gen_update(args: List): String {
+    let table = arg(args, "table")
+    let set   = arg(args, "set")
+    let where = arg(args, "where")
+
+    let sql = "UPDATE " + table + " SET " + set
+
+    if (where != "") {
+        let sql = sql + " WHERE " + where
+    }
+
+    return sql + ";\n"
+}
+
+// ── DELETE ────────────────────────────────────────────────────────────────────
+
+func gen_delete(args: List): String {
+    let table = arg(args, "table")
+    let where = arg(args, "where")
+
+    let sql = "DELETE FROM " + table
+
+    if (where != "") {
+        let sql = sql + " WHERE " + where
+    }
+
+    return sql + ";\n"
+}
+
+// ── CREATE TABLE ──────────────────────────────────────────────────────────────
+
+func gen_create_table(args: List, if_not_exists: Bool): String {
+    let table = arg(args, "table")
+    let cols  = arg(args, "cols")
+
+    let keyword = "CREATE TABLE "
+    if (if_not_exists == true) {
+        let keyword = "CREATE TABLE IF NOT EXISTS "
+    }
+
+    return keyword + table + " (\n  " + cols + "\n);\n"
+}
+
+// ── DROP TABLE ────────────────────────────────────────────────────────────────
+
+func gen_drop_table(args: List, if_exists: Bool): String {
+    let table = arg(args, "table")
+
+    let keyword = "DROP TABLE "
+    if (if_exists == true) {
+        let keyword = "DROP TABLE IF EXISTS "
+    }
+
+    return keyword + table + ";\n"
+}
+
+// ── TRUNCATE ──────────────────────────────────────────────────────────────────
+
+func gen_truncate(args: List): String {
+    let table = arg(args, "table")
+    return "TRUNCATE TABLE " + table + ";\n"
+}
+
+// ── CREATE INDEX ──────────────────────────────────────────────────────────────
+
+func gen_create_index(args: List): String {
+    let name   = arg(args, "name")
+    let table  = arg(args, "table")
+    let cols   = arg(args, "cols")
+    let unique = arg(args, "unique")
+
+    let keyword = "CREATE INDEX "
+    if (unique == "true") {
+        let keyword = "CREATE UNIQUE INDEX "
+    }
+
+    return keyword + name + " ON " + table + " (" + cols + ");\n"
+}
+
+// ── DROP INDEX ────────────────────────────────────────────────────────────────
+
+func gen_drop_index(args: List): String {
+    let name = arg(args, "name")
+    return "DROP INDEX IF EXISTS " + name + ";\n"
+}
+
+// ── ALTER TABLE ADD COLUMN ────────────────────────────────────────────────────
+
+func gen_alter_add(args: List): String {
+    let table = arg(args, "table")
+    let col   = arg(args, "col")
+    return "ALTER TABLE " + table + " ADD COLUMN " + col + ";\n"
+}
+
+// ── ALTER TABLE DROP COLUMN ───────────────────────────────────────────────────
+
+func gen_alter_drop(args: List): String {
+    let table = arg(args, "table")
+    let col   = arg(args, "col")
+    return "ALTER TABLE " + table + " DROP COLUMN " + col + ";\n"
+}

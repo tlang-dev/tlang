@@ -1,0 +1,16 @@
+name: Bash
+project: BashGen
+organisation: TLangGen
+version: 1.0.0
+stability: alpha
+releaseNumber: 1
+
+author: TLang Contributors
+website: https://tlang.dev/generators/bash
+license: Apache-2.0
+
+compatibility:
+  language: bash
+  domain: codegen
+
+main: BashGen

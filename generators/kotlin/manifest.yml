@@ -1,0 +1,27 @@
+name: Kotlin
+project: KotlinGen
+organisation: TLangGen
+version: 1.0.3
+stability: alpha
+releaseNumber: 4
+
+# Package author.
+author: TLang Contributors
+
+# Project website / documentation.
+website: https://tlang.dev/generators/kotlin
+
+# SPDX licence identifier.
+license: Apache-2.0
+
+# This generator targets Kotlin.  It is incompatible with generators that
+# target a different language (e.g. a Rust HTTP service generator), but
+# compatible with any language-agnostic generator (language: '*').
+compatibility:
+  language: kotlin
+  domain: codegen
+
+# The generator's entry point — used by `tlang package` to compile the library
+# and by consumers who want to import the whole package without knowing internal
+# file names (e.g. `use KotlinGen as kotlin`).
+main: KotlinCodegen

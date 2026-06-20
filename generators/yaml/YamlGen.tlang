@@ -1,0 +1,283 @@
+expose generate
+
+
+// ── Entry point ───────────────────────────────────────────────────────────────
+
+// generate — public entry point.
+//
+// Accepts a data-template instance leaf (kind: "data") and returns a YAML
+// document string.
+//
+// YAML structure rules applied here:
+//   - Scalar key/value pairs  =>  key: value
+//   - Nested objects          =>  key:\n  child_key: val
+//   - Sequences               =>  key:\n  - item
+//   - Named root bloc         =>  top-level name: mapping key
+//   - Anonymous root bloc     =>  entries emitted at document root
+//   - Include directives      =>  YAML comment  # include: call()
+//   - String quoting          =>  double-quoted when the value contains
+//                                 characters that would confuse a YAML parser
+func generate(data: Leaf): String {
+let root      = TLang.Leaf.get(data, "root")
+let root_name = TLang.Leaf.get(root, "name")
+
+if (root_name != "") {
+    let body = render_bloc_body(root, "  ")
+    if (body == "") {
+        return root_name + ": {}\n"
+    }
+    return root_name + ":\n" + body
+}
+
+return render_bloc_body(root, "")
+}
+
+// ── Bloc body ─────────────────────────────────────────────────────────────────
+
+// render_bloc_body — renders all inline_attrs then children of a bloc at the
+// given indentation level and returns the concatenated lines.
+func render_bloc_body(bloc: Leaf, indent: String): String {
+let inline_attrs = TLang.Leaf.get(bloc, "inline_attrs")
+let children     = TLang.Leaf.get(bloc, "children")
+let result       = ""
+
+for (attr in inline_attrs) {
+    let result = result + render_attr(attr, indent)
+}
+
+for (attr in children) {
+    let result = result + render_attr(attr, indent)
+}
+
+return result
+}
+
+// ── Attribute dispatch ────────────────────────────────────────────────────────
+
+// render_attr — dispatches a single attribute leaf to its renderer.
+//   include  =>  # include: call()
+//   set      =>  render_set
+func render_attr(attr: Leaf, indent: String): String {
+let kind = TLang.Leaf.get(attr, "kind")
+
+if (kind == "include") {
+    let call = TLang.Leaf.get(attr, "call")
+    return indent + "# include: " + call + "\n"
+}
+
+if (kind == "set") {
+    let key   = TLang.Leaf.get(attr, "key")
+    let value = TLang.Leaf.get(attr, "value")
+    return render_set(key, value, indent)
+}
+
+return ""
+}
+
+// render_set — renders one key/value attribute.
+//
+// Positional entries (key == empty) are emitted as YAML sequence items.
+func render_set(key: String, value: Leaf, indent: String): String {
+let vkind = TLang.Leaf.get(value, "kind")
+
+if (key == "") {
+    return render_sequence_item(value, indent)
+}
+
+if (vkind == "string") {
+    let text = TLang.Leaf.get(value, "value")
+    return indent + key + ": " + render_string(text) + "\n"
+}
+
+if (vkind == "number") {
+    return indent + key + ": " + TLang.Leaf.get(value, "value") + "\n"
+}
+
+if (vkind == "bool") {
+    let b = TLang.Leaf.get(value, "value")
+    if (b == true) {
+        return indent + key + ": true\n"
+    }
+    return indent + key + ": false\n"
+}
+
+if (vkind == "array") {
+    let items = TLang.Leaf.get(value, "items")
+    let seq   = render_sequence(items, indent + "  ")
+    if (seq == "") {
+        return indent + key + ": []\n"
+    }
+    return indent + key + ":\n" + seq
+}
+
+if (vkind == "bloc") {
+    let body = render_bloc_body(value, indent + "  ")
+    if (body == "") {
+        return indent + key + ": {}\n"
+    }
+    return indent + key + ":\n" + body
+}
+
+return ""
+}
+
+// ── Sequence rendering ────────────────────────────────────────────────────────
+
+// render_sequence — renders a list of attr items as a YAML block sequence.
+//
+// Bloc items use the block-mapping-inside-sequence form:
+//   -
+//     key: val
+// This is always valid YAML regardless of how many keys the mapping has.
+func render_sequence(items: List, indent: String): String {
+let result = ""
+
+for (item in items) {
+    let result = result + render_sequence_entry(item, indent)
+}
+
+return result
+}
+
+// render_sequence_entry — renders one item inside a block sequence.
+func render_sequence_entry(item: Leaf, indent: String): String {
+let kind = TLang.Leaf.get(item, "kind")
+
+if (kind == "include") {
+    let call = TLang.Leaf.get(item, "call")
+    return indent + "- # include: " + call + "\n"
+}
+
+if (kind == "set") {
+    let key   = TLang.Leaf.get(item, "key")
+    let value = TLang.Leaf.get(item, "value")
+
+    if (key == "") {
+        return render_sequence_item(value, indent)
+    }
+
+    let vkind = TLang.Leaf.get(value, "kind")
+
+    if (vkind == "bloc") {
+        let body = render_bloc_body(value, indent + "  ")
+        if (body == "") {
+            return indent + "-\n" + indent + "  " + key + ": {}\n"
+        }
+        return indent + "-\n" + indent + "  " + key + ":\n" + body
+    }
+
+    let scalar_line = render_set(key, value, indent + "  ")
+    return indent + "-\n" + scalar_line
+}
+
+return ""
+}
+
+// render_sequence_item — renders a positional (keyless) value as a sequence
+// item, e.g. - rust or - 42.
+func render_sequence_item(value: Leaf, indent: String): String {
+let vkind = TLang.Leaf.get(value, "kind")
+
+if (vkind == "string") {
+    let text = TLang.Leaf.get(value, "value")
+    return indent + "- " + render_string(text) + "\n"
+}
+
+if (vkind == "number") {
+    return indent + "- " + TLang.Leaf.get(value, "value") + "\n"
+}
+
+if (vkind == "bool") {
+    let b = TLang.Leaf.get(value, "value")
+    if (b == true) {
+        return indent + "- true\n"
+    }
+    return indent + "- false\n"
+}
+
+if (vkind == "array") {
+    let items = TLang.Leaf.get(value, "items")
+    let seq   = render_sequence(items, indent + "  ")
+    if (seq == "") {
+        return indent + "- []\n"
+    }
+    return indent + "-\n" + seq
+}
+
+if (vkind == "bloc") {
+    let body = render_bloc_body(value, indent + "  ")
+    if (body == "") {
+        return indent + "- {}\n"
+    }
+    return indent + "-\n" + body
+}
+
+return ""
+}
+
+// ── String rendering ──────────────────────────────────────────────────────────
+
+// render_string — returns a YAML-safe representation of a string value.
+// Strings that contain special characters are wrapped in double quotes.
+func render_string(s: String): String {
+if (needs_quoting(s)) {
+    return quote_string(s)
+}
+return s
+}
+
+// needs_quoting — returns true when the string must be double-quoted to be
+// safe in a YAML scalar context.
+//
+// Conditions that trigger quoting:
+//   - Empty string
+//   - Reserved YAML boolean/null keywords: true, false, null, yes, no, on, off
+//   - Contains colon-space or hash — would start a mapping or comment
+//   - Contains a double-quote or single-quote character
+//   - First character is a YAML flow/block indicator
+func needs_quoting(s: String): Bool {
+if (s == "") {
+    return true
+}
+
+if (s == "true")  { return true }
+if (s == "false") { return true }
+if (s == "null")  { return true }
+if (s == "~")     { return true }
+if (s == "yes")   { return true }
+if (s == "no")    { return true }
+if (s == "on")    { return true }
+if (s == "off")   { return true }
+
+if (TLang.String.contains(s, ": ")) { return true }
+if (TLang.String.contains(s, "#"))  { return true }
+if (TLang.String.contains(s, "\"")) { return true }
+if (TLang.String.contains(s, "'"))  { return true }
+
+let len = TLang.String.length(s)
+if (len > 0) {
+    let first = TLang.String.char_at(s, 0)
+    if (first == "{") { return true }
+    if (first == "[") { return true }
+    if (first == "*") { return true }
+    if (first == "&") { return true }
+    if (first == "!") { return true }
+    if (first == "|") { return true }
+    if (first == ">") { return true }
+    if (first == "%") { return true }
+    if (first == "@") { return true }
+    if (first == "-") { return true }
+    if (first == "?") { return true }
+    if (first == ":") { return true }
+}
+
+return false
+}
+
+// quote_string — wraps s in YAML double quotes, escaping embedded double-quotes.
+func quote_string(s: String): String {
+let s = TLang.String.replace(s, "\"", "\\\"")
+return "\"" + s + "\""
+}
+
+}

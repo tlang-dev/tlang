@@ -1,0 +1,16 @@
+name: Raw
+project: RawGen
+organisation: TLangGen
+version: 1.0.0
+stability: alpha
+releaseNumber: 1
+
+author: TLang Contributors
+website: https://tlang.dev/generators/raw
+license: Apache-2.0
+
+compatibility:
+  language: raw
+  domain: codegen
+
+main: RawAsIs

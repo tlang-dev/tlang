@@ -1,0 +1,190 @@
+use TLang.Generator
+use XmlGen as xml
+use TLang.Leaf
+use TLang.Terminal
+
+// ── Data templates ────────────────────────────────────────────────────────────
+
+// Android AndroidManifest.xml-style application manifest
+data [xml] androidManifest(package: String, appName: String, mainActivity: String) {
+    manifest(xmlns:android: "http://schemas.android.com/apk/res/android", package: "${package}") {
+        application(android:label: "${appName}", android:theme: "@style/AppTheme") {
+            activity(android:name: "${mainActivity}", android:exported: "true") {
+                intent-filter {
+                    action(android:name: "android.intent.action.MAIN"),
+                    category(android:name: "android.intent.category.LAUNCHER")
+                }
+            }
+        }
+    }
+}
+
+// Maven pom.xml-style project descriptor
+data [xml] mavenPom(groupId: String, artifactId: String, version: String, javaVersion: String) {
+    project(xmlns: "http://maven.apache.org/POM/4.0.0") {
+        modelVersion: "4.0.0",
+        groupId: "${groupId}",
+        artifactId: "${artifactId}",
+        version: "${version}",
+        packaging: "jar",
+        properties {
+            maven.compiler.source: "${javaVersion}",
+            maven.compiler.target: "${javaVersion}",
+            project.build.sourceEncoding: "UTF-8"
+        },
+        dependencies {
+            dependency {
+                groupId: "org.junit.jupiter",
+                artifactId: "junit-jupiter",
+                version: "5.10.0",
+                scope: "test"
+            },
+            dependency {
+                groupId: "org.slf4j",
+                artifactId: "slf4j-api",
+                version: "2.0.9",
+                scope: "compile"
+            }
+        }
+    }
+}
+
+// SVG image
+data [xml] svgIcon(size: String, title: String, fillColor: String) {
+    svg(xmlns: "http://www.w3.org/2000/svg", width: "${size}", height: "${size}", viewBox: "0 0 24 24") {
+        title: "${title}",
+        circle(cx: "12", cy: "12", r: "10", fill: "${fillColor}"),
+        text(x: "12", y: "16", text-anchor: "middle", font-size: "12", fill: "white") {
+            "${title}"
+        }
+    }
+}
+
+// Spring Boot / Jakarta EE beans.xml / application context
+data [xml] springBeans(appPackage: String) {
+    beans(xmlns: "http://www.springframework.org/schema/beans",
+          xmlns:xsi: "http://www.w3.org/2001/XMLSchema-instance") {
+        bean(id: "dataSource", class: "${appPackage}.config.DataSourceConfig", scope: "singleton") {
+            property(name: "url",      value: "jdbc:postgresql://localhost:5432/mydb"),
+            property(name: "username", value: "appuser"),
+            property(name: "password", value: "s3cr3t")
+        },
+        bean(id: "transactionManager", class: "${appPackage}.config.TxManagerConfig", scope: "singleton") {
+            property(name: "dataSource", ref: "dataSource")
+        }
+    }
+}
+
+// RSS 2.0 feed
+data [xml] rssFeed(title: String, link: String, description: String) {
+    rss(version: "2.0") {
+        channel {
+            title: "${title}",
+            link: "${link}",
+            description: "${description}",
+            language: "en-us",
+            item {
+                title: "First Post",
+                link: "${link}/posts/first",
+                description: "Welcome to the feed.",
+                pubDate: "Mon, 01 Jan 2024 00:00:00 GMT",
+                guid: "${link}/posts/first"
+            },
+            item {
+                title: "Second Post",
+                link: "${link}/posts/second",
+                description: "Another update.",
+                pubDate: "Tue, 02 Jan 2024 00:00:00 GMT",
+                guid: "${link}/posts/second"
+            }
+        }
+    }
+}
+
+// JUnit-style test report (Surefire XML)
+data [xml] testReport(suiteName: String, tests: String, failures: String, time: String) {
+    testsuite(name: "${suiteName}", tests: "${tests}", failures: "${failures}", time: "${time}") {
+        testcase(name: "should_create_user",    classname: "${suiteName}", time: "0.042"),
+        testcase(name: "should_validate_email", classname: "${suiteName}", time: "0.018"),
+        testcase(name: "should_reject_duplicate", classname: "${suiteName}", time: "0.031") {
+            failure(message: "Expected exception not thrown", type: "AssertionError") {
+                "Expected DuplicateUserException but no exception was raised."
+            }
+        }
+    }
+}
+
+// ── Main helper ───────────────────────────────────────────────────────────────
+
+
+func main(): String {
+// ── Android manifest ──────────────────────────────────────────────────────
+androidManifest(
+    "com.example.myapp",
+    "My Application",
+    "com.example.myapp.MainActivity"
+)
+
+let model  = Leaf.model()
+let inst   = Leaf.get(model, "androidManifest_1")
+let result = Generator.generate(inst, "xml")
+
+Terminal.println("=== AndroidManifest.xml ===")
+Terminal.println(result)
+
+// ── Maven pom.xml ─────────────────────────────────────────────────────────
+mavenPom("com.example", "my-service", "1.0.0", "21")
+
+let model2  = Leaf.model()
+let inst2   = Leaf.get(model2, "mavenPom_1")
+let result2 = Generator.generate(inst2, "xml")
+
+Terminal.println("=== pom.xml ===")
+Terminal.println(result2)
+
+// ── SVG icon ──────────────────────────────────────────────────────────────
+svgIcon("64", "Home", "#4A90E2")
+
+let model3  = Leaf.model()
+let inst3   = Leaf.get(model3, "svgIcon_1")
+let result3 = Generator.generate(inst3, "xml")
+
+Terminal.println("=== icon.svg ===")
+Terminal.println(result3)
+
+// ── Spring beans ──────────────────────────────────────────────────────────
+springBeans("com.example.myapp")
+
+let model4  = Leaf.model()
+let inst4   = Leaf.get(model4, "springBeans_1")
+let result4 = Generator.generate(inst4, "xml")
+
+Terminal.println("=== beans.xml ===")
+Terminal.println(result4)
+
+// ── RSS feed ──────────────────────────────────────────────────────────────
+rssFeed("My Dev Blog", "https://blog.example.com", "Thoughts on software engineering.")
+
+let model5  = Leaf.model()
+let inst5   = Leaf.get(model5, "rssFeed_1")
+let result5 = Generator.generate(inst5, "xml")
+
+Terminal.println("=== feed.rss ===")
+Terminal.println(result5)
+
+// ── JUnit test report ─────────────────────────────────────────────────────
+testReport("UserServiceTest", "3", "1", "0.091")
+
+let model6  = Leaf.model()
+let inst6   = Leaf.get(model6, "testReport_1")
+let result6 = Generator.generate(inst6, "xml")
+
+Terminal.println("=== TEST-UserServiceTest.xml ===")
+Terminal.println(result6)
+
+return result
+}
+
+
+// No model entries needed — all data is passed directly as template
+// arguments in the main() helper above.

@@ -1,0 +1,200 @@
+use TLang.Generator
+use TLang.Leaf
+use TLang.Terminal
+use JavaGenerator as java
+
+lang [java] serializable(pkg: String) {
+    pkg ${pkg}
+    impl[public interface] Serializable {
+    }
+}
+
+lang [java] auditable(pkg: String) {
+    pkg ${pkg}
+    impl[public abstract class] Auditable {
+        private java.time.LocalDateTime createdAt;
+        private java.time.LocalDateTime updatedAt;
+        func[public] java.time.LocalDateTime getCreatedAt() {
+            return createdAt;
+        }
+        func[public] void setCreatedAt(java.time.LocalDateTime createdAt) {
+            this.createdAt = createdAt;
+        }
+        func[public] java.time.LocalDateTime getUpdatedAt() {
+            return updatedAt;
+        }
+        func[public] void setUpdatedAt(java.time.LocalDateTime updatedAt) {
+            this.updatedAt = updatedAt;
+        }
+        func[public abstract] void validate()
+    }
+}
+
+lang [java] roleEnum(pkg: String) {
+    pkg ${pkg}
+    impl[public enum] Role {
+        ADMIN, USER, GUEST;
+        func[public] boolean isPrivileged() {
+            return this == ADMIN;
+        }
+    }
+}
+
+lang [java] userRepository(pkg: String) {
+    pkg ${pkg}
+    impl[public interface] UserRepository {
+        func[public] User findById(Long id)
+        func[public] User findByEmail(String email)
+        func[public] java.util.List<User> findAll()
+        func[public] User save(User user)
+        func[public] void deleteById(Long id)
+    }
+}
+
+lang [java] userEntity(pkg: String, annotation: String) {
+    pkg ${pkg}
+    impl[public class] User {
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Long id;
+        @Column(unique = true, nullable = false)
+        private String email;
+        @Column(nullable = false)
+        private String password;
+        @Enumerated(EnumType.STRING)
+        private Role role;
+        @Column(nullable = false)
+        private String firstName;
+        @Column(nullable = false)
+        private String lastName;
+        @Column
+        private boolean active;
+        func[public] Long getId() {
+            return id;
+        }
+        func[public] void setId(Long id) {
+            this.id = id;
+        }
+        func[public] String getEmail() {
+            return email;
+        }
+        func[public] void setEmail(String email) {
+            this.email = email;
+        }
+        func[public] String getPassword() {
+            return password;
+        }
+        func[public] void setPassword(String password) {
+            this.password = password;
+        }
+        func[public] Role getRole() {
+            return role;
+        }
+        func[public] void setRole(Role role) {
+            this.role = role;
+        }
+        func[public] String getFirstName() {
+            return firstName;
+        }
+        func[public] void setFirstName(String firstName) {
+            this.firstName = firstName;
+        }
+        func[public] String getLastName() {
+            return lastName;
+        }
+        func[public] void setLastName(String lastName) {
+            this.lastName = lastName;
+        }
+        func[public] boolean isActive() {
+            return active;
+        }
+        func[public] void setActive(boolean active) {
+            this.active = active;
+        }
+        func[public override] String toString() {
+            return "User{id=" + id + ", email=" + email + ", role=" + role + "}";
+        }
+    }
+}
+
+lang [java] userService(pkg: String, annotation: String) {
+    pkg ${pkg}
+    impl[public class] UserService {
+        private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(UserService.class);
+        private final UserRepository repository;
+        func[public] UserService(UserRepository repository) {
+            this.repository = repository;
+        }
+        func[public] User findById(Long id) throws java.util.NoSuchElementException {
+            User user = repository.findById(id);
+            if (user == null) {
+                throw new java.util.NoSuchElementException("User not found: " + id);
+            }
+            return user;
+        }
+        func[public] User findByEmail(String email) {
+            return repository.findByEmail(email);
+        }
+        func[public] java.util.List<User> findAll() {
+            return repository.findAll();
+        }
+        func[public synchronized] User save(User user) {
+            log.info("Saving user: {}", user.getEmail());
+            return repository.save(user);
+        }
+        func[public] void deleteById(Long id) {
+            repository.deleteById(id);
+        }
+        func[public static] boolean isValidEmail(String email) {
+            return email != null && email.contains("@");
+        }
+    }
+}
+
+lang [java] application(pkg: String) {
+    pkg ${pkg}
+    impl[public final class] Application {
+        private static final String VERSION = "1.0.0";
+        func[public static] void main(String[] args) {
+            System.out.println("Starting application v" + VERSION);
+        }
+    }
+}
+
+func main(): String {
+    let pkg = Demo.package
+
+    // Serializable interface
+    let serial_out = Generator.generate(serializable(pkg))
+    Terminal.println(serial_out)
+
+    // Auditable abstract base class
+    let auditable_out = Generator.generate(auditable(pkg))
+    Terminal.println(auditable_out)
+
+    // Role enum
+    let role_out = Generator.generate(roleEnum(pkg))
+    Terminal.println(role_out)
+
+    // UserRepository interface
+    let repo_out = Generator.generate(userRepository(pkg))
+    Terminal.println(repo_out)
+
+    // User entity
+    let entity_out = Generator.generate(userEntity(pkg, "@Entity"))
+    Terminal.println(entity_out)
+
+    // UserService
+    let service_out = Generator.generate(userService(pkg, "@Service"))
+    Terminal.println(service_out)
+
+    // Application entry point
+    let app_out = Generator.generate(application(pkg))
+    Terminal.println(app_out)
+
+    return app_out
+}
+
+set Demo {
+    package: "com.example.demo"
+}

@@ -1,0 +1,55 @@
+expose generate_raw_as_is
+
+
+// ── generate_raw_as_is ────────────────────────────────────────────────────────
+//
+// Public entry point for the `raw [AsIs]` template type.
+//
+// A `raw [AsIs]` block is emitted entirely verbatim: the body text is returned
+// exactly as the author wrote it, with no `${param}` substitution, no
+// indentation normalisation, and no language-specific processing.
+//
+// The runtime has already stripped the surrounding `{ }` from the balanced
+// block and resolved the template call into a plain String value — this
+// generator therefore receives a Leaf whose single "text" entry contains the
+// raw body.  It simply returns that text unchanged.
+//
+// Usage in a .tlang file:
+//
+//   raw [AsIs] mySnippet() {
+//   This text is written as-is into the output file.
+//   No ${interpolation} happens here.
+//   }
+//
+//   helper {
+//     let out = mySnippet()
+//     // out == "This text is written as-is into the output file.\nNo ${interpolation} happens here."
+//   }
+
+func generate_raw_as_is(tmpl: Leaf): String {
+let nodes = TLang.Leaf.get(tmpl, "nodes")
+return collect_raw_nodes(nodes)
+}
+
+// ── collect_raw_nodes ─────────────────────────────────────────────────────────
+//
+// Walks the node list produced by the runtime for a raw template instance and
+// concatenates every "text" entry, joining non-empty lines with a newline.
+//
+// Because AsIs mode performs no substitution the text values are already the
+// final output — this function is purely structural.
+
+func collect_raw_nodes(nodes: List): String {
+let result = ""
+for (node in nodes) {
+    let text = TLang.Leaf.get(node, "text")
+    if (text != "") {
+        if (result != "") {
+            let result = result + "\n"
+        }
+        let result = result + text
+    }
+}
+return result
+}
+
