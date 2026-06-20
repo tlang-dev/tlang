@@ -1,0 +1,58 @@
+# Conformity test — multiple parent sets and >> / >>? output declarations
+#
+# Tests the following language features:
+#
+#   1. Multiple `:` parents in a single set declaration.
+#      `set Combo : A : B : C { ... }` inherits attrs from all three parents
+#      left-to-right; later parent wins on name collision; child surcharges all.
+#
+#   2. `>> "path"` on a set declaration — always-overwrite output.
+#      When `generateAll()` is called on an instance of a set that declares
+#      `>> path`, the combined generated output is written to the interpolated
+#      path.  An existing file is replaced.
+#
+#   3. `>>? "path"` on a set declaration — write-once (scaffold) output.
+#      Same as `>>` but skips writing if the file already exists, preserving
+#      any developer edits made after the first scaffold run.
+#
+#   4. Path interpolation — `${paramName}` placeholders in the output path are
+#      replaced with the instance's impl values at generation time.
+#
+# Hierarchy exercised:
+#
+#   set WithUser(pkg: String, className: String, recordType: String)
+#       >> "target/tlang_test/multi_parent/${className}User.kt"
+#       { save: &saveWithUser, update: &updateWithUser }
+#
+#   set WithGroup(pkg: String, className: String, recordType: String)
+#       { save: &saveWithGroup, update: &updateWithGroup }
+#
+#   set WithAudit(pkg: String, className: String, recordType: String)
+#       { audit: &auditLog }
+#
+#   set FullRepo : WithUser : WithAudit { }
+#       — inherits save+update from WithUser, audit from WithAudit
+#       — no name collision (different attr names)
+#
+#   set CachedRepo : WithUser : WithGroup : WithAudit { save: &saveWithGroupCached }
+#       — inherits update from WithUser (first parent), audit from WithAudit
+#       — WithGroup's save would override WithUser's, but child surcharges it
+#         with saveWithGroupCached (child wins over all parents)
+#
+# The main helper:
+#   - Calls generateAll() on FullRepo and CachedRepo instances.
+#   - Verifies files written by >> exist and contain correct content.
+#   - Verifies >>? does not overwrite a pre-existing file.
+#   - Verifies canonical attr order across multiple parents.
+#
+# Run `tlang package generators/kotlin` before executing this test.
+
+name: SetMultiParentWrite
+project: ConformityTests
+organisation: TLang
+version: 1.0.0
+stability: alpha
+releaseNumber: 1
+
+dependencies:
+  - TLangGen/KotlinGen/Kotlin 1.0.0:alpha:1 KotlinGen

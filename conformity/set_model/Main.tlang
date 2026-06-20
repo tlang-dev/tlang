@@ -1,0 +1,70 @@
+use TLang.Leaf
+use TLang.Terminal
+
+set User {
+    name: String,
+    age: Number,
+    email: String
+}
+
+set Product {
+    title: String,
+    price: Number,
+    inStock: Bool
+}
+
+set Order : User {
+    orderId: String,
+    items: String[]
+}
+
+func main(): String {
+    let model = Leaf.model()
+
+    // --- User entity ---
+    let user      = Leaf.get(model, "User")
+    let user_name = Leaf.get(user, "name")
+    let user_kind = Leaf.get(user, "kind")
+    Terminal.println(user_name)
+    Terminal.println(user_kind)
+
+    // Drill into User attrs to get the type of the `name` attribute
+    let user_attrs     = Leaf.get(user, "attrs")
+    let name_attr      = Leaf.get(user_attrs, "name")
+    let name_attr_type = Leaf.get(name_attr, "value")
+    Terminal.println(name_attr_type)
+
+    // Drill into User attrs to get the type of the `age` attribute
+    let age_attr      = Leaf.get(user_attrs, "age")
+    let age_attr_type = Leaf.get(age_attr, "value")
+    Terminal.println(age_attr_type)
+
+    // --- Product entity ---
+    let product      = Leaf.get(model, "Product")
+    let product_name = Leaf.get(product, "name")
+    Terminal.println(product_name)
+
+    let product_attrs      = Leaf.get(product, "attrs")
+    let price_attr         = Leaf.get(product_attrs, "price")
+    let price_attr_type    = Leaf.get(price_attr, "value")
+    Terminal.println(price_attr_type)
+
+    // --- Order entity (extends User) ---
+    let order      = Leaf.get(model, "Order")
+    let order_name = Leaf.get(order, "name")
+    let order_ext  = Leaf.get(order, "ext")
+    Terminal.println(order_name)
+    Terminal.println(order_ext)
+
+    let order_attrs        = Leaf.get(order, "attrs")
+    let order_id_attr      = Leaf.get(order_attrs, "orderId")
+    let order_id_attr_type = Leaf.get(order_id_attr, "value")
+    Terminal.println(order_id_attr_type)
+
+    // items is an array type: String[]
+    let items_attr      = Leaf.get(order_attrs, "items")
+    let items_attr_type = Leaf.get(items_attr, "value")
+    Terminal.println(items_attr_type)
+
+    return "done"
+}

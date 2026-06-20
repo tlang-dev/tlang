@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>TLang.File &mdash; TLang</title>
+  <meta name="description" content="TLang documentation">
+  <link rel="stylesheet" href="../../assets/style.css">
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="../../index.html">TLang</a>
+    <div class="nav-links">
+      <a class="nav-link" href="../getting-started.html">Docs</a>
+      <a class="nav-link" href="../language/index.html">Language</a>
+      <a class="nav-link" href="../stdlib/index.html">Stdlib</a>
+      <a class="nav-link" href="../generators.html">Generators</a>
+      <a class="nav-link" href="https://github.com/joel-f/tlang">GitHub</a>
+      <a class="btn btn-sm btn-primary" href="../getting-started.html">Get Started</a>
+    </div>
+  </div>
+</nav>
+<div class="doc-layout">
+  <aside class="sidebar">
+    <nav>
+      <span class="sidebar-label">Getting Started</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../getting-started.html">Installation &amp; CLI</a>
+        <a class="sidebar-link" href="../editor-setup.html">Editor Setup</a>
+        <a class="sidebar-link" href="../ai-assistant.html">AI Assistant</a>
+      </div>
+      <div class="sidebar-sep"></div>
+      <span class="sidebar-label">Language Reference</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../language/index.html">Overview</a>
+        <a class="sidebar-link" href="../language/types.html">Types</a>
+        <a class="sidebar-link" href="../language/variables.html">Variables &amp; Scope</a>
+        <a class="sidebar-link" href="../language/functions.html">Functions</a>
+        <a class="sidebar-link" href="../language/control-flow.html">Control Flow</a>
+        <a class="sidebar-link" href="../language/templates.html">Template Blocks</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/lang-template.html">lang &mdash; Code</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/data-template.html">data &mdash; Data &amp; Config</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/doc-template.html">doc &mdash; Documents</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/style-template.html">style &mdash; Stylesheets</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/cmd-template.html">cmd &mdash; Commands &amp; SQL</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/raw-template.html">raw &mdash; Verbatim Text</a>
+        <a class="sidebar-link" href="../language/sets.html">Sets &amp; Models</a>
+        <a class="sidebar-link" href="../language/imports.html">Imports &amp; Expose</a>
+      </div>
+      <div class="sidebar-sep"></div>
+      <span class="sidebar-label">Standard Library</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../stdlib/index.html">Overview</a>
+        <a class="sidebar-link" href="../stdlib/string.html">TLang.String</a>
+        <a class="sidebar-link" href="../stdlib/list.html">TLang.List</a>
+        <a class="sidebar-link" href="../stdlib/map.html">TLang.Map</a>
+        <a class="sidebar-link" href="../stdlib/numbers.html">TLang.Int / Long</a>
+        <a class="sidebar-link" href="../stdlib/float.html">TLang.Float / Double</a>
+        <a class="sidebar-link" href="../stdlib/math.html">TLang.Math</a>
+        <a class="sidebar-link" href="../stdlib/file.html">TLang.File</a>
+        <a class="sidebar-link" href="../stdlib/terminal.html">TLang.Terminal</a>
+        <a class="sidebar-link" href="../stdlib/prompt.html">TLang.Prompt</a>
+        <a class="sidebar-link" href="../stdlib/shell.html">TLang.Shell</a>
+        <a class="sidebar-link" href="../stdlib/leaf.html">TLang.Leaf</a>
+        <a class="sidebar-link" href="../stdlib/generator.html">TLang.Generator</a>
+        <a class="sidebar-link" href="../stdlib/json.html">TLang.Json / Yaml</a>
+        <a class="sidebar-link" href="../stdlib/pdf.html">TLang.Pdf</a>
+        <a class="sidebar-link" href="../stdlib/string-builder.html">TLang.StringBuilder</a>
+        <a class="sidebar-link" href="../stdlib/naming.html">TLang.Naming</a>
+        <a class="sidebar-link" href="../stdlib/assert.html">TLang.Assert</a>
+        <a class="sidebar-link" href="../stdlib/formatting.html">TLang.Formatting</a>
+      </div>
+      <div class="sidebar-sep"></div>
+      <span class="sidebar-label">More</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../generators.html">Generators</a>
+        <a class="sidebar-link" href="../packages.html">Packages</a>
+        <a class="sidebar-link" href="../use-cases.html">Use Cases</a>
+      </div>
+    </nav>
+  </aside>
+  <main class="doc-content">
+    <h1>TLang.File</h1>
+<p>TLang.File provides file I/O operations. All paths are relative to the project root (where manifest.yml lives). Parent directories are created automatically on write.</p>
+<pre><code class="language-tlang">    use TLang.File
+  </code></pre>
+<section id="write">
+<h2>Writing Files</h2>
+<p>File.write has two modes depending on whether the third argument is provided.
+Scaffold-once — omit the third argument. The file is written only if it does not already exist. Use this for boilerplate that the user will edit.</p>
+<pre><code class="language-tlang">      File.write(&quot;src/App.kt&quot;, content)              // write once, skip if exists
+    </code></pre>
+<p>Always overwrite — pass true as the third argument. Use this for fully generated files that should never be manually edited.</p>
+<pre><code class="language-tlang">      File.write(&quot;generated/User.kt&quot;, content, true)  // always regenerate
+    </code></pre>
+</section>
+<section id="read">
+<h2>Reading Files</h2>
+<pre><code class="language-tlang">      let content = File.read(&quot;config/settings.json&quot;)   // → String
+    </code></pre>
+</section>
+<section id="exists">
+<h2>Checking Existence</h2>
+<pre><code class="language-tlang">      let ok = File.exists(&quot;config/settings.json&quot;)   // → Bool
+
+      if (!File.exists(&quot;output/&quot;)) {
+          File.createDir(&quot;output/&quot;)
+      }
+    </code></pre>
+</section>
+<section id="modify">
+<h2>Modifying Existing Files</h2>
+<p>Search and replace a substring in an existing file.</p>
+<pre><code class="language-tlang">      File.searchReplace(&quot;src/Config.kt&quot;, &quot;OLD_VALUE&quot;, &quot;NEW_VALUE&quot;)
+    </code></pre>
+<p>Append content to the end of a file.</p>
+<pre><code class="language-tlang">      File.append(&quot;logs/build.log&quot;, &quot;Build complete\n&quot;)
+    </code></pre>
+<p>Insert content after the first occurrence of a pattern.</p>
+<pre><code class="language-tlang">      File.appendAfter(&quot;src/routes.ts&quot;, &quot;// routes&quot;, newRoute)
+    </code></pre>
+<p>Insert content before the first occurrence of a pattern.</p>
+<pre><code class="language-tlang">      File.prependBefore(&quot;src/index.ts&quot;, &quot;export default app&quot;, banner)
+    </code></pre>
+</section>
+<section id="dirs">
+<h2>Directories</h2>
+<pre><code class="language-tlang">      File.createDir(&quot;output/generated&quot;)    // create (including parents)
+      File.deleteDir(&quot;output/tmp&quot;)          // delete recursively
+      File.deleteFile(&quot;output/old.kt&quot;)      // delete a file
+    </code></pre>
+</section>
+<section id="patterns">
+<h2>Usage Patterns</h2>
+<p>Scaffold then generate — write the boilerplate once, then always overwrite the generated parts.</p>
+<pre><code class="language-tlang">      // Boilerplate that the user edits — write once
+      File.write(&quot;src/main/kotlin/App.kt&quot;, appShell)
+
+      // Fully generated — always overwrite
+      File.write(&quot;src/main/kotlin/UserRepository.kt&quot;, repoCode, true)
+    </code></pre>
+<p>Check-then-write — vary behaviour on first vs subsequent runs.</p>
+<pre><code class="language-tlang">      if (File.exists(&quot;config/settings.json&quot;)) {
+          // subsequent run — patch instead of replace
+          File.searchReplace(&quot;config/settings.json&quot;, oldVersion, newVersion)
+      } else {
+          // first run — scaffold
+          File.write(&quot;config/settings.json&quot;, defaultConfig)
+      }
+    </code></pre>
+<p>Read-transform-write — read an existing file, transform it, write it back.</p>
+<pre><code class="language-tlang">      let original = File.read(&quot;src/routes.ts&quot;)
+      let updated  = String.replace(original, &quot;v1&quot;, &quot;v2&quot;)
+      File.write(&quot;src/routes.ts&quot;, updated, true)
+    </code></pre>
+</section>
+
+  </main>
+</div>
+<footer class="footer">
+  <div class="footer-inner">
+    <span class="footer-brand">TLang</span>
+    <div class="footer-links">
+      <a class="footer-link" href="../getting-started.html">Getting Started</a>
+      <a class="footer-link" href="../language/index.html">Language</a>
+      <a class="footer-link" href="../stdlib/index.html">Stdlib</a>
+      <a class="footer-link" href="../generators.html">Generators</a>
+      <a class="footer-link" href="https://github.com/joel-f/tlang">GitHub</a>
+    </div>
+    <span class="footer-copy">&copy; 2026 TLang Contributors &middot; Apache 2.0</span>
+  </div>
+</footer>
+<script>
+(function() {
+  var links = document.querySelectorAll('.sidebar-link');
+  var cur = window.location.href;
+  links.forEach(function(a) {
+    var href = a.getAttribute('href');
+    if (href && cur.indexOf(href.replace('../', '')) !== -1) {
+      a.classList.add('active');
+    }
+  });
+}());
+</script>
+</body>
+</html>

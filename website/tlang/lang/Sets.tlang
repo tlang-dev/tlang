@@ -1,0 +1,176 @@
+expose langSetsGen
+
+use TLang.File
+use TLang.Generator
+use TLang.Terminal
+use layout.PageLayout
+
+doc [html] setsPage() {
+  # Sets & Models
+
+  Sets declare named records of key-value data. They form the model that templates iterate over. A model block groups all sets together. At runtime, the model is accessible via Leaf.model() and via direct dot notation.
+
+  [section "set"
+    ## set Declarations
+
+    A set is a named record with string-valued attributes.
+
+    [code "tlang"
+      model {
+          set User {
+              pkg:   "com.example.model",
+              cls:   "User",
+              table: "users"
+          }
+          set Product {
+              pkg:   "com.example.model",
+              cls:   "Product",
+              table: "products"
+          }
+      }
+    ]
+
+    Access set attributes via direct dot notation when the name is known at compile time.
+
+    [code "tlang"
+      func main(): String {
+          let pkg   = User.pkg
+          let cls   = User.cls
+          let table = User.table
+          Terminal.println(pkg + "." + cls + " → " + table)
+          return "done"
+      }
+    ]
+  ]
+
+  [section "scalar"
+    ## Scalar let in model
+
+    The model block can also hold scalar constants using let.
+
+    [code "tlang"
+      model {
+          let version: String = "2.0.0"
+          let debug:   Bool   = false
+          let baseUrl: String = "https://api.example.com"
+      }
+
+      func main(): String {
+          Terminal.println("Version: " + version)
+          return "done"
+      }
+    ]
+  ]
+
+  [section "iterate"
+    ## Iterating with Leaf
+
+    When iterating over all sets dynamically, use the Leaf API. Leaf.model() returns the root model node. Leaf.keys() returns a List of set names.
+
+    [code "tlang"
+      use TLang.Leaf
+
+      func main(): String {
+          let model = Leaf.model()
+          let keys  = Leaf.keys(model)
+
+          for (k in keys) {
+              let entry = Leaf.get(model, k)
+              let pkg   = entry.pkg
+              let cls   = entry.cls
+              Terminal.println(cls + " in " + pkg)
+          }
+          return "done"
+      }
+    ]
+
+    For deeper access via the Leaf API when dynamic traversal is needed.
+
+    [code "tlang"
+      let model  = Leaf.model()
+      let entity = Leaf.get(model, "User")
+      let attrs  = Leaf.get(entity, "attrs")
+      let pkg    = Leaf.get(Leaf.get(attrs, "pkg"), "value")
+    ]
+  ]
+
+  [section "inheritance"
+    ## Set Inheritance
+
+    A set can extend another set with ext. It inherits all parent attributes and can add its own.
+
+    [code "tlang"
+      model {
+          set BaseEntity {
+              pkg:    "com.example.base",
+              extends: "Identifiable"
+          }
+          set User ext BaseEntity {
+              cls:   "User",
+              table: "users"
+          }
+      }
+    ]
+  ]
+
+  [section "constructor"
+    ## Sets with Constructor Parameters
+
+    A set can declare constructor parameters. Instantiate it with the impl keyword. An optional write path (>>) tells the generator where to write the output.
+
+    [code "tlang"
+      model {
+          set BasicEntity(pkg: String, cls: String, table: String)
+                  >> "output/$${cls}.kt" {
+              baseClass: "BaseEntity"
+          }
+      }
+
+      func main(): String {
+          let userEntity = BasicEntity(
+              impl pkg:   "com.example",
+              impl cls:   "User",
+              impl table: "users"
+          )
+          userEntity.generateAll()
+          return "done"
+      }
+    ]
+  ]
+
+  [section "func-params"
+    ## Sets with Function Parameters
+
+    A set attribute can reference a function by type. This lets different instances use different generation strategies.
+
+    [code "tlang"
+      model {
+          set CodeStrategy(generate: (String, String):(String)) {
+              label: "strategy"
+          }
+      }
+
+      func kotlinGen(pkg: String, cls: String): String {
+          return Generator.generate(kotlinEntity(pkg, cls))
+      }
+      func javaGen(pkg: String, cls: String): String {
+          return Generator.generate(javaEntity(pkg, cls))
+      }
+
+      func main(): String {
+          let kt = CodeStrategy(impl generate: &kotlinGen)
+          let jv = CodeStrategy(impl generate: &javaGen)
+          let code = kt.generate("com.example", "User")
+          return code
+      }
+    ]
+  ]
+}
+
+func langSetsGen(): String {
+    let content = Generator.generate(setsPage("html"))
+    let html = PageLayout.page("Sets & Models", content)
+    File.write("docs/docs/language/sets.html", html, true)
+    Terminal.println("  -> language/sets.html")
+    return ""
+}

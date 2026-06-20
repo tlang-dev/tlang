@@ -1,0 +1,137 @@
+expose stdlibLeafGen
+
+use TLang.File
+use TLang.Generator
+use TLang.Terminal
+use layout.PageLayout
+
+doc [html] leafPage() {
+  # TLang.Leaf
+
+  TLang.Leaf is the API for traversing the model tree at runtime. When you need to iterate dynamically over all sets or access nodes whose names are not known at compile time, Leaf is the right tool.
+
+  [code "tlang"
+    use TLang.Leaf
+  ]
+
+  [section "model"
+    ## Leaf.model()
+
+    Returns the root model node — the top-level object containing all sets.
+
+    [code "tlang"
+      let model = Leaf.model()
+    ]
+  ]
+
+  [section "get"
+    ## Leaf.get()
+
+    Returns a child node by name.
+
+    [code "tlang"
+      let model  = Leaf.model()
+      let user   = Leaf.get(model, "User")      // the User set
+      let attrs  = Leaf.get(user, "attrs")      // attributes of User
+      let pkgNode = Leaf.get(attrs, "pkg")      // the pkg attribute node
+    ]
+  ]
+
+  [section "keys"
+    ## Leaf.keys()
+
+    Returns a List of all child names. Use this to iterate over all sets.
+
+    [code "tlang"
+      let model = Leaf.model()
+      let keys  = Leaf.keys(model)    // ["User", "Product", "Order", ...]
+
+      for (k in keys) {
+          let entry = Leaf.get(model, k)
+          Terminal.println(k)
+      }
+    ]
+  ]
+
+  [section "has"
+    ## Leaf.has()
+
+    Checks whether a child with the given name exists.
+
+    [code "tlang"
+      if (Leaf.has(model, "Order")) {
+          let order = Leaf.get(model, "Order")
+          // process order...
+      }
+    ]
+  ]
+
+  [section "dot"
+    ## Direct Dot Access
+
+    When the set name is known at compile time, dot notation is shorter and clearer. Leaf API is only needed for dynamic traversal.
+
+    [code "tlang"
+      // Preferred when name is known
+      let pkg  = User.pkg
+      let cls  = User.cls
+
+      // Use Leaf for dynamic access
+      let model = Leaf.model()
+      for (k in Leaf.keys(model)) {
+          let entry = Leaf.get(model, k)
+          let pkg   = entry.pkg      // dot access on a Leaf node
+          let cls   = entry.cls
+      }
+    ]
+  ]
+
+  [section "example"
+    ## Example — Generate Files for Every Set
+
+    [code "tlang"
+      use TLang.Leaf
+      use TLang.Generator
+      use TLang.File
+      use TLang.Terminal
+      use KotlinGen as kotlin
+
+      lang [kotlin] entity(pkg: String, cls: String) {
+          pkg $${pkg}
+          impl[data class] $${cls}(
+              val id: Long,
+              val name: String
+          )
+      }
+
+      model {
+          set User    { pkg: "com.example", cls: "User" }
+          set Product { pkg: "com.example", cls: "Product" }
+          set Order   { pkg: "com.example", cls: "Order" }
+      }
+
+      func main(): String {
+          let model = Leaf.model()
+          let keys  = Leaf.keys(model)
+
+          for (k in keys) {
+              let entry = Leaf.get(model, k)
+              let pkg   = entry.pkg
+              let cls   = entry.cls
+              let code  = Generator.generate(entity(pkg, cls))
+              File.write("output/" + cls + ".kt", code, true)
+              Terminal.println("  → " + cls + ".kt")
+          }
+          return "done"
+      }
+    ]
+  ]
+}
+
+func stdlibLeafGen(): String {
+    let content = Generator.generate(leafPage("html"))
+    let html = PageLayout.page("TLang.Leaf", content)
+    File.write("docs/docs/stdlib/leaf.html", html, true)
+    Terminal.println("  -> stdlib/leaf.html")
+    return ""
+}

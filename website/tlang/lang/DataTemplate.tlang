@@ -1,0 +1,181 @@
+expose langDataTemplateGen
+
+use TLang.File
+use TLang.Generator
+use TLang.Terminal
+use layout.PageLayout
+
+doc [html] dataTemplatePage() {
+  # data — Data & Config Templates
+
+  The data template type generates hierarchical data files: HTML, JSON, YAML, XML, and TOML. No generator import is needed — the format is selected at call time. The body uses a bloc syntax that maps directly to nested tag or key structures.
+
+  [section "syntax"
+    ## Bloc Syntax
+
+    A bloc is a name, optional inline attributes, and an optional body of nested blocs and value attributes.
+
+    [code "tlang"
+      tagName(inlineAttr: value, ...) {
+          bodyAttr: value,
+          nestedTag(attr: val) {
+              deepAttr: "text"
+          }
+      }
+    ]
+
+    All three parts — name, inline attrs, body — are optional. The same syntax generates HTML tags, JSON keys, and YAML keys depending on the format selected.
+  ]
+
+  [section "values"
+    ## Value Types
+
+    String values use double quotes. Parameter substitution with $${ } works inside strings.
+
+    [code "tlang"
+      data [html, json] card(name: String, email: String) {
+        div(class: "user-card") {
+          h1: "$${name}",
+          p(class: "email"): "$${email}"
+        }
+      }
+    ]
+
+    Numeric and boolean values need no quotes.
+
+    [code "tlang"
+      data [json, yaml] service(name: String) {
+        {
+          name: "$${name}",
+          port: 8080,
+          replicas: 3,
+          enabled: true
+        }
+      }
+    ]
+
+    Arrays use square brackets.
+
+    [code "tlang"
+      data [json] config(app: String) {
+        {
+          name: "$${app}",
+          profiles: ["dev", "test", "prod"],
+          features: ["auth", "metrics"]
+        }
+      }
+    ]
+  ]
+
+  [section "formats"
+    ## Supported Formats
+
+    HTML renders blocs as nested tags. Inline attrs become HTML attributes.
+
+    [code "tlang"
+      data [html] page(title: String, body: String) {
+        html {
+          head { title: "$${title}" },
+          body {
+            div(class: "container") {
+              h1: "$${title}",
+              p:  "$${body}"
+            }
+          }
+        }
+      }
+    ]
+
+    JSON and YAML render the top-level bloc as an object. Nested blocs become nested objects.
+
+    [code "tlang"
+      data [json, yaml] k8sDeployment(name: String, image: String) {
+        {
+          apiVersion: "apps/v1",
+          kind: "Deployment",
+          metadata {
+            name: "$${name}"
+          },
+          spec {
+            replicas: 1,
+            template {
+              spec {
+                containers: [
+                  { name: "$${name}", image: "$${image}" }
+                ]
+              }
+            }
+          }
+        }
+      }
+    ]
+
+    XML renders blocs as XML elements.
+
+    [code "tlang"
+      data [xml] androidManifest(app: String, pkg: String) {
+        manifest(xmlns:android: "http://schemas.android.com/apk/res/android",
+                 package: "$${pkg}") {
+          application(android:label: "$${app}") {
+            <[ renderActivities(activities) ]>
+          }
+        }
+      }
+    ]
+
+    TOML renders the structure as TOML tables and key-value pairs.
+  ]
+
+  [section "include"
+    ## Includes
+
+    The <[ call() ]> syntax splices another template or function's output into the body.
+
+    [code "tlang"
+      data [html] table(headers: List, rows: List) {
+        table(class: "data-table") {
+          thead { <[ renderHeaders(headers) ]> },
+          tbody { <[ renderRows(rows) ]> }
+        }
+      }
+
+      data [html] th(label: String) spec {
+        th: "$${label}"
+      }
+
+      data [html] td(value: String) spec {
+        td: "$${value}"
+      }
+    ]
+  ]
+
+  [section "calling"
+    ## Calling and Generating
+
+    Pass the format name as the first argument. Generator.generate() converts the leaf to a string.
+
+    [code "tlang"
+      func main(): String {
+          let jsonLeaf = config("myapp")
+          let yamlLeaf = config("myapp")
+
+          let json = Generator.generate(jsonLeaf)
+          let yaml = Generator.generate(yamlLeaf)
+
+          File.write("config.json", json, true)
+          File.write("config.yml",  yaml, true)
+          return "done"
+      }
+    ]
+
+    Wait — the format selector is the first argument. For a template declared as data [json, yaml] config(name: String), call config("json", "myapp") for JSON output and config("yaml", "myapp") for YAML.
+  ]
+}
+
+func langDataTemplateGen(): String {
+    let content = Generator.generate(dataTemplatePage("html"))
+    let html = PageLayout.page("data — Data & Config", content)
+    File.write("docs/docs/language/data-template.html", html, true)
+    Terminal.println("  -> language/data-template.html")
+    return ""
+}

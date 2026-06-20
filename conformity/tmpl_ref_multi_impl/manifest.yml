@@ -1,0 +1,18 @@
+# Conformity test — multiple template implementations via ref dispatch
+#
+# Tests that a model can be impl'd multiple times, each instance pointing
+# (via a ref attribute) to a different template-calling function.  This
+# lets the user parameterise which generated variant (e.g. save with userId,
+# save with groupId, or public save) is produced based on configuration.
+#
+# Run `tlang package generators/kotlin` before executing this test.
+
+name: TmplRefMultiImpl
+project: ConformityTests
+organisation: TLang
+version: 1.0.0
+stability: alpha
+releaseNumber: 1
+
+dependencies:
+  - TLangGen/KotlinGen/Kotlin 1.0.0:alpha:1 KotlinGen

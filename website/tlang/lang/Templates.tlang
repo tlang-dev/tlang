@@ -1,0 +1,143 @@
+expose langTemplatesGen
+
+use TLang.File
+use TLang.Generator
+use TLang.Terminal
+use layout.PageLayout
+
+doc [html] templatesPage() {
+  # Template Blocks
+
+  Templates are the primary output mechanism in TLang. Each template declares a keyword, a list of target formats, a name, and typed parameters. Calling a template produces a value that Generator.generate() converts to a string.
+
+  [section "types"
+    ## The Six Template Types
+
+    lang — generates source code in any target language: Kotlin, Java, TypeScript, Go, Rust, HTML, YAML, and so on. Requires a generator import.
+
+    data — generates hierarchical data: HTML, JSON, YAML, XML, TOML. No generator import needed.
+
+    doc — generates Markdown or HTML documents with semantic structure. No generator import needed.
+
+    style — generates CSS, SCSS, LESS, JSON design tokens, or JS/TS style objects. No generator import needed.
+
+    cmd — generates commands: SQL statements, shell scripts, or any named invocation. No generator import needed.
+
+    raw — embeds verbatim text. AsIs writes it completely untouched; Replaced substitutes $${param} patterns only.
+  ]
+
+  [section "decision"
+    ## Choosing a Template Type
+
+    Use lang when generating source code — Kotlin, Java, TypeScript, Rust, Go, Python, SQL DDL embedded in code, and so on. This type understands code structure: classes, methods, fields, control flow.
+
+    Use data when generating structured data files — HTML pages, JSON configs, YAML manifests, XML descriptors, TOML files. The output has hierarchical tag/key structure.
+
+    Use doc when generating human-readable documents with standard sections, headings, code examples, and lists. Works in Markdown and HTML output.
+
+    Use style when generating presentation: CSS rules, SCSS variables, design tokens in JSON or JS.
+
+    Use cmd when the output is a command invocation: a SQL query, a bash script, an HTTP request. The cmd type models named calls with typed arguments.
+
+    Use raw when none of the above fit — Dockerfiles, .gitignore files, shell scripts with complex syntax, or any content that conflicts with TLang keyword parsing.
+  ]
+
+  [section "syntax"
+    ## Template Call Syntax
+
+    Call a template like a function. For multi-format templates the first argument selects the format.
+
+    [code "tlang"
+      // Single format
+      let leaf = entity("com.example", "User")
+
+      // Multi-format — first arg selects format
+      let md   = readme("md",   "MyLib")
+      let html = readme("html", "MyLib")
+
+      // Then generate the string
+      let code  = Generator.generate(leaf)
+      let mdStr = Generator.generate(md)
+    ]
+  ]
+
+  [section "generate"
+    ## Generator.generate()
+
+    Generator.generate(templateCall) converts a template instance into a string. For lang templates it dispatches to the appropriate code generator. For doc, data, style, and cmd templates it uses the built-in renderer for the selected format.
+
+    [code "tlang"
+      use TLang.Generator
+      use KotlinGen as kotlin
+
+      lang [kotlin] entity(pkg: String, cls: String) {
+          pkg $${pkg}
+          impl[data class] $${cls} { }
+      }
+
+      func main(): String {
+          let leaf = entity("com.example", "User")
+          let code = Generator.generate(leaf)   // → Kotlin source string
+          return code
+      }
+    ]
+  ]
+
+  [section "include"
+    ## Inline Includes
+
+    Inside template bodies, the include syntax splices another template's output at that position. This is the primary composition mechanism.
+
+    [code "tlang"
+      lang [kotlin] field(decl: String) spec {
+          var $${decl}
+      }
+
+      lang [kotlin] dataClass(cls: String, fields: List) {
+          impl[data class] $${cls} {
+              <[ renderFields(fields) ]>
+          }
+      }
+
+      func renderFields(fields: List): List {
+          let nodes = List.create()
+          for (f in fields) {
+              let nodes = List.push(nodes, field(f))
+          }
+          return nodes
+      }
+    ]
+
+    The spec modifier on field marks it as a fragment — it produces inner content without a file wrapper.
+  ]
+
+  [section "multi"
+    ## Multi-Format Templates
+
+    Declare multiple target formats in the brackets. The caller selects by passing the format name as the first argument.
+
+    [code "tlang"
+      doc [md, html] readme(project: String) {
+        # $${project}
+
+        Welcome to $${project}.
+      }
+
+      func main(): String {
+          let md   = Generator.generate(readme("md",   "MyLib"))
+          let html = Generator.generate(readme("html", "MyLib"))
+          File.write("README.md",       md,   true)
+          File.write("output/README.html", html, true)
+          return "done"
+      }
+    ]
+  ]
+}
+
+func langTemplatesGen(): String {
+    let content = Generator.generate(templatesPage("html"))
+    let html = PageLayout.page("Template Blocks", content)
+    File.write("docs/docs/language/templates.html", html, true)
+    Terminal.println("  -> language/templates.html")
+    return ""
+}

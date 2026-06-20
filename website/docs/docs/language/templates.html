@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Template Blocks &mdash; TLang</title>
+  <meta name="description" content="TLang documentation">
+  <link rel="stylesheet" href="../../assets/style.css">
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="../../index.html">TLang</a>
+    <div class="nav-links">
+      <a class="nav-link" href="../getting-started.html">Docs</a>
+      <a class="nav-link" href="../language/index.html">Language</a>
+      <a class="nav-link" href="../stdlib/index.html">Stdlib</a>
+      <a class="nav-link" href="../generators.html">Generators</a>
+      <a class="nav-link" href="https://github.com/joel-f/tlang">GitHub</a>
+      <a class="btn btn-sm btn-primary" href="../getting-started.html">Get Started</a>
+    </div>
+  </div>
+</nav>
+<div class="doc-layout">
+  <aside class="sidebar">
+    <nav>
+      <span class="sidebar-label">Getting Started</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../getting-started.html">Installation &amp; CLI</a>
+        <a class="sidebar-link" href="../editor-setup.html">Editor Setup</a>
+        <a class="sidebar-link" href="../ai-assistant.html">AI Assistant</a>
+      </div>
+      <div class="sidebar-sep"></div>
+      <span class="sidebar-label">Language Reference</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../language/index.html">Overview</a>
+        <a class="sidebar-link" href="../language/types.html">Types</a>
+        <a class="sidebar-link" href="../language/variables.html">Variables &amp; Scope</a>
+        <a class="sidebar-link" href="../language/functions.html">Functions</a>
+        <a class="sidebar-link" href="../language/control-flow.html">Control Flow</a>
+        <a class="sidebar-link" href="../language/templates.html">Template Blocks</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/lang-template.html">lang &mdash; Code</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/data-template.html">data &mdash; Data &amp; Config</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/doc-template.html">doc &mdash; Documents</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/style-template.html">style &mdash; Stylesheets</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/cmd-template.html">cmd &mdash; Commands &amp; SQL</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/raw-template.html">raw &mdash; Verbatim Text</a>
+        <a class="sidebar-link" href="../language/sets.html">Sets &amp; Models</a>
+        <a class="sidebar-link" href="../language/imports.html">Imports &amp; Expose</a>
+      </div>
+      <div class="sidebar-sep"></div>
+      <span class="sidebar-label">Standard Library</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../stdlib/index.html">Overview</a>
+        <a class="sidebar-link" href="../stdlib/string.html">TLang.String</a>
+        <a class="sidebar-link" href="../stdlib/list.html">TLang.List</a>
+        <a class="sidebar-link" href="../stdlib/map.html">TLang.Map</a>
+        <a class="sidebar-link" href="../stdlib/numbers.html">TLang.Int / Long</a>
+        <a class="sidebar-link" href="../stdlib/float.html">TLang.Float / Double</a>
+        <a class="sidebar-link" href="../stdlib/math.html">TLang.Math</a>
+        <a class="sidebar-link" href="../stdlib/file.html">TLang.File</a>
+        <a class="sidebar-link" href="../stdlib/terminal.html">TLang.Terminal</a>
+        <a class="sidebar-link" href="../stdlib/prompt.html">TLang.Prompt</a>
+        <a class="sidebar-link" href="../stdlib/shell.html">TLang.Shell</a>
+        <a class="sidebar-link" href="../stdlib/leaf.html">TLang.Leaf</a>
+        <a class="sidebar-link" href="../stdlib/generator.html">TLang.Generator</a>
+        <a class="sidebar-link" href="../stdlib/json.html">TLang.Json / Yaml</a>
+        <a class="sidebar-link" href="../stdlib/pdf.html">TLang.Pdf</a>
+        <a class="sidebar-link" href="../stdlib/string-builder.html">TLang.StringBuilder</a>
+        <a class="sidebar-link" href="../stdlib/naming.html">TLang.Naming</a>
+        <a class="sidebar-link" href="../stdlib/assert.html">TLang.Assert</a>
+        <a class="sidebar-link" href="../stdlib/formatting.html">TLang.Formatting</a>
+      </div>
+      <div class="sidebar-sep"></div>
+      <span class="sidebar-label">More</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../generators.html">Generators</a>
+        <a class="sidebar-link" href="../packages.html">Packages</a>
+        <a class="sidebar-link" href="../use-cases.html">Use Cases</a>
+      </div>
+    </nav>
+  </aside>
+  <main class="doc-content">
+    <h1>Template Blocks</h1>
+<p>Templates are the primary output mechanism in TLang. Each template declares a keyword, a list of target formats, a name, and typed parameters. Calling a template produces a value that Generator.generate() converts to a string.</p>
+<section id="types">
+<h2>The Six Template Types</h2>
+<p>lang — generates source code in any target language: Kotlin, Java, TypeScript, Go, Rust, HTML, YAML, and so on. Requires a generator import.
+data — generates hierarchical data: HTML, JSON, YAML, XML, TOML. No generator import needed.
+doc — generates Markdown or HTML documents with semantic structure. No generator import needed.
+style — generates CSS, SCSS, LESS, JSON design tokens, or JS/TS style objects. No generator import needed.
+cmd — generates commands: SQL statements, shell scripts, or any named invocation. No generator import needed.
+raw — embeds verbatim text. AsIs writes it completely untouched; Replaced substitutes $${param} patterns only.</p>
+</section>
+<section id="decision">
+<h2>Choosing a Template Type</h2>
+<p>Use lang when generating source code — Kotlin, Java, TypeScript, Rust, Go, Python, SQL DDL embedded in code, and so on. This type understands code structure: classes, methods, fields, control flow.
+Use data when generating structured data files — HTML pages, JSON configs, YAML manifests, XML descriptors, TOML files. The output has hierarchical tag/key structure.
+Use doc when generating human-readable documents with standard sections, headings, code examples, and lists. Works in Markdown and HTML output.
+Use style when generating presentation: CSS rules, SCSS variables, design tokens in JSON or JS.
+Use cmd when the output is a command invocation: a SQL query, a bash script, an HTTP request. The cmd type models named calls with typed arguments.
+Use raw when none of the above fit — Dockerfiles, .gitignore files, shell scripts with complex syntax, or any content that conflicts with TLang keyword parsing.</p>
+</section>
+<section id="syntax">
+<h2>Template Call Syntax</h2>
+<p>Call a template like a function. For multi-format templates the first argument selects the format.</p>
+<pre><code class="language-tlang">      // Single format
+      let leaf = entity(&quot;com.example&quot;, &quot;User&quot;)
+
+      // Multi-format — first arg selects format
+      let md   = readme(&quot;md&quot;,   &quot;MyLib&quot;)
+      let html = readme(&quot;html&quot;, &quot;MyLib&quot;)
+
+      // Then generate the string
+      let code  = Generator.generate(leaf)
+      let mdStr = Generator.generate(md)
+    </code></pre>
+</section>
+<section id="generate">
+<h2>Generator.generate()</h2>
+<p>Generator.generate(templateCall) converts a template instance into a string. For lang templates it dispatches to the appropriate code generator. For doc, data, style, and cmd templates it uses the built-in renderer for the selected format.</p>
+<pre><code class="language-tlang">      use TLang.Generator
+      use KotlinGen as kotlin
+
+      lang [kotlin] entity(pkg: String, cls: String) {
+          pkg $${pkg}
+          impl[data class] $${cls} { }
+      }
+
+      func main(): String {
+          let leaf = entity(&quot;com.example&quot;, &quot;User&quot;)
+          let code = Generator.generate(leaf)   // → Kotlin source string
+          return code
+      }
+    </code></pre>
+</section>
+<section id="include">
+<h2>Inline Includes</h2>
+<p>Inside template bodies, the include syntax splices another template's output at that position. This is the primary composition mechanism.</p>
+<pre><code class="language-tlang">      lang [kotlin] field(decl: String) spec {
+          var $${decl}
+      }
+
+      lang [kotlin] dataClass(cls: String, fields: List) {
+          impl[data class] $${cls} {
+              &lt;[ renderFields(fields) ]&gt;
+          }
+      }
+
+      func renderFields(fields: List): List {
+          let nodes = List.create()
+          for (f in fields) {
+              let nodes = List.push(nodes, field(f))
+          }
+          return nodes
+      }
+    </code></pre>
+<p>The spec modifier on field marks it as a fragment — it produces inner content without a file wrapper.</p>
+</section>
+<section id="multi">
+<h2>Multi-Format Templates</h2>
+<p>Declare multiple target formats in the brackets. The caller selects by passing the format name as the first argument.</p>
+<pre><code class="language-tlang">      doc [md, html] readme(project: String) {
+        # $${project}
+
+        Welcome to $${project}.
+      }
+
+      func main(): String {
+          let md   = Generator.generate(readme(&quot;md&quot;,   &quot;MyLib&quot;))
+          let html = Generator.generate(readme(&quot;html&quot;, &quot;MyLib&quot;))
+          File.write(&quot;README.md&quot;,       md,   true)
+          File.write(&quot;output/README.html&quot;, html, true)
+          return &quot;done&quot;
+      }
+    </code></pre>
+</section>
+
+  </main>
+</div>
+<footer class="footer">
+  <div class="footer-inner">
+    <span class="footer-brand">TLang</span>
+    <div class="footer-links">
+      <a class="footer-link" href="../getting-started.html">Getting Started</a>
+      <a class="footer-link" href="../language/index.html">Language</a>
+      <a class="footer-link" href="../stdlib/index.html">Stdlib</a>
+      <a class="footer-link" href="../generators.html">Generators</a>
+      <a class="footer-link" href="https://github.com/joel-f/tlang">GitHub</a>
+    </div>
+    <span class="footer-copy">&copy; 2026 TLang Contributors &middot; Apache 2.0</span>
+  </div>
+</footer>
+<script>
+(function() {
+  var links = document.querySelectorAll('.sidebar-link');
+  var cur = window.location.href;
+  links.forEach(function(a) {
+    var href = a.getAttribute('href');
+    if (href && cur.indexOf(href.replace('../', '')) !== -1) {
+      a.classList.add('active');
+    }
+  });
+}());
+</script>
+</body>
+</html>

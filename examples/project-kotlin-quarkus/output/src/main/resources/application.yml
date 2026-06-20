@@ -1,0 +1,19 @@
+quarkus:
+  application:
+    name: task
+
+  datasource:
+    db-kind: h2
+    jdbc:
+      url: "jdbc:h2:mem:task"
+    username: sa
+    password: ""
+
+  hibernate-orm:
+    database:
+      generation: drop-and-create
+    log:
+      sql: false
+
+  http:
+    port: 8080

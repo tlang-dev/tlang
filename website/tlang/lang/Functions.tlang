@@ -1,0 +1,187 @@
+expose langFunctionsGen
+
+use TLang.File
+use TLang.Generator
+use TLang.Terminal
+use layout.PageLayout
+
+doc [html] functionsPage() {
+  # Functions
+
+  Functions are top-level declarations that contain all executable logic. TLang has no classes — behaviour lives in functions, templates live in template blocks, and data lives in the model.
+
+  [section "syntax"
+    ## Syntax
+
+    The func keyword declares a function. Parameters require type annotations. The return type follows the parameter list.
+
+    [code "tlang"
+      func greet(name: String): String {
+          return "Hello, " + name + "!"
+      }
+
+      func add(a: Int, b: Int): Int {
+          return a + b
+      }
+
+      func isAdult(age: Int): Bool {
+          return age >= 18
+      }
+    ]
+
+    A function with no return value uses Unit (or omits the return type).
+
+    [code "tlang"
+      func log(msg: String): String {
+          Terminal.println(msg)
+          return ""
+      }
+    ]
+  ]
+
+  [section "main"
+    ## The main Function
+
+    main is the program entry point. It must return String and must be exposed.
+
+    [code "tlang"
+      expose main
+
+      func main(): String {
+          // generation logic here
+          return "done"
+      }
+    ]
+
+    main can accept a String list for CLI arguments.
+
+    [code "tlang"
+      func main(args: List): String {
+          let name = List.get(args, 0)
+          return "Hello, " + name
+      }
+    ]
+  ]
+
+  [section "calling"
+    ## Calling Functions
+
+    Functions call each other freely within the same file. Functions from imported files are accessed via the import alias.
+
+    [code "tlang"
+      let result = greet("Alice")
+      let sum    = add(10, 20)
+
+      // From an imported file:
+      // use helpers.StringUtils
+      let slug = StringUtils.toSlug(name)
+    ]
+  ]
+
+  [section "refs"
+    ## Function References
+
+    Use & to pass a function as a value. Function references work with higher-order functions.
+
+    [code "tlang"
+      func double(x: Int): Int {
+          return x * 2
+      }
+
+      let fn     = &double
+      let result = List.map(List.of(1, 2, 3), &double)   // [2, 4, 6]
+    ]
+  ]
+
+  [section "lambdas"
+    ## Lambdas
+
+    Lambdas are inline anonymous functions. They use the => arrow syntax.
+
+    [code "tlang"
+      let doubled = List.map(List.of(1, 2, 3), (x) => x * 2)
+      let evens   = List.filter(items, (x) => x % 2 == 0)
+      let total   = List.reduce(nums, 0, (acc, n) => acc + n)
+    ]
+
+    Lambdas can close over variables in scope.
+
+    [code "tlang"
+      let prefix = "user_"
+      let named  = List.map(ids, (id) => prefix + id)
+    ]
+
+    Multi-parameter lambdas use a comma-separated list.
+
+    [code "tlang"
+      let product = List.reduce(nums, 1, (acc, n) => acc * n)
+    ]
+  ]
+
+  [section "hof"
+    ## Dot-Method Syntax
+
+    Higher-order List and Map functions can be written using dot-method style. Both forms are identical.
+
+    [code "tlang"
+      // Function form
+      let result = List.map(items, (x) => x + "!")
+
+      // Dot form
+      let result = items.map((x) => x + "!")
+
+      // Chained
+      let processed = items
+          .filter((x) => x != "")
+          .map((x) => x.trim())
+    ]
+  ]
+
+  [section "recursion"
+    ## Recursion
+
+    Functions can call themselves directly. TLang does not limit recursion depth beyond available stack.
+
+    [code "tlang"
+      func factorial(n: Int): Int {
+          if (n <= 1) {
+              return 1
+          }
+          return n * factorial(n - 1)
+      }
+
+      func joinWith(items: List, sep: String, idx: Int, acc: String): String {
+          if (idx >= List.size(items)) {
+              return acc
+          }
+          let item = List.get(items, idx)
+          let next = if (idx == 0) item else acc + sep + item
+          return joinWith(items, sep, idx + 1, next)
+      }
+    ]
+  ]
+
+  [section "optional"
+    ## Optional Chaining and Null Coalescing
+
+    The ?. operator chains through nullable values. If any step is null, the whole expression returns null without error.
+
+    [code "tlang"
+      let name = user?.profile?.name
+    ]
+
+    The ?? operator provides a default when the left side is null.
+
+    [code "tlang"
+      let display = user?.name ?? "Anonymous"
+    ]
+  ]
+}
+
+func langFunctionsGen(): String {
+    let content = Generator.generate(functionsPage("html"))
+    let html = PageLayout.page("Functions", content)
+    File.write("docs/docs/language/functions.html", html, true)
+    Terminal.println("  -> language/functions.html")
+    return ""
+}

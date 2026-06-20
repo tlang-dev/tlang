@@ -1,0 +1,294 @@
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <title>Language Specification — TLang</title>
+      <link rel="stylesheet" href="../assets/style.css">
+    </head>
+    <body>
+    <nav class="nav">
+      <div class="nav-inner">
+        <a class="nav-logo" href="../index.html">TLang</a>
+        <div class="nav-links">
+          <a class="nav-link" href="getting-started.html">Docs</a>
+          <a class="nav-link" href="language/index.html">Language</a>
+          <a class="nav-link" href="stdlib/index.html">Stdlib</a>
+          <a class="nav-link" href="generators.html">Generators</a>
+          <a class="nav-link" href="use-cases.html">Use Cases</a>
+          <a class="nav-link" href="packages.html">Packages</a>
+          <a class="nav-link" href="https://github.com/joel-f/tlang">GitHub</a>
+          <a class="btn btn-sm btn-primary" href="getting-started.html">Get Started</a>
+        </div>
+      </div>
+    </nav>
+    <div class="doc-page section-inner">
+    <h1>Language Specification</h1>
+<p>TLang is a compiled, statically-typed template language. Source files use the .tlang
+extension and compile to bytecode before execution. The compiler caches bytecode —
+unchanged files are not recompiled on subsequent runs.</p>
+<section id="structure">
+<h2>File Structure</h2>
+<p>Every .tlang file contains an optional header followed by body declarations.
+The header holds expose and use statements. The body holds functions, templates, and sets:</p>
+<pre><code class="language-tlang">      // Header — declarations only
+      expose myFunction          // export this symbol
+      use TLang.Terminal         // import standard library module
+      use utils.MathHelpers      // import from utils/MathHelpers.tlang
+      use Formatter              // import from Formatter.tlang in same directory
+
+      // Body — implementations
+      func myFunction(): String {
+          return &quot;hello&quot;
+      }
+    </code></pre>
+</section>
+<section id="imports">
+<h2>Import Paths</h2>
+<p>Import paths map directly to filesystem paths relative to the project root.</p>
+<ul>
+<li>use TLang.X — standard library module</li>
+<li>use folder.File — file at folder/File.tlang</li>
+<li>use File — file at File.tlang in the same directory</li>
+</ul>
+<p>Only symbols declared with expose in the target file can be imported. Unexposed
+functions and templates are private to their file.</p>
+</section>
+<section id="comments">
+<h2>Comments</h2>
+<p>TLang supports single-line comments:</p>
+<pre><code class="language-tlang">      // This is a comment
+      let x = 42 // inline comment
+    </code></pre>
+<p>Comments are not permitted inside template block bodies (lang, style, doc) or
+inside set declarations.</p>
+</section>
+<section id="types">
+<h2>Types</h2>
+<p>TLang is statically typed. Type annotations follow the name with a colon:</p>
+<ul>
+<li>String — UTF-8 text. Literal: "hello". Concatenation with +</li>
+<li>Int — 64-bit signed integer. Literals: 42, -7, 1_000_000</li>
+<li>Float — 64-bit double precision. Literals: 3.14, -0.5, 1.0e6</li>
+<li>Bool — true or false. Operators: && || !</li>
+<li>List — ordered sequence. Constructed with List.of(a, b, c)</li>
+<li>Map — string-keyed dictionary. Constructed with Map.of("key", value, ...)</li>
+</ul>
+<p>String concatenation uses the + operator. Int and Float arithmetic use + - * /.
+Comparison operators: == != < > <= >=.</p>
+</section>
+<section id="variables">
+<h2>Variables</h2>
+<p>Variables are declared with let. Bindings are lexically scoped and immutable.
+To update a value, rebind the name with a new let in the same scope:</p>
+<pre><code class="language-tlang">      let name = &quot;Alice&quot;
+      let count = 0
+      let items = List.of(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;)
+
+      // Rebind — shadows the previous binding
+      let count = count + 1
+    </code></pre>
+</section>
+<section id="functions">
+<h2>Functions</h2>
+<p>Functions are top-level declarations. Parameters require explicit type annotations.
+The return type is declared after the parameter list:</p>
+<pre><code class="language-tlang">      func greet(name: String): String {
+          return &quot;Hello, &quot; + name + &quot;!&quot;
+      }
+
+      func add(a: Int, b: Int): Int {
+          return a + b
+      }
+
+      func isPositive(n: Int): Bool {
+          return n &gt; 0
+      }
+
+      // Functions can call each other freely
+      func greetMany(names: List): String {
+          let sb = StringBuilder.create()
+          for (name in names) {
+              StringBuilder.append(sb, greet(name) + &quot;\n&quot;)
+          }
+          return StringBuilder.build(sb)
+      }
+    </code></pre>
+</section>
+<section id="control">
+<h2>Control Flow</h2>
+<pre><code class="language-tlang">      // if / else if / else
+      func classify(n: Int): String {
+          if (n &lt; 0) {
+              return &quot;negative&quot;
+          } else if (n == 0) {
+              return &quot;zero&quot;
+          } else {
+              return &quot;positive&quot;
+          }
+      }
+
+      // for-in loop over a list
+      func join(items: List, sep: String): String {
+          let result = &quot;&quot;
+          for (item in items) {
+              let result = result + item + sep
+          }
+          return result
+      }
+
+      // for-range loop (inclusive on both ends)
+      func sumTo(n: Int): Int {
+          let total = 0
+          for (i in 1..n) {
+              let total = total + i
+          }
+          return total
+      }
+    </code></pre>
+</section>
+<section id="templates">
+<h2>Template Blocks</h2>
+<p>Template blocks are the primary output mechanism. Each template specifies a
+keyword, a list of target formats, a name, and parameters:</p>
+<pre><code class="language-tlang">      lang [kotlin] entity(pkg: String, name: String) {
+          pkg ${pkg}
+          impl[data class] ${name}(
+              val id: Long,
+              val name: String
+          )
+      }
+    </code></pre>
+<p>Inside a template body, ${paramName} is replaced with the argument value at call time.
+The first positional argument to a multi-format template selects the output format:</p>
+<pre><code class="language-tlang">      doc [md, html] readme(project: String) {
+        # ${project}
+
+        Welcome to ${project}.
+      }
+
+      func main(): String {
+          let md   = readme(&quot;md&quot;,   &quot;MyLib&quot;)
+          let html = readme(&quot;html&quot;, &quot;MyLib&quot;)
+          return &quot;ok&quot;
+      }
+    </code></pre>
+<p>Available template types:</p>
+<ul>
+<li>lang [target] — generate code in any target language (kotlin, java, ts, html, yaml, rust...)</li>
+<li>doc [md, html] — generate structured documents in multiple formats</li>
+<li>style [css] — generate CSS stylesheets with design tokens and component rules</li>
+<li>data [json, yaml] — generate structured data or configuration files</li>
+<li>cmd [bash, sql] — generate shell scripts or SQL migrations</li>
+<li>raw [text] — generate verbatim text with ${} substitution only</li>
+</ul>
+</section>
+<section id="doc-blocks">
+<h2>Doc Template Elements</h2>
+<p>Inside a doc template body, the following elements are available:</p>
+<ul>
+<li># Heading — H1 heading (## for H2, ### for H3)</li>
+<li>Paragraph — plain text lines become paragraphs</li>
+<li>[section "id" ... ] — named section, renders as HTML section or Markdown heading group</li>
+<li>[code "lang" ... ] — fenced code block with language hint</li>
+<li>[list "unordered" - item ... ] — bullet list</li>
+<li>[list "ordered" - item ... ] — numbered list</li>
+<li>[link "url" "text"] — hyperlink</li>
+<li>[img "url" "alt"] — image</li>
+<li>[asis ... ] — raw content block; ${params} are still substituted</li>
+</ul>
+</section>
+<section id="style-blocks">
+<h2>Style Template Rules</h2>
+<p>Inside a style template body, each rule is a selector followed by a block of
+property: value pairs separated by commas. Property values that contain spaces
+must be quoted strings:</p>
+<pre><code class="language-tlang">      style [css] Tokens() {
+          :root {
+              --bg: &quot;#0d0d0d&quot;,
+              --text: &quot;#e8e8e8&quot;
+          }
+          .card {
+              background: &quot;var(--bg)&quot;,
+              border-radius: 12px,
+              padding: &quot;1.5rem 2rem&quot;
+          }
+          .card [hover] {
+              border-color: &quot;var(--accent)&quot;
+          }
+      }
+    </code></pre>
+<p>Pseudo-class modifiers — [hover], [focus], [active], [visited] — generate the
+corresponding CSS pseudo-class selectors (:hover, :focus, etc.).
+Comments (//) are not permitted inside style block bodies.</p>
+</section>
+<section id="sets">
+<h2>Set Declarations</h2>
+<p>A set declares a named record of key-value pairs. Sets form the model that
+templates iterate over. All values are strings:</p>
+<pre><code class="language-tlang">      set User {
+          pkg: &quot;com.example.model&quot;,
+          name: &quot;User&quot;,
+          table: &quot;users&quot;
+      }
+
+      set Product {
+          pkg: &quot;com.example.model&quot;,
+          name: &quot;Product&quot;,
+          table: &quot;products&quot;
+      }
+    </code></pre>
+<p>At runtime, Generator.models() returns a List of all sets defined in the project.
+Each set is a Map — values are retrieved with model.get("key"):</p>
+<pre><code class="language-tlang">      for (model in Generator.models()) {
+          let name = model.get(&quot;name&quot;)
+          let pkg  = model.get(&quot;pkg&quot;)
+          entity(pkg, name)
+      }
+    </code></pre>
+</section>
+<section id="stdlib">
+<h2>Standard Library</h2>
+<p>All standard library modules are imported with use TLang.ModuleName.
+TLang.Terminal — console output:
+println(msg), print(msg)
+TLang.File — file I/O (sandboxed to the project directory):
+write(path, content, overwrite), read(path): String
+TLang.String — string utilities:
+split(s, sep), trim(s), replace(s, from, to), upper(s), lower(s),
+contains(s, sub), startsWith(s, prefix), endsWith(s, suffix), len(s), indexOf(s, sub)
+TLang.List — list operations:
+of(...), create(), push(list, item), pop(list), get(list, i),
+len(list), map(list, fn), filter(list, fn)
+TLang.Map — map operations:
+of(k, v, ...), create(), set(map, k, v), get(map, k), keys(map), values(map)
+TLang.Math — numeric utilities:
+abs(n), min(a, b), max(a, b), floor(n), ceil(n), round(n), sqrt(n), pow(a, b)
+TLang.StringBuilder — efficient string accumulation:
+create(): StringBuilder, append(sb, str), build(sb): String
+TLang.Generator — model iteration:
+models(): List of all set declarations in the project
+TLang.Leaf — model tree access:
+model(name): Map, get(map, key): String</p>
+</section>
+
+    </div>
+    <footer class="footer">
+      <div class="footer-inner">
+        <span class="footer-brand">TLang</span>
+        <div class="footer-links">
+          <a class="footer-link" href="getting-started.html">Getting Started</a>
+          <a class="footer-link" href="language-spec.html">Language</a>
+          <a class="footer-link" href="generators.html">Generators</a>
+          <a class="footer-link" href="use-cases.html">Use Cases</a>
+          <a class="footer-link" href="packages.html">Packages</a>
+          <a class="footer-link" href="editor-setup.html">Editor Setup</a>
+          <a class="footer-link" href="ai-assistant.html">AI Assistant</a>
+          <a class="footer-link" href="https://github.com/joel-f/tlang">GitHub</a>
+        </div>
+        <span class="footer-copy">&copy; 2026 TLang Contributors &middot; Apache 2.0</span>
+      </div>
+    </footer>
+    </body>
+    </html>
+  

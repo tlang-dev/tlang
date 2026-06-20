@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>TLang.Int / Long &mdash; TLang</title>
+  <meta name="description" content="TLang documentation">
+  <link rel="stylesheet" href="../../assets/style.css">
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="../../index.html">TLang</a>
+    <div class="nav-links">
+      <a class="nav-link" href="../getting-started.html">Docs</a>
+      <a class="nav-link" href="../language/index.html">Language</a>
+      <a class="nav-link" href="../stdlib/index.html">Stdlib</a>
+      <a class="nav-link" href="../generators.html">Generators</a>
+      <a class="nav-link" href="https://github.com/joel-f/tlang">GitHub</a>
+      <a class="btn btn-sm btn-primary" href="../getting-started.html">Get Started</a>
+    </div>
+  </div>
+</nav>
+<div class="doc-layout">
+  <aside class="sidebar">
+    <nav>
+      <span class="sidebar-label">Getting Started</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../getting-started.html">Installation &amp; CLI</a>
+        <a class="sidebar-link" href="../editor-setup.html">Editor Setup</a>
+        <a class="sidebar-link" href="../ai-assistant.html">AI Assistant</a>
+      </div>
+      <div class="sidebar-sep"></div>
+      <span class="sidebar-label">Language Reference</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../language/index.html">Overview</a>
+        <a class="sidebar-link" href="../language/types.html">Types</a>
+        <a class="sidebar-link" href="../language/variables.html">Variables &amp; Scope</a>
+        <a class="sidebar-link" href="../language/functions.html">Functions</a>
+        <a class="sidebar-link" href="../language/control-flow.html">Control Flow</a>
+        <a class="sidebar-link" href="../language/templates.html">Template Blocks</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/lang-template.html">lang &mdash; Code</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/data-template.html">data &mdash; Data &amp; Config</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/doc-template.html">doc &mdash; Documents</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/style-template.html">style &mdash; Stylesheets</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/cmd-template.html">cmd &mdash; Commands &amp; SQL</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/raw-template.html">raw &mdash; Verbatim Text</a>
+        <a class="sidebar-link" href="../language/sets.html">Sets &amp; Models</a>
+        <a class="sidebar-link" href="../language/imports.html">Imports &amp; Expose</a>
+      </div>
+      <div class="sidebar-sep"></div>
+      <span class="sidebar-label">Standard Library</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../stdlib/index.html">Overview</a>
+        <a class="sidebar-link" href="../stdlib/string.html">TLang.String</a>
+        <a class="sidebar-link" href="../stdlib/list.html">TLang.List</a>
+        <a class="sidebar-link" href="../stdlib/map.html">TLang.Map</a>
+        <a class="sidebar-link" href="../stdlib/numbers.html">TLang.Int / Long</a>
+        <a class="sidebar-link" href="../stdlib/float.html">TLang.Float / Double</a>
+        <a class="sidebar-link" href="../stdlib/math.html">TLang.Math</a>
+        <a class="sidebar-link" href="../stdlib/file.html">TLang.File</a>
+        <a class="sidebar-link" href="../stdlib/terminal.html">TLang.Terminal</a>
+        <a class="sidebar-link" href="../stdlib/prompt.html">TLang.Prompt</a>
+        <a class="sidebar-link" href="../stdlib/shell.html">TLang.Shell</a>
+        <a class="sidebar-link" href="../stdlib/leaf.html">TLang.Leaf</a>
+        <a class="sidebar-link" href="../stdlib/generator.html">TLang.Generator</a>
+        <a class="sidebar-link" href="../stdlib/json.html">TLang.Json / Yaml</a>
+        <a class="sidebar-link" href="../stdlib/pdf.html">TLang.Pdf</a>
+        <a class="sidebar-link" href="../stdlib/string-builder.html">TLang.StringBuilder</a>
+        <a class="sidebar-link" href="../stdlib/naming.html">TLang.Naming</a>
+        <a class="sidebar-link" href="../stdlib/assert.html">TLang.Assert</a>
+        <a class="sidebar-link" href="../stdlib/formatting.html">TLang.Formatting</a>
+      </div>
+      <div class="sidebar-sep"></div>
+      <span class="sidebar-label">More</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../generators.html">Generators</a>
+        <a class="sidebar-link" href="../packages.html">Packages</a>
+        <a class="sidebar-link" href="../use-cases.html">Use Cases</a>
+      </div>
+    </nav>
+  </aside>
+  <main class="doc-content">
+    <h1>TLang.Int / Long</h1>
+<p>TLang.Int provides utilities for 64-bit signed integers. TLang.Long is the same underlying type with a distinct name — use it when an API requires Long explicitly.</p>
+<pre><code class="language-tlang">    use TLang.Int
+    use TLang.Long
+  </code></pre>
+<section id="int">
+<h2>TLang.Int</h2>
+<p>Parsing and stringification.</p>
+<pre><code class="language-tlang">      let n   = Int.parse(&quot;42&quot;)           // String → Int
+      let s   = Int.toString(42)          // Int → String
+      let hex = Int.toHex(255)            // &quot;ff&quot;
+      let bin = Int.toBinary(10)          // &quot;1010&quot;
+      let oct = Int.toOctal(8)            // &quot;10&quot;
+    </code></pre>
+<p>Parsing from alternate bases.</p>
+<pre><code class="language-tlang">      let n = Int.fromHex(&quot;ff&quot;)           // 255
+      let n = Int.fromBinary(&quot;1010&quot;)      // 10
+      let n = Int.fromOctal(&quot;10&quot;)         // 8
+    </code></pre>
+<p>Range generation.</p>
+<pre><code class="language-tlang">      let r1 = Int.range(0, 5)      // [0, 1, 2, 3, 4]  — exclusive end
+      let r2 = Int.rangeTo(1, 5)    // [1, 2, 3, 4, 5]  — inclusive end
+    </code></pre>
+<p>Numeric utilities.</p>
+<pre><code class="language-tlang">      let a  = Int.abs(-7)                // 7
+      let c  = Int.clamp(15, 0, 10)       // 10
+      let f  = Int.toFloat(42)            // 42.0
+      let d  = Int.toDouble(42)           // 42.0
+      let mx = Int.maxValue()             // 9223372036854775807
+      let mn = Int.minValue()             // -9223372036854775808
+    </code></pre>
+</section>
+<section id="long">
+<h2>TLang.Long</h2>
+<p>TLang.Long mirrors TLang.Int with the same function set. Use it when a type annotation or API explicitly requires Long.</p>
+<pre><code class="language-tlang">      let max = Long.maxValue()
+      let min = Long.minValue()
+      let r   = Long.range(0, 100)          // List of Long 0..99
+      let rt  = Long.rangeTo(1, 5)          // [1, 2, 3, 4, 5]
+      let s   = Long.toString(1234567890)
+      let h   = Long.toHex(255)
+      let abs = Long.abs(-99)
+      let c   = Long.clamp(200, 0, 100)
+    </code></pre>
+</section>
+<section id="example">
+<h2>Examples</h2>
+<p>Generate padded numeric file names.</p>
+<pre><code class="language-tlang">      use TLang.Int
+      use TLang.String
+
+      func padded(n: Int, width: Int): String {
+          let s = Int.toString(n)
+          let s = String.repeat(&quot;0&quot;, width - String.length(s)) + s
+          return s
+      }
+
+      func main(): String {
+          let range = Int.range(1, 11)
+          for (i in range) {
+              let name = &quot;file_&quot; + padded(i, 3) + &quot;.txt&quot;
+              Terminal.println(name)
+          }
+          return &quot;done&quot;
+      }
+    </code></pre>
+<p>Convert a list of numeric strings to integers and sum them.</p>
+<pre><code class="language-tlang">      use TLang.Int
+      use TLang.List
+
+      func sumStrings(parts: List): Int {
+          return List.reduce(parts, 0, (acc, s) =&gt; acc + Int.parse(s))
+      }
+    </code></pre>
+</section>
+
+  </main>
+</div>
+<footer class="footer">
+  <div class="footer-inner">
+    <span class="footer-brand">TLang</span>
+    <div class="footer-links">
+      <a class="footer-link" href="../getting-started.html">Getting Started</a>
+      <a class="footer-link" href="../language/index.html">Language</a>
+      <a class="footer-link" href="../stdlib/index.html">Stdlib</a>
+      <a class="footer-link" href="../generators.html">Generators</a>
+      <a class="footer-link" href="https://github.com/joel-f/tlang">GitHub</a>
+    </div>
+    <span class="footer-copy">&copy; 2026 TLang Contributors &middot; Apache 2.0</span>
+  </div>
+</footer>
+<script>
+(function() {
+  var links = document.querySelectorAll('.sidebar-link');
+  var cur = window.location.href;
+  links.forEach(function(a) {
+    var href = a.getAttribute('href');
+    if (href && cur.indexOf(href.replace('../', '')) !== -1) {
+      a.classList.add('active');
+    }
+  });
+}());
+</script>
+</body>
+</html>

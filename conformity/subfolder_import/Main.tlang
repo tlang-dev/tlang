@@ -1,0 +1,12 @@
+use TLang.Terminal
+use helpers.MathUtils
+
+func main(): String {
+    let d = double(5)
+    Terminal.println(d)
+
+    let s = square(4)
+    Terminal.println(s)
+
+    return "done"
+}

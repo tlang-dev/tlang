@@ -1,0 +1,25 @@
+# Conformity test — set ext with attribute and ref surcharging
+#
+# Tests that a child set entity declared with `ext` inherits all body attrs
+# and constructor params from its parent, and that any attr (including a
+# `&ref` function attribute) redeclared in the child silently replaces the
+# inherited version (surcharging / overriding).
+#
+# Scenarios covered:
+#   - Child inherits all parent attrs it does not redeclare.
+#   - Child surcharges a single attr, leaving the rest inherited.
+#   - Child surcharges both a plain label attr and a &ref function attr.
+#   - Inherited constructor params flow through to the ref calling-convention
+#     (impl values are prepended to the ref call in declaration order).
+#
+# Run `tlang package generators/kotlin` before executing this test.
+
+name: SetExtOverride
+project: ConformityTests
+organisation: TLang
+version: 1.0.0
+stability: alpha
+releaseNumber: 1
+
+dependencies:
+  - TLangGen/KotlinGen/Kotlin 1.0.0:alpha:1 KotlinGen

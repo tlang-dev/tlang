@@ -1,0 +1,93 @@
+expose stdlibJsonGen
+
+use TLang.File
+use TLang.Generator
+use TLang.Terminal
+use layout.PageLayout
+
+doc [html] jsonPage() {
+  # TLang.Json / Yaml
+
+  TLang.Json and TLang.Yaml convert between Leaf trees and serialised text. Use them when you need to read structured data from a JSON or YAML string, or convert a Leaf model to JSON/YAML for inspection or output.
+
+  [code "tlang"
+    use TLang.Json
+    use TLang.Yaml
+  ]
+
+  [section "json"
+    ## TLang.Json
+
+    Json.toLeaf parses a JSON string into a Leaf tree that you can traverse with Leaf.get and Leaf.keys.
+
+    [code "tlang"
+      let rawJson = File.read("config.json")
+      let leaf    = Json.toLeaf(rawJson)
+      let host    = Leaf.get(leaf, "host")     // "localhost"
+      let port    = Leaf.get(leaf, "port")     // "5432"
+    ]
+
+    Json.fromLeaf serialises a Leaf tree to a JSON string.
+
+    [code "tlang"
+      let leaf   = Leaf.model()
+      let output = Json.fromLeaf(leaf)
+      File.write("output/model.json", output, true)
+    ]
+  ]
+
+  [section "yaml"
+    ## TLang.Yaml
+
+    Yaml.toLeaf parses a YAML string into a Leaf tree.
+
+    [code "tlang"
+      let rawYaml = File.read("values.yaml")
+      let leaf    = Yaml.toLeaf(rawYaml)
+      let image   = Leaf.get(leaf, "image")
+    ]
+
+    Yaml.fromLeaf serialises a Leaf tree to a YAML string.
+
+    [code "tlang"
+      let yamlStr = Yaml.fromLeaf(Leaf.model())
+    ]
+  ]
+
+  [section "example"
+    ## Example — Read Config, Generate Code
+
+    Read a JSON config file and generate an environment variable export script from it.
+
+    [code "tlang"
+      use TLang.Json
+      use TLang.Leaf
+      use TLang.File
+      use TLang.Terminal
+
+      func main(): String {
+          let raw    = File.read("config/settings.json")
+          let config = Json.toLeaf(raw)
+          let keys   = Leaf.keys(config)
+          let result = ""
+
+          for (k in keys) {
+              let val    = Leaf.get(config, k)
+              let result = result + "export " + k + "=" + val + "\n"
+          }
+
+          File.write("scripts/env.sh", result, true)
+          Terminal.println("Generated env.sh with " + List.size(keys) + " variables")
+          return "done"
+      }
+    ]
+  ]
+}
+
+func stdlibJsonGen(): String {
+    let content = Generator.generate(jsonPage("html"))
+    let html = PageLayout.page("TLang.Json / Yaml", content)
+    File.write("docs/docs/stdlib/json.html", html, true)
+    Terminal.println("  -> stdlib/json.html")
+    return ""
+}

@@ -1,0 +1,122 @@
+use TLang.Generator
+use KotlinGen as kotlin
+use TLang.Terminal
+
+lang [kotlin] saveWithUserId(pkg: String, className: String, recordType: String) {
+    pkg ${pkg}
+
+    impl[public class] ${className} {
+        fun save(record: ${recordType}, userId: String): ${recordType} {
+            record.ownerId = userId
+            record.ownerKind = "user"
+            return repository.save(record)
+        }
+    }
+}
+
+lang [kotlin] saveWithGroupId(pkg: String, className: String, recordType: String) {
+    pkg ${pkg}
+
+    impl[public class] ${className} {
+        fun save(record: ${recordType}, groupId: String): ${recordType} {
+            record.ownerId = groupId
+            record.ownerKind = "group"
+            return repository.save(record)
+        }
+    }
+}
+
+lang [kotlin] savePublic(pkg: String, className: String, recordType: String) {
+    pkg ${pkg}
+
+    impl[public class] ${className} {
+        fun save(record: ${recordType}): ${recordType} {
+            record.ownerId = null
+            record.ownerKind = "public"
+            return repository.save(record)
+        }
+    }
+}
+
+set UserSaveStrategy(pkg: String, className: String, recordType: String) {
+    description: "Save scoped to a userId",
+    generate: &generateWithUserId
+}
+
+set GroupSaveStrategy(pkg: String, className: String, recordType: String) {
+    description: "Save scoped to a groupId",
+    generate: &generateWithGroupId
+}
+
+set PublicSaveStrategy(pkg: String, className: String, recordType: String) {
+    description: "Save with no ownership (public)",
+    generate: &generatePublic
+}
+
+// Each function below is the ref target for the matching strategy.
+// It calls the appropriate template and returns the generated source.
+
+// The runtime prepends each instance's impl values as the first arguments
+// when dispatching a ref call, so these functions only need to declare the
+// impl param signature — no extra args are passed at the call site.
+
+func generateWithUserId(pkg: String, className: String, recordType: String): String {
+    let inst = saveWithUserId(pkg, className, recordType)
+    return Generator.generate(inst)
+}
+
+func generateWithGroupId(pkg: String, className: String, recordType: String): String {
+    let inst = saveWithGroupId(pkg, className, recordType)
+    return Generator.generate(inst)
+}
+
+func generatePublic(pkg: String, className: String, recordType: String): String {
+    let inst = savePublic(pkg, className, recordType)
+    return Generator.generate(inst)
+}
+
+// ── entry point ──────────────────────────────────────────────────────────
+
+func main(): String {
+    let pkg        = "com.example.save"
+    let recordType = "Document"
+
+    // ── Strategy A: user-scoped save ─────────────────────────────────
+    let userStrategy = UserSaveStrategy(
+        pkg:        pkg,
+        className:  "UserScopedDocumentSaver",
+        recordType: recordType
+    )
+    let userDesc = userStrategy.description
+    Terminal.println(userDesc)
+
+    // Impl values are automatically prepended by the runtime — call with no extra args.
+    let userCode = userStrategy.generate()
+    Terminal.println(userCode)
+
+    // ── Strategy B: group-scoped save ────────────────────────────────
+    let groupStrategy = GroupSaveStrategy(
+        pkg:        pkg,
+        className:  "GroupScopedDocumentSaver",
+        recordType: recordType
+    )
+    let groupDesc = groupStrategy.description
+    Terminal.println(groupDesc)
+
+    let groupCode = groupStrategy.generate()
+    Terminal.println(groupCode)
+
+    // ── Strategy C: public save ──────────────────────────────────────
+    let publicStrategy = PublicSaveStrategy(
+        pkg:        pkg,
+        className:  "PublicDocumentSaver",
+        recordType: recordType
+    )
+    let publicDesc = publicStrategy.description
+    Terminal.println(publicDesc)
+
+    let publicCode = publicStrategy.generate()
+    Terminal.println(publicCode)
+
+    return userCode + "\n---\n" + groupCode + "\n---\n" + publicCode
+}

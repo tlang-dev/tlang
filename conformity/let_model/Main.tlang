@@ -1,0 +1,44 @@
+use TLang.Leaf
+use TLang.Terminal
+
+let seed: Number = 42
+let enabled: Bool = false
+let max: Number = 100
+
+func main(): String {
+    let model = Leaf.model()
+
+    // Each model `let` node is exposed as a Leaf with fields:
+    //   name  — the variable name as a string
+    //   type  — the declared type as a string
+    //   value — the raw value text as a string
+
+    // --- seed ---
+    let seed_leaf  = Leaf.get(model, "seed")
+    let seed_name  = Leaf.get(seed_leaf, "name")
+    let seed_type  = Leaf.get(seed_leaf, "type")
+    let seed_value = Leaf.get(seed_leaf, "value")
+    Terminal.println(seed_name)
+    Terminal.println(seed_type)
+    Terminal.println(seed_value)
+
+    // --- enabled ---
+    let enabled_leaf  = Leaf.get(model, "enabled")
+    let enabled_name  = Leaf.get(enabled_leaf, "name")
+    let enabled_type  = Leaf.get(enabled_leaf, "type")
+    let enabled_value = Leaf.get(enabled_leaf, "value")
+    Terminal.println(enabled_name)
+    Terminal.println(enabled_type)
+    Terminal.println(enabled_value)
+
+    // --- max ---
+    let max_leaf  = Leaf.get(model, "max")
+    let max_name  = Leaf.get(max_leaf, "name")
+    let max_type  = Leaf.get(max_leaf, "type")
+    let max_value = Leaf.get(max_leaf, "value")
+    Terminal.println(max_name)
+    Terminal.println(max_type)
+    Terminal.println(max_value)
+
+    return "done"
+}

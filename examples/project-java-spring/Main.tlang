@@ -1,0 +1,86 @@
+use TLang.File
+use TLang.Terminal
+use TLang.Leaf
+use TLang.Naming as N
+use JavaSpringImpl
+use ContractLib
+
+set TodoProject {
+    name: "todo",
+    org: "example",
+    version: "0.1.0",
+    gradle_group: "com.example.todo"
+}
+
+
+func main(): String {
+
+    // ── Contract introspection ────────────────────────────────────────────
+    //
+    // contracts() is exposed by ContractLib (contract/Main.tlang).
+    // "project-build" is listed alongside the Layer 3 pattern contracts.
+
+    Terminal.println("Available contracts:")
+    Terminal.println(contracts())
+    Terminal.println("")
+
+    // ── Read project metadata from the local model set ────────────────────
+    //
+    // Leaf.model() is called here — in the example's own helper block —
+    // so it sees TodoProject without any cross-package limitation.
+
+    let mdl      = Leaf.model()
+    let entity   = Leaf.get(mdl, "TodoProject")
+    let attrs    = Leaf.get(entity, "attrs")
+
+    let group    = Leaf.get(Leaf.get(attrs, "gradle_group"), "value")
+    let nameVal  = Leaf.get(Leaf.get(attrs, "name"),         "value")
+    let ver      = Leaf.get(Leaf.get(attrs, "version"),      "value")
+
+    // Derive the Gradle artifact ID as the kebab-case project name.
+    let artifact = N.toKebabCase(nameVal)
+
+    Terminal.println("Generating Java + Spring Boot project base:")
+    Terminal.println("  group:    " + group)
+    Terminal.println("  artifact: " + artifact)
+    Terminal.println("  version:  " + ver)
+    Terminal.println("")
+
+    // ── build.gradle.kts ──────────────────────────────────────────────────
+    //
+    // Scaffold-once: user edits survive re-runs.
+    // Contains: Spring Boot plugin, dependency-management plugin,
+    // group/version, Java 17 toolchain, standard Spring Boot dependencies.
+
+    let build = buildFileContent(group, artifact, ver, "17")
+    File.write("output/build.gradle.kts", build)
+    Terminal.println("Generated: output/build.gradle.kts")
+
+    // ── settings.gradle.kts ───────────────────────────────────────────────
+
+    let settings = settingsFileContent(artifact)
+    File.write("output/settings.gradle.kts", settings)
+    Terminal.println("Generated: output/settings.gradle.kts")
+
+    // ── gradle.properties ─────────────────────────────────────────────────
+    //
+    // Enables the Gradle daemon and the Foojay toolchain resolver.
+
+    let props = gradlePropertiesContent()
+    File.write("output/gradle.properties", props)
+    Terminal.println("Generated: output/gradle.properties")
+
+    // ── src/main/resources/application.yml ────────────────────────────────
+    //
+    // Scaffold-once: edit to configure a real datasource before deploying.
+    // Defaults to H2 in-memory database on port 8080.
+
+    let config = appConfigContent(artifact, "8080")
+    File.write("output/src/main/resources/application.yml", config)
+    Terminal.println("Generated: output/src/main/resources/application.yml")
+
+    Terminal.println("")
+    Terminal.println("Java Spring project base generation complete.")
+    return "done"
+}
+

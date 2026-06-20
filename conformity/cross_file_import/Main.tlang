@@ -1,0 +1,12 @@
+use TLang.Terminal
+use Utils
+
+func main(): String {
+    let sum = add(3, 4)
+    Terminal.println(sum)
+
+    let msg = greet("TLang")
+    Terminal.println(msg)
+
+    return "done"
+}

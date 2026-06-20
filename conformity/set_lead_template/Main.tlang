@@ -1,0 +1,80 @@
+use TLang.Generator
+use TLang.File
+use KotlinGen as kotlin
+use TLang.Terminal
+
+lang [kotlin] classShell(pkg: String, className: String, recordType: String) {
+    pkg ${pkg}
+
+    impl[public class] ${className} {
+        <[ attrs() ]>
+    }
+}
+
+lang [kotlin] saveMethod(pkg: String, className: String, recordType: String) spec {
+    fun save(record: ${recordType}): ${recordType} {
+        return repository.save(record)
+    }
+}
+
+lang [kotlin] updateMethod(pkg: String, className: String, recordType: String) spec {
+    fun update(record: ${recordType}): ${recordType} {
+        return repository.update(record)
+    }
+}
+
+lang [kotlin] auditMethod(pkg: String, className: String, recordType: String) spec {
+    fun audit(record: ${recordType}): Unit {
+        auditLogger.log("modified", record)
+    }
+}
+
+set BasicRepo(pkg: String, className: String, recordType: String) >> "target/tlang_test/lead_template/${className}.kt" {
+    lead: &classShell,
+    save: &saveMethod,
+    update: &updateMethod
+}
+
+set AuditedRepo : BasicRepo >> "target/tlang_test/lead_template/audited/${className}.kt" {
+    audit: &auditMethod
+}
+
+func main(): String {
+    let pkg        = "com.example"
+    let recordType = "Document"
+
+    // ── BasicRepo ─────────────────────────────────────────────────────────
+    // generateAll() detects the `lead` attr, pre-renders the inner bodies of
+    // save and update, then instantiates classShell with <[ attrs() ]>
+    // expanding to those two method bodies.  The combined output is written
+    // to the >> path automatically — one file, one class.
+
+    let basicRepo = BasicRepo(
+        pkg:        pkg,
+        className:  "DocumentRepo",
+        recordType: recordType
+    )
+
+    basicRepo.generateAll()
+
+    let basicCode = File.read("target/tlang_test/lead_template/DocumentRepo.kt")
+    Terminal.println(basicCode)
+
+    // ── AuditedRepo ───────────────────────────────────────────────────────
+    // Inherits lead + save + update from BasicRepo and adds audit.
+    // generateAll() expands all three method bodies inside the inherited
+    // classShell, producing a single class with save, update, and audit.
+
+    let auditedRepo = AuditedRepo(
+        pkg:        pkg,
+        className:  "AuditedDocumentRepo",
+        recordType: recordType
+    )
+
+    auditedRepo.generateAll()
+
+    let auditedCode = File.read("target/tlang_test/lead_template/audited/AuditedDocumentRepo.kt")
+    Terminal.println(auditedCode)
+
+    return basicCode
+}

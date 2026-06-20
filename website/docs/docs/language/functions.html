@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Functions &mdash; TLang</title>
+  <meta name="description" content="TLang documentation">
+  <link rel="stylesheet" href="../../assets/style.css">
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="../../index.html">TLang</a>
+    <div class="nav-links">
+      <a class="nav-link" href="../getting-started.html">Docs</a>
+      <a class="nav-link" href="../language/index.html">Language</a>
+      <a class="nav-link" href="../stdlib/index.html">Stdlib</a>
+      <a class="nav-link" href="../generators.html">Generators</a>
+      <a class="nav-link" href="https://github.com/joel-f/tlang">GitHub</a>
+      <a class="btn btn-sm btn-primary" href="../getting-started.html">Get Started</a>
+    </div>
+  </div>
+</nav>
+<div class="doc-layout">
+  <aside class="sidebar">
+    <nav>
+      <span class="sidebar-label">Getting Started</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../getting-started.html">Installation &amp; CLI</a>
+        <a class="sidebar-link" href="../editor-setup.html">Editor Setup</a>
+        <a class="sidebar-link" href="../ai-assistant.html">AI Assistant</a>
+      </div>
+      <div class="sidebar-sep"></div>
+      <span class="sidebar-label">Language Reference</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../language/index.html">Overview</a>
+        <a class="sidebar-link" href="../language/types.html">Types</a>
+        <a class="sidebar-link" href="../language/variables.html">Variables &amp; Scope</a>
+        <a class="sidebar-link" href="../language/functions.html">Functions</a>
+        <a class="sidebar-link" href="../language/control-flow.html">Control Flow</a>
+        <a class="sidebar-link" href="../language/templates.html">Template Blocks</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/lang-template.html">lang &mdash; Code</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/data-template.html">data &mdash; Data &amp; Config</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/doc-template.html">doc &mdash; Documents</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/style-template.html">style &mdash; Stylesheets</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/cmd-template.html">cmd &mdash; Commands &amp; SQL</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/raw-template.html">raw &mdash; Verbatim Text</a>
+        <a class="sidebar-link" href="../language/sets.html">Sets &amp; Models</a>
+        <a class="sidebar-link" href="../language/imports.html">Imports &amp; Expose</a>
+      </div>
+      <div class="sidebar-sep"></div>
+      <span class="sidebar-label">Standard Library</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../stdlib/index.html">Overview</a>
+        <a class="sidebar-link" href="../stdlib/string.html">TLang.String</a>
+        <a class="sidebar-link" href="../stdlib/list.html">TLang.List</a>
+        <a class="sidebar-link" href="../stdlib/map.html">TLang.Map</a>
+        <a class="sidebar-link" href="../stdlib/numbers.html">TLang.Int / Long</a>
+        <a class="sidebar-link" href="../stdlib/float.html">TLang.Float / Double</a>
+        <a class="sidebar-link" href="../stdlib/math.html">TLang.Math</a>
+        <a class="sidebar-link" href="../stdlib/file.html">TLang.File</a>
+        <a class="sidebar-link" href="../stdlib/terminal.html">TLang.Terminal</a>
+        <a class="sidebar-link" href="../stdlib/prompt.html">TLang.Prompt</a>
+        <a class="sidebar-link" href="../stdlib/shell.html">TLang.Shell</a>
+        <a class="sidebar-link" href="../stdlib/leaf.html">TLang.Leaf</a>
+        <a class="sidebar-link" href="../stdlib/generator.html">TLang.Generator</a>
+        <a class="sidebar-link" href="../stdlib/json.html">TLang.Json / Yaml</a>
+        <a class="sidebar-link" href="../stdlib/pdf.html">TLang.Pdf</a>
+        <a class="sidebar-link" href="../stdlib/string-builder.html">TLang.StringBuilder</a>
+        <a class="sidebar-link" href="../stdlib/naming.html">TLang.Naming</a>
+        <a class="sidebar-link" href="../stdlib/assert.html">TLang.Assert</a>
+        <a class="sidebar-link" href="../stdlib/formatting.html">TLang.Formatting</a>
+      </div>
+      <div class="sidebar-sep"></div>
+      <span class="sidebar-label">More</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../generators.html">Generators</a>
+        <a class="sidebar-link" href="../packages.html">Packages</a>
+        <a class="sidebar-link" href="../use-cases.html">Use Cases</a>
+      </div>
+    </nav>
+  </aside>
+  <main class="doc-content">
+    <h1>Functions</h1>
+<p>Functions are top-level declarations that contain all executable logic. TLang has no classes — behaviour lives in functions, templates live in template blocks, and data lives in the model.</p>
+<section id="syntax">
+<h2>Syntax</h2>
+<p>The func keyword declares a function. Parameters require type annotations. The return type follows the parameter list.</p>
+<pre><code class="language-tlang">      func greet(name: String): String {
+          return &quot;Hello, &quot; + name + &quot;!&quot;
+      }
+
+      func add(a: Int, b: Int): Int {
+          return a + b
+      }
+
+      func isAdult(age: Int): Bool {
+          return age &gt;= 18
+      }
+    </code></pre>
+<p>A function with no return value uses Unit (or omits the return type).</p>
+<pre><code class="language-tlang">      func log(msg: String): String {
+          Terminal.println(msg)
+          return &quot;&quot;
+      }
+    </code></pre>
+</section>
+<section id="main">
+<h2>The main Function</h2>
+<p>main is the program entry point. It must return String and must be exposed.</p>
+<pre><code class="language-tlang">      expose main
+
+      func main(): String {
+          // generation logic here
+          return &quot;done&quot;
+      }
+    </code></pre>
+<p>main can accept a String list for CLI arguments.</p>
+<pre><code class="language-tlang">      func main(args: List): String {
+          let name = List.get(args, 0)
+          return &quot;Hello, &quot; + name
+      }
+    </code></pre>
+</section>
+<section id="calling">
+<h2>Calling Functions</h2>
+<p>Functions call each other freely within the same file. Functions from imported files are accessed via the import alias.</p>
+<pre><code class="language-tlang">      let result = greet(&quot;Alice&quot;)
+      let sum    = add(10, 20)
+
+      // From an imported file:
+      // use helpers.StringUtils
+      let slug = StringUtils.toSlug(name)
+    </code></pre>
+</section>
+<section id="refs">
+<h2>Function References</h2>
+<p>Use & to pass a function as a value. Function references work with higher-order functions.</p>
+<pre><code class="language-tlang">      func double(x: Int): Int {
+          return x * 2
+      }
+
+      let fn     = &amp;double
+      let result = List.map(List.of(1, 2, 3), &amp;double)   // [2, 4, 6]
+    </code></pre>
+</section>
+<section id="lambdas">
+<h2>Lambdas</h2>
+<p>Lambdas are inline anonymous functions. They use the => arrow syntax.</p>
+<pre><code class="language-tlang">      let doubled = List.map(List.of(1, 2, 3), (x) =&gt; x * 2)
+      let evens   = List.filter(items, (x) =&gt; x % 2 == 0)
+      let total   = List.reduce(nums, 0, (acc, n) =&gt; acc + n)
+    </code></pre>
+<p>Lambdas can close over variables in scope.</p>
+<pre><code class="language-tlang">      let prefix = &quot;user_&quot;
+      let named  = List.map(ids, (id) =&gt; prefix + id)
+    </code></pre>
+<p>Multi-parameter lambdas use a comma-separated list.</p>
+<pre><code class="language-tlang">      let product = List.reduce(nums, 1, (acc, n) =&gt; acc * n)
+    </code></pre>
+</section>
+<section id="hof">
+<h2>Dot-Method Syntax</h2>
+<p>Higher-order List and Map functions can be written using dot-method style. Both forms are identical.</p>
+<pre><code class="language-tlang">      // Function form
+      let result = List.map(items, (x) =&gt; x + &quot;!&quot;)
+
+      // Dot form
+      let result = items.map((x) =&gt; x + &quot;!&quot;)
+
+      // Chained
+      let processed = items
+          .filter((x) =&gt; x != &quot;&quot;)
+          .map((x) =&gt; x.trim())
+    </code></pre>
+</section>
+<section id="recursion">
+<h2>Recursion</h2>
+<p>Functions can call themselves directly. TLang does not limit recursion depth beyond available stack.</p>
+<pre><code class="language-tlang">      func factorial(n: Int): Int {
+          if (n &lt;= 1) {
+              return 1
+          }
+          return n * factorial(n - 1)
+      }
+
+      func joinWith(items: List, sep: String, idx: Int, acc: String): String {
+          if (idx &gt;= List.size(items)) {
+              return acc
+          }
+          let item = List.get(items, idx)
+          let next = if (idx == 0) item else acc + sep + item
+          return joinWith(items, sep, idx + 1, next)
+      }
+    </code></pre>
+</section>
+<section id="optional">
+<h2>Optional Chaining and Null Coalescing</h2>
+<p>The ?. operator chains through nullable values. If any step is null, the whole expression returns null without error.</p>
+<pre><code class="language-tlang">      let name = user?.profile?.name
+    </code></pre>
+<p>The ?? operator provides a default when the left side is null.</p>
+<pre><code class="language-tlang">      let display = user?.name ?? &quot;Anonymous&quot;
+    </code></pre>
+</section>
+
+  </main>
+</div>
+<footer class="footer">
+  <div class="footer-inner">
+    <span class="footer-brand">TLang</span>
+    <div class="footer-links">
+      <a class="footer-link" href="../getting-started.html">Getting Started</a>
+      <a class="footer-link" href="../language/index.html">Language</a>
+      <a class="footer-link" href="../stdlib/index.html">Stdlib</a>
+      <a class="footer-link" href="../generators.html">Generators</a>
+      <a class="footer-link" href="https://github.com/joel-f/tlang">GitHub</a>
+    </div>
+    <span class="footer-copy">&copy; 2026 TLang Contributors &middot; Apache 2.0</span>
+  </div>
+</footer>
+<script>
+(function() {
+  var links = document.querySelectorAll('.sidebar-link');
+  var cur = window.location.href;
+  links.forEach(function(a) {
+    var href = a.getAttribute('href');
+    if (href && cur.indexOf(href.replace('../', '')) !== -1) {
+      a.classList.add('active');
+    }
+  });
+}());
+</script>
+</body>
+</html>

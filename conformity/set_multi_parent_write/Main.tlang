@@ -1,0 +1,178 @@
+use TLang.Generator
+use KotlinGen as kotlin
+use TLang.Terminal
+
+lang [kotlin] saveWithUser(pkg: String, className: String, recordType: String) {
+    pkg ${pkg}
+
+    impl[public class] ${className} {
+        fun save(record: ${recordType}, userId: String): ${recordType} {
+            record.ownerId = userId
+            record.ownerKind = "user"
+            return repository.save(record)
+        }
+    }
+}
+
+lang [kotlin] saveWithGroup(pkg: String, className: String, recordType: String) {
+    pkg ${pkg}
+
+    impl[public class] ${className} {
+        fun save(record: ${recordType}, groupId: String): ${recordType} {
+            record.ownerId = groupId
+            record.ownerKind = "group"
+            return repository.save(record)
+        }
+    }
+}
+
+lang [kotlin] saveWithGroupCached(pkg: String, className: String, recordType: String) {
+    pkg ${pkg}
+
+    impl[public class] ${className} {
+        fun save(record: ${recordType}, groupId: String): ${recordType} {
+            record.ownerId = groupId
+            record.ownerKind = "group"
+            cache.invalidate(groupId)
+            return repository.save(record)
+        }
+    }
+}
+
+lang [kotlin] updateWithUser(pkg: String, className: String, recordType: String) {
+    pkg ${pkg}
+
+    impl[public class] ${className} {
+        fun update(record: ${recordType}, userId: String): ${recordType} {
+            record.ownerId = userId
+            return repository.update(record)
+        }
+    }
+}
+
+lang [kotlin] updateWithGroup(pkg: String, className: String, recordType: String) {
+    pkg ${pkg}
+
+    impl[public class] ${className} {
+        fun update(record: ${recordType}, groupId: String): ${recordType} {
+            record.ownerId = groupId
+            return repository.update(record)
+        }
+    }
+}
+
+lang [kotlin] auditLog(pkg: String, className: String, recordType: String) {
+    pkg ${pkg}
+
+    impl[public class] ${className} {
+        fun audit(record: ${recordType}): Unit {
+            auditLogger.log("modified", record)
+        }
+    }
+}
+
+set WithUser(pkg: String, className: String, recordType: String) >> "target/tlang_test/multi_parent/${className}.kt" {
+    save: &saveWithUser,
+    update: &updateWithUser
+}
+
+set WithGroup(pkg: String, className: String, recordType: String) {
+    save: &saveWithGroup,
+    update: &updateWithGroup
+}
+
+set WithAudit(pkg: String, className: String, recordType: String) {
+    audit: &auditLog
+}
+
+set FullRepo : WithUser : WithAudit {}
+
+set CachedRepo : WithUser : WithGroup : WithAudit {
+    save: &saveWithGroupCached
+}
+
+set ScaffoldRepo : WithUser >>? "target/tlang_test/multi_parent/scaffold/${className}.kt" {}
+
+func main(): String {
+    let pkg        = "com.example"
+    let recordType = "Document"
+
+    // ── FullRepo: two parents, no surcharge ───────────────────────────────
+    // Attrs in canonical order: save, update (from WithUser), audit (from WithAudit)
+
+    let fullRepo = FullRepo(
+        pkg:        pkg,
+        className:  "FullDocumentRepo",
+        recordType: recordType
+    )
+
+    Terminal.println("--- FullRepo attrs ---")
+    for (op in fullRepo.attrs()) {
+        Terminal.println(op.name)
+    }
+
+    // Direct template-ref calls return Leaf directly
+    let fullSaveLeaf = fullRepo.save()
+    let fullSaveCode = Generator.generate(fullSaveLeaf)
+    Terminal.println(fullSaveCode)
+
+    let fullAuditLeaf = fullRepo.audit()
+    let fullAuditCode = Generator.generate(fullAuditLeaf)
+    Terminal.println(fullAuditCode)
+
+    // generateAll() also writes to >> path (target/tlang_test/multi_parent/FullDocumentRepo.kt)
+    let fullEntries = fullRepo.generateAll()
+    Terminal.println("--- FullRepo generateAll ---")
+    for (entry in fullEntries) {
+        Terminal.println(entry.name)
+    }
+
+    // ── CachedRepo: three parents, child surcharges save ──────────────────
+    // Canonical order: save, update (from WithUser/WithGroup chain), audit (from WithAudit)
+    // save  → saveWithGroupCached (child wins over both WithUser and WithGroup)
+    // update → updateWithGroup (WithGroup declared after WithUser — last parent wins)
+    // audit  → auditLog           (WithAudit)
+
+    let cachedRepo = CachedRepo(
+        pkg:        pkg,
+        className:  "CachedDocumentRepo",
+        recordType: recordType
+    )
+
+    Terminal.println("--- CachedRepo attrs ---")
+    for (op in cachedRepo.attrs()) {
+        Terminal.println(op.name)
+    }
+
+    // save must use saveWithGroupCached (child surcharge)
+    let cachedSaveLeaf = cachedRepo.save()
+    let cachedSaveCode = Generator.generate(cachedSaveLeaf)
+    Terminal.println(cachedSaveCode)
+
+    // update must use updateWithUser (from WithUser — WithGroup has no update)
+    let cachedUpdateLeaf = cachedRepo.update()
+    let cachedUpdateCode = Generator.generate(cachedUpdateLeaf)
+    Terminal.println(cachedUpdateCode)
+
+    let cachedEntries = cachedRepo.generateAll()
+    Terminal.println("--- CachedRepo generateAll ---")
+    for (entry in cachedEntries) {
+        Terminal.println(entry.name)
+    }
+
+    // ── ScaffoldRepo: >>? writes only if file does not exist ─────────────
+
+    let scaffoldRepo = ScaffoldRepo(
+        pkg:        pkg,
+        className:  "ScaffoldDocumentRepo",
+        recordType: recordType
+    )
+
+    let scaffoldEntries = scaffoldRepo.generateAll()
+    Terminal.println("--- ScaffoldRepo generateAll ---")
+    for (entry in scaffoldEntries) {
+        Terminal.println(entry.name)
+    }
+
+    return fullSaveCode
+}

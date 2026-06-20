@@ -1,0 +1,101 @@
+use TLang.Terminal
+use TLang.List as L
+use TLang.Map as M
+
+func main(): String {
+    // --- create / isEmpty / size ---
+    let empty = M.create()
+    Terminal.println(M.isEmpty(empty))
+    Terminal.println(M.size(empty))
+
+    // --- of ---
+    let m = M.of("name", "alice", "age", "30")
+    Terminal.println(M.isEmpty(m))
+    Terminal.println(M.size(m))
+
+    // --- has ---
+    Terminal.println(M.has(m, "name"))
+    Terminal.println(M.has(m, "email"))
+
+    // --- get ---
+    Terminal.println(M.get(m, "name"))
+    Terminal.println(M.get(m, "age"))
+
+    // --- getOrDefault ---
+    Terminal.println(M.getOrDefault(m, "name", "unknown"))
+    Terminal.println(M.getOrDefault(m, "email", "none"))
+
+    // --- set (immutable: original unchanged) ---
+    let m2 = M.set(m, "email", "alice@example.com")
+    Terminal.println(M.size(m2))
+    Terminal.println(M.size(m))
+    Terminal.println(M.get(m2, "email"))
+    Terminal.println(M.has(m, "email"))
+
+    // overwrite existing key
+    let m3 = M.set(m, "name", "bob")
+    Terminal.println(M.get(m3, "name"))
+    Terminal.println(M.get(m, "name"))
+
+    // --- remove ---
+    let m4 = M.remove(m2, "age")
+    Terminal.println(M.size(m4))
+    Terminal.println(M.has(m4, "age"))
+    Terminal.println(M.size(m2))
+
+    // remove a key that does not exist is a no-op
+    let m5 = M.remove(m, "ghost")
+    Terminal.println(M.size(m5))
+
+    // --- keys (BTreeMap: sorted alphabetically) ---
+    let ks = M.keys(m)
+    Terminal.println(L.size(ks))
+    Terminal.println(L.join(ks, ","))
+
+    // --- values (key-sorted order) ---
+    let vs = M.values(m)
+    Terminal.println(L.size(vs))
+    Terminal.println(L.join(vs, ","))
+
+    // --- entries ---
+    let es = M.entries(m)
+    Terminal.println(L.size(es))
+    let entry0 = L.get(es, 0)
+    Terminal.println(L.join(entry0, "="))
+    let entry1 = L.get(es, 1)
+    Terminal.println(L.join(entry1, "="))
+
+    // --- merge ---
+    let base = M.of("x", "1", "y", "2")
+    let over = M.of("y", "99", "z", "3")
+    let merged = M.merge(base, over)
+    Terminal.println(M.size(merged))
+    Terminal.println(M.get(merged, "x"))
+    Terminal.println(M.get(merged, "y"))
+    Terminal.println(M.get(merged, "z"))
+
+    // base and over are unchanged
+    Terminal.println(M.size(base))
+    Terminal.println(M.size(over))
+
+    // --- fromLists ---
+    let fk = L.of("a", "b", "c")
+    let fv = L.of("1", "2", "3")
+    let built = M.fromLists(fk, fv)
+    Terminal.println(M.size(built))
+    Terminal.println(M.get(built, "a"))
+    Terminal.println(M.get(built, "b"))
+    Terminal.println(M.get(built, "c"))
+
+    // --- toList (alias for entries) ---
+    let tl = M.toList(built)
+    Terminal.println(L.size(tl))
+
+    // --- iterate over keys with for-in ---
+    let final_keys = M.keys(built)
+    for (k in final_keys) {
+        Terminal.println(k)
+    }
+
+    return "done"
+}

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Imports & Expose &mdash; TLang</title>
+  <meta name="description" content="TLang documentation">
+  <link rel="stylesheet" href="../../assets/style.css">
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="../../index.html">TLang</a>
+    <div class="nav-links">
+      <a class="nav-link" href="../getting-started.html">Docs</a>
+      <a class="nav-link" href="../language/index.html">Language</a>
+      <a class="nav-link" href="../stdlib/index.html">Stdlib</a>
+      <a class="nav-link" href="../generators.html">Generators</a>
+      <a class="nav-link" href="https://github.com/joel-f/tlang">GitHub</a>
+      <a class="btn btn-sm btn-primary" href="../getting-started.html">Get Started</a>
+    </div>
+  </div>
+</nav>
+<div class="doc-layout">
+  <aside class="sidebar">
+    <nav>
+      <span class="sidebar-label">Getting Started</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../getting-started.html">Installation &amp; CLI</a>
+        <a class="sidebar-link" href="../editor-setup.html">Editor Setup</a>
+        <a class="sidebar-link" href="../ai-assistant.html">AI Assistant</a>
+      </div>
+      <div class="sidebar-sep"></div>
+      <span class="sidebar-label">Language Reference</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../language/index.html">Overview</a>
+        <a class="sidebar-link" href="../language/types.html">Types</a>
+        <a class="sidebar-link" href="../language/variables.html">Variables &amp; Scope</a>
+        <a class="sidebar-link" href="../language/functions.html">Functions</a>
+        <a class="sidebar-link" href="../language/control-flow.html">Control Flow</a>
+        <a class="sidebar-link" href="../language/templates.html">Template Blocks</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/lang-template.html">lang &mdash; Code</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/data-template.html">data &mdash; Data &amp; Config</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/doc-template.html">doc &mdash; Documents</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/style-template.html">style &mdash; Stylesheets</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/cmd-template.html">cmd &mdash; Commands &amp; SQL</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/raw-template.html">raw &mdash; Verbatim Text</a>
+        <a class="sidebar-link" href="../language/sets.html">Sets &amp; Models</a>
+        <a class="sidebar-link" href="../language/imports.html">Imports &amp; Expose</a>
+      </div>
+      <div class="sidebar-sep"></div>
+      <span class="sidebar-label">Standard Library</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../stdlib/index.html">Overview</a>
+        <a class="sidebar-link" href="../stdlib/string.html">TLang.String</a>
+        <a class="sidebar-link" href="../stdlib/list.html">TLang.List</a>
+        <a class="sidebar-link" href="../stdlib/map.html">TLang.Map</a>
+        <a class="sidebar-link" href="../stdlib/numbers.html">TLang.Int / Long</a>
+        <a class="sidebar-link" href="../stdlib/float.html">TLang.Float / Double</a>
+        <a class="sidebar-link" href="../stdlib/math.html">TLang.Math</a>
+        <a class="sidebar-link" href="../stdlib/file.html">TLang.File</a>
+        <a class="sidebar-link" href="../stdlib/terminal.html">TLang.Terminal</a>
+        <a class="sidebar-link" href="../stdlib/prompt.html">TLang.Prompt</a>
+        <a class="sidebar-link" href="../stdlib/shell.html">TLang.Shell</a>
+        <a class="sidebar-link" href="../stdlib/leaf.html">TLang.Leaf</a>
+        <a class="sidebar-link" href="../stdlib/generator.html">TLang.Generator</a>
+        <a class="sidebar-link" href="../stdlib/json.html">TLang.Json / Yaml</a>
+        <a class="sidebar-link" href="../stdlib/pdf.html">TLang.Pdf</a>
+        <a class="sidebar-link" href="../stdlib/string-builder.html">TLang.StringBuilder</a>
+        <a class="sidebar-link" href="../stdlib/naming.html">TLang.Naming</a>
+        <a class="sidebar-link" href="../stdlib/assert.html">TLang.Assert</a>
+        <a class="sidebar-link" href="../stdlib/formatting.html">TLang.Formatting</a>
+      </div>
+      <div class="sidebar-sep"></div>
+      <span class="sidebar-label">More</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../generators.html">Generators</a>
+        <a class="sidebar-link" href="../packages.html">Packages</a>
+        <a class="sidebar-link" href="../use-cases.html">Use Cases</a>
+      </div>
+    </nav>
+  </aside>
+  <main class="doc-content">
+    <h1>Imports & Expose</h1>
+<p>TLang uses a simple path-based module system. expose makes a symbol callable by other files. use imports a module, making its exposed symbols available under an alias.</p>
+<section id="expose">
+<h2>expose</h2>
+<p>expose declares which functions and templates are visible to other files. Symbols not listed with expose are private to the file.</p>
+<pre><code class="language-tlang">      expose main
+      expose greet
+      expose entity
+
+      func main(): String { ... }
+      func greet(name: String): String { ... }
+      func internal(): String { ... }   // NOT exposed — private
+
+      lang [kotlin] entity(pkg: String, cls: String) { ... }
+    </code></pre>
+<p>Multiple symbols are each declared on their own expose line.</p>
+</section>
+<section id="use">
+<h2>use</h2>
+<p>use imports a file. The alias defaults to the last path segment (the filename without extension).</p>
+<pre><code class="language-tlang">      use TLang.File          // alias: File  — standard library
+      use TLang.Generator     // alias: Generator
+      use TLang.List          // alias: List (also works as bare List.of(...))
+      use helpers.Formatters  // alias: Formatters — from helpers/Formatters.tlang
+      use Utils               // alias: Utils — from Utils.tlang in same directory
+    </code></pre>
+<p>After importing, call exposed symbols via the alias.</p>
+<pre><code class="language-tlang">      use helpers.StringUtils
+
+      func main(): String {
+          let slug = StringUtils.toSlug(&quot;Hello World&quot;)
+          return slug
+      }
+    </code></pre>
+</section>
+<section id="alias">
+<h2>Custom Aliases</h2>
+<p>Use as to give the import a different alias. Required when two imports have the same filename.</p>
+<pre><code class="language-tlang">      use KotlinGen       as kotlin
+      use JavaGen         as java
+      use TypescriptGenerator as ts
+      use lang.Overview   as LangOverview
+      use stdlib.Overview as StdlibOverview
+    </code></pre>
+<p>Generators need an alias that matches the lang template format name.</p>
+<pre><code class="language-tlang">      use KotlinGen as kotlin
+
+      lang [kotlin] entity(pkg: String, cls: String) {
+          // format &quot;kotlin&quot; matches the alias
+      }
+    </code></pre>
+</section>
+<section id="paths">
+<h2>Import Paths</h2>
+<p>Paths map to the filesystem relative to the project root (where manifest.yml lives).
+TLang.Module — standard library module. Always works regardless of project structure.
+File — imports File.tlang in the same directory as the importing file.
+folder.File — imports folder/File.tlang relative to the project root.</p>
+<pre><code class="language-tlang">      use TLang.File         // standard library
+      use TLang.Generator    // standard library
+      use Utils              // ./Utils.tlang (same dir)
+      use helpers.Math       // ./helpers/Math.tlang
+      use models.Entities    // ./models/Entities.tlang
+    </code></pre>
+<p>Maximum import depth is one subfolder level. Two-level paths like use a.b.File are rejected.</p>
+</section>
+<section id="visibility">
+<h2>Visibility Rules</h2>
+<p>A symbol must be expose'd in its source file to be imported. Unexposed symbols are private.
+When you import a file, you access its exposed symbols via the alias.</p>
+<pre><code class="language-tlang">      // helpers/Formatters.tlang
+      expose toSlug
+      expose capitalize
+
+      func toSlug(s: String): String { ... }
+      func capitalize(s: String): String { ... }
+      func internalHelper(): String { ... }   // private
+    </code></pre>
+<pre><code class="language-tlang">      // Main.tlang
+      use helpers.Formatters
+
+      func main(): String {
+          let slug = Formatters.toSlug(&quot;Hello World&quot;)
+          // Formatters.internalHelper()  ← would fail — not exposed
+          return slug
+      }
+    </code></pre>
+</section>
+<section id="stdlib">
+<h2>Standard Library Modules</h2>
+<p>All standard library modules are imported with use TLang.ModuleName. They are always available regardless of project structure.</p>
+<pre><code class="language-tlang">      use TLang.File
+      use TLang.Terminal
+      use TLang.Generator
+      use TLang.Leaf
+      use TLang.List
+      use TLang.Map
+      use TLang.String
+      use TLang.Math
+      use TLang.Shell
+      use TLang.Json
+      use TLang.Yaml
+      use TLang.Pdf
+      use TLang.StringBuilder
+      use TLang.Naming
+      use TLang.Assert
+      use TLang.Prompt
+      use TLang.Formatting
+    </code></pre>
+<p>TLang.Str is an alias for TLang.String — both work identically.</p>
+</section>
+
+  </main>
+</div>
+<footer class="footer">
+  <div class="footer-inner">
+    <span class="footer-brand">TLang</span>
+    <div class="footer-links">
+      <a class="footer-link" href="../getting-started.html">Getting Started</a>
+      <a class="footer-link" href="../language/index.html">Language</a>
+      <a class="footer-link" href="../stdlib/index.html">Stdlib</a>
+      <a class="footer-link" href="../generators.html">Generators</a>
+      <a class="footer-link" href="https://github.com/joel-f/tlang">GitHub</a>
+    </div>
+    <span class="footer-copy">&copy; 2026 TLang Contributors &middot; Apache 2.0</span>
+  </div>
+</footer>
+<script>
+(function() {
+  var links = document.querySelectorAll('.sidebar-link');
+  var cur = window.location.href;
+  links.forEach(function(a) {
+    var href = a.getAttribute('href');
+    if (href && cur.indexOf(href.replace('../', '')) !== -1) {
+      a.classList.add('active');
+    }
+  });
+}());
+</script>
+</body>
+</html>

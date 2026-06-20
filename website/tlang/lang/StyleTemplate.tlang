@@ -1,0 +1,177 @@
+expose langStyleTemplateGen
+
+use TLang.File
+use TLang.Generator
+use TLang.Terminal
+use layout.PageLayout
+
+doc [html] styleTemplatePage() {
+  # style — Stylesheet Templates
+
+  The style template type generates CSS, SCSS, LESS, JSON design tokens, or JavaScript/TypeScript style objects. Body syntax uses selectors and property-value pairs. No generator import is needed.
+
+  [section "syntax"
+    ## Selector Syntax
+
+    Each rule is a selector name followed by a block of property-value pairs separated by commas.
+
+    [code "tlang"
+      style [css] base() {
+          body {
+              background: "#0d0d0d",
+              color:       "#e8e8e8",
+              font-family: "system-ui, sans-serif"
+          }
+          .container {
+              max-width:  1100px,
+              margin:     "0 auto",
+              padding:    "0 2rem"
+          }
+      }
+    ]
+
+    Property names are bare identifiers (hyphens allowed). Values that contain spaces must be quoted.
+  ]
+
+  [section "modifiers"
+    ## Pseudo-Class Modifiers
+
+    Append modifier names in square brackets to generate pseudo-class selectors.
+
+    [code "tlang"
+      style [css] buttons(accent: String) {
+          .btn {
+              background: $${accent},
+              padding:    "0.5rem 1rem"
+          }
+          .btn [hover] {
+              background: "#5a3fcc"
+          }
+          .btn [focus] {
+              outline: "2px solid " + $${accent}
+          }
+          .btn [active] {
+              transform: "scale(0.98)"
+          }
+          input [disabled] {
+              opacity: 0.5
+          }
+      }
+    ]
+
+    Supported modifiers: hover, focus, active, visited, disabled, checked, placeholder, first-child, last-child, nth-child, not, before, after.
+  ]
+
+  [section "values"
+    ## Value Forms
+
+    Bare identifiers are used verbatim — no quotes needed for single-word values.
+
+    Quoted strings have their quotes stripped in CSS output.
+
+    Numbers are emitted as-is. Values with units (14px, 2em) are quoted strings.
+
+    Parameter substitution with $${ } works in any value position.
+
+    Arrays are joined with commas in CSS output, useful for font stacks or transition lists.
+
+    [code "tlang"
+      style [css] theme(primary: String, radius: String) {
+          :root {
+              --color-primary:   $${primary},
+              --border-radius:   $${radius},
+              --font-sans:       ["Inter", "system-ui", "sans-serif"]
+          }
+          .card {
+              border-radius: $${radius},
+              padding:       "1.5rem 2rem",
+              transition:    ["background 0.2s", "border-color 0.2s"]
+          }
+      }
+    ]
+  ]
+
+  [section "formats"
+    ## Output Formats
+
+    css and scss and less produce standard CSS rules.
+
+    json produces a nested object with selector and property-value pairs.
+
+    js and ts produce JavaScript or TypeScript object literals.
+
+    [code "tlang"
+      style [css, json, js] tokens(primary: String) {
+          :root {
+              --primary: $${primary},
+              --radius:  "8px"
+          }
+      }
+
+      func main(): String {
+          let css    = Generator.generate(tokens("css",  "#7c5cfc"))
+          let tokens = Generator.generate(tokens("json", "#7c5cfc"))
+          let js     = Generator.generate(tokens("js",   "#7c5cfc"))
+
+          File.write("styles/tokens.css",  css,    true)
+          File.write("styles/tokens.json", tokens, true)
+          File.write("styles/tokens.js",   js,     true)
+          return "done"
+      }
+    ]
+  ]
+
+  [section "example"
+    ## Full Example — Design System
+
+    [code "tlang"
+      style [css] designSystem(primary: String, secondary: String) {
+          :root {
+              --color-primary:   $${primary},
+              --color-secondary: $${secondary},
+              --spacing-sm:      "0.5rem",
+              --spacing-md:      "1rem",
+              --spacing-lg:      "2rem",
+              --radius-sm:       "4px",
+              --radius-md:       "8px",
+              --radius-lg:       "16px"
+          }
+
+          * {
+              box-sizing: "border-box"
+          }
+
+          body {
+              margin:      0,
+              font-family: ["Inter", "system-ui", "sans-serif"],
+              line-height: 1.6
+          }
+
+          h1, h2, h3 {
+              color:       $${primary},
+              font-weight: 700
+          }
+
+          .btn-primary {
+              background: $${primary},
+              color:      white,
+              border:     none,
+              padding:    "0.6rem 1.4rem",
+              border-radius: "var(--radius-md)"
+          }
+
+          .btn-primary [hover] {
+              background: $${secondary}
+          }
+      }
+    ]
+  ]
+}
+
+func langStyleTemplateGen(): String {
+    let content = Generator.generate(styleTemplatePage("html"))
+    let html = PageLayout.page("style — Stylesheet Templates", content)
+    File.write("docs/docs/language/style-template.html", html, true)
+    Terminal.println("  -> language/style-template.html")
+    return ""
+}

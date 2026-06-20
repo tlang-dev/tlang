@@ -1,0 +1,14 @@
+expose double
+expose square
+
+func double(n: Int): Int {
+    return n * 2
+}
+
+func square(n: Int): Int {
+    return n * n
+}
+
+func internalMultiply(a: Int, b: Int): Int {
+    return a * b
+}

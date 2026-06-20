@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Sets & Models &mdash; TLang</title>
+  <meta name="description" content="TLang documentation">
+  <link rel="stylesheet" href="../../assets/style.css">
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="../../index.html">TLang</a>
+    <div class="nav-links">
+      <a class="nav-link" href="../getting-started.html">Docs</a>
+      <a class="nav-link" href="../language/index.html">Language</a>
+      <a class="nav-link" href="../stdlib/index.html">Stdlib</a>
+      <a class="nav-link" href="../generators.html">Generators</a>
+      <a class="nav-link" href="https://github.com/joel-f/tlang">GitHub</a>
+      <a class="btn btn-sm btn-primary" href="../getting-started.html">Get Started</a>
+    </div>
+  </div>
+</nav>
+<div class="doc-layout">
+  <aside class="sidebar">
+    <nav>
+      <span class="sidebar-label">Getting Started</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../getting-started.html">Installation &amp; CLI</a>
+        <a class="sidebar-link" href="../editor-setup.html">Editor Setup</a>
+        <a class="sidebar-link" href="../ai-assistant.html">AI Assistant</a>
+      </div>
+      <div class="sidebar-sep"></div>
+      <span class="sidebar-label">Language Reference</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../language/index.html">Overview</a>
+        <a class="sidebar-link" href="../language/types.html">Types</a>
+        <a class="sidebar-link" href="../language/variables.html">Variables &amp; Scope</a>
+        <a class="sidebar-link" href="../language/functions.html">Functions</a>
+        <a class="sidebar-link" href="../language/control-flow.html">Control Flow</a>
+        <a class="sidebar-link" href="../language/templates.html">Template Blocks</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/lang-template.html">lang &mdash; Code</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/data-template.html">data &mdash; Data &amp; Config</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/doc-template.html">doc &mdash; Documents</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/style-template.html">style &mdash; Stylesheets</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/cmd-template.html">cmd &mdash; Commands &amp; SQL</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/raw-template.html">raw &mdash; Verbatim Text</a>
+        <a class="sidebar-link" href="../language/sets.html">Sets &amp; Models</a>
+        <a class="sidebar-link" href="../language/imports.html">Imports &amp; Expose</a>
+      </div>
+      <div class="sidebar-sep"></div>
+      <span class="sidebar-label">Standard Library</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../stdlib/index.html">Overview</a>
+        <a class="sidebar-link" href="../stdlib/string.html">TLang.String</a>
+        <a class="sidebar-link" href="../stdlib/list.html">TLang.List</a>
+        <a class="sidebar-link" href="../stdlib/map.html">TLang.Map</a>
+        <a class="sidebar-link" href="../stdlib/numbers.html">TLang.Int / Long</a>
+        <a class="sidebar-link" href="../stdlib/float.html">TLang.Float / Double</a>
+        <a class="sidebar-link" href="../stdlib/math.html">TLang.Math</a>
+        <a class="sidebar-link" href="../stdlib/file.html">TLang.File</a>
+        <a class="sidebar-link" href="../stdlib/terminal.html">TLang.Terminal</a>
+        <a class="sidebar-link" href="../stdlib/prompt.html">TLang.Prompt</a>
+        <a class="sidebar-link" href="../stdlib/shell.html">TLang.Shell</a>
+        <a class="sidebar-link" href="../stdlib/leaf.html">TLang.Leaf</a>
+        <a class="sidebar-link" href="../stdlib/generator.html">TLang.Generator</a>
+        <a class="sidebar-link" href="../stdlib/json.html">TLang.Json / Yaml</a>
+        <a class="sidebar-link" href="../stdlib/pdf.html">TLang.Pdf</a>
+        <a class="sidebar-link" href="../stdlib/string-builder.html">TLang.StringBuilder</a>
+        <a class="sidebar-link" href="../stdlib/naming.html">TLang.Naming</a>
+        <a class="sidebar-link" href="../stdlib/assert.html">TLang.Assert</a>
+        <a class="sidebar-link" href="../stdlib/formatting.html">TLang.Formatting</a>
+      </div>
+      <div class="sidebar-sep"></div>
+      <span class="sidebar-label">More</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../generators.html">Generators</a>
+        <a class="sidebar-link" href="../packages.html">Packages</a>
+        <a class="sidebar-link" href="../use-cases.html">Use Cases</a>
+      </div>
+    </nav>
+  </aside>
+  <main class="doc-content">
+    <h1>Sets & Models</h1>
+<p>Sets declare named records of key-value data. They form the model that templates iterate over. A model block groups all sets together. At runtime, the model is accessible via Leaf.model() and via direct dot notation.</p>
+<section id="set">
+<h2>set Declarations</h2>
+<p>A set is a named record with string-valued attributes.</p>
+<pre><code class="language-tlang">      model {
+          set User {
+              pkg:   &quot;com.example.model&quot;,
+              cls:   &quot;User&quot;,
+              table: &quot;users&quot;
+          }
+          set Product {
+              pkg:   &quot;com.example.model&quot;,
+              cls:   &quot;Product&quot;,
+              table: &quot;products&quot;
+          }
+      }
+    </code></pre>
+<p>Access set attributes via direct dot notation when the name is known at compile time.</p>
+<pre><code class="language-tlang">      func main(): String {
+          let pkg   = User.pkg
+          let cls   = User.cls
+          let table = User.table
+          Terminal.println(pkg + &quot;.&quot; + cls + &quot; → &quot; + table)
+          return &quot;done&quot;
+      }
+    </code></pre>
+</section>
+<section id="scalar">
+<h2>Scalar let in model</h2>
+<p>The model block can also hold scalar constants using let.</p>
+<pre><code class="language-tlang">      model {
+          let version: String = &quot;2.0.0&quot;
+          let debug:   Bool   = false
+          let baseUrl: String = &quot;https://api.example.com&quot;
+      }
+
+      func main(): String {
+          Terminal.println(&quot;Version: &quot; + version)
+          return &quot;done&quot;
+      }
+    </code></pre>
+</section>
+<section id="iterate">
+<h2>Iterating with Leaf</h2>
+<p>When iterating over all sets dynamically, use the Leaf API. Leaf.model() returns the root model node. Leaf.keys() returns a List of set names.</p>
+<pre><code class="language-tlang">      use TLang.Leaf
+
+      func main(): String {
+          let model = Leaf.model()
+          let keys  = Leaf.keys(model)
+
+          for (k in keys) {
+              let entry = Leaf.get(model, k)
+              let pkg   = entry.pkg
+              let cls   = entry.cls
+              Terminal.println(cls + &quot; in &quot; + pkg)
+          }
+          return &quot;done&quot;
+      }
+    </code></pre>
+<p>For deeper access via the Leaf API when dynamic traversal is needed.</p>
+<pre><code class="language-tlang">      let model  = Leaf.model()
+      let entity = Leaf.get(model, &quot;User&quot;)
+      let attrs  = Leaf.get(entity, &quot;attrs&quot;)
+      let pkg    = Leaf.get(Leaf.get(attrs, &quot;pkg&quot;), &quot;value&quot;)
+    </code></pre>
+</section>
+<section id="inheritance">
+<h2>Set Inheritance</h2>
+<p>A set can extend another set with ext. It inherits all parent attributes and can add its own.</p>
+<pre><code class="language-tlang">      model {
+          set BaseEntity {
+              pkg:    &quot;com.example.base&quot;,
+              extends: &quot;Identifiable&quot;
+          }
+          set User ext BaseEntity {
+              cls:   &quot;User&quot;,
+              table: &quot;users&quot;
+          }
+      }
+    </code></pre>
+</section>
+<section id="constructor">
+<h2>Sets with Constructor Parameters</h2>
+<p>A set can declare constructor parameters. Instantiate it with the impl keyword. An optional write path (>>) tells the generator where to write the output.</p>
+<pre><code class="language-tlang">      model {
+          set BasicEntity(pkg: String, cls: String, table: String)
+                  &gt;&gt; &quot;output/$${cls}.kt&quot; {
+              baseClass: &quot;BaseEntity&quot;
+          }
+      }
+
+      func main(): String {
+          let userEntity = BasicEntity(
+              impl pkg:   &quot;com.example&quot;,
+              impl cls:   &quot;User&quot;,
+              impl table: &quot;users&quot;
+          )
+          userEntity.generateAll()
+          return &quot;done&quot;
+      }
+    </code></pre>
+</section>
+<section id="func-params">
+<h2>Sets with Function Parameters</h2>
+<p>A set attribute can reference a function by type. This lets different instances use different generation strategies.</p>
+<pre><code class="language-tlang">      model {
+          set CodeStrategy(generate: (String, String):(String)) {
+              label: &quot;strategy&quot;
+          }
+      }
+
+      func kotlinGen(pkg: String, cls: String): String {
+          return Generator.generate(kotlinEntity(pkg, cls))
+      }
+      func javaGen(pkg: String, cls: String): String {
+          return Generator.generate(javaEntity(pkg, cls))
+      }
+
+      func main(): String {
+          let kt = CodeStrategy(impl generate: &amp;kotlinGen)
+          let jv = CodeStrategy(impl generate: &amp;javaGen)
+          let code = kt.generate(&quot;com.example&quot;, &quot;User&quot;)
+          return code
+      }
+    </code></pre>
+</section>
+
+  </main>
+</div>
+<footer class="footer">
+  <div class="footer-inner">
+    <span class="footer-brand">TLang</span>
+    <div class="footer-links">
+      <a class="footer-link" href="../getting-started.html">Getting Started</a>
+      <a class="footer-link" href="../language/index.html">Language</a>
+      <a class="footer-link" href="../stdlib/index.html">Stdlib</a>
+      <a class="footer-link" href="../generators.html">Generators</a>
+      <a class="footer-link" href="https://github.com/joel-f/tlang">GitHub</a>
+    </div>
+    <span class="footer-copy">&copy; 2026 TLang Contributors &middot; Apache 2.0</span>
+  </div>
+</footer>
+<script>
+(function() {
+  var links = document.querySelectorAll('.sidebar-link');
+  var cur = window.location.href;
+  links.forEach(function(a) {
+    var href = a.getAttribute('href');
+    if (href && cur.indexOf(href.replace('../', '')) !== -1) {
+      a.classList.add('active');
+    }
+  });
+}());
+</script>
+</body>
+</html>

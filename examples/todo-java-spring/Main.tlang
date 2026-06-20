@@ -1,0 +1,133 @@
+use TLang.Generator
+use TLang.File
+use TLang.Terminal
+use JavaSpringImpl
+use ContractLib
+
+set TodoEntity(pkg: String, pkgPath: String, entityName: String) >> "output/src/main/java/${pkgPath}/${entityName}.java" {
+    lead: &entityLead
+}
+
+set TodoRepository(pkg: String, pkgPath: String, entityName: String, extendsClass: String) >> "output/src/main/java/${pkgPath}/${entityName}Repository.java" {
+    lead: &repositoryLead
+}
+
+set TodoService(pkg: String, pkgPath: String, entityName: String) >> "output/src/main/java/${pkgPath}/${entityName}Service.java" {
+    lead: &serviceLead
+}
+
+set TodoController(pkg: String, pkgPath: String, entityName: String, basePath: String) >> "output/src/main/java/${pkgPath}/${entityName}Controller.java" {
+    lead: &controllerLead
+}
+
+set FavouriteEntity : TodoEntity {
+    extra: &favouriteField
+}
+
+set FavouriteRepository : TodoRepository {
+    findByFavourite: &findByFavouriteMethod
+}
+
+set FavouriteService : TodoService {
+    findByFavourite: &findByFavouriteServiceMethod
+}
+
+set FavouriteController : TodoController {
+    findFavourites: &favouriteEndpoint
+}
+
+
+func main(): String {
+    let pkg     = "com.example.todo"
+    let pkgPath = "com/example/todo"
+
+    // ── Print available contracts from the contract package ───────────────
+    //
+    // ContractLib (contract/Main.tlang) exposes contracts() which lists
+    // every pattern contract registered in the package.  This is how
+    // tooling (CI, registry, IDE) can enumerate available contracts without
+    // parsing individual contract files.
+
+    Terminal.println("Available contracts:")
+    Terminal.println(contracts())
+
+    // ── TodoItem: base four-layer stack ───────────────────────────────────
+
+    let todoEntity = TodoEntity(
+        impl pkg:        pkg,
+        impl pkgPath:    pkgPath,
+        impl entityName: "TodoItem"
+    )
+    todoEntity.generateAll()
+    Terminal.println("Generated: TodoItem.java")
+
+    let todoRepo = TodoRepository(
+        impl pkg:          pkg,
+        impl pkgPath:      pkgPath,
+        impl entityName:   "TodoItem",
+        impl extendsClass: "JpaRepository<TodoItem, java.util.UUID>"
+    )
+    todoRepo.generateAll()
+    Terminal.println("Generated: TodoItemRepository.java")
+
+    let todoService = TodoService(
+        impl pkg:        pkg,
+        impl pkgPath:    pkgPath,
+        impl entityName: "TodoItem"
+    )
+    todoService.generateAll()
+    Terminal.println("Generated: TodoItemService.java")
+
+    let todoController = TodoController(
+        impl pkg:        pkg,
+        impl pkgPath:    pkgPath,
+        impl entityName: "TodoItem",
+        impl basePath:   "/api/todos"
+    )
+    todoController.generateAll()
+    Terminal.println("Generated: TodoItemController.java")
+
+    // ── FavouriteTodo: favourite-extended four-layer stack ────────────────
+    //
+    // Inherits all attrs from the base sets via :, then injects the
+    // favourite spec at <[ attrs() ]> inside each lead template.
+    // No templates were modified — composition happens entirely at the
+    // model-set level.
+
+    let favEntity = FavouriteEntity(
+        impl pkg:        pkg,
+        impl pkgPath:    pkgPath,
+        impl entityName: "FavouriteTodo"
+    )
+    favEntity.generateAll()
+    Terminal.println("Generated: FavouriteTodo.java (with favourite field)")
+
+    let favRepo = FavouriteRepository(
+        impl pkg:          pkg,
+        impl pkgPath:      pkgPath,
+        impl entityName:   "FavouriteTodo",
+        impl extendsClass: "JpaRepository<FavouriteTodo, java.util.UUID>"
+    )
+    favRepo.generateAll()
+    Terminal.println("Generated: FavouriteTodoRepository.java (with findByFavourite)")
+
+    let favService = FavouriteService(
+        impl pkg:        pkg,
+        impl pkgPath:    pkgPath,
+        impl entityName: "FavouriteTodo"
+    )
+    favService.generateAll()
+    Terminal.println("Generated: FavouriteTodoService.java (with findFavourites)")
+
+    let favController = FavouriteController(
+        impl pkg:        pkg,
+        impl pkgPath:    pkgPath,
+        impl entityName: "FavouriteTodo",
+        impl basePath:   "/api/favourite-todos"
+    )
+    favController.generateAll()
+    Terminal.println("Generated: FavouriteTodoController.java (with GET /favourite)")
+
+    Terminal.println("Java Spring Todo generation complete.")
+    return "done"
+}

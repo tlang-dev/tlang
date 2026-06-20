@@ -1,0 +1,57 @@
+# Conformity test — lead-template composition with <[ attrs() ]>
+#
+# Tests the following language features:
+#
+#   1. `lead` attr in a set body.
+#      When a set declares an attr named `lead` pointing to a template ref,
+#      that template acts as the outer structural scaffold for the set.
+#      It receives all non-lead attrs' inner body fragments via `<[ attrs() ]>`.
+#
+#   2. `<[ attrs() ]>` special include inside a lead template.
+#      At `generateAll()` time, the runtime pre-renders every non-lead attr,
+#      extracts each one's inner body fragment (strips the outer `{ … }`
+#      wrapper), concatenates them, and makes them available as the expansion
+#      of `<[ attrs() ]>` inside the lead template body.
+#
+#   3. Single unified output via `>>`.
+#      When a set with a `lead` attr declares `>> "path"`, `generateAll()`
+#      writes only the lead template's combined output (outer structure +
+#      all inner fragments) to that path — not a separate file per attr.
+#
+#   4. Inheritance of lead attr.
+#      A child set that extends a parent with a `lead` attr inherits it.
+#      Additional non-lead attrs introduced by the child are also included
+#      inside `<[ attrs() ]>` when the inherited lead template is rendered.
+#
+# Hierarchy exercised:
+#
+#   lang [kotlin] classShell(pkg, className)  — lead template (outer class wrapper)
+#   lang [kotlin] saveMethod(className, recordType) spec  — inner fragment
+#   lang [kotlin] updateMethod(className, recordType) spec  — inner fragment
+#   lang [kotlin] auditMethod(className, recordType) spec  — inner fragment
+#
+#   set BasicRepo(pkg, className, recordType)
+#       >> "target/tlang_test/lead_template/${className}.kt"
+#       { lead: &classShell, save: &saveMethod, update: &updateMethod }
+#
+#   set AuditedRepo : BasicRepo
+#       >> "target/tlang_test/lead_template/audited/${className}.kt"
+#       { audit: &auditMethod }
+#       — inherits lead + save + update from BasicRepo, adds audit
+#
+# The main helper:
+#   - Calls generateAll() on BasicRepo and AuditedRepo instances.
+#   - Verifies the returned lead code contains the full class with all methods.
+#   - Returns the BasicRepo lead code as the test return value.
+#
+# Run `tlang package generators/kotlin` before executing this test.
+
+name: SetLeadTemplate
+project: ConformityTests
+organisation: TLang
+version: 1.0.0
+stability: alpha
+releaseNumber: 1
+
+dependencies:
+  - TLangGen/KotlinGen/Kotlin 1.0.0:alpha:1 KotlinGen

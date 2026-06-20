@@ -1,0 +1,149 @@
+use TLang.Generator
+use KotlinGen as kotlin
+use TLang.Terminal
+use TLang.Map as M
+
+lang [kotlin] saveWithUserId(pkg: String, className: String, recordType: String) {
+    pkg ${pkg}
+
+    impl[public class] ${className} {
+        fun save(record: ${recordType}, userId: String): ${recordType} {
+            record.ownerId   = userId
+            record.ownerKind = "user"
+            return repository.save(record)
+        }
+    }
+}
+
+lang [kotlin] saveWithGroupId(pkg: String, className: String, recordType: String) {
+    pkg ${pkg}
+
+    impl[public class] ${className} {
+        fun save(record: ${recordType}, groupId: String): ${recordType} {
+            record.ownerId   = groupId
+            record.ownerKind = "group"
+            return repository.save(record)
+        }
+    }
+}
+
+lang [kotlin] savePublic(pkg: String, className: String, recordType: String) {
+    pkg ${pkg}
+
+    impl[public class] ${className} {
+        fun save(record: ${recordType}): ${recordType} {
+            record.ownerId   = null
+            record.ownerKind = "public"
+            return repository.save(record)
+        }
+    }
+}
+
+set SaveStrategy(generate: (String, String, String):(String)) {
+    label: "save-strategy"
+}
+
+// ── Concrete implementations of the FuncDef contract ─────────────────────
+//
+// Each function satisfies (String, String, String):(String).
+//
+// Improvement 1 — template calls return their instance directly.
+//   Instead of the fragile two-step:
+//     saveWithUserId(pkg, className, recordType)
+//     let inst = Leaf.get(Leaf.model(), "saveWithUserId_1")  // breaks on 2nd call
+//   we capture the return value in one step:
+//     let inst = saveWithUserId(pkg, className, recordType)
+//   The runtime has always returned a Leaf from template calls; this pattern
+//   makes that explicit, removes the _N counter dependency entirely, and
+//   means TLang.Leaf is no longer needed in this file.
+
+func generateWithUserId(pkg: String, className: String, recordType: String): String {
+    let inst = saveWithUserId(pkg, className, recordType)
+    return Generator.generate(inst)
+}
+
+func generateWithGroupId(pkg: String, className: String, recordType: String): String {
+    let inst = saveWithGroupId(pkg, className, recordType)
+    return Generator.generate(inst)
+}
+
+func generatePublic(pkg: String, className: String, recordType: String): String {
+    let inst = savePublic(pkg, className, recordType)
+    return Generator.generate(inst)
+}
+
+// ── Entry point ───────────────────────────────────────────────────────────
+
+func main(): String {
+    let pkg        = "com.example.save"
+    let recordType = "Document"
+
+    // ── Direct dispatch ───────────────────────────────────────────────────
+    //
+    // Three instances, one model definition.  The only thing that varies
+    // across them is the function bound to `generate`.
+    //
+    // Improvement 2 — &ref syntax for FuncDef impl values.
+    //   Instead of the unvalidated plain string:
+    //     SaveStrategy(impl generate: "generateWithUserId")
+    //   we use the &ref syntax, consistent with how body-ref attributes are
+    //   declared in the model block:
+    //     SaveStrategy(impl generate: &generateWithUserId)
+    //   The compiler resolves &name to the string "name" at parse time, so
+    //   the identifier must be a valid ident — typos are caught immediately
+    //   rather than failing silently at runtime.
+
+    let userStrategy = SaveStrategy(generate: &generateWithUserId)
+    let userLabel    = userStrategy.label
+    Terminal.println(userLabel)                           // save-strategy
+
+    let userCode = userStrategy.generate(pkg, "UserScopedDocumentSaver", recordType)
+    Terminal.println(userCode)
+
+    let groupStrategy = SaveStrategy(generate: &generateWithGroupId)
+    let groupLabel    = groupStrategy.label
+    Terminal.println(groupLabel)                          // save-strategy
+
+    let groupCode = groupStrategy.generate(pkg, "GroupScopedDocumentSaver", recordType)
+    Terminal.println(groupCode)
+
+    let publicStrategy = SaveStrategy(generate: &generatePublic)
+    let publicLabel    = publicStrategy.label
+    Terminal.println(publicLabel)                         // save-strategy
+
+    let publicCode = publicStrategy.generate(pkg, "PublicDocumentSaver", recordType)
+    Terminal.println(publicCode)
+
+    // ── Config-driven dispatch via Map registry ───────────────────────────
+    //
+    // A Map registry replaces the hand-written resolveClassName helper.
+    // Both lookups — which function to bind and which class name prefix to
+    // use — are driven by a single config key.  Adding a new strategy is a
+    // single M.set on each registry; no helper function needs to change.
+    //
+    // The &ref syntax works equally well here: M.get returns a String and
+    // the runtime accepts it identically to an &ref literal.
+
+    let strategyRegistry = M.of(
+        "user",   "generateWithUserId",
+        "group",  "generateWithGroupId",
+        "public", "generatePublic"
+    )
+
+    let prefixRegistry = M.of(
+        "user",   "UserScoped",
+        "group",  "GroupScoped",
+        "public", "Public"
+    )
+
+    let configKey  = "group"
+    let funcName   = M.get(strategyRegistry, configKey)
+    let prefix     = M.get(prefixRegistry,   configKey)
+    let className  = prefix + "InvoiceSaver"
+
+    let configuredStrategy = SaveStrategy(generate: funcName)
+    let configuredCode     = configuredStrategy.generate(pkg, className, "Invoice")
+    Terminal.println(configuredCode)
+
+    return userCode + "\n---\n" + groupCode + "\n---\n" + publicCode + "\n---\n" + configuredCode
+}

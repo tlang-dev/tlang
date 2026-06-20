@@ -1,0 +1,389 @@
+use TLangUI.button.Button as UIButton
+use TLangUI.layout.Layout as UILayout
+use TLangUI.text.Text as UIText
+use TLangUI.nav.Nav as UINav
+use TLangUI.dialog.Dialog as UIDialog
+use TLangUI.progress.Progress as UIProgress
+use TLangUI.image.Image as UIImage
+use TLangUI.input.Input as UIInput
+use TLangUI.select.Select as UISelect
+use TLangUI.textarea.Textarea as UITextarea
+
+set AppSidebar : UINav.SidebarBase {
+    variant: "full",
+    placement: "left",
+    collapsible: "true",
+    collapsed: "false",
+    width: "260"
+}
+
+set DashboardNavItem : UINav.SidebarItemBase {
+    key: "dashboard",
+    label: "Dashboard",
+    icon: "⬡",
+    href: "#",
+    active: "true"
+}
+
+set AnalyticsNavItem : UINav.SidebarItemBase {
+    key: "analytics",
+    label: "Analytics",
+    icon: "↗",
+    href: "#analytics"
+}
+
+set OrdersNavItem : UINav.SidebarItemBase {
+    key: "orders",
+    label: "Orders",
+    icon: "≡",
+    href: "#orders",
+    badge: "12"
+}
+
+set CustomersNavItem : UINav.SidebarItemBase {
+    key: "customers",
+    label: "Customers",
+    icon: "◎",
+    href: "#customers"
+}
+
+set ProductsNavItem : UINav.SidebarItemBase {
+    key: "products",
+    label: "Products",
+    icon: "◈",
+    href: "#products"
+}
+
+set ReportsNavItem : UINav.SidebarItemBase {
+    key: "reports",
+    label: "Reports",
+    icon: "▤",
+    href: "#reports"
+}
+
+set SettingsNavItem : UINav.SidebarItemBase {
+    key: "settings",
+    label: "Settings",
+    icon: "⚙",
+    href: "#settings"
+}
+
+set AppNavBar : UINav.NavBarBase {
+    logo: "Nucleus",
+    sticky: "true"
+}
+
+set RevenueCardTitle : UIText.Heading {
+    text: "Total Revenue",
+    level: "3"
+}
+
+set UsersCardTitle : UIText.Heading {
+    text: "Active Users",
+    level: "3"
+}
+
+set OrdersCardTitle : UIText.Heading {
+    text: "New Orders",
+    level: "3"
+}
+
+set ConversionCardTitle : UIText.Heading {
+    text: "Conversion Rate",
+    level: "3"
+}
+
+set RevenueChangeBadge : UIText.Badge {
+    text: "+14.5%",
+    style: "soft",
+    variant: "success"
+}
+
+set UsersChangeBadge : UIText.Badge {
+    text: "+8.2%",
+    style: "soft",
+    variant: "success"
+}
+
+set OrdersChangeBadge : UIText.Badge {
+    text: "+23.1%",
+    style: "soft",
+    variant: "success"
+}
+
+set ConversionChangeBadge : UIText.Badge {
+    text: "-1.4%",
+    style: "soft",
+    variant: "danger"
+}
+
+set OrdersSectionTitle : UIText.Heading {
+    text: "Recent Orders",
+    level: "2"
+}
+
+set GoalsSectionTitle : UIText.Heading {
+    text: "Monthly Goals",
+    level: "2"
+}
+
+set ActivitySectionTitle : UIText.Heading {
+    text: "Activity Feed",
+    level: "2"
+}
+
+set TopProductsSectionTitle : UIText.Heading {
+    text: "Top Products",
+    level: "2"
+}
+
+set PaidBadge : UIText.Badge {
+    text: "Paid",
+    style: "soft",
+    variant: "success"
+}
+
+set PendingBadge : UIText.Badge {
+    text: "Pending",
+    style: "soft",
+    variant: "warning"
+}
+
+set RefundedBadge : UIText.Badge {
+    text: "Refunded",
+    style: "soft",
+    variant: "danger"
+}
+
+set ProcessingBadge : UIText.Badge {
+    text: "Processing",
+    style: "soft",
+    variant: "primary"
+}
+
+set RevenueGoalBar : UIProgress.ProgressBarBase {
+    value: "82",
+    max: "100",
+    variant: "primary",
+    size: "md",
+    label: "Revenue — $82k of $100k",
+    show_label: "true"
+}
+
+set UsersGoalBar : UIProgress.ProgressBarBase {
+    value: "65",
+    max: "100",
+    variant: "success",
+    size: "md",
+    label: "New Users — 6,500 of 10,000",
+    show_label: "true"
+}
+
+set OrdersGoalBar : UIProgress.ProgressBarBase {
+    value: "91",
+    max: "100",
+    variant: "primary",
+    size: "md",
+    label: "Orders — 2,730 of 3,000",
+    show_label: "true"
+}
+
+set SupportGoalBar : UIProgress.ProgressBarBase {
+    value: "47",
+    max: "100",
+    variant: "warning",
+    size: "md",
+    label: "Support SLA — 47% resolved",
+    show_label: "true"
+}
+
+set ExportButton : UIButton.Button {
+    label: "Export",
+    variant: "secondary",
+    size: "sm",
+    type: "button",
+    icon: "↓",
+    tooltip: "Export data to CSV"
+}
+
+set NewOrderButton : UIButton.Button {
+    label: "New Order",
+    variant: "primary",
+    size: "sm",
+    type: "button",
+    icon: "+",
+    tooltip: "Create a new order"
+}
+
+set SystemAlert : UIDialog.AlertBase {
+    variant: "info",
+    title: "Scheduled maintenance",
+    message: "The system will be unavailable on Sunday 2 Jun from 02:00–04:00 UTC. Plan accordingly."
+}
+
+set ContentRow : UILayout.Row {
+    align: "start",
+    justify: "start",
+    gap: "lg",
+    wrap: "true"
+}
+
+set CardCol : UILayout.Column {
+    align: "stretch",
+    justify: "start",
+    gap: "md"
+}
+
+set AdminAvatar : UIImage.AvatarBase {
+    src: "",
+    alt: "Admin User",
+    initials: "AU",
+    shape: "circle",
+    size: "sm"
+}
+
+set OrderStatusFilter : UISelect.NativeSelect {
+    label: "Status",
+    placeholder: "All statuses",
+    options: "paid pending processing refunded",
+    size: "sm",
+    variant: "outlined"
+}
+
+set OrderDateRangeFilter : UISelect.NativeSelect {
+    label: "Date range",
+    placeholder: "Last 30 days",
+    options: "today 7d 30d custom",
+    size: "sm",
+    variant: "outlined"
+}
+
+set OrderSortFilter : UISelect.NativeSelect {
+    label: "Sort",
+    placeholder: "Newest first",
+    options: "date_desc date_asc amount_desc amount_asc",
+    size: "sm",
+    variant: "outlined"
+}
+
+set NewOrderCustomerInput : UIInput.TextInput {
+    label: "Customer name",
+    placeholder: "Jane Smith",
+    required: "true",
+    hint: "Start typing to search existing customers"
+}
+
+set NewOrderEmailInput : UIInput.TextInput {
+    label: "Email address",
+    placeholder: "jane@example.com",
+    required: "true",
+    type: "email"
+}
+
+set NewOrderPlanSelect : UISelect.NativeSelect {
+    label: "Plan / Product",
+    placeholder: "Select a plan…",
+    options: "nucleus-pro analytics-addon team-seats starter enterprise",
+    required: "true",
+    size: "md",
+    variant: "outlined"
+}
+
+set NewOrderQtyInput : UIInput.TextInput {
+    label: "Quantity / Seats",
+    placeholder: "1",
+    required: "true",
+    type: "number"
+}
+
+set NewOrderAmountInput : UIInput.TextInput {
+    label: "Amount ($)",
+    placeholder: "0.00",
+    required: "true",
+    type: "number"
+}
+
+set NewOrderStatusSelect : UISelect.NativeSelect {
+    label: "Status",
+    placeholder: "Pending",
+    options: "paid pending processing",
+    required: "true",
+    size: "md",
+    variant: "outlined"
+}
+
+set NewOrderDateInput : UIInput.TextInput {
+    label: "Order date",
+    required: "true",
+    type: "date"
+}
+
+set NewOrderNotesTextarea : UITextarea.TextareaBase {
+    label: "Notes",
+    placeholder: "Optional notes about this order…",
+    rows: "3"
+}
+
+set NewOrderSubmitButton : UIButton.Button {
+    label: "Create Order",
+    variant: "primary",
+    size: "md",
+    type: "submit",
+    icon: "✓"
+}
+
+set NewOrderCancelButton : UIButton.Button {
+    label: "Cancel",
+    variant: "ghost",
+    size: "md",
+    type: "button"
+}
+
+set TotalCustomersHeading : UIText.Heading {
+    text: "Total Customers",
+    level: "3"
+}
+
+set ActiveCustomersHeading : UIText.Heading {
+    text: "Active This Month",
+    level: "3"
+}
+
+set ChurnedCustomersHeading : UIText.Heading {
+    text: "Churned (30 d)",
+    level: "3"
+}
+
+set NetNewCustomersHeading : UIText.Heading {
+    text: "Net New (30 d)",
+    level: "3"
+}
+
+set TotalCustomersDelta : UIText.Badge {
+    text: "+3.1%",
+    style: "soft",
+    variant: "success"
+}
+
+set ActiveCustomersDelta : UIText.Badge {
+    text: "+8.2%",
+    style: "soft",
+    variant: "success"
+}
+
+set ChurnedCustomersDelta : UIText.Badge {
+    text: "-0.9%",
+    style: "soft",
+    variant: "danger"
+}
+
+set NetNewCustomersDelta : UIText.Badge {
+    text: "+12.4%",
+    style: "soft",
+    variant: "success"
+}
+
+set AcquisitionSectionTitle : UIText.Heading {
+    text: "Acquisition Channels",
+    level: "2"
+}

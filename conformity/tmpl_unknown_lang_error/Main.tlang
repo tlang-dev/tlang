@@ -1,0 +1,7 @@
+lang [kotlin] myTemplate(name: String) {
+    impl[public class] ${name} {}
+}
+
+func main(): String {
+    return "should not compile"
+}

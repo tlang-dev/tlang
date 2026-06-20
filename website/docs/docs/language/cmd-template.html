@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>cmd — Commands & SQL &mdash; TLang</title>
+  <meta name="description" content="TLang documentation">
+  <link rel="stylesheet" href="../../assets/style.css">
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="../../index.html">TLang</a>
+    <div class="nav-links">
+      <a class="nav-link" href="../getting-started.html">Docs</a>
+      <a class="nav-link" href="../language/index.html">Language</a>
+      <a class="nav-link" href="../stdlib/index.html">Stdlib</a>
+      <a class="nav-link" href="../generators.html">Generators</a>
+      <a class="nav-link" href="https://github.com/joel-f/tlang">GitHub</a>
+      <a class="btn btn-sm btn-primary" href="../getting-started.html">Get Started</a>
+    </div>
+  </div>
+</nav>
+<div class="doc-layout">
+  <aside class="sidebar">
+    <nav>
+      <span class="sidebar-label">Getting Started</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../getting-started.html">Installation &amp; CLI</a>
+        <a class="sidebar-link" href="../editor-setup.html">Editor Setup</a>
+        <a class="sidebar-link" href="../ai-assistant.html">AI Assistant</a>
+      </div>
+      <div class="sidebar-sep"></div>
+      <span class="sidebar-label">Language Reference</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../language/index.html">Overview</a>
+        <a class="sidebar-link" href="../language/types.html">Types</a>
+        <a class="sidebar-link" href="../language/variables.html">Variables &amp; Scope</a>
+        <a class="sidebar-link" href="../language/functions.html">Functions</a>
+        <a class="sidebar-link" href="../language/control-flow.html">Control Flow</a>
+        <a class="sidebar-link" href="../language/templates.html">Template Blocks</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/lang-template.html">lang &mdash; Code</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/data-template.html">data &mdash; Data &amp; Config</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/doc-template.html">doc &mdash; Documents</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/style-template.html">style &mdash; Stylesheets</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/cmd-template.html">cmd &mdash; Commands &amp; SQL</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/raw-template.html">raw &mdash; Verbatim Text</a>
+        <a class="sidebar-link" href="../language/sets.html">Sets &amp; Models</a>
+        <a class="sidebar-link" href="../language/imports.html">Imports &amp; Expose</a>
+      </div>
+      <div class="sidebar-sep"></div>
+      <span class="sidebar-label">Standard Library</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../stdlib/index.html">Overview</a>
+        <a class="sidebar-link" href="../stdlib/string.html">TLang.String</a>
+        <a class="sidebar-link" href="../stdlib/list.html">TLang.List</a>
+        <a class="sidebar-link" href="../stdlib/map.html">TLang.Map</a>
+        <a class="sidebar-link" href="../stdlib/numbers.html">TLang.Int / Long</a>
+        <a class="sidebar-link" href="../stdlib/float.html">TLang.Float / Double</a>
+        <a class="sidebar-link" href="../stdlib/math.html">TLang.Math</a>
+        <a class="sidebar-link" href="../stdlib/file.html">TLang.File</a>
+        <a class="sidebar-link" href="../stdlib/terminal.html">TLang.Terminal</a>
+        <a class="sidebar-link" href="../stdlib/prompt.html">TLang.Prompt</a>
+        <a class="sidebar-link" href="../stdlib/shell.html">TLang.Shell</a>
+        <a class="sidebar-link" href="../stdlib/leaf.html">TLang.Leaf</a>
+        <a class="sidebar-link" href="../stdlib/generator.html">TLang.Generator</a>
+        <a class="sidebar-link" href="../stdlib/json.html">TLang.Json / Yaml</a>
+        <a class="sidebar-link" href="../stdlib/pdf.html">TLang.Pdf</a>
+        <a class="sidebar-link" href="../stdlib/string-builder.html">TLang.StringBuilder</a>
+        <a class="sidebar-link" href="../stdlib/naming.html">TLang.Naming</a>
+        <a class="sidebar-link" href="../stdlib/assert.html">TLang.Assert</a>
+        <a class="sidebar-link" href="../stdlib/formatting.html">TLang.Formatting</a>
+      </div>
+      <div class="sidebar-sep"></div>
+      <span class="sidebar-label">More</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../generators.html">Generators</a>
+        <a class="sidebar-link" href="../packages.html">Packages</a>
+        <a class="sidebar-link" href="../use-cases.html">Use Cases</a>
+      </div>
+    </nav>
+  </aside>
+  <main class="doc-content">
+    <h1>cmd — Command & SQL Templates</h1>
+<p>The cmd template type models named command invocations — SQL queries, shell commands, HTTP requests, or any parameterised operation. At generation time, Generator.generate() dispatches to the appropriate generator (SqlGen, BashGen, and so on).</p>
+<section id="syntax">
+<h2>Syntax</h2>
+<p>A cmd template body contains either a bare identifier (naming the command type) or a call expression (naming the operation and its arguments).
+Bare form — the command type is a single word. The template parameters become the command's parameters.</p>
+<pre><code class="language-tlang">      cmd [sql] rawQuery(sql: String) {
+          sql
+      }
+    </code></pre>
+<p>Call form — the command is a named operation with typed arguments. Arguments can reference template parameters with $${ }.</p>
+<pre><code class="language-tlang">      cmd [sql] findUser(email: String) {
+          SELECT(
+              table: users,
+              cols:  &quot;id, name, email&quot;,
+              where: &quot;email = '$${email}'&quot;
+          )
+      }
+
+      cmd [sql] createUser(name: String, email: String) {
+          INSERT(
+              table:  users,
+              cols:   &quot;name, email&quot;,
+              values: &quot;'$${name}', '$${email}'&quot;
+          )
+      }
+    </code></pre>
+</section>
+<section id="generate">
+<h2>Generating SQL</h2>
+<p>Call Generator.generate() to produce the SQL string. The SqlGen generator handles all standard SQL operations.</p>
+<pre><code class="language-tlang">      use TLang.Generator
+
+      cmd [sql] allUsers() {
+          SELECT(table: users)
+      }
+
+      cmd [sql] userById(id: String) {
+          SELECT(
+              table: users,
+              where: &quot;id = $${id}&quot;
+          )
+      }
+
+      func main(): String {
+          let allSql   = Generator.generate(allUsers())
+          let userSql  = Generator.generate(userById(&quot;42&quot;))
+          Terminal.println(allSql)    // SELECT * FROM users;
+          Terminal.println(userSql)   // SELECT * FROM users WHERE id = 42;
+          return &quot;done&quot;
+      }
+    </code></pre>
+</section>
+<section id="sql-ops">
+<h2>Supported SQL Operations</h2>
+<p>SELECT — query rows from a table.</p>
+<pre><code class="language-tlang">      cmd [sql] search(term: String) {
+          SELECT(
+              table:  products,
+              cols:   &quot;id, name, price&quot;,
+              where:  &quot;name LIKE '%$${term}%'&quot;,
+              order:  &quot;name ASC&quot;,
+              limit:  &quot;20&quot;
+          )
+      }
+    </code></pre>
+<p>INSERT — insert new rows.</p>
+<pre><code class="language-tlang">      cmd [sql] addProduct(name: String, price: String) {
+          INSERT(
+              table:  products,
+              cols:   &quot;name, price&quot;,
+              values: &quot;'$${name}', $${price}&quot;
+          )
+      }
+    </code></pre>
+<p>UPDATE — update existing rows.</p>
+<pre><code class="language-tlang">      cmd [sql] updatePrice(id: String, price: String) {
+          UPDATE(
+              table: products,
+              set:   &quot;price = $${price}&quot;,
+              where: &quot;id = $${id}&quot;
+          )
+      }
+    </code></pre>
+<p>DELETE — remove rows.</p>
+<pre><code class="language-tlang">      cmd [sql] removeUser(id: String) {
+          DELETE(table: users, where: &quot;id = $${id}&quot;)
+      }
+    </code></pre>
+<p>CREATE-TABLE and CREATE-TABLE-IF — schema creation.</p>
+<pre><code class="language-tlang">      cmd [sql] createUsersTable() {
+          CREATE-TABLE-IF(
+              table: users,
+              cols:  &quot;id BIGSERIAL PRIMARY KEY, name VARCHAR(255) NOT NULL, email VARCHAR(255) UNIQUE&quot;
+          )
+      }
+    </code></pre>
+<p>DROP-TABLE, DROP-TABLE-IF, TRUNCATE, CREATE-INDEX, DROP-INDEX, ALTER-ADD, ALTER-DROP are also supported.</p>
+<pre><code class="language-tlang">      cmd [sql] addColumn(table: String, col: String) {
+          ALTER-ADD(table: $${table}, col: $${col})
+      }
+
+      cmd [sql] dropColumn(table: String, col: String) {
+          ALTER-DROP(table: $${table}, col: $${col})
+      }
+    </code></pre>
+</section>
+<section id="bash">
+<h2>Shell Commands</h2>
+<p>A bash generator can be registered and cmd templates used to model shell operations.</p>
+<pre><code class="language-tlang">      cmd [bash] buildProject(dir: String) {
+          run(cmd: &quot;cd $${dir} &amp;&amp; ./gradlew build&quot;)
+      }
+    </code></pre>
+</section>
+<section id="example">
+<h2>Full Migration Example</h2>
+<p>Generate a complete schema migration file from model entities.</p>
+<pre><code class="language-tlang">      use TLang.Generator
+      use TLang.File
+      use TLang.Leaf
+      use TLang.StringBuilder
+
+      cmd [sql] createTable(tableName: String, cols: String) {
+          CREATE-TABLE-IF(
+              table: $${tableName},
+              cols:  $${cols}
+          )
+      }
+
+      model {
+          set users    { table: &quot;users&quot;,    cols: &quot;id BIGSERIAL PRIMARY KEY, name TEXT, email TEXT UNIQUE&quot; }
+          set products { table: &quot;products&quot;, cols: &quot;id BIGSERIAL PRIMARY KEY, name TEXT, price NUMERIC&quot; }
+          set orders   { table: &quot;orders&quot;,   cols: &quot;id BIGSERIAL PRIMARY KEY, user_id BIGINT REFERENCES users(id), total NUMERIC&quot; }
+      }
+
+      func main(): String {
+          let sb    = StringBuilder.create()
+          let model = Leaf.model()
+          for (k in Leaf.keys(model)) {
+              let e   = Leaf.get(model, k)
+              let sql = Generator.generate(createTable(e.table, e.cols))
+              let sb  = StringBuilder.append(sb, sql)
+          }
+          let migration = StringBuilder.build(sb)
+          File.write(&quot;db/V1__init.sql&quot;, migration, true)
+          return &quot;done&quot;
+      }
+    </code></pre>
+</section>
+
+  </main>
+</div>
+<footer class="footer">
+  <div class="footer-inner">
+    <span class="footer-brand">TLang</span>
+    <div class="footer-links">
+      <a class="footer-link" href="../getting-started.html">Getting Started</a>
+      <a class="footer-link" href="../language/index.html">Language</a>
+      <a class="footer-link" href="../stdlib/index.html">Stdlib</a>
+      <a class="footer-link" href="../generators.html">Generators</a>
+      <a class="footer-link" href="https://github.com/joel-f/tlang">GitHub</a>
+    </div>
+    <span class="footer-copy">&copy; 2026 TLang Contributors &middot; Apache 2.0</span>
+  </div>
+</footer>
+<script>
+(function() {
+  var links = document.querySelectorAll('.sidebar-link');
+  var cur = window.location.href;
+  links.forEach(function(a) {
+    var href = a.getAttribute('href');
+    if (href && cur.indexOf(href.replace('../', '')) !== -1) {
+      a.classList.add('active');
+    }
+  });
+}());
+</script>
+</body>
+</html>

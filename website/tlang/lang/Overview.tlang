@@ -1,0 +1,169 @@
+expose langOverviewGen
+
+use TLang.File
+use TLang.Generator
+use TLang.Terminal
+use layout.PageLayout
+
+doc [html] langOverviewPage() {
+  # Language Reference
+
+  TLang is a compiled, statically-typed template language for structural code generation. A TLang program reads a model, applies templates, and writes output files. The whole stack compiles to bytecode for fast, reproducible runs.
+
+  [section "structure"
+    ## File Structure
+
+    Every .tlang file starts with optional header declarations, followed by body blocks.
+
+    [code "tlang"
+      // Header — declarations only
+      expose myFunction        // make this symbol callable by other files
+      use TLang.File           // import a standard library module
+      use helpers.Formatters   // import from helpers/Formatters.tlang
+      use Utils                // import Utils.tlang in the same directory
+
+      // Body — one or more of these blocks
+      func myFunction(): String {
+          return "hello"
+      }
+
+      model {
+          set User { name: "User", pkg: "com.example" }
+      }
+
+      lang [kotlin] entityClass(pkg: String, cls: String) {
+          pkg $${pkg}
+          impl[data class] $${cls} { }
+      }
+    ]
+  ]
+
+  [section "blocks"
+    ## Body Block Types
+
+    A TLang file can contain any combination of these blocks.
+
+    Functions hold all executable logic. The entry point is always a function named main.
+
+    [code "tlang"
+      func main(): String {
+          Terminal.println("Running...")
+          return "done"
+      }
+
+      func helper(name: String): String {
+          return "Hello, " + name
+      }
+    ]
+
+    Template blocks define reusable generation units. The six template types are lang, data, doc, style, cmd, and raw. See the Template Blocks section for full coverage.
+
+    [code "tlang"
+      lang [kotlin] entity(pkg: String, cls: String) {
+          pkg $${pkg}
+          impl[data class] $${cls} { }
+      }
+
+      doc [md, html] readme(project: String) {
+        # $${project}
+        Welcome to $${project}.
+      }
+
+      data [json] config(app: String, port: String) {
+        { name: "$${app}", port: "$${port}" }
+      }
+    ]
+
+    The model block declares named static data that templates iterate over.
+
+    [code "tlang"
+      model {
+          let version: String = "2.0.0"
+
+          set User {
+              pkg:   "com.example.model",
+              table: "users"
+          }
+          set Product {
+              pkg:   "com.example.model",
+              table: "products"
+          }
+      }
+    ]
+  ]
+
+  [section "run"
+    ## Running a Program
+
+    Compile and run in one step.
+
+    [code "bash"
+      tlang compile-run Main.tlang
+    ]
+
+    Or compile to bytecode first, then run later.
+
+    [code "bash"
+      tlang compile Main.tlang
+      tlang run Main.tlangc
+    ]
+
+    Run a specific exposed function with arguments.
+
+    [code "bash"
+      tlang exec MyTemplate.tlang render --arg name=Invoice
+    ]
+  ]
+
+  [section "example"
+    ## Complete Example
+
+    A minimal project that generates a Kotlin data class for every set in the model.
+
+    [code "tlang"
+      // Main.tlang
+      expose main
+
+      use TLang.File
+      use TLang.Generator
+      use TLang.Terminal
+      use TLang.Leaf
+      use KotlinGen as kotlin
+
+      lang [kotlin] entity(pkg: String, cls: String) {
+          pkg $${pkg}
+          impl[data class] $${cls}(
+              val id: Long,
+              val name: String
+          )
+      }
+
+      model {
+          set User    { pkg: "com.example", cls: "User" }
+          set Product { pkg: "com.example", cls: "Product" }
+      }
+
+      func main(): String {
+          let model = Leaf.model()
+          let keys  = Leaf.keys(model)
+          for (k in keys) {
+              let entry = Leaf.get(model, k)
+              let pkg   = entry.pkg
+              let cls   = entry.cls
+              let code  = Generator.generate(entity(pkg, cls), "kotlin")
+              File.write("output/" + cls + ".kt", code, true)
+              Terminal.println("Generated: " + cls + ".kt")
+          }
+          return "done"
+      }
+    ]
+  ]
+}
+
+func langOverviewGen(): String {
+    let content = Generator.generate(langOverviewPage("html"))
+    let html = PageLayout.page("Language Reference", content)
+    File.write("docs/docs/language/index.html", html, true)
+    Terminal.println("  -> language/index.html")
+    return ""
+}

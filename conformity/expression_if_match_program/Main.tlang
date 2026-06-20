@@ -1,0 +1,32 @@
+use TLang.Terminal
+
+  func ifLabel(n): String {
+let label = if (n < 0) "negative" else if (n == 0) "zero" else "positive"
+return label
+  }
+
+  func matchLabel(n): String {
+let label = match (n) {
+  case 1 => "one",
+  case 2 => "two",
+  default => "other"
+}
+return label
+  }
+
+  func inlineLabel(enabled, n): String {
+return if (enabled) match (n) { case 1 => "enabled-one", default => "enabled-many" } else "disabled"
+  }
+
+  func main(): String {
+Terminal.println(ifLabel(-1))
+Terminal.println(ifLabel(0))
+Terminal.println(ifLabel(7))
+Terminal.println(matchLabel(1))
+Terminal.println(matchLabel(7))
+Terminal.println(inlineLabel(true, 1))
+Terminal.println(inlineLabel(true, 7))
+Terminal.println(inlineLabel(false, 1))
+
+return if (true) match (2) { case 2 => "done", default => "bad" } else "bad"
+  }

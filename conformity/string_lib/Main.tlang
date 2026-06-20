@@ -1,0 +1,107 @@
+use TLang.Terminal
+use TLang.String as Str
+
+func main(): String {
+    // --- length ---
+    Terminal.println(Str.length("hello"))
+    Terminal.println(Str.length(""))
+
+    // --- isEmpty ---
+    Terminal.println(Str.isEmpty(""))
+    Terminal.println(Str.isEmpty("x"))
+
+    // --- toUpperCase / toLowerCase ---
+    Terminal.println(Str.toUpperCase("hello"))
+    Terminal.println(Str.toLowerCase("WORLD"))
+
+    // --- trim ---
+    Terminal.println(Str.trim("  hi  "))
+
+    // --- contains ---
+    Terminal.println(Str.contains("foobar", "oob"))
+    Terminal.println(Str.contains("foobar", "xyz"))
+
+    // --- startsWith / endsWith ---
+    Terminal.println(Str.startsWith("foobar", "foo"))
+    Terminal.println(Str.endsWith("foobar", "bar"))
+    Terminal.println(Str.startsWith("foobar", "bar"))
+
+    // --- equals / equalsIgnoreCase ---
+    Terminal.println(Str.equals("abc", "abc"))
+    Terminal.println(Str.equals("abc", "ABC"))
+    Terminal.println(Str.equalsIgnoreCase("Hello", "hElLo"))
+
+    // --- compare ---
+    Terminal.println(Str.compare("apple", "banana"))
+    Terminal.println(Str.compare("same", "same"))
+    Terminal.println(Str.compare("zoo", "ant"))
+
+    // --- indexOf / lastIndexOf ---
+    Terminal.println(Str.indexOf("hello world", "world"))
+    Terminal.println(Str.indexOf("hello", "xyz"))
+    Terminal.println(Str.lastIndexOf("abcabc", "bc"))
+    Terminal.println(Str.lastIndexOf("hello", "xyz"))
+
+    // --- substring ---
+    Terminal.println(Str.substring("hello", 1, 4))
+    Terminal.println(Str.substring("hello", 0, 5))
+
+    // --- slice (supports negative indices) ---
+    Terminal.println(Str.slice("hello", 1, 4))
+    Terminal.println(Str.slice("hello", -3, -1))
+
+    // --- split (iterate with for-in) ---
+    let parts = Str.split("a,b,c", ",")
+    for (p in parts) {
+        Terminal.println(p)
+    }
+
+    // single-item split
+    let single = Str.split("alone", ",")
+    for (s in single) {
+        Terminal.println(s)
+    }
+
+    // --- replace / replaceAll ---
+    Terminal.println(Str.replace("aabbaa", "aa", "X"))
+    Terminal.println(Str.replaceAll("aabbaa", "aa", "X"))
+
+    // replace with no match is identity
+    Terminal.println(Str.replace("hello", "z", "X"))
+
+    // --- concat ---
+    Terminal.println(Str.concat("foo", "bar"))
+    Terminal.println(Str.concat("", "bar"))
+    Terminal.println(Str.concat("foo", ""))
+
+    // --- repeat ---
+    Terminal.println(Str.repeat("ab", 3))
+    Terminal.println(Str.repeat("x", 1))
+    Terminal.println(Str.repeat("x", 0))
+
+    // --- charAt ---
+    Terminal.println(Str.charAt("hello", 0))
+    Terminal.println(Str.charAt("hello", 4))
+
+    // --- charCodeAt ---
+    Terminal.println(Str.charCodeAt("A", 0))
+    Terminal.println(Str.charCodeAt("a", 0))
+
+    // --- fromCharCode ---
+    Terminal.println(Str.fromCharCode(65))
+    Terminal.println(Str.fromCharCode(97))
+
+    // --- lines (iterate with for-in) ---
+    let ls = Str.lines("x\ny\nz")
+    for (l in ls) {
+        Terminal.println(l)
+    }
+
+    // --- words (iterate with for-in) ---
+    let ws = Str.words("  hello   world  ")
+    for (w in ws) {
+        Terminal.println(w)
+    }
+
+    return "done"
+}

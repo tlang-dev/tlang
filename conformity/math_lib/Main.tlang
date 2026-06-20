@@ -1,0 +1,66 @@
+use TLang.Terminal
+use TLang.Math as Math
+
+func main(): String {
+    // --- abs ---
+    Terminal.println(Math.abs(5))
+    Terminal.println(Math.abs(-5))
+    Terminal.println(Math.abs(0))
+
+    // --- min / max ---
+    Terminal.println(Math.min(3, 7))
+    Terminal.println(Math.min(7, 3))
+    Terminal.println(Math.min(-1, 1))
+    Terminal.println(Math.max(3, 7))
+    Terminal.println(Math.max(7, 3))
+    Terminal.println(Math.max(-1, 1))
+
+    // --- clamp ---
+    Terminal.println(Math.clamp(5, 0, 10))
+    Terminal.println(Math.clamp(-5, 0, 10))
+    Terminal.println(Math.clamp(15, 0, 10))
+    Terminal.println(Math.clamp(0, 0, 10))
+    Terminal.println(Math.clamp(10, 0, 10))
+
+    // --- pow ---
+    Terminal.println(Math.pow(2, 10))
+    Terminal.println(Math.pow(3, 3))
+    Terminal.println(Math.pow(5, 0))
+    Terminal.println(Math.pow(0, 5))
+    Terminal.println(Math.pow(7, 1))
+
+    // --- sqrt ---
+    Terminal.println(Math.sqrt(9))
+    Terminal.println(Math.sqrt(16))
+    Terminal.println(Math.sqrt(2))
+    Terminal.println(Math.sqrt(0))
+    Terminal.println(Math.sqrt(100))
+
+    // --- isEven / isOdd ---
+    Terminal.println(Math.isEven(4))
+    Terminal.println(Math.isEven(7))
+    Terminal.println(Math.isEven(0))
+    Terminal.println(Math.isOdd(4))
+    Terminal.println(Math.isOdd(7))
+    Terminal.println(Math.isOdd(0))
+
+    // --- sign ---
+    Terminal.println(Math.sign(42))
+    Terminal.println(Math.sign(-42))
+    Terminal.println(Math.sign(0))
+
+    // --- gcd ---
+    Terminal.println(Math.gcd(12, 8))
+    Terminal.println(Math.gcd(100, 75))
+    Terminal.println(Math.gcd(7, 13))
+    Terminal.println(Math.gcd(0, 5))
+    Terminal.println(Math.gcd(5, 0))
+
+    // --- lcm ---
+    Terminal.println(Math.lcm(4, 6))
+    Terminal.println(Math.lcm(3, 5))
+    Terminal.println(Math.lcm(0, 5))
+    Terminal.println(Math.lcm(7, 7))
+
+    return "done"
+}

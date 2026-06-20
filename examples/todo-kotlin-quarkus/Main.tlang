@@ -1,0 +1,59 @@
+use TLang.Generator
+use TLang.File
+use TLang.Terminal
+use KotlinQuarkusImpl
+use ContractLib
+
+set TodoEntity(pkg: String, pkgPath: String, entityName: String, extendsClass: String) >> "output/src/main/kotlin/${pkgPath}/${entityName}.kt" {
+    lead: &entityLead2
+}
+
+set FavouriteTodoEntity : TodoEntity {
+    extra: &favouriteField
+}
+
+set TodoRepository(pkg: String, pkgPath: String, entityName: String, extendsClass: String) >> "output/src/main/kotlin/${pkgPath}/${entityName}Repository.kt" {
+    lead: &repositoryLead2
+}
+
+set FavouriteTodoRepository : TodoRepository {
+    findByFavourite: &findByFavouriteMethod
+}
+
+set TodoService(pkg: String, pkgPath: String, entityName: String) >> "output/src/main/kotlin/${pkgPath}/${entityName}Service.kt" {
+    lead: &serviceLead
+}
+
+set FavouriteTodoService : TodoService {
+    findByFavourite: &findByFavouriteServiceMethod
+}
+
+set TodoResource(pkg: String, pkgPath: String, entityName: String, basePath: String) >> "output/src/main/kotlin/${pkgPath}/${entityName}Resource.kt" {
+    lead: &resourceLead2
+}
+
+set FavouriteTodoResource : TodoResource {
+    findFavourites: &favouriteEndpoint
+}
+
+func main(): String {
+    let pkg     = "com.example.todo"
+    let pkgPath = "com/example/todo"
+
+    // ── Contract introspection ────────────────────────────────────────────
+    Terminal.println("Available contracts:")
+    Terminal.println(contracts())
+
+    // ── TodoItem: base CRUD stack ─────────────────────────────────────────
+    let todoEntity = TodoEntity(
+        pkg:          pkg,
+        pkgPath:      pkgPath,
+        entityName:   "TodoItem",
+        extendsClass: "PanacheEntity"
+    )
+    todoEntity.generateAll()
+    Terminal.println("Generated: TodoItem.kt")
+
+    Terminal.println("Kotlin Quarkus Todo generation complete.")
+    return "done"
+}

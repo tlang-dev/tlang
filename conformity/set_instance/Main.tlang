@@ -1,0 +1,81 @@
+use TLang.Terminal
+
+set Config {
+    version: "1.0.0",
+    maxRetries: 3,
+    debugMode: false,
+    tags: ["stable", "v1"]
+}
+
+set User(name: String, role: String) {
+    label: "user-entity"
+}
+
+set Greeter(prefix: String) {
+    label: "greeter-entity",
+    greetUser: &buildGreeting
+}
+
+set Formatter(format: (String):(String)) {
+    label: "formatter-entity"
+}
+
+// Used as a ref target by Greeter.greetUser.
+func buildGreeting(prefix: String, name: String): String {
+    return prefix + ", " + name + "!"
+}
+
+// Used as a FuncDef impl value for Formatter.format.
+func shout(s: String): String {
+    return s + "!!!"
+}
+
+func main(): String {
+    // ── Static attribute access ──────────────────────────────────────
+    let ver = Config.version
+    Terminal.println(ver)            // 1.0.0
+
+    let retries = Config.maxRetries
+    Terminal.println(retries)        // 3
+
+    let debug = Config.debugMode
+    Terminal.println(debug)          // false
+
+    // ── Positional instantiation ─────────────────────────────────────
+    let alice = User("Alice", "admin")
+    let bob   = User("Bob", "viewer")
+
+    // Reading positional-param values from the instance.
+    let aliceName = alice.name
+    let aliceRole = alice.role
+    Terminal.println(aliceName)      // Alice
+    Terminal.println(aliceRole)      // admin
+
+    let bobName = bob.name
+    Terminal.println(bobName)        // Bob
+
+    // Reading a body attribute from a positionally-instantiated instance.
+    let aliceLabel = alice.label
+    Terminal.println(aliceLabel)     // user-entity
+
+    // ── Named instantiation ───────────────────────────────────────────
+    let carol = User(name: "Carol", role: "guest")
+    let carolName = carol.name
+    Terminal.println(carolName)      // Carol
+
+    // ── Ref attribute dispatch (positional) ───────────────────────────
+    let greeter = Greeter("Hello")
+    let msg = greeter.greetUser("World")
+    Terminal.println(msg)            // Hello, World!
+
+    let greeter2 = Greeter("Hi")
+    let msg2 = greeter2.greetUser("TLang")
+    Terminal.println(msg2)           // Hi, TLang!
+
+    // ── FuncDef param dispatch (positional) ───────────────────────────
+    let fmt = Formatter("shout")
+    let result = fmt.format("hello")
+    Terminal.println(result)         // hello!!!
+
+    return "done"
+}

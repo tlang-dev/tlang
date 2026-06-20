@@ -1,0 +1,58 @@
+use TLang.Terminal
+
+func sum_list(items: List): Int {
+    let total = 0
+    for (item in items) {
+        let total = total + item
+    }
+    return total
+}
+
+func sum_to(n: Int): Int {
+    let total = 0
+    for (i 1 to n) {
+        let total = total + i
+    }
+    return total
+}
+
+func count_until(n: Int): Int {
+    let count = 0
+    for (i 0 until n) {
+        let count = count + 1
+    }
+    return count
+}
+
+func print_evens(items: List): Unit {
+    for (n in items) {
+        if (n % 2 == 0) {
+            Terminal.println(n)
+        }
+    }
+}
+
+func main(): String {
+    // for-in over a list of integers
+    let numbers = [10, 20, 30, 40, 50]
+    let total = sum_list(numbers)
+    Terminal.println(total)
+
+    // for-in over a list of strings
+    for (word in ["alpha", "beta", "gamma"]) {
+        Terminal.println(word)
+    }
+
+    // for-range inclusive (to): 1+2+3+4+5 = 15
+    let sum = sum_to(5)
+    Terminal.println(sum)
+
+    // for-range exclusive (until): count 0..4 = 5 iterations
+    let count = count_until(5)
+    Terminal.println(count)
+
+    // nested: for-range drives index, if filters evens
+    print_evens([1, 2, 3, 4, 5, 6])
+
+    return "done"
+}

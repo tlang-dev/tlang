@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>TLang.List &mdash; TLang</title>
+  <meta name="description" content="TLang documentation">
+  <link rel="stylesheet" href="../../assets/style.css">
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="../../index.html">TLang</a>
+    <div class="nav-links">
+      <a class="nav-link" href="../getting-started.html">Docs</a>
+      <a class="nav-link" href="../language/index.html">Language</a>
+      <a class="nav-link" href="../stdlib/index.html">Stdlib</a>
+      <a class="nav-link" href="../generators.html">Generators</a>
+      <a class="nav-link" href="https://github.com/joel-f/tlang">GitHub</a>
+      <a class="btn btn-sm btn-primary" href="../getting-started.html">Get Started</a>
+    </div>
+  </div>
+</nav>
+<div class="doc-layout">
+  <aside class="sidebar">
+    <nav>
+      <span class="sidebar-label">Getting Started</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../getting-started.html">Installation &amp; CLI</a>
+        <a class="sidebar-link" href="../editor-setup.html">Editor Setup</a>
+        <a class="sidebar-link" href="../ai-assistant.html">AI Assistant</a>
+      </div>
+      <div class="sidebar-sep"></div>
+      <span class="sidebar-label">Language Reference</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../language/index.html">Overview</a>
+        <a class="sidebar-link" href="../language/types.html">Types</a>
+        <a class="sidebar-link" href="../language/variables.html">Variables &amp; Scope</a>
+        <a class="sidebar-link" href="../language/functions.html">Functions</a>
+        <a class="sidebar-link" href="../language/control-flow.html">Control Flow</a>
+        <a class="sidebar-link" href="../language/templates.html">Template Blocks</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/lang-template.html">lang &mdash; Code</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/data-template.html">data &mdash; Data &amp; Config</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/doc-template.html">doc &mdash; Documents</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/style-template.html">style &mdash; Stylesheets</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/cmd-template.html">cmd &mdash; Commands &amp; SQL</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/raw-template.html">raw &mdash; Verbatim Text</a>
+        <a class="sidebar-link" href="../language/sets.html">Sets &amp; Models</a>
+        <a class="sidebar-link" href="../language/imports.html">Imports &amp; Expose</a>
+      </div>
+      <div class="sidebar-sep"></div>
+      <span class="sidebar-label">Standard Library</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../stdlib/index.html">Overview</a>
+        <a class="sidebar-link" href="../stdlib/string.html">TLang.String</a>
+        <a class="sidebar-link" href="../stdlib/list.html">TLang.List</a>
+        <a class="sidebar-link" href="../stdlib/map.html">TLang.Map</a>
+        <a class="sidebar-link" href="../stdlib/numbers.html">TLang.Int / Long</a>
+        <a class="sidebar-link" href="../stdlib/float.html">TLang.Float / Double</a>
+        <a class="sidebar-link" href="../stdlib/math.html">TLang.Math</a>
+        <a class="sidebar-link" href="../stdlib/file.html">TLang.File</a>
+        <a class="sidebar-link" href="../stdlib/terminal.html">TLang.Terminal</a>
+        <a class="sidebar-link" href="../stdlib/prompt.html">TLang.Prompt</a>
+        <a class="sidebar-link" href="../stdlib/shell.html">TLang.Shell</a>
+        <a class="sidebar-link" href="../stdlib/leaf.html">TLang.Leaf</a>
+        <a class="sidebar-link" href="../stdlib/generator.html">TLang.Generator</a>
+        <a class="sidebar-link" href="../stdlib/json.html">TLang.Json / Yaml</a>
+        <a class="sidebar-link" href="../stdlib/pdf.html">TLang.Pdf</a>
+        <a class="sidebar-link" href="../stdlib/string-builder.html">TLang.StringBuilder</a>
+        <a class="sidebar-link" href="../stdlib/naming.html">TLang.Naming</a>
+        <a class="sidebar-link" href="../stdlib/assert.html">TLang.Assert</a>
+        <a class="sidebar-link" href="../stdlib/formatting.html">TLang.Formatting</a>
+      </div>
+      <div class="sidebar-sep"></div>
+      <span class="sidebar-label">More</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../generators.html">Generators</a>
+        <a class="sidebar-link" href="../packages.html">Packages</a>
+        <a class="sidebar-link" href="../use-cases.html">Use Cases</a>
+      </div>
+    </nav>
+  </aside>
+  <main class="doc-content">
+    <h1>TLang.List</h1>
+<p>TLang.List provides ordered sequence operations. Lists are persistent — every operation returns a new list. Higher-order functions accept lambdas or function references, and also work as dot-method calls on the list value.</p>
+<pre><code class="language-tlang">    use TLang.List
+  </code></pre>
+<section id="create">
+<h2>Creating Lists</h2>
+<pre><code class="language-tlang">      let fixed  = List.of(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;)     // fixed list
+      let empty  = List.create()               // empty list
+      let with1  = List.push(empty, &quot;item&quot;)   // [&quot;item&quot;]
+    </code></pre>
+</section>
+<section id="access">
+<h2>Access and Info</h2>
+<pre><code class="language-tlang">      let n     = List.size(items)              // count
+      let first = List.first(items)             // first element
+      let last  = List.last(items)              // last element
+      let el    = List.get(items, 2)            // element at index 2
+      let has   = List.contains(items, &quot;x&quot;)    // Bool
+      let idx   = List.indexOf(items, &quot;x&quot;)     // Int (-1 if not found)
+    </code></pre>
+</section>
+<section id="mutate">
+<h2>Adding and Removing</h2>
+<pre><code class="language-tlang">      let pushed   = List.push(items, &quot;new&quot;)           // append
+      let prepended = List.prepend(items, &quot;first&quot;)      // prepend
+      let updated  = List.set(items, 1, &quot;replaced&quot;)    // replace at index
+      let removed  = List.remove(items, 2)             // remove at index
+    </code></pre>
+</section>
+<section id="slice">
+<h2>Slicing and Combining</h2>
+<pre><code class="language-tlang">      let tail    = List.tail(items)              // all but first
+      let init    = List.init(items)              // all but last
+      let sliced  = List.slice(items, 1, 3)       // elements 1..2
+      let taken   = List.take(items, 3)           // first 3
+      let dropped = List.drop(items, 2)           // skip first 2
+      let rev     = List.reverse(items)
+      let cat     = List.concat(a, b)             // join two lists
+      let flat    = List.flatten(nested)          // one level flat
+      let uniq    = List.distinct(items)
+    </code></pre>
+</section>
+<section id="sort">
+<h2>Sorting and Joining</h2>
+<pre><code class="language-tlang">      let sorted  = List.sort(items)                         // lexicographic
+      let joined  = List.join(items, &quot;, &quot;)                   // &quot;a, b, c&quot;
+      let zipped  = List.zip(keys, values)                   // List of pairs
+    </code></pre>
+</section>
+<section id="hof">
+<h2>Higher-Order Functions</h2>
+<p>All HOFs accept a lambda or function reference and work as both free functions and dot-method calls.</p>
+<pre><code class="language-tlang">      // map — transform each element
+      let doubled = List.map(nums, (x) =&gt; x * 2)
+      let doubled = nums.map((x) =&gt; x * 2)
+
+      // filter — keep matching elements
+      let evens = List.filter(nums, (x) =&gt; x % 2 == 0)
+
+      // forEach — side effect per element (returns Unit)
+      List.forEach(items, (x) =&gt; Terminal.println(x))
+
+      // reduce — fold left to a single value
+      let sum = List.reduce(nums, 0, (acc, x) =&gt; acc + x)
+
+      // any / all — boolean tests
+      let hasNeg = List.any(nums, (x) =&gt; x &lt; 0)
+      let allPos = List.all(nums, (x) =&gt; x &gt; 0)
+
+      // find — first match or Unit
+      let found = List.find(items, (x) =&gt; x.startsWith(&quot;A&quot;))
+
+      // count — count matching elements
+      let n = List.count(items, (x) =&gt; x != &quot;&quot;)
+
+      // flatMap — map then flatten one level
+      let words = List.flatMap(sentences, (s) =&gt; s.split(&quot; &quot;))
+
+      // sortBy — sort by derived key
+      let sorted = List.sortBy(users, (u) =&gt; u.name)
+
+      // groupBy — group into a Map of lists
+      let byFirstChar = List.groupBy(names, (n) =&gt; n.substring(0, 1))
+    </code></pre>
+</section>
+<section id="chain">
+<h2>Chaining</h2>
+<pre><code class="language-tlang">      let result = items
+          .filter((x) =&gt; x != &quot;&quot;)
+          .map((x) =&gt; x.trim())
+          .map((x) =&gt; Naming.toPascalCase(x))
+    </code></pre>
+</section>
+
+  </main>
+</div>
+<footer class="footer">
+  <div class="footer-inner">
+    <span class="footer-brand">TLang</span>
+    <div class="footer-links">
+      <a class="footer-link" href="../getting-started.html">Getting Started</a>
+      <a class="footer-link" href="../language/index.html">Language</a>
+      <a class="footer-link" href="../stdlib/index.html">Stdlib</a>
+      <a class="footer-link" href="../generators.html">Generators</a>
+      <a class="footer-link" href="https://github.com/joel-f/tlang">GitHub</a>
+    </div>
+    <span class="footer-copy">&copy; 2026 TLang Contributors &middot; Apache 2.0</span>
+  </div>
+</footer>
+<script>
+(function() {
+  var links = document.querySelectorAll('.sidebar-link');
+  var cur = window.location.href;
+  links.forEach(function(a) {
+    var href = a.getAttribute('href');
+    if (href && cur.indexOf(href.replace('../', '')) !== -1) {
+      a.classList.add('active');
+    }
+  });
+}());
+</script>
+</body>
+</html>

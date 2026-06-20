@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>TLang &mdash; Template Language for Structural Code Generation</title>
+  <meta name="description" content="TLang is a compiled template language that generates code across any technology stack from a single source of truth.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="/">TLang</a>
+    <div class="nav-links">
+      <a class="nav-link" href="docs/getting-started.html">Docs</a>
+      <a class="nav-link" href="docs/language-spec.html">Language</a>
+      <a class="nav-link" href="https://github.com/joel-f/tlang">GitHub</a>
+      <a class="btn btn-sm btn-primary" href="docs/getting-started.html">Get Started</a>
+    </div>
+  </div>
+</nav>
+<section class="hero">
+  <div class="section-inner">
+    <div class="hero-badge">Open Source &middot; Apache 2.0</div>
+    <h1 class="hero-title">Write the template.<br>Skip the repetition.</h1>
+    <p class="hero-sub">TLang is a compiled template language that generates code across any technology stack &mdash; from a single, readable source of truth. AI writes the template once. TLang enforces it everywhere.</p>
+    <div class="hero-cta">
+      <a class="btn btn-primary" href="docs/getting-started.html">Get Started</a>
+      <a class="btn btn-ghost" href="https://github.com/joel-f/tlang">View on GitHub</a>
+    </div>
+    <div class="hero-prompt"><code>tlang compile-run Main.tlang</code></div>
+  </div>
+</section>
+<section class="problem" id="problem">
+  <div class="section-inner">
+    <div class="section-label">The Problem</div>
+    <h2>AI code generation doesn&rsquo;t scale</h2>
+    <p>Every file, every service, every entity requires the model to reason from scratch &mdash; consuming tokens and producing output that is, at best, <em>probably</em> correct. Multiply that across 200 files and the cost becomes hard to justify.</p>
+    <p>Switching to cheaper models trades one problem for another. A cheaper model that generates subtly wrong code across 200 files is far more expensive to fix than the tokens you saved.</p>
+    <p class="problem-lead">There is a better approach.</p>
+  </div>
+</section>
+<section class="features" id="features">
+  <div class="section-inner">
+    <div class="section-label">Features</div>
+    <h2>One template. Every output.</h2>
+    <div class="features-grid">
+      <div class="feature">
+        <h3 class="feature-title">Compiled, not interpreted</h3>
+        <p class="feature-body">TLang compiles to bytecode. Generate thousands of files in milliseconds from a single template.</p>
+      </div>
+      <div class="feature">
+        <h3 class="feature-title">Any target language</h3>
+        <p class="feature-body">Generate Kotlin, Java, TypeScript, HTML, YAML, Rust &mdash; from the same template definition.</p>
+      </div>
+      <div class="feature">
+        <h3 class="feature-title">Structural generation</h3>
+        <p class="feature-body">Templates operate on models. One model, many outputs. Add an entity; every file updates.</p>
+      </div>
+      <div class="feature">
+        <h3 class="feature-title">AI-native workflow</h3>
+        <p class="feature-body">Ask AI to write the template once. TLang handles the scale. Expensive reasoning happens once.</p>
+      </div>
+      <div class="feature">
+        <h3 class="feature-title">LSP &amp; MCP support</h3>
+        <p class="feature-body">Full Language Server Protocol for editors. Model Context Protocol for AI assistants.</p>
+      </div>
+      <div class="feature">
+        <h3 class="feature-title">Package system</h3>
+        <p class="feature-body">Share templates across projects. Import framework adapters. Compose generators.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="demo" id="demo">
+  <div class="section-inner">
+    <div class="section-label">See It In Action</div>
+    <h2>From template to output in one compile</h2>
+    <div class="demo-split">
+      <div class="demo-panel">
+        <div class="demo-label">Template &mdash; written once</div>
+        <pre class="demo-code"><code>lang [kotlin] entity(pkg: String, name: String) {
+    pkg ${pkg}
+    impl[data class] ${name}(
+        val id: Long,
+        val name: String
+    )
+}</code></pre>
+      </div>
+      <div class="demo-panel">
+        <div class="demo-label">Generated for every entity</div>
+        <pre class="demo-code demo-out"><code>package com.example.model
+
+data class User(
+    val id: Long,
+    val name: String
+)
+
+data class Product(
+    val id: Long,
+    val name: String
+)</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="cta" id="install">
+  <div class="section-inner">
+    <h2>Ready to generate?</h2>
+    <p class="cta-sub">TLang is open source under the Apache 2.0 license.</p>
+    <div class="cta-btns">
+      <a class="btn btn-primary" href="docs/getting-started.html">Get Started</a>
+      <a class="btn btn-ghost" href="https://github.com/joel-f/tlang">Star on GitHub</a>
+    </div>
+  </div>
+</section>
+<footer class="footer">
+  <div class="footer-inner">
+    <span class="footer-brand">TLang</span>
+    <div class="footer-links">
+      <a class="footer-link" href="docs/getting-started.html">Docs</a>
+      <a class="footer-link" href="https://github.com/joel-f/tlang">GitHub</a>
+      <a class="footer-link" href="https://crates.io/crates/tlang">Crates.io</a>
+    </div>
+    <span class="footer-copy">&copy; 2026 TLang Contributors &middot; Apache 2.0</span>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,93 @@
+use TLang.Terminal
+use TLang.Float as F
+use TLang.Double as D
+
+func main(): String {
+    // --- Double.fromInt / toInt ---
+    let d1 = D.fromInt(42)
+    Terminal.println(D.toString(d1))
+    let d2 = D.fromInt(-7)
+    Terminal.println(D.toString(d2))
+    Terminal.println(D.toInt(d1))
+
+    // --- Double.parse / toString ---
+    let pi = D.parse("3.141592653589793")
+    Terminal.println(D.toString(pi))
+    let neg = D.parse("-2.5")
+    Terminal.println(D.toString(neg))
+
+    // --- Double.floor / ceil / round ---
+    let x = D.parse("3.7")
+    Terminal.println(D.toString(D.floor(x)))
+    Terminal.println(D.toString(D.ceil(x)))
+    Terminal.println(D.toString(D.round(x)))
+    let y = D.parse("3.2")
+    Terminal.println(D.toString(D.floor(y)))
+    Terminal.println(D.toString(D.ceil(y)))
+    Terminal.println(D.toString(D.round(y)))
+
+    // --- Double.abs ---
+    let neg2 = D.parse("-4.5")
+    Terminal.println(D.toString(D.abs(neg2)))
+    Terminal.println(D.toString(D.abs(x)))
+
+    // --- Double.min / max ---
+    Terminal.println(D.toString(D.min(x, y)))
+    Terminal.println(D.toString(D.max(x, y)))
+
+    // --- Double.sqrt ---
+    let four = D.fromInt(4)
+    Terminal.println(D.toString(D.sqrt(four)))
+    let nine = D.fromInt(9)
+    Terminal.println(D.toString(D.sqrt(nine)))
+
+    // --- Double.pow ---
+    let two = D.fromInt(2)
+    let ten = D.fromInt(10)
+    Terminal.println(D.toString(D.pow(two, ten)))
+    Terminal.println(D.toString(D.pow(D.parse("2.0"), D.parse("0.5"))))
+
+    // --- Double.add / sub / mul / div ---
+    let a = D.parse("1.5")
+    let b = D.parse("2.5")
+    Terminal.println(D.toString(D.add(a, b)))
+    Terminal.println(D.toString(D.sub(b, a)))
+    Terminal.println(D.toString(D.mul(a, b)))
+    Terminal.println(D.toString(D.div(b, a)))
+
+    // --- Double.pi / e ---
+    Terminal.println(D.toString(D.pi()))
+    Terminal.println(D.toString(D.e()))
+
+    // --- Double.isNaN / isInfinite ---
+    Terminal.println(D.isNaN(D.nan()))
+    Terminal.println(D.isNaN(x))
+    Terminal.println(D.isInfinite(D.infinity()))
+    Terminal.println(D.isInfinite(x))
+
+    // --- Float.pi / e (32-bit precision) ---
+    Terminal.println(F.toString(F.pi()))
+    Terminal.println(F.toString(F.e()))
+
+    // --- Float.fromInt / toInt ---
+    let f1 = F.fromInt(5)
+    Terminal.println(F.toString(f1))
+    Terminal.println(F.toInt(f1))
+
+    // --- Float.floor / ceil / round ---
+    let fx = F.parse("3.7")
+    Terminal.println(F.toString(F.floor(fx)))
+    Terminal.println(F.toString(F.ceil(fx)))
+    Terminal.println(F.toString(F.round(fx)))
+
+    // --- Float.sqrt ---
+    Terminal.println(F.toString(F.sqrt(F.fromInt(4))))
+
+    // --- Float.isNaN / isInfinite ---
+    Terminal.println(F.isNaN(F.nan()))
+    Terminal.println(F.isNaN(f1))
+    Terminal.println(F.isInfinite(F.infinity()))
+    Terminal.println(F.isInfinite(f1))
+
+    return "done"
+}

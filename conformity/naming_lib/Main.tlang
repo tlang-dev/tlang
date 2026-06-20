@@ -1,0 +1,71 @@
+use TLang.Terminal
+use TLang.Naming as N
+
+func main(): String {
+    // --- toCamelCase ---
+    Terminal.println(N.toCamelCase("my_field_name"))
+    Terminal.println(N.toCamelCase("MyFieldName"))
+    Terminal.println(N.toCamelCase("MY_FIELD_NAME"))
+    Terminal.println(N.toCamelCase("my-field-name"))
+    Terminal.println(N.toCamelCase("my field name"))
+
+    // --- toPascalCase ---
+    Terminal.println(N.toPascalCase("my_field_name"))
+    Terminal.println(N.toPascalCase("myFieldName"))
+    Terminal.println(N.toPascalCase("MY_FIELD_NAME"))
+    Terminal.println(N.toPascalCase("my-field-name"))
+
+    // --- toSnakeCase ---
+    Terminal.println(N.toSnakeCase("myFieldName"))
+    Terminal.println(N.toSnakeCase("MyFieldName"))
+    Terminal.println(N.toSnakeCase("MY_FIELD_NAME"))
+    Terminal.println(N.toSnakeCase("my-field-name"))
+
+    // --- toScreamingSnake ---
+    Terminal.println(N.toScreamingSnake("myFieldName"))
+    Terminal.println(N.toScreamingSnake("my_field_name"))
+    Terminal.println(N.toScreamingSnake("my-field-name"))
+
+    // --- toKebabCase ---
+    Terminal.println(N.toKebabCase("myFieldName"))
+    Terminal.println(N.toKebabCase("my_field_name"))
+    Terminal.println(N.toKebabCase("MyFieldName"))
+
+    // --- toDotCase ---
+    Terminal.println(N.toDotCase("myFieldName"))
+    Terminal.println(N.toDotCase("my_field_name"))
+
+    // --- toTitleCase ---
+    Terminal.println(N.toTitleCase("myFieldName"))
+    Terminal.println(N.toTitleCase("my_field_name"))
+
+    // --- capitalize / decapitalize ---
+    Terminal.println(N.capitalize("hello"))
+    Terminal.println(N.capitalize("world"))
+    Terminal.println(N.decapitalize("Hello"))
+    Terminal.println(N.decapitalize("World"))
+
+    // --- pluralize ---
+    Terminal.println(N.pluralize("entity"))
+    Terminal.println(N.pluralize("service"))
+    Terminal.println(N.pluralize("bus"))
+    Terminal.println(N.pluralize("class"))
+    Terminal.println(N.pluralize("leaf"))
+
+    // --- singularize ---
+    Terminal.println(N.singularize("entities"))
+    Terminal.println(N.singularize("services"))
+    Terminal.println(N.singularize("buses"))
+    Terminal.println(N.singularize("classes"))
+    Terminal.println(N.singularize("leaves"))
+
+    // --- words ---
+    let w1 = N.words("myFieldName")
+    Terminal.println(w1)
+    let w2 = N.words("my_field_name")
+    Terminal.println(w2)
+    let w3 = N.words("MY_FIELD_NAME")
+    Terminal.println(w3)
+
+    return "done"
+}

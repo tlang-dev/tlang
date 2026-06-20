@@ -1,0 +1,43 @@
+# Todo App — Kotlin + Quarkus Example
+#
+# Demonstrates the full TLang layer stack working together:
+#
+#   contract/            ← Layer 3: pattern contracts (machine-readable hooks)
+#       └─ Main.tlang        exposes contracts() listing available patterns
+#
+#   implementation/kotlin-quarkus/
+#       └─ KotlinQuarkus.tlang  exposes all 8 templates (entityLead, repositoryLead,
+#                               serviceLead, resourceLead + their favourite-* specs)
+#
+#   examples/todo-kotlin-quarkus/   ← this project
+#       └─ Main.tlang        defines Todo-domain model sets using the impl templates,
+#                            introspects the contract, and writes 8 output files
+#
+# Run with: tlang both examples/todo-kotlin-quarkus
+#
+# Output structure (under output/):
+#   src/main/kotlin/com/example/todo/
+#     TodoItem.kt               ← Panache entity  (base)
+#     TodoItemRepository.kt     ← PanacheRepository
+#     TodoItemService.kt        ← ApplicationScoped service CRUD
+#     TodoItemResource.kt       ← JAX-RS resource CRUD
+#     FavouriteTodo.kt          ← entity WITH favourite property  (:  inheritance)
+#     FavouriteTodoRepository.kt
+#     FavouriteTodoService.kt
+#     FavouriteTodoResource.kt  ← resource + GET /favourite endpoint
+
+name: TodoKotlinQuarkus
+project: TodoExamples
+organisation: TLang
+version: 1.0.0
+stability: alpha
+releaseNumber: 1
+
+author: TLang Contributors
+website: https://tlang.dev/examples/todo-kotlin-quarkus
+license: Apache-2.0
+
+dependencies:
+  - TLangGen/KotlinGen/Kotlin 1.0.0:alpha:1 KotlinGen
+  - file://../../implementation/kotlin-quarkus KotlinQuarkusImpl
+  - file://../../contract ContractLib

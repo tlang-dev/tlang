@@ -1,0 +1,123 @@
+expose stdlibStringLibGen
+
+use TLang.File
+use TLang.Generator
+use TLang.Terminal
+use layout.PageLayout
+
+doc [html] stringLibPage() {
+  # TLang.String
+
+  TLang.String provides string manipulation utilities. Import with use TLang.String. TLang.Str is an identical alias.
+
+  [code "tlang"
+    use TLang.String
+  ]
+
+  [section "basics"
+    ## Length and Emptiness
+
+    [code "tlang"
+      let n     = String.length("hello")        // 5
+      let empty = String.isEmpty("")            // true
+      let empty = String.isEmpty("hi")          // false
+    ]
+  ]
+
+  [section "case"
+    ## Case Conversion
+
+    [code "tlang"
+      let up   = String.toUpperCase("hello")    // "HELLO"
+      let down = String.toLowerCase("HELLO")    // "hello"
+    ]
+  ]
+
+  [section "trim"
+    ## Trimming
+
+    [code "tlang"
+      let t  = String.trim("  hello  ")         // "hello"
+      let ts = String.trimStart("  hello  ")    // "hello  "
+      let te = String.trimEnd("  hello  ")      // "  hello"
+    ]
+  ]
+
+  [section "search"
+    ## Search and Test
+
+    [code "tlang"
+      let has   = String.contains("hello world", "world")   // true
+      let sw    = String.startsWith("hello", "he")          // true
+      let ew    = String.endsWith("hello", "lo")            // true
+      let eq    = String.equals("abc", "abc")               // true
+      let eqi   = String.equalsIgnoreCase("ABC", "abc")     // true
+      let cmp   = String.compare("a", "b")                  // -1 / 0 / 1
+    ]
+  ]
+
+  [section "index"
+    ## Index Operations
+
+    [code "tlang"
+      let i  = String.indexOf("hello world", "world")      // 6
+      let li = String.lastIndexOf("abcabc", "b")           // 4
+    ]
+  ]
+
+  [section "slice"
+    ## Substrings and Slicing
+
+    [code "tlang"
+      let sub  = String.substring("hello world", 6)        // "world"
+      let sub2 = String.substring("hello world", 0, 5)     // "hello"
+      let sl   = String.slice("hello", 1, 4)               // "ell"
+    ]
+  ]
+
+  [section "split"
+    ## Split and Join
+
+    [code "tlang"
+      let parts = String.split("a,b,c", ",")    // ["a", "b", "c"]
+      let lines = String.lines("a\nb\nc")        // ["a", "b", "c"]
+      let words = String.words("hello world")    // ["hello", "world"]
+    ]
+  ]
+
+  [section "replace"
+    ## Replace
+
+    [code "tlang"
+      let r1 = String.replace("hello world", "world", "there")   // "hello there"
+      let r2 = String.replaceAll("aabbcc", "b", "x")             // "aaxxcc"
+    ]
+  ]
+
+  [section "concat"
+    ## Concat and Repeat
+
+    [code "tlang"
+      let c  = String.concat("hello", " world")    // "hello world"
+      let r  = String.repeat("ab", 3)              // "ababab"
+    ]
+  ]
+
+  [section "char"
+    ## Character Operations
+
+    [code "tlang"
+      let ch   = String.charAt("hello", 1)           // "e"
+      let code = String.charCodeAt("A", 0)           // 65
+      let str  = String.fromCharCode(65)             // "A"
+    ]
+  ]
+}
+
+func stdlibStringLibGen(): String {
+    let content = Generator.generate(stringLibPage("html"))
+    let html = PageLayout.page("TLang.String", content)
+    File.write("docs/docs/stdlib/string.html", html, true)
+    Terminal.println("  -> stdlib/string.html")
+    return ""
+}

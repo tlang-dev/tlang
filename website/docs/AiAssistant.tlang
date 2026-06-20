@@ -1,0 +1,132 @@
+expose aiAssistant
+
+doc [md, html] aiAssistant() {
+  # AI Assistant Integration
+
+  TLang ships a Model Context Protocol server that gives AI coding assistants
+  — Claude, Cursor, GitHub Copilot, and others — full access to TLang's compiler,
+  runtime, and embedded documentation. The MCP server turns any MCP-compatible
+  assistant into a TLang-aware pair programmer.
+
+  [section "start"
+    ## Starting the MCP Server
+
+    [code "bash"
+      tlang mcp-server
+    ]
+
+    The server communicates over stdin/stdout using JSON-RPC 2.0, following the
+    MCP 2024-11-05 specification. Connect it to your AI assistant using the
+    assistant's MCP configuration.
+
+    Example configuration for Claude Desktop (claude_desktop_config.json):
+
+    [code "json"
+      {
+        "mcpServers": {
+          "tlang": {
+            "command": "tlang",
+            "args": ["mcp-server"]
+          }
+        }
+      }
+    ]
+  ]
+
+  [section "tools"
+    ## Available Tools
+
+    The MCP server exposes a set of tools that mirror the TLang CLI.
+    The assistant can call these tools directly during a conversation:
+
+    [list "unordered"
+      - tlang_init — initialise a new TLang project with a manifest.yml
+      - tlang_compile — compile a .tlang file to bytecode without running it
+      - tlang_run — run a pre-compiled .tlang bytecode file
+      - tlang_both — compile and run in a single step (the typical workflow)
+      - tlang_package — package a project into a .tbag archive for publishing
+      - tlang_clean — remove compiled bytecode caches
+      - tlang_index — index the current project for symbol search
+      - tlang_topic — retrieve embedded documentation on a specific TLang topic
+    ]
+
+    When a project context is active, the server also exposes dynamic tools
+    derived from the project's exposed functions, allowing the assistant to
+    call specific generators directly.
+  ]
+
+  [section "resources"
+    ## Resources
+
+    The MCP server exposes embedded documentation as resources the assistant
+    can read to understand TLang before generating code:
+
+    [list "unordered"
+      - tlang://guide — the full TLang onboarding guide
+      - tlang://project — project structure and manifest reference
+      - tlang://lang — language syntax reference
+      - tlang://templates — template block reference (lang, doc, style, data, cmd, raw)
+      - tlang://helpers — helper function patterns
+      - tlang://builtins — standard library module reference
+      - tlang://patterns — idiomatic TLang patterns
+      - tlang://mistakes — common mistakes and how to avoid them
+    ]
+
+    These resources are served directly from the binary — no internet connection required.
+  ]
+
+  [section "prompts"
+    ## System Prompt
+
+    The MCP server provides a ready-made system prompt for AI assistants.
+    When connected, the assistant automatically receives context about:
+
+    [list "unordered"
+      - TLang syntax and semantics
+      - Template types and their calling conventions
+      - The set + template binding pattern
+      - The standard library API
+      - Common pitfalls (StringBuilder.build vs toString, etc.)
+      - How to write idiomatic TLang code
+    ]
+
+    This eliminates the need to paste TLang documentation into every conversation.
+    The assistant starts with full context.
+  ]
+
+  [section "workflow"
+    ## AI-Native Workflow
+
+    The intended workflow with TLang and an AI assistant:
+
+    [list "ordered"
+      - Describe your model to the assistant (entities, fields, relationships)
+      - The assistant writes the TLang templates using set declarations and template blocks
+      - The assistant calls tlang_both to compile and run the templates
+      - TLang generates all target files — the assistant reviews the output
+      - You add more entities or refine the templates — the assistant regenerates
+    ]
+
+    The AI does the creative work (understanding your domain and writing the template)
+    once. TLang handles the mechanical work (generating the same pattern across all
+    entities) at zero additional AI cost.
+
+    A project with 200 entities costs the same in AI tokens as a project with 2 —
+    because the AI writes one template, not 200 files.
+  ]
+
+  [section "project-context"
+    ## Project Context
+
+    Use the set_project_context tool to point the MCP server at a TLang project:
+
+    [code "bash"
+      # In the assistant conversation:
+      # "Set the project context to my-app/"
+    ]
+
+    Once set, the server indexes the project and exposes its exposed functions
+    as dynamic tools. The assistant can then call your project's generators
+    directly without writing any CLI commands.
+  ]
+}

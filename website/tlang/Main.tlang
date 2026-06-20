@@ -1,0 +1,88 @@
+expose main
+
+use TLang.Terminal
+
+// Language reference pages
+use lang.Overview    as LangOverview
+use lang.Types       as LangTypes
+use lang.Variables   as LangVariables
+use lang.Functions   as LangFunctions
+use lang.ControlFlow as LangControlFlow
+use lang.Templates   as LangTemplates
+use lang.LangTemplate as LangLangTemplate
+use lang.DataTemplate as LangDataTemplate
+use lang.DocTemplate  as LangDocTemplate
+use lang.StyleTemplate as LangStyleTemplate
+use lang.CmdTemplate  as LangCmdTemplate
+use lang.RawTemplate  as LangRawTemplate
+use lang.Sets        as LangSets
+use lang.Imports     as LangImports
+
+// Stdlib reference pages
+use stdlib.Overview      as StdlibOverview
+use stdlib.StringLib     as StdlibString
+use stdlib.ListLib       as StdlibList
+use stdlib.MapLib        as StdlibMap
+use stdlib.Numbers       as StdlibNumbers
+use stdlib.Float         as StdlibFloat
+use stdlib.Math          as StdlibMath
+use stdlib.File          as StdlibFile
+use stdlib.Terminal      as StdlibTerminal
+use stdlib.Prompt        as StdlibPrompt
+use stdlib.Shell         as StdlibShell
+use stdlib.Leaf          as StdlibLeaf
+use stdlib.Generator     as StdlibGenerator
+use stdlib.Json          as StdlibJson
+use stdlib.Pdf           as StdlibPdf
+use stdlib.StringBuilder as StdlibStringBuilder
+use stdlib.Naming        as StdlibNaming
+use stdlib.Assert        as StdlibAssert
+use stdlib.Formatting    as StdlibFormatting
+
+func main(): String {
+    Terminal.println("Generating TLang documentation...")
+    Terminal.println("")
+    Terminal.println("Language Reference:")
+
+    LangOverview.langOverviewGen()
+    LangTypes.langTypesGen()
+    LangVariables.langVariablesGen()
+    LangFunctions.langFunctionsGen()
+    LangControlFlow.langControlFlowGen()
+    LangTemplates.langTemplatesGen()
+    LangLangTemplate.langLangTemplateGen()
+    LangDataTemplate.langDataTemplateGen()
+    LangDocTemplate.langDocTemplateGen()
+    LangStyleTemplate.langStyleTemplateGen()
+    LangCmdTemplate.langCmdTemplateGen()
+    LangRawTemplate.langRawTemplateGen()
+    LangSets.langSetsGen()
+    LangImports.langImportsGen()
+
+    Terminal.println("")
+    Terminal.println("Standard Library:")
+
+    StdlibOverview.stdlibOverviewGen()
+    StdlibString.stdlibStringLibGen()
+    StdlibList.stdlibListLibGen()
+    StdlibMap.stdlibMapLibGen()
+    StdlibNumbers.stdlibNumbersGen()
+    StdlibFloat.stdlibFloatGen()
+    StdlibMath.stdlibMathGen()
+    StdlibFile.stdlibFileGen()
+    StdlibTerminal.stdlibTerminalGen()
+    StdlibPrompt.stdlibPromptGen()
+    StdlibShell.stdlibShellGen()
+    StdlibLeaf.stdlibLeafGen()
+    StdlibGenerator.stdlibGeneratorGen()
+    StdlibJson.stdlibJsonGen()
+    StdlibPdf.stdlibPdfGen()
+    StdlibStringBuilder.stdlibStringBuilderGen()
+    StdlibNaming.stdlibNamingGen()
+    StdlibAssert.stdlibAssertGen()
+    StdlibFormatting.stdlibFormattingGen()
+
+    Terminal.println("")
+    Terminal.println("Done. 33 pages generated.")
+    return "done"
+}

@@ -1,0 +1,156 @@
+use TLang.Terminal
+
+// Returns the square of n.
+func square(n: Int): Int {
+    return n * n
+}
+
+// Returns the cube of n.
+func cube(n: Int): Int {
+    return n * n * n
+}
+
+// Returns n multiplied by two.
+func double(n: Int): Int {
+    return n * 2
+}
+
+// Returns n divided by two (integer division).
+func half(n: Int): Int {
+    return n / 2
+}
+
+// Returns the absolute difference between a and b.
+func abs_diff(a: Int, b: Int): Int {
+    if (a > b) {
+        return a - b
+    }
+    return b - a
+}
+
+// Clamps v to [lo, hi].
+func clamp(v: Int, lo: Int, hi: Int): Int {
+    if (v < lo) {
+        return lo
+    }
+    if (v > hi) {
+        return hi
+    }
+    return v
+}
+
+// Returns a * a + b * b  (used to build more complex expressions).
+func sum_of_squares(a: Int, b: Int): Int {
+    return a * a + b * b
+}
+
+func main(): String {
+    // ----------------------------------------------------------------
+    // Basic operators
+    // ----------------------------------------------------------------
+    Terminal.println(2 + 3);          // 5
+    Terminal.println(10 - 4);         // 6
+    Terminal.println(3 * 7);          // 21
+    Terminal.println(20 / 4);         // 5
+    Terminal.println(17 % 5);         // 2
+
+    // ----------------------------------------------------------------
+    // Operator precedence: * / % bind tighter than + -
+    // Without correct precedence these produce wrong results.
+    // ----------------------------------------------------------------
+    Terminal.println(1 + 2 * 3);           // 7   (not 9)
+    Terminal.println(10 - 2 * 3);          // 4   (not 24)
+    Terminal.println(2 * 3 + 4 * 5);       // 26
+    Terminal.println(20 / 4 + 3);          // 8
+    Terminal.println(100 - 50 / 5 * 2);    // 80  (50/5=10, 10*2=20, 100-20)
+    Terminal.println(10 + 17 % 5);         // 12  (17%5=2, 10+2)
+    Terminal.println(3 * 7 % 4);           // 1   (3*7=21, 21%4=1)
+
+    // ----------------------------------------------------------------
+    // Parentheses override precedence
+    // ----------------------------------------------------------------
+    Terminal.println((1 + 2) * 3);                 // 9
+    Terminal.println((10 - 2) * (3 + 4));          // 56
+    Terminal.println(((2 + 3) * (4 - 1)) / 5);    // 3  (5*3=15, 15/5)
+    Terminal.println(2 * (3 + 4 * 5));             // 46 (4*5=20, 3+20=23, 2*23)
+    Terminal.println((6 + 2) / (3 - 1));           // 4
+
+    // ----------------------------------------------------------------
+    // Deeply nested brackets — tests correct recursive grouping
+    // (1 + 2*(3 + 4*(5-2)) - 1) * (2 + 1)
+    //   innermost : 5-2 = 3
+    //   4*3       = 12
+    //   3+12      = 15
+    //   2*15      = 30
+    //   1+30-1    = 30
+    //   30*(2+1)  = 90
+    // ----------------------------------------------------------------
+    Terminal.println((1 + 2 * (3 + 4 * (5 - 2)) - 1) * (2 + 1));   // 90
+
+    // (3+4) * (2 + (5-1)*3) / (1+6)
+    //   3+4=7,  5-1=4, 4*3=12, 2+12=14,  1+6=7
+    //   7*14=98,  98/7=14
+    Terminal.println((3 + 4) * (2 + (5 - 1) * 3) / (1 + 6));       // 14
+
+    // ((4+6) * (3 + 2) - (8 / 2 + 6)) * (1 + 1)
+    //   4+6=10, 3+2=5, 10*5=50
+    //   8/2=4,  4+6=10
+    //   50-10=40,  40*(1+1)=80
+    Terminal.println(((4 + 6) * (3 + 2) - (8 / 2 + 6)) * (1 + 1)); // 80
+
+    // ----------------------------------------------------------------
+    // Subtraction resulting in negative values (via 0 - expr)
+    // ----------------------------------------------------------------
+    Terminal.println(0 - 5);          // -5
+    Terminal.println(0 - (3 + 2));    // -5
+    Terminal.println(0 - (2 * 4 - 1)); // -7  (2*4=8, 8-1=7, 0-7)
+
+    // ----------------------------------------------------------------
+    // Function calls as operands in expressions
+    // ----------------------------------------------------------------
+    Terminal.println(square(4));               // 16
+    Terminal.println(cube(3));                 // 27
+    Terminal.println(double(7));               // 14
+    Terminal.println(half(18));                // 9
+    Terminal.println(square(3) + 1);           // 10
+    Terminal.println(double(5) * 3);           // 30
+    Terminal.println(square(2 + 1));           // 9  (square(3))
+    Terminal.println(double(square(3)));        // 18 (square→9, double→18)
+    Terminal.println(cube(2) + square(3));     // 17 (8+9)
+    Terminal.println(abs_diff(10, 3));         // 7
+    Terminal.println(abs_diff(3, 10));         // 7
+    Terminal.println(clamp(5, 1, 10));         // 5
+    Terminal.println(clamp(0, 1, 10));         // 1
+    Terminal.println(clamp(15, 1, 10));        // 10
+    Terminal.println(sum_of_squares(3, 4));    // 25 (9+16)
+
+    // ----------------------------------------------------------------
+    // Functions combined with arithmetic and brackets
+    // ----------------------------------------------------------------
+    Terminal.println(square(3) + square(4));                    // 25
+    Terminal.println((square(5) - 1) / (double(3) - 4));       // 12 (24/2)
+    Terminal.println(cube(2) + double(3) * (square(4) - 10));  // 44 (8+6*6)
+
+    // ----------------------------------------------------------------
+    // Very complex: all features combined
+    //
+    // ((square(3)+1) * (cube(2) - double(2))) / abs_diff(10,4) + square(2)
+    //   square(3)=9,  9+1=10
+    //   cube(2)=8,    double(2)=4,  8-4=4
+    //   10*4=40
+    //   abs_diff(10,4)=6
+    //   40/6=6  (integer division)
+    //   square(2)=4
+    //   6+4=10
+    // ----------------------------------------------------------------
+    Terminal.println(((square(3) + 1) * (cube(2) - double(2))) / abs_diff(10, 4) + square(2));  // 10
+
+    // sum_of_squares(3,4) * 2 - clamp(square(3)+1, 5, 20) + half(cube(2)+2)
+    //   sum_of_squares(3,4)=25, 25*2=50
+    //   square(3)=9, 9+1=10, clamp(10,5,20)=10
+    //   cube(2)=8, 8+2=10, half(10)=5
+    //   50 - 10 + 5 = 45
+    Terminal.println(sum_of_squares(3, 4) * 2 - clamp(square(3) + 1, 5, 20) + half(cube(2) + 2));  // 45
+
+    return "done"
+}

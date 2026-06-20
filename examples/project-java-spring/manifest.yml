@@ -1,0 +1,35 @@
+# Project Base — Java + Spring Boot Example
+#
+# Demonstrates the TLang ProjectBuild contract working together with the
+# Project API (api/project) and the Java + Spring Boot implementation.
+#
+# Flow:
+#   1. A model set declares the project metadata (name, org, version, …)
+#   2. The Project API extracts gradleGroup, gradleArtifact, version, etc.
+#   3. The JavaSpring implementation generates the Gradle build files and
+#      the Spring Boot application.yml from those values.
+#
+# Run with:
+#   tlang both examples/project-java-spring
+#
+# Output structure (under output/):
+#   build.gradle.kts
+#   settings.gradle.kts
+#   gradle.properties
+#   src/main/resources/application.yml
+
+name: ProjectJavaSpring
+project: ProjectExamples
+organisation: TLang
+version: 1.0.0
+stability: alpha
+releaseNumber: 1
+
+author: TLang Contributors
+website: https://tlang.dev/examples/project-java-spring
+license: Apache-2.0
+
+dependencies:
+  - TLangGen/JavaGen/Java 1.0.0:alpha:1 JavaGen
+  - file://../../implementation/java-spring JavaSpringImpl
+  - file://../../contract ContractLib

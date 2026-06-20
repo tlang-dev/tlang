@@ -1,0 +1,141 @@
+expose langRawTemplateGen
+
+use TLang.File
+use TLang.Generator
+use TLang.Terminal
+use layout.PageLayout
+
+doc [html] rawTemplatePage() {
+  # raw — Verbatim Templates
+
+  The raw template type embeds text exactly as written. There are two modes: AsIs writes the body completely unchanged, and Replaced substitutes $${ param } patterns while leaving everything else untouched.
+
+  [section "asis"
+    ## raw [AsIs] — No Substitution
+
+    The body is written to the output verbatim. No substitution, no keyword parsing, no LSP normalisation.
+
+    [code "tlang"
+      raw [AsIs] dockerfileHeader() {
+      # Auto-generated — DO NOT EDIT
+      # ${placeholder} appears literally in the output
+      FROM eclipse-temurin:21
+      }
+    ]
+
+    Use AsIs when the content contains TLang syntax that must appear literally in the output, or when you need complete fidelity to a template format.
+  ]
+
+  [section "replaced"
+    ## raw [Replaced] — Parameter Substitution
+
+    The body is written verbatim except that $${ param } sequences are replaced with the argument value at call time.
+
+    [code "tlang"
+      raw [Replaced] dockerfile(image: String, port: String) {
+      FROM $${image}
+      WORKDIR /app
+      COPY build/libs/app.jar app.jar
+      EXPOSE $${port}
+      ENTRYPOINT ["java", "-jar", "app.jar"]
+      }
+    ]
+
+    [code "tlang"
+      raw [Replaced] gitignore(buildDir: String) {
+      # Build output
+      $${buildDir}/
+      *.class
+      *.jar
+      .env
+      .DS_Store
+      }
+    ]
+  ]
+
+  [section "calling"
+    ## Calling raw Templates
+
+    raw template calls return a String directly — no Generator.generate() needed.
+
+    [code "tlang"
+      func main(): String {
+          let header = dockerfileHeader()
+          let body   = dockerfile("eclipse-temurin:21", "8080")
+
+          File.write("Dockerfile",   header + "\n" + body, true)
+          File.write(".gitignore",   gitignore("build"),    true)
+          return "done"
+      }
+    ]
+  ]
+
+  [section "usecases"
+    ## When to Use raw
+
+    Use raw when the target format conflicts with TLang syntax. Common cases:
+
+    Dockerfiles — FROM, RUN, CMD keywords would be parsed as TLang directives inside a lang template.
+
+    Shell scripts — variable syntax $VAR, complex quoting, heredocs.
+
+    .gitignore, .npmrc, .env files — no structure to model.
+
+    GitHub Actions YAML with complex anchors or multi-line strings.
+
+    Makefile targets — tab-significant syntax.
+
+    [code "tlang"
+      raw [Replaced] githubAction(name: String, branch: String) {
+      name: $${name}
+
+      on:
+        push:
+          branches: [$${branch}]
+
+      jobs:
+        build:
+          runs-on: ubuntu-latest
+          steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-java@v4
+              with:
+                java-version: '21'
+            - run: ./gradlew build
+      }
+    ]
+  ]
+
+  [section "escape"
+    ## Escaping in raw [Replaced]
+
+    Sequences that look like ${ param } but should appear literally can be written as $${ param } — the double dollar prefix prevents substitution.
+
+    [code "tlang"
+      raw [Replaced] helmTemplate(app: String) {
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: $${app}
+        labels:
+          app: $${app}
+      spec:
+        template:
+          spec:
+            containers:
+              - name: $${app}
+                image: {{ .Values.image }}    # Helm syntax — not substituted
+      }
+    ]
+
+    Any double-dollar escape sequence not matching a declared parameter is left as-is.
+  ]
+}
+
+func langRawTemplateGen(): String {
+    let content = Generator.generate(rawTemplatePage("html"))
+    let html = PageLayout.page("raw — Verbatim Templates", content)
+    File.write("docs/docs/language/raw-template.html", html, true)
+    Terminal.println("  -> language/raw-template.html")
+    return ""
+}

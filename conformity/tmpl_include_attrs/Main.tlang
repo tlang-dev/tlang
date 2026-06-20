@@ -1,0 +1,50 @@
+use TLang.Generator
+use KotlinGen as kotlin
+use TLang.Leaf
+use TLang.Terminal
+use TLang.List
+
+lang [kotlin] attrNode(attrDecl: String) spec {
+    var ${attrDecl}
+}
+
+lang [kotlin] dataClass(className: String, attrs: List) {
+    impl[public class] ${className} {
+        <[ renderAttrs(attrs) ]>
+    }
+}
+
+// renderAttrs — loops over a list of "name: Type" strings, calls the
+// attrNode spec template for each one, and returns the list of
+// TemplateInstance leaves.  expand_includes in the Rust runtime will
+// recognise each leaf as a TemplateInstance, extract its substituted
+// body fragment, and inline them all at the <[...]> call site.
+func renderAttrs(attrs: List): List {
+    let nodes = List.create()
+    for (attr in attrs) {
+        let node = attrNode(attr)
+        let nodes = List.push(nodes, node)
+    }
+    return nodes
+}
+
+func main(): String {
+    // Build the list of attributes to inject into the class template.
+    let attrs = List.of("id: Long", "name: String", "email: String", "active: Boolean")
+
+    // Instantiate the template.  The runtime detects <[ renderAttrs(attrs) ]>,
+    // calls renderAttrs with the live List value, receives a List of
+    // TemplateInstance leaves (each an attrNode instance), extracts the
+    // substituted `var …` fragment from every leaf, and splices them all
+    // into the impl body before storing the dataClass instance.
+    dataClass("UserProfile", attrs)
+
+    // Retrieve the generated template instance from the model.
+    let model    = Leaf.model()
+    let instance = Leaf.get(model, "dataClass_1")
+
+    // Use the Kotlin code generator to produce the final source text.
+    let generated = Generator.generate(instance)
+    Terminal.println(generated)
+    return generated
+}

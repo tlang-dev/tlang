@@ -1,0 +1,102 @@
+use TLang.File
+use TLang.Terminal
+use TLangAPI.entity.Entity
+use TLangAPI.Resource
+use KotlinQuarkusImpl
+
+set CommentResource : Resource {
+    extends: "PanacheEntityBase"
+}
+
+
+func main(): String {
+    let pkg     = "com.example.app"
+    let pkgPath = "com/example/app"
+
+    // ── Post — plain CRUD stack ───────────────────────────────────────────
+    //
+    // Fields are declared exactly once inside the Entity.  All four layers
+    // (Entity, Repository, Service, REST resource) are generated from this
+    // single Resource descriptor — no repetition of pkg/pkgPath/entityName.
+
+    let post = Resource(
+        Entity("Post", "Blog post", [
+            Field("title",    StringType()),
+            Field("body",     StringType()),
+            Field("authorId", Number())
+        ]),
+        pkg, pkgPath, "/api/posts", []
+    )
+    run(post)
+    Terminal.println("Generated: Post stack → Post.kt, PostRepository.kt, PostService.kt, PostResource.kt")
+
+    // ── Bookmark — Favourite feature ──────────────────────────────────────
+    //
+    // Adding Favourite() to the features list automatically injects extra
+    // behaviour at every layer without any extra declarations:
+    //
+    //   Entity      →  favourite: Boolean  column
+    //   Repository  →  findByFavourite(Boolean)  Panache query
+    //   Service     →  findFavourites()  method
+    //   Resource    →  GET /favourite  JAX-RS endpoint
+    //
+    // The fields (url, label) are still defined once.  The feature is purely
+    // additive — removing Favourite() from the list drops all injected code.
+
+    let bookmark = Resource(
+        Entity("Bookmark", "Saved link", [
+            Field("url",   StringType()),
+            Field("label", StringType())
+        ]),
+        pkg, pkgPath, "/api/bookmarks", [Favourite()]
+    )
+    run(bookmark)
+    Terminal.println("Generated: Bookmark stack → Bookmark*.kt (+favourite behaviour)")
+
+    // ── Comment — body attribute override via subtype ─────────────────────
+    //
+    // CommentResource is declared in the model block above as a subtype of
+    // Resource with `extends: "PanacheEntityBase"`.  At the call site it is
+    // used exactly like Resource — same constructor, same generate() helper.
+    //
+    // This is the Prop-3 escape hatch: override a single per-layer config
+    // value (here the JPA base class) without touching any template or
+    // duplicating the rest of the stack definition.
+
+    let comment = CommentResource(
+        Entity("Comment", "Post comment", [
+            Field("postId",  Number()),
+            Field("content", StringType()),
+            Field("author",  StringType())
+        ]),
+        pkg, pkgPath, "/api/comments", []
+    )
+    run(comment)
+    Terminal.println("Generated: Comment stack → Comment*.kt (extends PanacheEntityBase)")
+
+    // ── Gradle project scaffold ───────────────────────────────────────────
+    //
+    // All four files are scaffold-once: File.write without a third argument
+    // skips files that already exist, so user edits survive re-runs.
+
+    let build = buildFileContent("com.example.app", "app", "0.1.0", "17")
+    File.write("output/build.gradle.kts", build)
+    Terminal.println("Generated: output/build.gradle.kts")
+
+    let settings = settingsFileContent("app")
+    File.write("output/settings.gradle.kts", settings)
+    Terminal.println("Generated: output/settings.gradle.kts")
+
+    let props = gradlePropertiesContent()
+    File.write("output/gradle.properties", props)
+    Terminal.println("Generated: output/gradle.properties")
+
+    let config = appConfigContent("app", "8080")
+    File.write("output/src/main/resources/application.yml", config)
+    Terminal.println("Generated: output/src/main/resources/application.yml")
+
+    Terminal.println("")
+    Terminal.println("Kotlin Quarkus generation complete.")
+    return "done"
+}
+

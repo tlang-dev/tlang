@@ -1,0 +1,111 @@
+expose stdlibAssertGen
+
+use TLang.File
+use TLang.Generator
+use TLang.Terminal
+use layout.PageLayout
+
+doc [html] assertPage() {
+  # TLang.Assert
+
+  TLang.Assert provides assertions for use inside test blocks. A failing assertion throws an error with a descriptive message that the test runner captures.
+
+  [code "tlang"
+    use TLang.Assert
+  ]
+
+  [section "api"
+    ## Assertions
+
+    [code "tlang"
+      Assert.isTrue(value)               // fails if not true
+      Assert.isFalse(value)              // fails if not false
+      Assert.equals(actual, expected)    // fails if not equal
+      Assert.notEquals(a, b)            // fails if equal
+      Assert.contains(str, substr)       // fails if str does not contain substr
+      Assert.notContains(str, substr)    // fails if str contains substr
+      Assert.startsWith(str, prefix)     // fails if str does not start with prefix
+      Assert.endsWith(str, suffix)       // fails if str does not end with suffix
+      Assert.isEmpty(value)              // fails if not empty (string or list)
+      Assert.notEmpty(value)             // fails if empty
+      Assert.isNull(value)               // fails if not null
+      Assert.notNull(value)              // fails if null
+      Assert.fail("message")             // always fails — unconditional
+    ]
+  ]
+
+  [section "test"
+    ## Test Blocks
+
+    Assertions are used inside test blocks. The test runner executes each test and reports failures with the test name.
+
+    [code "tlang"
+      use TLang.Assert
+
+      func toSlug(s: String): String {
+          return String.toLowerCase(String.replace(s, " ", "-"))
+      }
+
+      test "toSlug converts spaces to hyphens" {
+          Assert.equals(toSlug("hello world"), "hello-world")
+      }
+
+      test "toSlug lowercases" {
+          Assert.equals(toSlug("Hello World"), "hello-world")
+      }
+
+      test "toSlug empty string" {
+          Assert.equals(toSlug(""), "")
+      }
+    ]
+  ]
+
+  [section "run"
+    ## Running Tests
+
+    [code "bash"
+      tlang test MyFile.tlang
+    ]
+
+    The runner reports each test with pass/fail status and any assertion error messages.
+  ]
+
+  [section "example"
+    ## Example — Testing a Generator Function
+
+    [code "tlang"
+      use TLang.Assert
+      use TLang.Naming
+
+      test "toPascalCase basic" {
+          Assert.equals(Naming.toPascalCase("user_profile"), "UserProfile")
+      }
+
+      test "toSnakeCase from pascal" {
+          Assert.equals(Naming.toSnakeCase("UserProfile"), "user_profile")
+      }
+
+      test "pluralize regular" {
+          Assert.equals(Naming.pluralize("user"), "users")
+      }
+
+      test "pluralize irregular" {
+          Assert.equals(Naming.pluralize("entity"), "entities")
+      }
+
+      test "generated code contains class name" {
+          let code = Generator.generate(entity("com.example", "User"))
+          Assert.contains(code, "class User")
+          Assert.contains(code, "package com.example")
+      }
+    ]
+  ]
+}
+
+func stdlibAssertGen(): String {
+    let content = Generator.generate(assertPage("html"))
+    let html = PageLayout.page("TLang.Assert", content)
+    File.write("docs/docs/stdlib/assert.html", html, true)
+    Terminal.println("  -> stdlib/assert.html")
+    return ""
+}

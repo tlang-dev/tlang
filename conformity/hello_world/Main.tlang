@@ -1,0 +1,7 @@
+use TLang.Terminal
+
+func main(): String {
+    let message = "Hello, World!"
+    Terminal.println(message)
+    return message
+}

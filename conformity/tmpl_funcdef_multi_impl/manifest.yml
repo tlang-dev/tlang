@@ -1,0 +1,23 @@
+# Conformity test — multiple template implementations via FuncDef dispatch
+#
+# Tests that a single model set can act as an interface by declaring a FuncDef
+# as an implementable parameter.  Multiple named instances are created, each
+# supplying a different function reference as the impl value.  Calling the
+# FuncDef attribute on any instance dispatches to its bound template-generating
+# function, producing a distinct code variant.
+#
+# A Map-based registry shows how a config string can select the right instance
+# at runtime — the user parameterises the final generated file without changing
+# the model definition.
+#
+# Run `tlang package generators/kotlin` before executing this test.
+
+name: TmplFuncdefMultiImpl
+project: ConformityTests
+organisation: TLang
+version: 1.0.0
+stability: alpha
+releaseNumber: 1
+
+dependencies:
+  - TLangGen/KotlinGen/Kotlin 1.0.0:alpha:1 KotlinGen

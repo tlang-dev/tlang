@@ -1,0 +1,135 @@
+expose stdlibListLibGen
+
+use TLang.File
+use TLang.Generator
+use TLang.Terminal
+use layout.PageLayout
+
+doc [html] listLibPage() {
+  # TLang.List
+
+  TLang.List provides ordered sequence operations. Lists are persistent — every operation returns a new list. Higher-order functions accept lambdas or function references, and also work as dot-method calls on the list value.
+
+  [code "tlang"
+    use TLang.List
+  ]
+
+  [section "create"
+    ## Creating Lists
+
+    [code "tlang"
+      let fixed  = List.of("a", "b", "c")     // fixed list
+      let empty  = List.create()               // empty list
+      let with1  = List.push(empty, "item")   // ["item"]
+    ]
+  ]
+
+  [section "access"
+    ## Access and Info
+
+    [code "tlang"
+      let n     = List.size(items)              // count
+      let first = List.first(items)             // first element
+      let last  = List.last(items)              // last element
+      let el    = List.get(items, 2)            // element at index 2
+      let has   = List.contains(items, "x")    // Bool
+      let idx   = List.indexOf(items, "x")     // Int (-1 if not found)
+    ]
+  ]
+
+  [section "mutate"
+    ## Adding and Removing
+
+    [code "tlang"
+      let pushed   = List.push(items, "new")           // append
+      let prepended = List.prepend(items, "first")      // prepend
+      let updated  = List.set(items, 1, "replaced")    // replace at index
+      let removed  = List.remove(items, 2)             // remove at index
+    ]
+  ]
+
+  [section "slice"
+    ## Slicing and Combining
+
+    [code "tlang"
+      let tail    = List.tail(items)              // all but first
+      let init    = List.init(items)              // all but last
+      let sliced  = List.slice(items, 1, 3)       // elements 1..2
+      let taken   = List.take(items, 3)           // first 3
+      let dropped = List.drop(items, 2)           // skip first 2
+      let rev     = List.reverse(items)
+      let cat     = List.concat(a, b)             // join two lists
+      let flat    = List.flatten(nested)          // one level flat
+      let uniq    = List.distinct(items)
+    ]
+  ]
+
+  [section "sort"
+    ## Sorting and Joining
+
+    [code "tlang"
+      let sorted  = List.sort(items)                         // lexicographic
+      let joined  = List.join(items, ", ")                   // "a, b, c"
+      let zipped  = List.zip(keys, values)                   // List of pairs
+    ]
+  ]
+
+  [section "hof"
+    ## Higher-Order Functions
+
+    All HOFs accept a lambda or function reference and work as both free functions and dot-method calls.
+
+    [code "tlang"
+      // map — transform each element
+      let doubled = List.map(nums, (x) => x * 2)
+      let doubled = nums.map((x) => x * 2)
+
+      // filter — keep matching elements
+      let evens = List.filter(nums, (x) => x % 2 == 0)
+
+      // forEach — side effect per element (returns Unit)
+      List.forEach(items, (x) => Terminal.println(x))
+
+      // reduce — fold left to a single value
+      let sum = List.reduce(nums, 0, (acc, x) => acc + x)
+
+      // any / all — boolean tests
+      let hasNeg = List.any(nums, (x) => x < 0)
+      let allPos = List.all(nums, (x) => x > 0)
+
+      // find — first match or Unit
+      let found = List.find(items, (x) => x.startsWith("A"))
+
+      // count — count matching elements
+      let n = List.count(items, (x) => x != "")
+
+      // flatMap — map then flatten one level
+      let words = List.flatMap(sentences, (s) => s.split(" "))
+
+      // sortBy — sort by derived key
+      let sorted = List.sortBy(users, (u) => u.name)
+
+      // groupBy — group into a Map of lists
+      let byFirstChar = List.groupBy(names, (n) => n.substring(0, 1))
+    ]
+  ]
+
+  [section "chain"
+    ## Chaining
+
+    [code "tlang"
+      let result = items
+          .filter((x) => x != "")
+          .map((x) => x.trim())
+          .map((x) => Naming.toPascalCase(x))
+    ]
+  ]
+}
+
+func stdlibListLibGen(): String {
+    let content = Generator.generate(listLibPage("html"))
+    let html = PageLayout.page("TLang.List", content)
+    File.write("docs/docs/stdlib/list.html", html, true)
+    Terminal.println("  -> stdlib/list.html")
+    return ""
+}

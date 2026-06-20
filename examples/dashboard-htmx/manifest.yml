@@ -1,0 +1,28 @@
+# Dashboard — HTML + HTMX Example
+#
+# A beautiful standalone analytics/admin dashboard generated entirely from
+# TLangUI model instances rendered through the htmx-html implementation.
+#
+# The output is a single self-contained HTML file that requires no server —
+# all HTMX wiring is present and ready for a real backend to be plugged in.
+#
+# Run with:
+#   tlang both examples/dashboard-htmx
+#
+# Output:
+#   examples/dashboard-htmx/output/index.html
+
+name: DashboardHtmx
+main: Main
+project: Examples
+organisation: TLang
+version: 1.0.0
+stability: alpha
+releaseNumber: 1
+
+author: TLang Contributors
+website: https://tlang.dev/examples/dashboard-htmx
+license: Apache-2.0
+
+dependencies:
+  - file://../../generators/html HtmlGen

@@ -1,0 +1,236 @@
+expose langLangTemplateGen
+
+use TLang.File
+use TLang.Generator
+use TLang.Terminal
+use layout.PageLayout
+
+doc [html] langTemplatePage() {
+  # lang — Code Generation Templates
+
+  The lang template type generates source code in any target language. The body uses a set of structural directives that map to code concepts: packages, classes, methods, fields, and control flow. The chosen generator translates these to the target syntax.
+
+  [section "import"
+    ## Generator Import
+
+    lang templates require a generator import. The import declares an alias that becomes the format name.
+
+    [code "tlang"
+      use KotlinGen as kotlin
+      use JavaGen   as java
+      use TypescriptGenerator as ts
+    ]
+
+    The format name in the brackets must match the alias.
+
+    [code "tlang"
+      lang [kotlin] entity(pkg: String, cls: String) {
+          pkg $${pkg}
+          impl[data class] $${cls} { }
+      }
+
+      lang [kotlin, java] service(pkg: String, cls: String) {
+          pkg $${pkg}
+          impl[interface] $${cls}Service {
+              func find(id: Long): $${cls}
+          }
+      }
+    ]
+  ]
+
+  [section "directives"
+    ## Directives
+
+    Inside a lang template body, directives map to structural code elements.
+
+    pkg declares the package or namespace for the generated file.
+
+    [code "tlang"
+      lang [kotlin] entity(pkg: String, cls: String) {
+          pkg $${pkg}
+          impl[data class] $${cls} { }
+      }
+    ]
+
+    impl declares a class, interface, or object. The modifier in brackets controls the keyword or annotation used.
+
+    [code "tlang"
+      lang [kotlin] repo(pkg: String, cls: String) {
+          pkg $${pkg}
+          impl[interface] $${cls}Repository {
+              func findById(id: Long): $${cls}?
+              func save(entity: $${cls}): $${cls}
+              func delete(id: Long)
+          }
+      }
+    ]
+
+    func declares a method inside an impl block.
+
+    [code "tlang"
+      lang [kotlin] service(pkg: String, cls: String, rec: String) {
+          pkg $${pkg}
+          impl[class] $${cls}Service(
+              val repo: $${rec}Repository
+          ) {
+              func findAll(): List<$${rec}> {
+                  return repo.findAll()
+              }
+              func save(entity: $${rec}): $${rec} {
+                  return repo.save(entity)
+              }
+          }
+      }
+    ]
+
+    var declares a field or property.
+
+    [code "tlang"
+      lang [kotlin] config(pkg: String) {
+          pkg $${pkg}
+          impl[data class] AppConfig(
+              var host: String = "localhost",
+              var port: Int = 8080
+          )
+      }
+    ]
+
+    comment emits a line comment in the target language.
+
+    [code "tlang"
+      lang [kotlin] entity(pkg: String, cls: String) {
+          pkg $${pkg}
+          comment: Generated — do not edit
+          impl[data class] $${cls} { }
+      }
+    ]
+
+    raw emits a line of text verbatim — no directive parsing, no substitution.
+
+    [code "tlang"
+      lang [kotlin] imports(pkg: String) {
+          pkg $${pkg}
+          raw: import com.example.base.BaseEntity
+          raw: import jakarta.persistence.*
+      }
+    ]
+  ]
+
+  [section "spec"
+    ## spec Fragments
+
+    A template marked spec produces a fragment (inner content) rather than a complete file. Use spec templates to compose larger templates via includes.
+
+    [code "tlang"
+      lang [kotlin] field(name: String, type: String) spec {
+          var $${name}: $${type}
+      }
+
+      lang [kotlin] entity(pkg: String, cls: String, fields: List) {
+          pkg $${pkg}
+          impl[data class] $${cls} {
+              <[ renderFields(fields) ]>
+          }
+      }
+
+      func renderFields(fields: List): List {
+          let out = List.create()
+          for (f in fields) {
+              let name = Map.get(f, "name")
+              let type = Map.get(f, "type")
+              let out  = List.push(out, field(name, type))
+          }
+          return out
+      }
+    ]
+  ]
+
+  [section "escape"
+    ## Escaping
+
+    Use $$ to produce a literal dollar sign in the output.
+
+    Use $$ to escape braces. The pattern $$ followed by an opening brace prevents substitution: $${ name } renders literally as ${ name } in the output.
+
+    Prefix a line with raw: to emit it verbatim without any directive or substitution processing.
+
+    [code "tlang"
+      lang [kotlin] template(pkg: String) {
+          pkg $${pkg}
+          raw: val raw = "$${literal}"     // output: val raw = "${literal}"
+          raw: return $$value              // output: return $value
+      }
+    ]
+  ]
+
+  [section "include"
+    ## Inline Includes
+
+    The <[ call() ]> syntax splices another template's output at that position inside the template body.
+
+    [code "tlang"
+      lang [kotlin] method(name: String, body: String) spec {
+          func $${name}(): String {
+              <[ bodyLines(body) ]>
+          }
+      }
+
+      lang [kotlin] cls(pkg: String, cls: String, methods: List) {
+          pkg $${pkg}
+          impl[class] $${cls} {
+              <[ renderMethods(methods) ]>
+          }
+      }
+    ]
+  ]
+
+  [section "example"
+    ## Full Example
+
+    A Quarkus repository interface generated for each model entity.
+
+    [code "tlang"
+      use TLang.Generator
+      use TLang.File
+      use TLang.Leaf
+      use KotlinGen as kotlin
+
+      lang [kotlin] repository(pkg: String, cls: String) {
+          pkg $${pkg}.repository
+          raw: import io.quarkus.hibernate.orm.panache.PanacheRepository
+          raw: import jakarta.enterprise.context.ApplicationScoped
+          impl[@ApplicationScoped class] $${cls}Repository :
+              PanacheRepository<$${cls}> {
+              func findByName(name: String): $${cls}? {
+                  return find("name", name).firstResult()
+              }
+          }
+      }
+
+      model {
+          set User    { pkg: "com.example", cls: "User" }
+          set Product { pkg: "com.example", cls: "Product" }
+      }
+
+      func main(): String {
+          let model = Leaf.model()
+          for (k in Leaf.keys(model)) {
+              let e    = Leaf.get(model, k)
+              let pkg  = e.pkg
+              let cls  = e.cls
+              let code = Generator.generate(repository(pkg, cls))
+              File.write("output/" + cls + "Repository.kt", code, true)
+          }
+          return "done"
+      }
+    ]
+  ]
+}
+
+func langLangTemplateGen(): String {
+    let content = Generator.generate(langTemplatePage("html"))
+    let html = PageLayout.page("lang — Code Generation", content)
+    File.write("docs/docs/language/lang-template.html", html, true)
+    Terminal.println("  -> language/lang-template.html")
+    return ""
+}

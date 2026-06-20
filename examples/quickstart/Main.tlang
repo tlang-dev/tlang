@@ -1,0 +1,124 @@
+// Quickstart — Quarkus Kotlin CRUD generator
+//
+// Demonstrates the core TLang value loop with zero external dependencies:
+//   1. Write templates once (raw [Replaced] — pure string substitution)
+//   2. Run: tlang both examples/quickstart
+//   3. Get 6 production-ready Kotlin files in seconds
+//
+// Adding a new entity: copy one File.write pair and update the arguments.
+
+use TLang.File
+use TLang.Terminal
+
+// ── Entity template ───────────────────────────────────────────────────────────
+//
+// Generates a Quarkus Panache entity.
+// Written once. Called once per entity.
+
+raw [Replaced] entity(pkg: String, name: String) {
+package ${pkg}
+
+import io.quarkus.hibernate.orm.panache.kotlin.PanacheEntity
+import io.quarkus.hibernate.orm.panache.kotlin.PanacheCompanionBase
+import jakarta.persistence.Entity
+import jakarta.persistence.Table
+
+@Entity
+@Table(name = "${name}s")
+class ${name}(
+    var name: String = "",
+    var description: String = ""
+) : PanacheEntity() {
+    companion object : PanacheCompanionBase<${name}, Long>
+}
+}
+
+// ── REST Resource template ────────────────────────────────────────────────────
+//
+// Generates a Quarkus JAX-RS resource with all five CRUD endpoints.
+// Written once. Called once per entity.
+
+raw [Replaced] resource(pkg: String, name: String, path: String) {
+package ${pkg}
+
+import jakarta.enterprise.context.ApplicationScoped
+import jakarta.transaction.Transactional
+import jakarta.ws.rs.Consumes
+import jakarta.ws.rs.DELETE
+import jakarta.ws.rs.GET
+import jakarta.ws.rs.POST
+import jakarta.ws.rs.PUT
+import jakarta.ws.rs.Path
+import jakarta.ws.rs.PathParam
+import jakarta.ws.rs.Produces
+import jakarta.ws.rs.core.MediaType
+import jakarta.ws.rs.core.Response
+
+@Path("${path}")
+@ApplicationScoped
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+class ${name}Resource {
+
+    @GET
+    fun list(): List<${name}> = ${name}.listAll()
+
+    @GET
+    @Path("/{id}")
+    fun findById(@PathParam("id") id: Long): Response =
+        ${name}.findById(id)?.let { Response.ok(it).build() }
+            ?: Response.status(404).build()
+
+    @POST
+    @Transactional
+    fun create(entity: ${name}): Response {
+        entity.persist()
+        return Response.status(201).entity(entity).build()
+    }
+
+    @PUT
+    @Path("/{id}")
+    @Transactional
+    fun update(@PathParam("id") id: Long, entity: ${name}): Response {
+        val existing = ${name}.findById(id) ?: return Response.status(404).build()
+        existing.name = entity.name
+        existing.description = entity.description
+        return Response.ok(existing).build()
+    }
+
+    @DELETE
+    @Path("/{id}")
+    @Transactional
+    fun delete(@PathParam("id") id: Long): Response {
+        val deleted = ${name}.deleteById(id)
+        return if (deleted) Response.noContent().build()
+               else Response.status(404).build()
+    }
+}
+}
+
+// ── Generator ─────────────────────────────────────────────────────────────────
+//
+// Call each template once per entity. Two files generated per call.
+// To add a new entity: copy a pair of File.write lines and update the args.
+
+func main(): String {
+    Terminal.println("Generating Quarkus CRUD stack...")
+    let dir = "output/src/main/kotlin/com/example/"
+
+    File.write(dir + "User.kt",            entity("com.example", "User"),               true)
+    File.write(dir + "UserResource.kt",    resource("com.example", "User", "/api/users"),    true)
+    Terminal.println("  User.kt + UserResource.kt")
+
+    File.write(dir + "Product.kt",         entity("com.example", "Product"),            true)
+    File.write(dir + "ProductResource.kt", resource("com.example", "Product", "/api/products"), true)
+    Terminal.println("  Product.kt + ProductResource.kt")
+
+    File.write(dir + "Order.kt",           entity("com.example", "Order"),              true)
+    File.write(dir + "OrderResource.kt",   resource("com.example", "Order", "/api/orders"),   true)
+    Terminal.println("  Order.kt + OrderResource.kt")
+
+    Terminal.println("")
+    Terminal.println("6 files. 2 templates. 3 entities. Run again to regenerate.")
+    return "ok"
+}

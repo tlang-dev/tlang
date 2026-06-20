@@ -1,0 +1,9 @@
+func test(): String {
+    return "color: #ff0000; /* ── box drawing ── */"
+}
+
+func main(): String {
+    TLang.Terminal.println(test())
+    return test()
+}
+

@@ -1,0 +1,126 @@
+expose stdlibMapLibGen
+
+use TLang.File
+use TLang.Generator
+use TLang.Terminal
+use layout.PageLayout
+
+doc [html] mapLibPage() {
+  # TLang.Map
+
+  TLang.Map provides string-keyed dictionaries. Maps are persistent — operations return new maps. Higher-order functions work as free functions or dot-method calls.
+
+  [code "tlang"
+    use TLang.Map
+  ]
+
+  [section "create"
+    ## Creating Maps
+
+    [code "tlang"
+      let m  = Map.of("host", "localhost", "port", "5432")    // from pairs
+      let m2 = Map.create()                                    // empty map
+    ]
+  ]
+
+  [section "access"
+    ## Access and Info
+
+    [code "tlang"
+      let v  = Map.get(m, "host")                        // value or error if missing
+      let v2 = Map.getOrDefault(m, "port", "3306")       // value or default
+      let ok = Map.has(m, "host")                        // Bool
+      let n  = Map.size(m)                               // count
+      let e  = Map.isEmpty(m)                            // Bool
+    ]
+  ]
+
+  [section "mutate"
+    ## Adding and Removing
+
+    [code "tlang"
+      let m2 = Map.set(m, "port", "5433")        // add or update
+      let m3 = Map.remove(m, "host")             // remove key
+    ]
+  ]
+
+  [section "keys"
+    ## Keys, Values, and Entries
+
+    [code "tlang"
+      let keys    = Map.keys(m)       // List of String
+      let values  = Map.values(m)     // List of values
+      let entries = Map.entries(m)    // List of {key, value} maps
+    ]
+  ]
+
+  [section "combine"
+    ## Combining Maps
+
+    [code "tlang"
+      let merged   = Map.merge(m1, m2)              // m2 values win on conflict
+      let fromLists = Map.fromLists(keys, values)   // zip two lists into a map
+      let asList   = Map.toList(m)                  // List of {key, value} maps
+    ]
+  ]
+
+  [section "hof"
+    ## Higher-Order Functions
+
+    [code "tlang"
+      // mapValues — transform each value
+      let upper = Map.mapValues(m, (k, v) => v.toUpperCase())
+      let upper = m.mapValues((k, v) => v.toUpperCase())
+
+      // filterKeys — keep by key predicate
+      let sub = Map.filterKeys(m, (k) => k.startsWith("db_"))
+
+      // filterValues — keep by key+value predicate
+      let sub = Map.filterValues(m, (k, v) => v != "")
+
+      // forEach — side effect per entry
+      Map.forEach(m, (k, v) => Terminal.println(k + " = " + v))
+
+      // reduce — fold over entries
+      let csv = Map.reduce(m, "", (acc, k, v) => acc + k + "=" + v + "\n")
+    ]
+  ]
+
+  [section "example"
+    ## Example — Config Map
+
+    [code "tlang"
+      use TLang.Map
+      use TLang.List
+
+      func toEnvFile(config: Map): String {
+          let keys   = Map.keys(config)
+          let result = ""
+          for (k in keys) {
+              let v      = Map.get(config, k)
+              let result = result + k + "=" + v + "\n"
+          }
+          return result
+      }
+
+      func main(): String {
+          let config = Map.of(
+              "DB_HOST", "localhost",
+              "DB_PORT", "5432",
+              "DB_NAME", "myapp"
+          )
+          let env = toEnvFile(config)
+          File.write(".env", env, true)
+          return "done"
+      }
+    ]
+  ]
+}
+
+func stdlibMapLibGen(): String {
+    let content = Generator.generate(mapLibPage("html"))
+    let html = PageLayout.page("TLang.Map", content)
+    File.write("docs/docs/stdlib/map.html", html, true)
+    Terminal.println("  -> stdlib/map.html")
+    return ""
+}

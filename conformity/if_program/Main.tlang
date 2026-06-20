@@ -1,0 +1,65 @@
+use TLang.Terminal
+
+func classify(n: Int): String {
+        if (n < 0)    {
+            return "negative"
+        }
+        if (n == 0) {
+            return "zero"
+        }
+        return "positive"
+    }
+
+func in_range(n: Int, lo: Int, hi: Int): String {
+        if ((n >= lo) && (n <= hi)){
+            return "in range"
+        } else {
+            return "out of range"
+        }
+    }
+
+func either_big(a: Int, b: Int): String {
+        if ((a > 100) || (b > 100)) {
+            return "at least one is big"
+        } else {
+            return "both are small"
+        }
+    }
+
+func describe_parity(n: Int): String {
+        if (n % 2 == 0) {
+            return "even"
+        } else {
+            return "odd"
+        }
+    }
+
+func main(): String {
+        // classify: negative / zero / positive
+        let neg    = classify(-7)
+        let zero   = classify(0)
+        let pos    = classify(5)
+        Terminal.println(neg)
+        Terminal.println(zero)
+        Terminal.println(pos)
+
+        // range check
+        let inside  = in_range(5, 1, 10)
+        let outside = in_range(42, 1, 10)
+        Terminal.println(inside)
+        Terminal.println(outside)
+
+        // logical or
+        let big     = either_big(200, 3)
+        let neither = either_big(50, 50)
+        Terminal.println(big)
+        Terminal.println(neither)
+
+        // parity via !=
+        let even = describe_parity(4)
+        let odd  = describe_parity(7)
+        Terminal.println(even)
+        Terminal.println(odd)
+
+        return "done"
+    }

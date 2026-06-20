@@ -1,0 +1,144 @@
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <title>AI Assistant — TLang</title>
+      <link rel="stylesheet" href="../assets/style.css">
+    </head>
+    <body>
+    <nav class="nav">
+      <div class="nav-inner">
+        <a class="nav-logo" href="../index.html">TLang</a>
+        <div class="nav-links">
+          <a class="nav-link" href="getting-started.html">Docs</a>
+          <a class="nav-link" href="language/index.html">Language</a>
+          <a class="nav-link" href="stdlib/index.html">Stdlib</a>
+          <a class="nav-link" href="generators.html">Generators</a>
+          <a class="nav-link" href="use-cases.html">Use Cases</a>
+          <a class="nav-link" href="packages.html">Packages</a>
+          <a class="nav-link" href="https://github.com/joel-f/tlang">GitHub</a>
+          <a class="btn btn-sm btn-primary" href="getting-started.html">Get Started</a>
+        </div>
+      </div>
+    </nav>
+    <div class="doc-page section-inner">
+    <h1>AI Assistant Integration</h1>
+<p>TLang ships a Model Context Protocol server that gives AI coding assistants
+— Claude, Cursor, GitHub Copilot, and others — full access to TLang's compiler,
+runtime, and embedded documentation. The MCP server turns any MCP-compatible
+assistant into a TLang-aware pair programmer.</p>
+<section id="start">
+<h2>Starting the MCP Server</h2>
+<pre><code class="language-bash">      tlang mcp-server
+    </code></pre>
+<p>The server communicates over stdin/stdout using JSON-RPC 2.0, following the
+MCP 2024-11-05 specification. Connect it to your AI assistant using the
+assistant's MCP configuration.
+Example configuration for Claude Desktop (claude_desktop_config.json):</p>
+<pre><code class="language-json">      {
+        &quot;mcpServers&quot;: {
+          &quot;tlang&quot;: {
+            &quot;command&quot;: &quot;tlang&quot;,
+            &quot;args&quot;: [&quot;mcp-server&quot;]
+          }
+        }
+      }
+    </code></pre>
+</section>
+<section id="tools">
+<h2>Available Tools</h2>
+<p>The MCP server exposes a set of tools that mirror the TLang CLI.
+The assistant can call these tools directly during a conversation:</p>
+<ul>
+<li>tlang_init — initialise a new TLang project with a manifest.yml</li>
+<li>tlang_compile — compile a .tlang file to bytecode without running it</li>
+<li>tlang_run — run a pre-compiled .tlang bytecode file</li>
+<li>tlang_both — compile and run in a single step (the typical workflow)</li>
+<li>tlang_package — package a project into a .tbag archive for publishing</li>
+<li>tlang_clean — remove compiled bytecode caches</li>
+<li>tlang_index — index the current project for symbol search</li>
+<li>tlang_topic — retrieve embedded documentation on a specific TLang topic</li>
+</ul>
+<p>When a project context is active, the server also exposes dynamic tools
+derived from the project's exposed functions, allowing the assistant to
+call specific generators directly.</p>
+</section>
+<section id="resources">
+<h2>Resources</h2>
+<p>The MCP server exposes embedded documentation as resources the assistant
+can read to understand TLang before generating code:</p>
+<ul>
+<li>tlang://guide — the full TLang onboarding guide</li>
+<li>tlang://project — project structure and manifest reference</li>
+<li>tlang://lang — language syntax reference</li>
+<li>tlang://templates — template block reference (lang, doc, style, data, cmd, raw)</li>
+<li>tlang://helpers — helper function patterns</li>
+<li>tlang://builtins — standard library module reference</li>
+<li>tlang://patterns — idiomatic TLang patterns</li>
+<li>tlang://mistakes — common mistakes and how to avoid them</li>
+</ul>
+<p>These resources are served directly from the binary — no internet connection required.</p>
+</section>
+<section id="prompts">
+<h2>System Prompt</h2>
+<p>The MCP server provides a ready-made system prompt for AI assistants.
+When connected, the assistant automatically receives context about:</p>
+<ul>
+<li>TLang syntax and semantics</li>
+<li>Template types and their calling conventions</li>
+<li>The set + template binding pattern</li>
+<li>The standard library API</li>
+<li>Common pitfalls (StringBuilder.build vs toString, etc.)</li>
+<li>How to write idiomatic TLang code</li>
+</ul>
+<p>This eliminates the need to paste TLang documentation into every conversation.
+The assistant starts with full context.</p>
+</section>
+<section id="workflow">
+<h2>AI-Native Workflow</h2>
+<p>The intended workflow with TLang and an AI assistant:</p>
+<ol>
+<li>Describe your model to the assistant (entities, fields, relationships)</li>
+<li>The assistant writes the TLang templates using set declarations and template blocks</li>
+<li>The assistant calls tlang_both to compile and run the templates</li>
+<li>TLang generates all target files — the assistant reviews the output</li>
+<li>You add more entities or refine the templates — the assistant regenerates</li>
+</ol>
+<p>The AI does the creative work (understanding your domain and writing the template)
+once. TLang handles the mechanical work (generating the same pattern across all
+entities) at zero additional AI cost.
+A project with 200 entities costs the same in AI tokens as a project with 2 —
+because the AI writes one template, not 200 files.</p>
+</section>
+<section id="project-context">
+<h2>Project Context</h2>
+<p>Use the set_project_context tool to point the MCP server at a TLang project:</p>
+<pre><code class="language-bash">      # In the assistant conversation:
+      # &quot;Set the project context to my-app/&quot;
+    </code></pre>
+<p>Once set, the server indexes the project and exposes its exposed functions
+as dynamic tools. The assistant can then call your project's generators
+directly without writing any CLI commands.</p>
+</section>
+
+    </div>
+    <footer class="footer">
+      <div class="footer-inner">
+        <span class="footer-brand">TLang</span>
+        <div class="footer-links">
+          <a class="footer-link" href="getting-started.html">Getting Started</a>
+          <a class="footer-link" href="language-spec.html">Language</a>
+          <a class="footer-link" href="generators.html">Generators</a>
+          <a class="footer-link" href="use-cases.html">Use Cases</a>
+          <a class="footer-link" href="packages.html">Packages</a>
+          <a class="footer-link" href="editor-setup.html">Editor Setup</a>
+          <a class="footer-link" href="ai-assistant.html">AI Assistant</a>
+          <a class="footer-link" href="https://github.com/joel-f/tlang">GitHub</a>
+        </div>
+        <span class="footer-copy">&copy; 2026 TLang Contributors &middot; Apache 2.0</span>
+      </div>
+    </footer>
+    </body>
+    </html>
+  

@@ -1,0 +1,71 @@
+expose stdlibMathGen
+
+use TLang.File
+use TLang.Generator
+use TLang.Terminal
+use layout.PageLayout
+
+doc [html] mathPage() {
+  # TLang.Math
+
+  TLang.Math provides generic numeric utilities that work with both Int and Float values.
+
+  [code "tlang"
+    use TLang.Math
+  ]
+
+  [section "funcs"
+    ## Functions
+
+    [code "tlang"
+      let a   = Math.abs(-7)           // 7
+      let mn  = Math.min(3, 5)         // 3
+      let mx  = Math.max(3, 5)         // 5
+      let c   = Math.clamp(15, 0, 10)  // 10  — clamp to [0, 10]
+      let pw  = Math.pow(2, 10)        // 1024
+      let sq  = Math.sqrt(16.0)        // 4.0
+    ]
+
+    Parity tests.
+
+    [code "tlang"
+      let even = Math.isEven(4)        // true
+      let odd  = Math.isOdd(7)         // true
+      let sign = Math.sign(-5)         // -1  (-1, 0, or 1)
+    ]
+
+    Number theory.
+
+    [code "tlang"
+      let g = Math.gcd(12, 8)          // 4
+      let l = Math.lcm(4, 6)           // 12
+    ]
+  ]
+
+  [section "example"
+    ## Example — Centred Layout
+
+    [code "tlang"
+      use TLang.Math
+      use TLang.Int
+
+      func centre(width: Int, contentWidth: Int): Int {
+          return Math.max(0, (width - contentWidth) / 2)
+      }
+
+      func main(): String {
+          let margin = centre(80, 60)
+          Terminal.println("margin: " + Int.toString(margin))
+          return "done"
+      }
+    ]
+  ]
+}
+
+func stdlibMathGen(): String {
+    let content = Generator.generate(mathPage("html"))
+    let html = PageLayout.page("TLang.Math", content)
+    File.write("docs/docs/stdlib/math.html", html, true)
+    Terminal.println("  -> stdlib/math.html")
+    return ""
+}

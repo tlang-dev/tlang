@@ -1,0 +1,26 @@
+# Quickstart — Quarkus Kotlin CRUD generator
+#
+# Zero external dependencies. Run with:
+#
+#   tlang both examples/quickstart
+#
+# Output: examples/quickstart/output/src/main/kotlin/com/example/
+#
+#   User.kt + UserResource.kt
+#   Product.kt + ProductResource.kt
+#   Order.kt + OrderResource.kt
+#
+# Each entity has a full Quarkus CRUD REST resource (GET list, GET by ID,
+# POST create, PUT update, DELETE). Adding a new entity = one new set block.
+
+name: Quickstart
+project: QuickstartCRUD
+organisation: TLang
+version: 1.0.0
+stability: stable
+releaseNumber: 1
+main: Main
+
+author: TLang Contributors
+website: https://tlang.dev/docs/getting-started.html
+license: Apache-2.0

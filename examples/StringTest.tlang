@@ -1,0 +1,25 @@
+use TLang.Assert
+use TLang.String
+
+test emailContainsAt {
+    let email = "user@example.com"
+    Assert.contains(email, "@")
+}
+
+test emailIsNotEmpty {
+    let email = "user@example.com"
+    Assert.notEmpty(email)
+}
+
+test uppercaseWorks {
+    let result = String.toUpperCase("hello")
+    Assert.equals("HELLO", result)
+}
+
+test multipleAssertions {
+    let name = "TLang"
+    Assert.startsWith(name, "TL")
+    Assert.endsWith(name, "ang")
+    Assert.contains(name, "La")
+    Assert.notEmpty(name)
+}

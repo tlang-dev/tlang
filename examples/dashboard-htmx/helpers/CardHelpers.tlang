@@ -1,0 +1,184 @@
+expose kpiCard
+expose miniSparkline
+expose sectionHeader
+expose productRow
+expose activityItem
+expose statDelta
+
+
+// ── KPI Card ──────────────────────────────────────────────────────────────
+//
+// Renders a single key-performance-indicator card.
+//
+// Parameters:
+//   id       — element id
+//   icon     — emoji / SVG string shown in the coloured icon box
+//   iconColor — CSS class name for the icon background: kpi-icon--indigo |
+//               kpi-icon--emerald | kpi-icon--amber | kpi-icon--rose
+//   title    — metric label (e.g. "Total Revenue")
+//   value    — primary metric value string (e.g. "$124,592")
+//   delta    — change badge HTML already rendered (pass "" to omit)
+//   sub      — secondary descriptor (e.g. "vs last month")
+//   hxGet    — optional HTMX polling endpoint; empty = no polling
+//   hxTrigger — HTMX trigger expression (e.g. "every 30s")
+
+func kpiCard(id: String, icon: String, iconColor: String,
+             title: String, value: String, delta: String, sub: String,
+             hxGet: String, hxTrigger: String): String {
+    let htmxAttrs = ""
+    let htmxAttrs = htmxAttrs + hxAttr("hx-get", hxGet)
+    let htmxAttrs = htmxAttrs + hxAttr("hx-trigger", hxTrigger)
+    let htmxAttrs = htmxAttrs + hxAttr("hx-swap", "outerHTML")
+    let htmxAttrs = htmxAttrs + hxAttr("hx-target", "#" + id)
+
+    let s = "<div class=\"kpi-card\" id=\"" + id + "\"" + htmxAttrs + ">\n"
+    let s = s + "  <div class=\"kpi-card__icon-wrap " + iconColor + "\">\n"
+    let s = s + "    <span class=\"kpi-card__icon\" aria-hidden=\"true\">" + icon + "</span>\n"
+    let s = s + "  </div>\n"
+    let s = s + "  <div class=\"kpi-card__body\">\n"
+    let s = s + "    <p class=\"kpi-card__title\">" + title + "</p>\n"
+    let s = s + "    <div class=\"kpi-card__row\">\n"
+    let s = s + "      <span class=\"kpi-card__value\">" + value + "</span>\n"
+    let s = s + "      " + delta + "\n"
+    let s = s + "    </div>\n"
+    let s = s + "    <p class=\"kpi-card__sub\">" + sub + "</p>\n"
+    let s = s + "  </div>\n"
+    let s = s + "</div>\n"
+    return s
+}
+
+// ── Mini Sparkline ────────────────────────────────────────────────────────
+//
+// A pure-CSS bar sparkline chart using a space-separated list of integer
+// values (0–100 representing relative heights).
+//
+// Parameters:
+//   id     — element id
+//   values — space-separated integers, e.g. "40 55 70 45 80 65 90 72 88 95"
+//   color  — CSS custom property value, e.g. "var(--color-indigo)"
+
+func miniSparkline(id: String, values: String, color: String): String {
+    let bars    = buildSparkBars(values, color)
+    let s = "<div class=\"sparkline\" id=\"" + id + "\" aria-hidden=\"true\">\n"
+    let s = s + bars
+    let s = s + "</div>\n"
+    return s
+}
+
+func buildSparkBars(values: String, color: String): String {
+    let parts = TLang.String.split(values, " ")
+    let out   = ""
+    for (v in parts) {
+        let bar = "  <span class=\"sparkline__bar\" style=\"height:" + v + "%;background:" + color + "\" data-value=\"" + v + "\"></span>\n"
+        let out = out + bar
+    }
+    return out
+}
+
+// ── Section Header ────────────────────────────────────────────────────────
+//
+// A titled row at the top of a dashboard section with an optional
+// right-hand action slot.
+//
+// Parameters:
+//   title      — section title HTML (pass pre-rendered heading)
+//   actionHtml — pre-rendered button(s) or empty string
+
+func sectionHeader(title: String, actionHtml: String): String {
+    let s = "<div class=\"section-header\">\n"
+    let s = s + "  <div class=\"section-header__title\">" + title + "</div>\n"
+    let s = s + "  <div class=\"section-header__actions\">" + actionHtml + "</div>\n"
+    let s = s + "</div>\n"
+    return s
+}
+
+// ── Product Row ───────────────────────────────────────────────────────────
+//
+// A single row in the "Top Products" list panel.
+//
+// Parameters:
+//   rank      — rank number string (e.g. "1")
+//   name      — product name
+//   category  — product category string
+//   revenue   — revenue string (e.g. "$24,300")
+//   units     — units sold string (e.g. "812")
+//   trend     — "up" | "down" | "flat"
+
+func productRow(rank: String, name: String, category: String,
+                revenue: String, units: String, trend: String): String {
+    let trendIcon = trendArrow(trend)
+    let trendCls  = "trend trend--" + trend
+    let s = "<div class=\"product-row\">\n"
+    let s = s + "  <span class=\"product-row__rank\">" + rank + "</span>\n"
+    let s = s + "  <div class=\"product-row__info\">\n"
+    let s = s + "    <span class=\"product-row__name\">" + name + "</span>\n"
+    let s = s + "    <span class=\"product-row__category\">" + category + "</span>\n"
+    let s = s + "  </div>\n"
+    let s = s + "  <span class=\"product-row__revenue\">" + revenue + "</span>\n"
+    let s = s + "  <span class=\"product-row__units\">" + units + " units</span>\n"
+    let s = s + "  <span class=\"" + trendCls + "\">" + trendIcon + "</span>\n"
+    let s = s + "</div>\n"
+    return s
+}
+
+func trendArrow(trend: String): String {
+    if (trend == "up")   { return "↑" }
+    if (trend == "down") { return "↓" }
+    return "→"
+}
+
+// ── Activity Item ─────────────────────────────────────────────────────────
+//
+// A single entry in the activity / audit feed.
+//
+// Parameters:
+//   icon    — emoji / icon character representing the event type
+//   iconCls — CSS class for the icon bubble: act-icon--blue | act-icon--green |
+//             act-icon--amber | act-icon--red | act-icon--purple
+//   message — HTML-safe event description
+//   time    — relative time string (e.g. "2 min ago")
+//   meta    — secondary meta text (e.g. a username or order id)
+
+func activityItem(icon: String, iconCls: String,
+                  message: String, time: String, meta: String): String {
+    let s = "<div class=\"activity-item\">\n"
+    let s = s + "  <div class=\"activity-item__icon-wrap " + iconCls + "\">\n"
+    let s = s + "    <span class=\"activity-item__icon\" aria-hidden=\"true\">" + icon + "</span>\n"
+    let s = s + "  </div>\n"
+    let s = s + "  <div class=\"activity-item__body\">\n"
+    let s = s + "    <p class=\"activity-item__message\">" + message + "</p>\n"
+    let s = s + "    <div class=\"activity-item__row\">\n"
+    let s = s + "      <span class=\"activity-item__meta\">" + meta + "</span>\n"
+    let s = s + "      <span class=\"activity-item__time\">" + time + "</span>\n"
+    let s = s + "    </div>\n"
+    let s = s + "  </div>\n"
+    let s = s + "</div>\n"
+    return s
+}
+
+// ── Stat Delta Badge ──────────────────────────────────────────────────────
+//
+// A small inline delta pill used inside KPI cards.
+//
+// Parameters:
+//   text      — text content, e.g. "+14.5%"
+//   direction — "up" | "down" | "neutral"
+
+func statDelta(text: String, direction: String): String {
+    let cls = "delta delta--" + direction
+    let arrow = deltaArrow(direction)
+    return "<span class=\"" + cls + "\">" + arrow + " " + text + "</span>"
+}
+
+func deltaArrow(direction: String): String {
+    if (direction == "up")   { return "↑" }
+    if (direction == "down") { return "↓" }
+    return ""
+}
+
+// ── Internal: conditional hx-* attribute builder ──────────────────────────
+
+func hxAttr(key: String, value: String): String {
+    if (TLang.String.isEmpty(value)) { return "" }
+    return " " + key + "=\"" + value + "\""
+}

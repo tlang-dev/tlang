@@ -1,0 +1,87 @@
+use TLang.Terminal
+
+func add(a: Int, b: Int): Int {
+    return a + b
+}
+
+func multiply(a: Int, b: Int): Int {
+    return a * b
+}
+
+func greet(name: String): String {
+    return "Hello, " + name + "!"
+}
+
+func max(a: Int, b: Int): Int {
+    if (a >= b) {
+        return a
+    } else {
+        return b
+    }
+}
+
+func is_even(n: Int): Bool {
+    if (n % 2 == 0) {
+        return true
+    } else {
+        return false
+    }
+}
+
+func apply_twice(n: Int, step: Int): Int {
+    let once  = add(n, step)
+    let twice = add(once, step)
+    return twice
+}
+
+func main(): String {
+    // Call with direct literal values
+    let sum_direct = add(3, 7)
+    Terminal.println(sum_direct)
+
+    // Call with variables
+    let x = 6
+    let y = 4
+    let sum_vars = add(x, y)
+    Terminal.println(sum_vars)
+
+    // Call with a mix of variable and literal
+    let product = multiply(x, 3)
+    Terminal.println(product)
+
+    // Pass the return value of one call directly into another
+    let chained = add(multiply(2, 5), add(3, 4))
+    Terminal.println(chained)
+
+    // String function with a literal
+    let greeting_literal = greet("World")
+    Terminal.println(greeting_literal)
+
+    // String function with a variable
+    let who = "TLang"
+    let greeting_var = greet(who)
+    Terminal.println(greeting_var)
+
+    // Logical return value used in if
+    let even_check = is_even(8)
+    if (even_check) {
+        Terminal.println("8 is even")
+    }
+
+    let odd_check = is_even(7)
+    if (odd_check) {
+        Terminal.println("7 is even")
+    } else {
+        Terminal.println("7 is odd")
+    }
+
+    // Function whose args are themselves return values of other calls
+    let bigger = max(multiply(3, 4), add(10, 1))
+    Terminal.println(bigger)
+
+    // Accumulated steps through a helper function
+    let stepped = apply_twice(10, 5)
+    Terminal.println(stepped)
+
+    return "done"
+}

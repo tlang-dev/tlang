@@ -1,0 +1,134 @@
+expose stdlibFileGen
+
+use TLang.File
+use TLang.Generator
+use TLang.Terminal
+use layout.PageLayout
+
+doc [html] filePage() {
+  # TLang.File
+
+  TLang.File provides file I/O operations. All paths are relative to the project root (where manifest.yml lives). Parent directories are created automatically on write.
+
+  [code "tlang"
+    use TLang.File
+  ]
+
+  [section "write"
+    ## Writing Files
+
+    File.write has two modes depending on whether the third argument is provided.
+
+    Scaffold-once — omit the third argument. The file is written only if it does not already exist. Use this for boilerplate that the user will edit.
+
+    [code "tlang"
+      File.write("src/App.kt", content)              // write once, skip if exists
+    ]
+
+    Always overwrite — pass true as the third argument. Use this for fully generated files that should never be manually edited.
+
+    [code "tlang"
+      File.write("generated/User.kt", content, true)  // always regenerate
+    ]
+  ]
+
+  [section "read"
+    ## Reading Files
+
+    [code "tlang"
+      let content = File.read("config/settings.json")   // → String
+    ]
+  ]
+
+  [section "exists"
+    ## Checking Existence
+
+    [code "tlang"
+      let ok = File.exists("config/settings.json")   // → Bool
+
+      if (!File.exists("output/")) {
+          File.createDir("output/")
+      }
+    ]
+  ]
+
+  [section "modify"
+    ## Modifying Existing Files
+
+    Search and replace a substring in an existing file.
+
+    [code "tlang"
+      File.searchReplace("src/Config.kt", "OLD_VALUE", "NEW_VALUE")
+    ]
+
+    Append content to the end of a file.
+
+    [code "tlang"
+      File.append("logs/build.log", "Build complete\n")
+    ]
+
+    Insert content after the first occurrence of a pattern.
+
+    [code "tlang"
+      File.appendAfter("src/routes.ts", "// routes", newRoute)
+    ]
+
+    Insert content before the first occurrence of a pattern.
+
+    [code "tlang"
+      File.prependBefore("src/index.ts", "export default app", banner)
+    ]
+  ]
+
+  [section "dirs"
+    ## Directories
+
+    [code "tlang"
+      File.createDir("output/generated")    // create (including parents)
+      File.deleteDir("output/tmp")          // delete recursively
+      File.deleteFile("output/old.kt")      // delete a file
+    ]
+  ]
+
+  [section "patterns"
+    ## Usage Patterns
+
+    Scaffold then generate — write the boilerplate once, then always overwrite the generated parts.
+
+    [code "tlang"
+      // Boilerplate that the user edits — write once
+      File.write("src/main/kotlin/App.kt", appShell)
+
+      // Fully generated — always overwrite
+      File.write("src/main/kotlin/UserRepository.kt", repoCode, true)
+    ]
+
+    Check-then-write — vary behaviour on first vs subsequent runs.
+
+    [code "tlang"
+      if (File.exists("config/settings.json")) {
+          // subsequent run — patch instead of replace
+          File.searchReplace("config/settings.json", oldVersion, newVersion)
+      } else {
+          // first run — scaffold
+          File.write("config/settings.json", defaultConfig)
+      }
+    ]
+
+    Read-transform-write — read an existing file, transform it, write it back.
+
+    [code "tlang"
+      let original = File.read("src/routes.ts")
+      let updated  = String.replace(original, "v1", "v2")
+      File.write("src/routes.ts", updated, true)
+    ]
+  ]
+}
+
+func stdlibFileGen(): String {
+    let content = Generator.generate(filePage("html"))
+    let html = PageLayout.page("TLang.File", content)
+    File.write("docs/docs/stdlib/file.html", html, true)
+    Terminal.println("  -> stdlib/file.html")
+    return ""
+}

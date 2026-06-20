@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Variables & Scope &mdash; TLang</title>
+  <meta name="description" content="TLang documentation">
+  <link rel="stylesheet" href="../../assets/style.css">
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="../../index.html">TLang</a>
+    <div class="nav-links">
+      <a class="nav-link" href="../getting-started.html">Docs</a>
+      <a class="nav-link" href="../language/index.html">Language</a>
+      <a class="nav-link" href="../stdlib/index.html">Stdlib</a>
+      <a class="nav-link" href="../generators.html">Generators</a>
+      <a class="nav-link" href="https://github.com/joel-f/tlang">GitHub</a>
+      <a class="btn btn-sm btn-primary" href="../getting-started.html">Get Started</a>
+    </div>
+  </div>
+</nav>
+<div class="doc-layout">
+  <aside class="sidebar">
+    <nav>
+      <span class="sidebar-label">Getting Started</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../getting-started.html">Installation &amp; CLI</a>
+        <a class="sidebar-link" href="../editor-setup.html">Editor Setup</a>
+        <a class="sidebar-link" href="../ai-assistant.html">AI Assistant</a>
+      </div>
+      <div class="sidebar-sep"></div>
+      <span class="sidebar-label">Language Reference</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../language/index.html">Overview</a>
+        <a class="sidebar-link" href="../language/types.html">Types</a>
+        <a class="sidebar-link" href="../language/variables.html">Variables &amp; Scope</a>
+        <a class="sidebar-link" href="../language/functions.html">Functions</a>
+        <a class="sidebar-link" href="../language/control-flow.html">Control Flow</a>
+        <a class="sidebar-link" href="../language/templates.html">Template Blocks</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/lang-template.html">lang &mdash; Code</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/data-template.html">data &mdash; Data &amp; Config</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/doc-template.html">doc &mdash; Documents</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/style-template.html">style &mdash; Stylesheets</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/cmd-template.html">cmd &mdash; Commands &amp; SQL</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/raw-template.html">raw &mdash; Verbatim Text</a>
+        <a class="sidebar-link" href="../language/sets.html">Sets &amp; Models</a>
+        <a class="sidebar-link" href="../language/imports.html">Imports &amp; Expose</a>
+      </div>
+      <div class="sidebar-sep"></div>
+      <span class="sidebar-label">Standard Library</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../stdlib/index.html">Overview</a>
+        <a class="sidebar-link" href="../stdlib/string.html">TLang.String</a>
+        <a class="sidebar-link" href="../stdlib/list.html">TLang.List</a>
+        <a class="sidebar-link" href="../stdlib/map.html">TLang.Map</a>
+        <a class="sidebar-link" href="../stdlib/numbers.html">TLang.Int / Long</a>
+        <a class="sidebar-link" href="../stdlib/float.html">TLang.Float / Double</a>
+        <a class="sidebar-link" href="../stdlib/math.html">TLang.Math</a>
+        <a class="sidebar-link" href="../stdlib/file.html">TLang.File</a>
+        <a class="sidebar-link" href="../stdlib/terminal.html">TLang.Terminal</a>
+        <a class="sidebar-link" href="../stdlib/prompt.html">TLang.Prompt</a>
+        <a class="sidebar-link" href="../stdlib/shell.html">TLang.Shell</a>
+        <a class="sidebar-link" href="../stdlib/leaf.html">TLang.Leaf</a>
+        <a class="sidebar-link" href="../stdlib/generator.html">TLang.Generator</a>
+        <a class="sidebar-link" href="../stdlib/json.html">TLang.Json / Yaml</a>
+        <a class="sidebar-link" href="../stdlib/pdf.html">TLang.Pdf</a>
+        <a class="sidebar-link" href="../stdlib/string-builder.html">TLang.StringBuilder</a>
+        <a class="sidebar-link" href="../stdlib/naming.html">TLang.Naming</a>
+        <a class="sidebar-link" href="../stdlib/assert.html">TLang.Assert</a>
+        <a class="sidebar-link" href="../stdlib/formatting.html">TLang.Formatting</a>
+      </div>
+      <div class="sidebar-sep"></div>
+      <span class="sidebar-label">More</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../generators.html">Generators</a>
+        <a class="sidebar-link" href="../packages.html">Packages</a>
+        <a class="sidebar-link" href="../use-cases.html">Use Cases</a>
+      </div>
+    </nav>
+  </aside>
+  <main class="doc-content">
+    <h1>Variables & Scope</h1>
+<p>TLang uses let bindings. Every binding is immutable — once declared, a name holds its value until the scope ends. To update a value, rebind the name with a new let.</p>
+<section id="let">
+<h2>let Bindings</h2>
+<p>Declare a variable with let. The type annotation is optional; the compiler infers it from the value.</p>
+<pre><code class="language-tlang">      let name  = &quot;Alice&quot;
+      let count = 0
+      let pi    = 3.14159
+      let items = List.of(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;)
+    </code></pre>
+<p>With explicit type annotation.</p>
+<pre><code class="language-tlang">      let name:  String = &quot;Alice&quot;
+      let count: Int    = 0
+    </code></pre>
+</section>
+<section id="rebind">
+<h2>Rebinding</h2>
+<p>let does not mutate — it shadows the previous binding with a new one. The old binding still exists in the outer scope but is hidden.</p>
+<pre><code class="language-tlang">      let count = 0
+      let count = count + 1   // shadows previous — count is now 1
+      let count = count + 1   // count is now 2
+    </code></pre>
+<p>This is the standard pattern for accumulating a value in a loop.</p>
+<pre><code class="language-tlang">      let result = &quot;&quot;
+      for (item in items) {
+          let result = result + item + &quot;\n&quot;
+      }
+      return result
+    </code></pre>
+</section>
+<section id="scope">
+<h2>Scope</h2>
+<p>Bindings are lexically scoped to the block they are declared in. An inner binding shadows an outer one with the same name; the outer binding is restored when the block exits.</p>
+<pre><code class="language-tlang">      let x = 10
+
+      if (condition) {
+          let x = 20      // shadows outer x inside this block
+          Terminal.println(x)   // prints 20
+      }
+
+      Terminal.println(x)       // prints 10 — outer x restored
+    </code></pre>
+<p>Function bodies are their own scope.</p>
+<pre><code class="language-tlang">      func compute(n: Int): Int {
+          let x = n * 2    // local to this function
+          let x = x + 1
+          return x
+      }
+
+      // x is not accessible here
+    </code></pre>
+</section>
+<section id="for-rebind">
+<h2>Rebinding in for Loops</h2>
+<p>Inside a for loop body, rebinding a variable declared before the loop updates the outer binding. This is the correct accumulator pattern.</p>
+<pre><code class="language-tlang">      let total = 0
+      for (n in List.of(1, 2, 3)) {
+          let total = total + n    // updates the outer total each iteration
+      }
+      // total is now 6
+    </code></pre>
+<p>Contrast with while loops, where rebinding behaves the same (shadows within body, restores on exit).</p>
+</section>
+<section id="expr-if">
+<h2>Expression if</h2>
+<p>if can be used as an expression, assigning its result to a let. The else branch is mandatory.</p>
+<pre><code class="language-tlang">      let label = if (n &lt; 0) &quot;negative&quot; else if (n == 0) &quot;zero&quot; else &quot;positive&quot;
+    </code></pre>
+<pre><code class="language-tlang">      let status = if (ok) &quot;success&quot; else &quot;failure&quot;
+      return if (debug) &quot;verbose: &quot; + result else result
+    </code></pre>
+</section>
+<section id="match">
+<h2>match Expression</h2>
+<p>match can also be used as an expression. A default case is required.</p>
+<pre><code class="language-tlang">      let mime = match (ext) {
+          case &quot;html&quot; =&gt; &quot;text/html&quot;
+          case &quot;json&quot; =&gt; &quot;application/json&quot;
+          case &quot;css&quot;  =&gt; &quot;text/css&quot;
+          default     =&gt; &quot;text/plain&quot;
+      }
+    </code></pre>
+</section>
+
+  </main>
+</div>
+<footer class="footer">
+  <div class="footer-inner">
+    <span class="footer-brand">TLang</span>
+    <div class="footer-links">
+      <a class="footer-link" href="../getting-started.html">Getting Started</a>
+      <a class="footer-link" href="../language/index.html">Language</a>
+      <a class="footer-link" href="../stdlib/index.html">Stdlib</a>
+      <a class="footer-link" href="../generators.html">Generators</a>
+      <a class="footer-link" href="https://github.com/joel-f/tlang">GitHub</a>
+    </div>
+    <span class="footer-copy">&copy; 2026 TLang Contributors &middot; Apache 2.0</span>
+  </div>
+</footer>
+<script>
+(function() {
+  var links = document.querySelectorAll('.sidebar-link');
+  var cur = window.location.href;
+  links.forEach(function(a) {
+    var href = a.getAttribute('href');
+    if (href && cur.indexOf(href.replace('../', '')) !== -1) {
+      a.classList.add('active');
+    }
+  });
+}());
+</script>
+</body>
+</html>

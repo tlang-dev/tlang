@@ -1,0 +1,64 @@
+use TLang.Generator
+use KotlinGen as kotlin
+use TLang.Leaf
+use TLang.Terminal
+
+lang [kotlin] userService(pkg: String, className: String, extendsClass: String, annotation: String) {
+    pkg ${pkg}
+    impl[public class] ${className} {
+        var name: String = "default"
+        val maxRetries: Int = 3
+        var count: Int = 0
+
+        func greet(who: String): String {
+            return "Hello, " + who + "!"
+        }
+
+        func classify(n: Int): String {
+            if (n < 0) {
+                return "negative"
+            } else if (n == 0) {
+                return "zero"
+            } else {
+                return "positive"
+            }
+        }
+
+        func sumTo(limit: Int): Int {
+            var total = 0
+            for (i in 1..limit) {
+                total = total + i
+            }
+            return total
+        }
+
+        func report(who: String, limit: Int): String {
+            val greeting = greet(who)
+            val sum = sumTo(limit)
+            return greeting + " Sum 1.." + limit + " = " + sum
+        }
+    }
+}
+
+func main(): String {
+    let model  = Leaf.model()
+    let entity = Leaf.get(model, "UserService")
+    let attrs  = Leaf.get(entity, "attrs")
+    let pkg    = Leaf.get(Leaf.get(attrs, "package"),    "value")
+    let cls    = Leaf.get(Leaf.get(attrs, "class_name"), "value")
+    let ext    = Leaf.get(Leaf.get(attrs, "extends"),    "value")
+    let ann    = Leaf.get(Leaf.get(attrs, "annotation"), "value")
+    userService(pkg, cls, ext, ann)
+    let model2   = Leaf.model()
+    let instance = Leaf.get(model2, "userService_1")
+    let generated = Generator.generate(instance, "kotlin")
+    Terminal.println(generated)
+    return generated
+}
+
+set UserService {
+    package: "com.example.demo",
+    class_name: "UserService",
+    extends: "BaseService",
+    annotation: "@Component"
+}

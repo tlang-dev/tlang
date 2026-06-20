@@ -1,0 +1,207 @@
+expose langCmdTemplateGen
+
+use TLang.File
+use TLang.Generator
+use TLang.Terminal
+use layout.PageLayout
+
+doc [html] cmdTemplatePage() {
+  # cmd — Command & SQL Templates
+
+  The cmd template type models named command invocations — SQL queries, shell commands, HTTP requests, or any parameterised operation. At generation time, Generator.generate() dispatches to the appropriate generator (SqlGen, BashGen, and so on).
+
+  [section "syntax"
+    ## Syntax
+
+    A cmd template body contains either a bare identifier (naming the command type) or a call expression (naming the operation and its arguments).
+
+    Bare form — the command type is a single word. The template parameters become the command's parameters.
+
+    [code "tlang"
+      cmd [sql] rawQuery(sql: String) {
+          sql
+      }
+    ]
+
+    Call form — the command is a named operation with typed arguments. Arguments can reference template parameters with $${ }.
+
+    [code "tlang"
+      cmd [sql] findUser(email: String) {
+          SELECT(
+              table: users,
+              cols:  "id, name, email",
+              where: "email = '$${email}'"
+          )
+      }
+
+      cmd [sql] createUser(name: String, email: String) {
+          INSERT(
+              table:  users,
+              cols:   "name, email",
+              values: "'$${name}', '$${email}'"
+          )
+      }
+    ]
+  ]
+
+  [section "generate"
+    ## Generating SQL
+
+    Call Generator.generate() to produce the SQL string. The SqlGen generator handles all standard SQL operations.
+
+    [code "tlang"
+      use TLang.Generator
+
+      cmd [sql] allUsers() {
+          SELECT(table: users)
+      }
+
+      cmd [sql] userById(id: String) {
+          SELECT(
+              table: users,
+              where: "id = $${id}"
+          )
+      }
+
+      func main(): String {
+          let allSql   = Generator.generate(allUsers())
+          let userSql  = Generator.generate(userById("42"))
+          Terminal.println(allSql)    // SELECT * FROM users;
+          Terminal.println(userSql)   // SELECT * FROM users WHERE id = 42;
+          return "done"
+      }
+    ]
+  ]
+
+  [section "sql-ops"
+    ## Supported SQL Operations
+
+    SELECT — query rows from a table.
+
+    [code "tlang"
+      cmd [sql] search(term: String) {
+          SELECT(
+              table:  products,
+              cols:   "id, name, price",
+              where:  "name LIKE '%$${term}%'",
+              order:  "name ASC",
+              limit:  "20"
+          )
+      }
+    ]
+
+    INSERT — insert new rows.
+
+    [code "tlang"
+      cmd [sql] addProduct(name: String, price: String) {
+          INSERT(
+              table:  products,
+              cols:   "name, price",
+              values: "'$${name}', $${price}"
+          )
+      }
+    ]
+
+    UPDATE — update existing rows.
+
+    [code "tlang"
+      cmd [sql] updatePrice(id: String, price: String) {
+          UPDATE(
+              table: products,
+              set:   "price = $${price}",
+              where: "id = $${id}"
+          )
+      }
+    ]
+
+    DELETE — remove rows.
+
+    [code "tlang"
+      cmd [sql] removeUser(id: String) {
+          DELETE(table: users, where: "id = $${id}")
+      }
+    ]
+
+    CREATE-TABLE and CREATE-TABLE-IF — schema creation.
+
+    [code "tlang"
+      cmd [sql] createUsersTable() {
+          CREATE-TABLE-IF(
+              table: users,
+              cols:  "id BIGSERIAL PRIMARY KEY, name VARCHAR(255) NOT NULL, email VARCHAR(255) UNIQUE"
+          )
+      }
+    ]
+
+    DROP-TABLE, DROP-TABLE-IF, TRUNCATE, CREATE-INDEX, DROP-INDEX, ALTER-ADD, ALTER-DROP are also supported.
+
+    [code "tlang"
+      cmd [sql] addColumn(table: String, col: String) {
+          ALTER-ADD(table: $${table}, col: $${col})
+      }
+
+      cmd [sql] dropColumn(table: String, col: String) {
+          ALTER-DROP(table: $${table}, col: $${col})
+      }
+    ]
+  ]
+
+  [section "bash"
+    ## Shell Commands
+
+    A bash generator can be registered and cmd templates used to model shell operations.
+
+    [code "tlang"
+      cmd [bash] buildProject(dir: String) {
+          run(cmd: "cd $${dir} && ./gradlew build")
+      }
+    ]
+  ]
+
+  [section "example"
+    ## Full Migration Example
+
+    Generate a complete schema migration file from model entities.
+
+    [code "tlang"
+      use TLang.Generator
+      use TLang.File
+      use TLang.Leaf
+      use TLang.StringBuilder
+
+      cmd [sql] createTable(tableName: String, cols: String) {
+          CREATE-TABLE-IF(
+              table: $${tableName},
+              cols:  $${cols}
+          )
+      }
+
+      model {
+          set users    { table: "users",    cols: "id BIGSERIAL PRIMARY KEY, name TEXT, email TEXT UNIQUE" }
+          set products { table: "products", cols: "id BIGSERIAL PRIMARY KEY, name TEXT, price NUMERIC" }
+          set orders   { table: "orders",   cols: "id BIGSERIAL PRIMARY KEY, user_id BIGINT REFERENCES users(id), total NUMERIC" }
+      }
+
+      func main(): String {
+          let sb    = StringBuilder.create()
+          let model = Leaf.model()
+          for (k in Leaf.keys(model)) {
+              let e   = Leaf.get(model, k)
+              let sql = Generator.generate(createTable(e.table, e.cols))
+              let sb  = StringBuilder.append(sb, sql)
+          }
+          let migration = StringBuilder.build(sb)
+          File.write("db/V1__init.sql", migration, true)
+          return "done"
+      }
+    ]
+  ]
+}
+
+func langCmdTemplateGen(): String {
+    let content = Generator.generate(cmdTemplatePage("html"))
+    let html = PageLayout.page("cmd — Commands & SQL", content)
+    File.write("docs/docs/language/cmd-template.html", html, true)
+    Terminal.println("  -> language/cmd-template.html")
+    return ""
+}

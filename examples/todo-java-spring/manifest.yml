@@ -1,0 +1,43 @@
+# Todo App — Java + Spring Boot Example
+#
+# Demonstrates the full TLang Layer 3 stack working together:
+#
+#   contract/          — machine-readable pattern definitions (Repository,
+#                        Service, APIController, SSRController)
+#   implementation/    — concrete Java + Spring Boot template implementations
+#   examples/          — THIS FILE — consumes impl + contract to generate
+#                        a real Todo CRUD application
+#
+# The example does NOT define its own templates.  It imports the
+# implementation package (which in turn uses JavaGen) and the contract
+# package, then wires them together via model sets.
+#
+# Run with:
+#   tlang both examples/todo-java-spring
+#
+# Output structure (under output/):
+#   src/main/java/com/example/todo/
+#     TodoItem.java               <- JPA entity (base)
+#     TodoItemRepository.java     <- Spring Data JPA interface
+#     TodoItemService.java        <- Service with CRUD
+#     TodoItemController.java     <- REST controller
+#     FavouriteTodo.java          <- entity WITH favourite field (via : inheritance)
+#     FavouriteTodoRepository.java
+#     FavouriteTodoService.java
+#     FavouriteTodoController.java
+
+name: TodoJavaSpring
+project: TodoExamples
+organisation: TLang
+version: 1.0.0
+stability: alpha
+releaseNumber: 1
+
+author: TLang Contributors
+website: https://tlang.dev/examples/todo-java-spring
+license: Apache-2.0
+
+dependencies:
+  - TLangGen/JavaGen/Java 1.0.0:alpha:1 JavaGen
+  - file://../../implementation/java-spring JavaSpringImpl
+  - file://../../contract ContractLib

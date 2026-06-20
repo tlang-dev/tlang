@@ -1,0 +1,179 @@
+expose stdlibPdfGen
+
+use TLang.File
+use TLang.Generator
+use TLang.Terminal
+use layout.PageLayout
+
+doc [html] pdfPage() {
+  # TLang.Pdf
+
+  TLang.Pdf enables programmatic PDF creation. Create a document, add pages, draw text and shapes, control fonts and colours, and save to disk. It is backed by the printpdf library.
+
+  [code "tlang"
+    use TLang.Pdf
+  ]
+
+  [section "create"
+    ## Creating a Document
+
+    Pdf.create creates a new document and returns a PdfDoc value.
+
+    [code "tlang"
+      let doc = Pdf.create("My Document", 595.276, 841.89)    // A4 in points
+    ]
+
+    Common page sizes in points (1 inch = 72 points).
+
+    A4 — 595.276 x 841.89
+    Letter — 612.0 x 792.0
+    A3 — 841.89 x 1190.55
+  ]
+
+  [section "pages"
+    ## Pages
+
+    Pdf.addPage adds a new page to the document and resets the cursor to the top.
+
+    [code "tlang"
+      let doc = Pdf.addPage(doc)
+    ]
+  ]
+
+  [section "fonts"
+    ## Fonts
+
+    Pdf.setFont sets the active font and size. Built-in fonts: Helvetica, HelveticaBold, Times, TimesBold, Courier, CourierBold, Symbol, ZapfDingbats.
+
+    [code "tlang"
+      let doc = Pdf.setFont(doc, "Helvetica",     12.0)
+      let doc = Pdf.setFont(doc, "HelveticaBold", 18.0)
+      let doc = Pdf.setFont(doc, "Courier",       10.0)
+    ]
+  ]
+
+  [section "cursor"
+    ## Cursor and Movement
+
+    Text is drawn at the current cursor position. The cursor is measured from the bottom of the page.
+
+    [code "tlang"
+      // Move to an absolute position (x, y from bottom-left)
+      let doc = Pdf.setCursor(doc, 50.0, 750.0)
+
+      // Move down by n points
+      let doc = Pdf.moveDown(doc, 20.0)
+
+      // Read current Y position
+      let y = Pdf.cursorY(doc)
+
+      // Page dimensions
+      let w = Pdf.pageWidth(doc)
+      let h = Pdf.pageHeight(doc)
+    ]
+  ]
+
+  [section "text"
+    ## Drawing Text
+
+    Pdf.drawText draws text at the current cursor position.
+
+    [code "tlang"
+      let doc = Pdf.drawText(doc, "Hello, World!", 50.0, 750.0)
+    ]
+
+    Pdf.drawTextLine draws text and moves the cursor down by the line height.
+
+    [code "tlang"
+      let doc = Pdf.drawTextLine(doc, "First line")
+      let doc = Pdf.drawTextLine(doc, "Second line")
+    ]
+
+    Pdf.wrapText draws a paragraph that word-wraps at the given width.
+
+    [code "tlang"
+      let doc = Pdf.wrapText(doc, longText, 495.0, 14.0)
+    ]
+
+    Pdf.textWidth measures the width of a string with the current font.
+
+    [code "tlang"
+      let w = Pdf.textWidth(doc, "Hello")
+    ]
+  ]
+
+  [section "shapes"
+    ## Shapes and Colours
+
+    Colours are set separately for fill and stroke.
+
+    [code "tlang"
+      let doc = Pdf.setFillColor(doc, 0.2, 0.4, 0.9)       // R G B (0.0–1.0)
+      let doc = Pdf.setStrokeColor(doc, 0.0, 0.0, 0.0)
+      let doc = Pdf.setLineWidth(doc, 1.0)
+    ]
+
+    Draw and fill rectangles.
+
+    [code "tlang"
+      let doc = Pdf.drawRect(doc, 50.0, 700.0, 200.0, 40.0)    // stroke only
+      let doc = Pdf.fillRect(doc, 50.0, 700.0, 200.0, 40.0)    // fill only
+    ]
+  ]
+
+  [section "save"
+    ## Saving
+
+    Pdf.save writes the document to a file path (relative to the project root) and returns the path.
+
+    [code "tlang"
+      let path = Pdf.save(doc, "output/report.pdf")
+      Terminal.println("Saved: " + path)
+    ]
+  ]
+
+  [section "example"
+    ## Example — Invoice PDF
+
+    [code "tlang"
+      use TLang.Pdf
+      use TLang.File
+      use TLang.Terminal
+
+      func main(): String {
+          let doc = Pdf.create("Invoice", 595.276, 841.89)
+          let doc = Pdf.addPage(doc)
+
+          // Title
+          let doc = Pdf.setFont(doc, "HelveticaBold", 22.0)
+          let doc = Pdf.setFillColor(doc, 0.48, 0.36, 0.99)
+          let doc = Pdf.drawTextLine(doc, "INVOICE")
+
+          // Reset colour and draw body
+          let doc = Pdf.setFillColor(doc, 0.1, 0.1, 0.1)
+          let doc = Pdf.setFont(doc, "Helvetica", 12.0)
+          let doc = Pdf.moveDown(doc, 20.0)
+          let doc = Pdf.drawTextLine(doc, "Client: Acme Corp")
+          let doc = Pdf.drawTextLine(doc, "Amount: $1,200.00")
+          let doc = Pdf.drawTextLine(doc, "Due: 2026-07-01")
+
+          // Separator line
+          let doc = Pdf.moveDown(doc, 10.0)
+          let doc = Pdf.setStrokeColor(doc, 0.7, 0.7, 0.7)
+          let doc = Pdf.drawRect(doc, 50.0, Pdf.cursorY(doc), 495.0, 1.0)
+
+          let path = Pdf.save(doc, "output/invoice.pdf")
+          Terminal.println("Saved: " + path)
+          return path
+      }
+    ]
+  ]
+}
+
+func stdlibPdfGen(): String {
+    let content = Generator.generate(pdfPage("html"))
+    let html = PageLayout.page("TLang.Pdf", content)
+    File.write("docs/docs/stdlib/pdf.html", html, true)
+    Terminal.println("  -> stdlib/pdf.html")
+    return ""
+}

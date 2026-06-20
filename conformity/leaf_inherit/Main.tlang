@@ -1,0 +1,97 @@
+use TLang.Leaf
+use TLang.Terminal
+
+// ── Base set ──────────────────────────────────────────────────────────────────
+// Declares three attrs that children automatically inherit.
+
+set Base {
+    kind:  "animal",
+    color: "brown",
+    legs:  "4"
+}
+
+// ── Single inheritance ────────────────────────────────────────────────────────
+// Child extends Base but does NOT redeclare `kind`, `color`, or `legs`.
+// Leaf.get on Child's attrs must still resolve all three from the parent.
+
+set Child : Base {
+    sound: "woof"
+}
+
+// ── Attr override ─────────────────────────────────────────────────────────────
+// Override inherits `kind` and `legs` from Base, but replaces `color`.
+
+set Override : Base {
+    color: "black"
+}
+
+// ── Multi-level inheritance ───────────────────────────────────────────────────
+// GrandChild extends Child, which extends Base.
+// `kind`, `color`, and `legs` reach it through two hops.
+
+set GrandChild : Child {
+    name: "rex"
+}
+
+func main(): String {
+    let model = Leaf.model()
+
+    // ── Base: own attrs are accessible normally ───────────────────────────────
+    let base      = Leaf.get(model, "Base")
+    let baseAttrs = Leaf.get(base, "attrs")
+    let baseKind  = Leaf.get(Leaf.get(baseAttrs, "kind"), "value")
+    Terminal.println(baseKind)    // animal
+
+    // ── Child: inherits `kind`, `color`, `legs` — only `sound` is own ────────
+    let child      = Leaf.get(model, "Child")
+    let childAttrs = Leaf.get(child, "attrs")
+
+    // kind is inherited from Base (Child never declared it)
+    let childKind  = Leaf.get(Leaf.get(childAttrs, "kind"), "value")
+    Terminal.println(childKind)   // animal  (inherited)
+
+    // color is inherited from Base
+    let childColor = Leaf.get(Leaf.get(childAttrs, "color"), "value")
+    Terminal.println(childColor)  // brown   (inherited)
+
+    // sound is Child's own attr
+    let childSound = Leaf.get(Leaf.get(childAttrs, "sound"), "value")
+    Terminal.println(childSound)  // woof    (own)
+
+    // ── Override: inherited kind + legs, overridden color ─────────────────────
+    let over      = Leaf.get(model, "Override")
+    let overAttrs = Leaf.get(over, "attrs")
+
+    let overKind  = Leaf.get(Leaf.get(overAttrs, "kind"), "value")
+    Terminal.println(overKind)    // animal  (inherited)
+
+    let overColor = Leaf.get(Leaf.get(overAttrs, "color"), "value")
+    Terminal.println(overColor)   // black   (overridden)
+
+    let overLegs  = Leaf.get(Leaf.get(overAttrs, "legs"), "value")
+    Terminal.println(overLegs)    // 4       (inherited)
+
+    // ── GrandChild: two-hop inheritance ───────────────────────────────────────
+    let grand      = Leaf.get(model, "GrandChild")
+    let grandAttrs = Leaf.get(grand, "attrs")
+
+    let grandKind  = Leaf.get(Leaf.get(grandAttrs, "kind"), "value")
+    Terminal.println(grandKind)   // animal  (2 hops: GrandChild→Child→Base)
+
+    let grandSound = Leaf.get(Leaf.get(grandAttrs, "sound"), "value")
+    Terminal.println(grandSound)  // woof    (1 hop: GrandChild→Child)
+
+    let grandName  = Leaf.get(Leaf.get(grandAttrs, "name"), "value")
+    Terminal.println(grandName)   // rex     (own)
+
+    // ── Leaf.has: safe existence checks ──────────────────────────────────────
+    // has returns true for both inherited and own attrs; false for absent ones.
+    let hasSoundOwn       = Leaf.has(childAttrs, "sound")  // own attr
+    let hasSoundInherited = Leaf.has(grandAttrs, "sound")  // inherited attr
+    let hasAbsent         = Leaf.has(childAttrs, "wings")  // not present
+    Terminal.println(hasSoundOwn)        // true
+    Terminal.println(hasSoundInherited)  // true
+    Terminal.println(hasAbsent)          // false
+
+    return "done"
+}

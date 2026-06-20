@@ -1,0 +1,43 @@
+# Conformity test — top set with template refs and attribute iteration
+#
+# Tests the following new language features:
+#
+#   1. `top set` — an abstract contract set whose body attrs may be marked
+#      `required`.  A `top set` cannot be instantiated directly; only concrete
+#      child sets that surcharge every `required` attr may be instantiated.
+#
+#   2. Template refs in body attrs — `attr: &templateName` where `templateName`
+#      is a `lang [...]` template (not a helper function).  Calling
+#      `inst.attr()` instantiates the template with the instance's impl values
+#      and returns a `Leaf` that can be passed to `Generator.generate`.
+#
+#   3. `inst.attrs()` — returns `List[String]` of body attr names in canonical
+#      declaration order (top ancestor first, child overrides in place).
+#
+#   4. `inst.callAttr(name)` — calls a body attr dynamically by name, returning
+#      the result of the underlying ref (a Leaf for template refs).
+#
+# Hierarchy exercised:
+#   top set CrudRepository          (save: required, update: required)
+#     set UserCrudRepository        (save: &saveWithUser,  update: &updateWithUser)
+#     set PublicCrudRepository      (save: &savePublic,    update: &updatePublic)
+#     set GroupCrudRepository       (save: &saveWithGroup, update: &updateWithGroup)
+#       set CachedGroupCrudRepository (save: &saveWithGroupCached — surcharges only save)
+#
+# The main helper:
+#   - Instantiates `CachedGroupCrudRepository`.
+#   - Calls `inst.attrs()` and iterates, calling each attr via `callAttr`.
+#   - Verifies that the canonical order is [save, update] (top-ancestor order).
+#   - Verifies that the surcharged `save` template is used, not the parent's.
+#
+# Run `tlang package generators/kotlin` before executing this test.
+
+name: TopSetTmplRef
+project: ConformityTests
+organisation: TLang
+version: 1.0.0
+stability: alpha
+releaseNumber: 1
+
+dependencies:
+  - TLangGen/KotlinGen/Kotlin 1.0.0:alpha:1 KotlinGen

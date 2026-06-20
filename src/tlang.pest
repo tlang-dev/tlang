@@ -1,0 +1,57 @@
+WHITESPACE = _{ " " | "\t" | NEWLINE }
+COMMENT = _{ "//" ~ (!NEWLINE ~ ANY)* | "/*" ~ !"*" ~ (!"*/" ~ ANY)* ~ "*/" }
+
+ident = @{ "^"? ~ (ASCII_ALPHA | "_") ~ (ASCII_ALPHANUMERIC | "_" | "-")* }
+
+string = @{ "\"" ~ ("\\\"" | !"\"" ~ ANY)* ~ "\"" }
+
+file = { SOI ~ domain_header ~ domain_block* ~ EOI }
+
+domain_header = { (domain_expose | domain_use)* }
+domain_expose = { "expose" ~ ident }
+domain_use = { "use" ~ use_path ~ domain_use_alias? }
+use_path = { ident ~ ("." ~ ident)* }
+domain_use_alias = { "as" ~ ident }
+
+// javadoc = `/** ... */` doc comment immediately before a top-level func.
+// Regular block comments `/* ... */` are handled by COMMENT (silent).
+javadoc = @{ "/**" ~ (!"*/" ~ ANY)* ~ "*/" }
+toplevel_doc_func = { javadoc ~ toplevel_func }
+domain_block = _{ toplevel_doc_func | toplevel_func | toplevel_set | toplevel_let | data_block | tmpl_block | cmd_block | raw_block | doc_block | style_block | test_block }
+test_block = { "test" ~ ident ~ balanced_block }
+doc_block = { "doc" ~ "[" ~ doc_langs ~ "]" ~ ident ~ tmpl_params? ~ balanced_block }
+doc_langs = { ident ~ ("," ~ ident)* }
+style_block = { "style" ~ "[" ~ style_langs ~ "]" ~ ident ~ tmpl_params? ~ balanced_block }
+style_langs = { ident ~ ("," ~ ident)* }
+// Top-level declarations (no helper/model wrapper required).
+// The header (between the keyword and the opening brace) may contain quoted
+// strings such as `>> "output/${pkg}/Foo.kt"` whose interpolations hold `{`.
+// We skip over strings so those inner braces don't prematurely end the scan.
+// Newlines are excluded so headers don't consume across lines.
+toplevel_header_char = _{ string | (!"{" ~ !NEWLINE ~ ANY) }
+toplevel_func = @{ "func" ~ toplevel_header_char* ~ balanced_block }
+// `set` may have no body (e.g. `set Foo(params)` with no `{}`).
+// Optional trailing content after `}` is captured on the same line (e.g. `!> bash`).
+toplevel_set  = @{ "set"  ~ toplevel_header_char* ~ (balanced_block ~ (!NEWLINE ~ ANY)*)? ~ NEWLINE? }
+// `let` model-variable declarations have no trailing block — they end at EOL.
+toplevel_let  = @{ "let" ~ (!NEWLINE ~ ANY)* ~ NEWLINE? }
+cmd_block = { "cmd" ~ "[" ~ cmd_langs ~ "]" ~ ident ~ tmpl_params? ~ balanced_block }
+cmd_langs = { ident ~ ("," ~ ident)* }
+
+tmpl_block = { "lang" ~ "[" ~ tmpl_id ~ "]" ~ tmpl_id ~ tmpl_params? ~ tmpl_content }
+raw_block = { "raw" ~ "[" ~ raw_variant ~ "]" ~ ident ~ tmpl_params? ~ balanced_block }
+raw_variant = { ident }
+data_block = { "data" ~ "[" ~ data_langs ~ "]" ~ tmpl_id ~ tmpl_params? ~ balanced_block }
+data_langs = { tmpl_id ~ ("," ~ tmpl_id)* }
+tmpl_params = { "(" ~ (tmpl_param ~ ("," ~ tmpl_param)*)? ~ ")" }
+tmpl_param = { ident ~ (":" ~ tmpl_type)? }
+tmpl_type = { tmpl_id ~ ("<" ~ tmpl_id ~ ("," ~ tmpl_id)* ~ ">")? ~ ("[" ~ "]")? }
+tmpl_content = { tmpl_specialized | balanced_block }
+tmpl_specialized = { "spec" ~ balanced_block }
+
+tmpl_id = { ident | escaped_id | intpr_id }
+escaped_id = @{ "`" ~ (!"`" ~ ANY)* ~ "`" }
+intpr_id = @{ ident? ~ "${" ~ (!"}" ~ ANY)* ~ "}" ~ ident? }
+
+balanced_block = @{ "{" ~ balanced_item* ~ "}" }
+balanced_item = _{ balanced_block | string | (!"{" ~ !"}" ~ ANY) }

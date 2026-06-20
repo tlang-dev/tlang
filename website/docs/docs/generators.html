@@ -1,0 +1,310 @@
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <title>Generators — TLang</title>
+      <link rel="stylesheet" href="../assets/style.css">
+    </head>
+    <body>
+    <nav class="nav">
+      <div class="nav-inner">
+        <a class="nav-logo" href="../index.html">TLang</a>
+        <div class="nav-links">
+          <a class="nav-link" href="getting-started.html">Docs</a>
+          <a class="nav-link" href="language/index.html">Language</a>
+          <a class="nav-link" href="stdlib/index.html">Stdlib</a>
+          <a class="nav-link" href="generators.html">Generators</a>
+          <a class="nav-link" href="use-cases.html">Use Cases</a>
+          <a class="nav-link" href="packages.html">Packages</a>
+          <a class="nav-link" href="https://github.com/joel-f/tlang">GitHub</a>
+          <a class="btn btn-sm btn-primary" href="getting-started.html">Get Started</a>
+        </div>
+      </div>
+    </nav>
+    <div class="doc-page section-inner">
+    <h1>Generators</h1>
+<p>A generator is a named template block that renders structured output in a target format.
+Every generator has the same shape: a keyword, a format list, a name, and parameters.
+The output format is selected at call time by passing the format name as the first argument.</p>
+<pre><code class="language-tlang">    keyword [format, ...] name(param: Type, ...) {
+      // template body
+    }
+  </code></pre>
+<p>Calling a generator returns a String containing the rendered output.
+That string can be returned, written to a file, or embedded in another template.</p>
+<section id="lang">
+<h2>lang — Code Generation</h2>
+<p>The lang template generates source code in any target language.
+TLang provides structural keywords that map to idioms in the target language —
+the compiler knows how to render them for each target:</p>
+<pre><code class="language-tlang">      lang [kotlin] entity(pkg: String, name: String) {
+          pkg ${pkg}
+          import java.time.LocalDateTime
+          impl[data class] ${name}(
+              val id: Long,
+              val name: String,
+              val createdAt: LocalDateTime
+          )
+      }
+    </code></pre>
+<p>The same template can target multiple languages by listing them in the format bracket.
+Structural keywords like pkg, import, impl, annotation, and extend adapt their
+rendering for the selected target:</p>
+<pre><code class="language-tlang">      lang [kotlin, java] service(pkg: String, name: String) {
+          pkg ${pkg}
+          annotation Service
+          impl ${name}Service {
+              func findAll(): List
+              func findById(id: Long): Optional
+          }
+      }
+
+      func main(): String {
+          let kt   = service(&quot;kotlin&quot;, &quot;com.example&quot;, &quot;User&quot;)
+          let java = service(&quot;java&quot;,   &quot;com.example&quot;, &quot;User&quot;)
+          return &quot;ok&quot;
+      }
+    </code></pre>
+<p>lang templates are well suited for: entity classes, repository interfaces, REST controllers,
+DTOs, test stubs, OpenAPI specs, Dockerfile variants, CI/CD pipeline definitions,
+and any file that follows a predictable structural pattern.</p>
+</section>
+<section id="doc">
+<h2>doc — Document Generation</h2>
+<p>The doc template generates structured documents. A single doc template can emit
+Markdown and HTML simultaneously, keeping all formats in sync:</p>
+<pre><code class="language-tlang">      doc [md, html] changelog(version: String, date: String) {
+        # Changelog — v${version}
+
+        Released on ${date}.
+
+        [section &quot;added&quot;
+          ## Added
+
+          [list &quot;unordered&quot;
+            - New template interpolation in [asis] blocks
+            - style [css] pseudo-class modifier syntax
+            - StringBuilder.build() for efficient string construction
+          ]
+        ]
+
+        [section &quot;fixed&quot;
+          ## Fixed
+
+          [list &quot;unordered&quot;
+            - Depth tracking in find_standalone_close_bracket
+            - Bytecode cache invalidation on source change
+          ]
+        ]
+      }
+
+      func main(): String {
+          File.write(&quot;CHANGELOG.md&quot;,   changelog(&quot;md&quot;,   &quot;0.4.0&quot;, &quot;2026-06-18&quot;), true)
+          File.write(&quot;docs/changelog.html&quot;, changelog(&quot;html&quot;, &quot;0.4.0&quot;, &quot;2026-06-18&quot;), true)
+          return &quot;ok&quot;
+      }
+    </code></pre>
+<p>Doc template elements:</p>
+<ul>
+<li># H1 / ## H2 / ### H3 — headings at any level</li>
+<li>Plain text — rendered as paragraphs</li>
+<li>[section "id" ... ] — named section (anchored in HTML, grouped in Markdown)</li>
+<li>[code "lang" ... ] — syntax-highlighted code block</li>
+<li>[list "unordered" - item ] — bullet list</li>
+<li>[list "ordered" - item ] — numbered list</li>
+<li>[link "url" "text"] — hyperlink</li>
+<li>[img "url" "alt"] — image</li>
+<li>[asis ... ] — raw output block; ${params} are still substituted</li>
+</ul>
+<p>The doc template is the right choice for: README files, API documentation,
+changelogs, architecture decision records, onboarding guides, and any content
+that must exist in more than one format.</p>
+</section>
+<section id="style">
+<h2>style — Stylesheet Generation</h2>
+<p>The style template generates CSS rules. Design tokens, component rules, and
+theme variants can all be expressed as parameterised style templates:</p>
+<pre><code class="language-tlang">      style [css] DesignTokens(accent: String, bg: String) {
+          :root {
+              --accent: ${accent},
+              --bg: ${bg},
+              --text: &quot;#e8e8e8&quot;,
+              --surface: &quot;#141414&quot;,
+              --border: &quot;#222222&quot;,
+              --radius: &quot;8px&quot;
+          }
+          html {
+              font-size: 16px,
+              scroll-behavior: smooth
+          }
+          body {
+              background: &quot;var(--bg)&quot;,
+              color: &quot;var(--text)&quot;,
+              margin: 0
+          }
+      }
+
+      style [css] ButtonComponent() {
+          .btn {
+              display: &quot;inline-flex&quot;,
+              align-items: center,
+              padding: &quot;0.65em 1.4em&quot;,
+              border-radius: &quot;var(--radius)&quot;,
+              font-weight: 600,
+              cursor: pointer
+          }
+          .btn-primary {
+              background: &quot;var(--accent)&quot;,
+              color: &quot;#ffffff&quot;
+          }
+          .btn-primary [hover] {
+              opacity: &quot;0.9&quot;
+          }
+      }
+    </code></pre>
+<p>Rules:</p>
+<ul>
+<li>Property values containing spaces must be quoted strings</li>
+<li>Pseudo-classes use [hover] [focus] [active] [visited] modifier syntax</li>
+<li>Comments (//) are not permitted inside style block bodies</li>
+<li>Multiple style templates can be concatenated with StringBuilder</li>
+</ul>
+<p>Parameterised style templates make it possible to generate themed CSS for multiple
+brands, white-label products, or dark/light variants from a single source.</p>
+</section>
+<section id="data">
+<h2>data — Data File Generation</h2>
+<p>The data template generates structured data files in JSON or YAML format.
+Use it for configuration files, fixture data, OpenAPI specs, or infrastructure definitions:</p>
+<pre><code class="language-tlang">      data [json] serviceConfig(name: String, port: String, replicas: String) {
+          object {
+              &quot;name&quot;: &quot;${name}&quot;,
+              &quot;port&quot;: ${port},
+              &quot;replicas&quot;: ${replicas},
+              &quot;healthCheck&quot;: &quot;/health&quot;
+          }
+      }
+
+      func main(): String {
+          File.write(&quot;config/inventory.json&quot;,  serviceConfig(&quot;json&quot;, &quot;inventory&quot;,  &quot;8081&quot;, &quot;3&quot;), true)
+          File.write(&quot;config/catalog.json&quot;,    serviceConfig(&quot;json&quot;, &quot;catalog&quot;,    &quot;8082&quot;, &quot;2&quot;), true)
+          return &quot;ok&quot;
+      }
+    </code></pre>
+<p>Data templates are ideal for: Kubernetes manifests, Docker Compose files,
+Terraform variable files, database seed fixtures, and mock API response collections.</p>
+</section>
+<section id="cmd">
+<h2>cmd — Script Generation</h2>
+<p>The cmd template generates executable scripts or SQL statements.
+Parameterise migration scripts, deployment pipelines, or database seeds:</p>
+<pre><code class="language-tlang">      cmd [sql] createTable(schema: String, table: String, entity: String) {
+          CREATE TABLE IF NOT EXISTS ${schema}.${table} (
+              id          BIGSERIAL PRIMARY KEY,
+              name        VARCHAR(255) NOT NULL,
+              created_at  TIMESTAMP NOT NULL DEFAULT now()
+          );
+
+          CREATE INDEX idx_${table}_name ON ${schema}.${table}(name);
+      }
+
+      func main(): String {
+          File.write(&quot;migrations/001_create_users.sql&quot;,
+              createTable(&quot;sql&quot;, &quot;public&quot;, &quot;users&quot;, &quot;User&quot;), true)
+          File.write(&quot;migrations/002_create_products.sql&quot;,
+              createTable(&quot;sql&quot;, &quot;public&quot;, &quot;products&quot;, &quot;Product&quot;), true)
+          return &quot;ok&quot;
+      }
+    </code></pre>
+<p>cmd templates also target bash, making them useful for generating repeatable
+deployment scripts, environment setup scripts, and CI pipeline steps.</p>
+</section>
+<section id="raw">
+<h2>raw — Verbatim Text</h2>
+<p>The raw template outputs content exactly as written, with ${} substitution applied.
+Use it for formats not covered by other template types, or for mixed-content files:</p>
+<pre><code class="language-tlang">      raw [text] envFile(dbHost: String, dbPort: String, appPort: String) {
+          # Generated — do not edit manually
+          DATABASE_HOST=${dbHost}
+          DATABASE_PORT=${dbPort}
+          APP_PORT=${appPort}
+          LOG_LEVEL=info
+      }
+
+      func main(): String {
+          File.write(&quot;.env.production&quot;,
+              envFile(&quot;text&quot;, &quot;db.internal&quot;, &quot;5432&quot;, &quot;8080&quot;), true)
+          return &quot;ok&quot;
+      }
+    </code></pre>
+</section>
+<section id="binding">
+<h2>Binding Generators to Models</h2>
+<p>The real power of generators emerges when combined with set declarations.
+Define your model once; every generator that iterates it automatically produces
+output for every entity:</p>
+<pre><code class="language-tlang">      use TLang.File
+      use TLang.Generator
+
+      lang [kotlin] entityClass(pkg: String, name: String, table: String) {
+          pkg ${pkg}
+          annotation Entity
+          annotation Table(&quot;${table}&quot;)
+          impl ${name}(
+              val id: Long,
+              val name: String
+          )
+      }
+
+      cmd [sql] migration(schema: String, table: String) {
+          CREATE TABLE IF NOT EXISTS ${schema}.${table} (
+              id    BIGSERIAL PRIMARY KEY,
+              name  VARCHAR(255) NOT NULL
+          );
+      }
+
+      set User    { pkg: &quot;com.example&quot;, name: &quot;User&quot;,    table: &quot;users&quot;    }
+      set Product { pkg: &quot;com.example&quot;, name: &quot;Product&quot;, table: &quot;products&quot; }
+      set Order   { pkg: &quot;com.example&quot;, name: &quot;Order&quot;,   table: &quot;orders&quot;   }
+
+      func main(): String {
+          let idx = 1
+          for (model in Generator.models()) {
+              let name  = model.get(&quot;name&quot;)
+              let pkg   = model.get(&quot;pkg&quot;)
+              let table = model.get(&quot;table&quot;)
+              File.write(&quot;src/&quot; + name + &quot;.kt&quot;,
+                  entityClass(pkg, name, table), true)
+              File.write(&quot;migrations/0&quot; + idx + &quot;_create_&quot; + table + &quot;.sql&quot;,
+                  migration(&quot;sql&quot;, &quot;public&quot;, table), true)
+              let idx = idx + 1
+          }
+          return &quot;ok&quot;
+      }
+    </code></pre>
+<p>With this pattern, adding a new domain entity requires exactly one change: a new set block.
+Every generator — Kotlin class, SQL migration, REST controller, test stub, OpenAPI entry —
+is produced automatically on the next run.</p>
+</section>
+
+    </div>
+    <footer class="footer">
+      <div class="footer-inner">
+        <span class="footer-brand">TLang</span>
+        <div class="footer-links">
+          <a class="footer-link" href="getting-started.html">Getting Started</a>
+          <a class="footer-link" href="language-spec.html">Language</a>
+          <a class="footer-link" href="generators.html">Generators</a>
+          <a class="footer-link" href="use-cases.html">Use Cases</a>
+          <a class="footer-link" href="packages.html">Packages</a>
+          <a class="footer-link" href="editor-setup.html">Editor Setup</a>
+          <a class="footer-link" href="ai-assistant.html">AI Assistant</a>
+          <a class="footer-link" href="https://github.com/joel-f/tlang">GitHub</a>
+        </div>
+        <span class="footer-copy">&copy; 2026 TLang Contributors &middot; Apache 2.0</span>
+      </div>
+    </footer>
+    </body>
+    </html>
+  

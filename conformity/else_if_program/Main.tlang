@@ -1,0 +1,62 @@
+use TLang.Terminal
+
+// Linear else-if chain — letter grade from a numeric score.
+func grade(score: Int): String {
+    if (score >= 90) {
+        return "A"
+    } else if (score >= 80) {
+        return "B"
+    } else if (score >= 70) {
+        return "C"
+    } else if (score >= 60) {
+        return "D"
+    } else {
+        return "F"
+    }
+}
+
+// Three-way else-if — arithmetic sign of an integer.
+func sign(n: Int): String {
+    if (n > 0) {
+        return "positive"
+    } else if (n < 0) {
+        return "negative"
+    } else {
+        return "zero"
+    }
+}
+
+// Mixed: else-if with compound boolean conditions.
+func classify(n: Int): String {
+    if ((n >= 0) && (n <= 9)) {
+        return "single digit"
+    } else if ((n >= 10) && (n <= 99)) {
+        return "double digit"
+    } else if (n < 0) {
+        return "negative"
+    } else {
+        return "large"
+    }
+}
+
+func main(): String {
+    // grade — full range
+    Terminal.println(grade(95))    // A
+    Terminal.println(grade(85))    // B
+    Terminal.println(grade(75))    // C
+    Terminal.println(grade(65))    // D
+    Terminal.println(grade(55))    // F
+
+    // sign
+    Terminal.println(sign(42))     // positive
+    Terminal.println(sign(-7))     // negative
+    Terminal.println(sign(0))      // zero
+
+    // classify
+    Terminal.println(classify(5))   // single digit
+    Terminal.println(classify(42))  // double digit
+    Terminal.println(classify(-3))  // negative
+    Terminal.println(classify(100)) // large
+
+    return "done"
+}

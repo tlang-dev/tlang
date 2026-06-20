@@ -1,0 +1,80 @@
+use TLang.Terminal
+use TLang.List as L
+use TLang.Map as M
+
+func main(): String {
+    // --- List method-call syntax ---
+    let nums = L.of(1, 2, 3, 4, 5)
+    Terminal.println(nums.size())
+    Terminal.println(nums.isEmpty())
+    Terminal.println(nums.first())
+    Terminal.println(nums.last())
+    Terminal.println(nums.contains(3))
+    Terminal.println(nums.contains(9))
+    Terminal.println(nums.indexOf(3))
+    Terminal.println(nums.join(","))
+
+    let pushed = nums.push(6)
+    Terminal.println(pushed.size())
+    Terminal.println(pushed.last())
+
+    let reversed = nums.reverse()
+    Terminal.println(reversed.first())
+    Terminal.println(reversed.last())
+
+    let sliced = nums.slice(1, 4)
+    Terminal.println(sliced.size())
+    Terminal.println(sliced.join("-"))
+
+    let taken = nums.take(3)
+    Terminal.println(taken.join(","))
+
+    let dropped = nums.drop(2)
+    Terminal.println(dropped.join(","))
+
+    let a = L.of(1, 2)
+    let b = L.of(3, 4)
+    let cat = a.concat(b)
+    Terminal.println(cat.join(","))
+
+    // --- String method-call syntax ---
+    let greeting = "Hello, World!"
+    Terminal.println(greeting.length())
+    Terminal.println(greeting.toUpperCase())
+    Terminal.println(greeting.toLowerCase())
+    Terminal.println(greeting.contains("World"))
+    Terminal.println(greeting.startsWith("Hello"))
+    Terminal.println(greeting.endsWith("!"))
+    Terminal.println(greeting.indexOf("World"))
+    Terminal.println(greeting.substring(7, 12))
+
+    let padded = "  trim me  "
+    Terminal.println(padded.trim())
+
+    let csv = "a,b,c"
+    let parts = csv.split(",")
+    Terminal.println(parts.size())
+    Terminal.println(parts.join("|"))
+
+    // --- Map method-call syntax ---
+    let m = M.of("name", "Alice", "age", "30")
+    Terminal.println(m.size())
+    Terminal.println(m.isEmpty())
+    Terminal.println(m.has("name"))
+    Terminal.println(m.has("missing"))
+    Terminal.println(m.get("name"))
+    Terminal.println(m.get("age"))
+
+    let m2 = m.set("city", "Paris")
+    Terminal.println(m2.size())
+    Terminal.println(m2.get("city"))
+
+    let m3 = m.remove("age")
+    Terminal.println(m3.size())
+    Terminal.println(m3.has("age"))
+
+    let keys = m.keys()
+    Terminal.println(keys.size())
+
+    return "done"
+}

@@ -1,0 +1,216 @@
+expose langTypesGen
+
+use TLang.File
+use TLang.Generator
+use TLang.Terminal
+use layout.PageLayout
+
+doc [html] typesPage() {
+  # Types
+
+  TLang is statically typed. Every value has a type. Type annotations use a colon after the name. Many annotations are optional where the compiler can infer them, but they are required on function parameters.
+
+  [section "string"
+    ## String
+
+    A String is a sequence of UTF-8 characters. String literals use double quotes.
+
+    [code "tlang"
+      let greeting = "Hello, world!"
+      let empty    = ""
+    ]
+
+    Concatenation uses the + operator. Any value can be concatenated to a String.
+
+    [code "tlang"
+      let name  = "Alice"
+      let msg   = "Hello, " + name + "!"
+      let count = 3
+      let line  = "Items: " + count    // Int converts automatically
+    ]
+
+    The $$ escape produces a literal dollar sign in template and raw bodies.
+
+    [code "tlang"
+      // Inside a template body: $${name} renders as ${name} literally
+      let escaped = "$$"    // the string contains one $
+    ]
+  ]
+
+  [section "int"
+    ## Int
+
+    Int is a 64-bit signed integer. Underscores are allowed as separators.
+
+    [code "tlang"
+      let x = 42
+      let y = -7
+      let big = 1_000_000
+    ]
+
+    Arithmetic: + - * / %. Division between two Ints produces an Int (truncated).
+
+    [code "tlang"
+      let sum  = 10 + 3    // 13
+      let diff = 10 - 3    // 7
+      let prod = 10 * 3    // 30
+      let quot = 10 / 3    // 3  (truncated)
+      let rem  = 10 % 3    // 1
+    ]
+
+    Comparison operators return Bool: == != < > <= >=
+  ]
+
+  [section "long"
+    ## Long
+
+    Long holds 64-bit values but is distinct from Int at the type level. Use Long when interfacing with APIs that expect it explicitly, or when working with very large numbers.
+
+    [code "tlang"
+      use TLang.Long
+
+      let max = Long.maxValue()
+      let min = Long.minValue()
+      let r   = Long.range(0, 100)    // List of Long 0..99
+    ]
+  ]
+
+  [section "float"
+    ## Float and Double
+
+    Float and Double both represent IEEE 754 double-precision floating-point numbers. They are interchangeable in practice; Double is the preferred alias.
+
+    [code "tlang"
+      let pi    = 3.14159
+      let neg   = -0.5
+      let sci   = 1.0e6
+    ]
+
+    [code "tlang"
+      use TLang.Float
+
+      let rounded = Float.round(3.7)    // 4.0
+      let floored = Float.floor(3.7)    // 3.0
+      let ceiled  = Float.ceil(3.2)     // 4.0
+      let root    = Float.sqrt(16.0)    // 4.0
+    ]
+  ]
+
+  [section "bool"
+    ## Bool
+
+    Bool is either true or false.
+
+    [code "tlang"
+      let yes = true
+      let no  = false
+    ]
+
+    Logical operators: && (and), || (or), ! (not). Both && and || short-circuit.
+
+    [code "tlang"
+      let both   = true && false    // false
+      let either = true || false    // true
+      let inv    = !true            // false
+    ]
+
+    Comparison expressions produce Bool values.
+
+    [code "tlang"
+      let isAdult = age >= 18
+      let isValid = name != "" && age > 0
+    ]
+  ]
+
+  [section "list"
+    ## List
+
+    A List is an ordered sequence of values. Create a fixed list with List.of, or an empty list with List.create.
+
+    [code "tlang"
+      use TLang.List
+
+      let names  = List.of("Alice", "Bob", "Charlie")
+      let nums   = List.of(1, 2, 3)
+      let empty  = List.create()
+    ]
+
+    Access elements by index (zero-based). Iterate with for-in.
+
+    [code "tlang"
+      let first = List.get(names, 0)     // "Alice"
+      let count = List.size(names)        // 3
+
+      for (n in names) {
+          Terminal.println(n)
+      }
+    ]
+
+    Lists are persistent — operations return new lists.
+
+    [code "tlang"
+      let with4  = List.push(nums, 4)     // [1, 2, 3, 4]
+      let tail   = List.tail(nums)         // [2, 3]
+      let joined = List.join(names, ", ")  // "Alice, Bob, Charlie"
+    ]
+
+    Higher-order functions accept lambdas or function references.
+
+    [code "tlang"
+      let doubled = List.map(nums, (x) => x * 2)           // [2, 4, 6]
+      let evens   = List.filter(nums, (x) => x % 2 == 0)   // [2]
+      let sum     = List.reduce(nums, 0, (acc, x) => acc + x)  // 6
+    ]
+  ]
+
+  [section "map"
+    ## Map
+
+    A Map is a string-keyed dictionary. Create with Map.of (key-value pairs) or Map.create.
+
+    [code "tlang"
+      use TLang.Map
+
+      let m  = Map.of("host", "localhost", "port", "5432")
+      let m2 = Map.create()
+    ]
+
+    [code "tlang"
+      let host = Map.get(m, "host")                        // "localhost"
+      let port = Map.getOrDefault(m, "port", "3306")       // "5432"
+      let keys = Map.keys(m)                               // List of keys
+      let m3   = Map.set(m, "host", "prod.db.example.com")
+    ]
+  ]
+
+  [section "annotations"
+    ## Type Annotations
+
+    Annotations follow the name with a colon. On function parameters they are required. On let bindings they are optional (inferred from the value).
+
+    [code "tlang"
+      func greet(name: String, times: Int): String {
+          let result: String = ""     // annotation optional here
+          let result = ""             // same — inferred
+          return result
+      }
+    ]
+
+    Collection annotations.
+
+    [code "tlang"
+      func process(items: List, config: Map): String {
+          // ...
+          return "ok"
+      }
+    ]
+  ]
+}
+
+func langTypesGen(): String {
+    let content = Generator.generate(typesPage("html"))
+    let html = PageLayout.page("Types", content)
+    File.write("docs/docs/language/types.html", html, true)
+    Terminal.println("  -> language/types.html")
+    return ""
+}

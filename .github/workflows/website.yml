@@ -1,0 +1,65 @@
+name: Website
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "website/**"
+      - "src/**"
+      - ".github/workflows/website.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  generate:
+    name: Generate & Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+
+      - name: Build tlang
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release
+
+      - name: Create output directories
+        run: mkdir -p website/docs/assets website/docs/docs
+
+      - name: Generate website
+        run: ./target/release/tlang compile-run website/Main.tlang
+
+      - name: Add .nojekyll
+        run: touch website/docs/.nojekyll
+
+      - name: Copy to docs/
+        run: |
+          rm -rf docs/index.html docs/assets docs/docs/getting-started.* docs/docs/language-spec.*
+          cp website/docs/index.html docs/index.html
+          cp -r website/docs/assets docs/assets
+          mkdir -p docs/docs
+          cp website/docs/docs/getting-started.md  docs/docs/getting-started.md
+          cp website/docs/docs/getting-started.html docs/docs/getting-started.html
+          cp website/docs/docs/language-spec.md    docs/docs/language-spec.md
+          cp website/docs/docs/language-spec.html  docs/docs/language-spec.html
+          cp website/docs/.nojekyll docs/.nojekyll
+
+      - name: Commit generated site
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add docs/index.html docs/assets docs/docs/getting-started.* docs/docs/language-spec.* docs/.nojekyll
+          git diff --staged --quiet || git commit -m "chore: regenerate website from TLang templates"
+          git push

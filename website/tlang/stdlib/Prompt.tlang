@@ -1,0 +1,106 @@
+expose stdlibPromptGen
+
+use TLang.File
+use TLang.Generator
+use TLang.Terminal
+use layout.PageLayout
+
+doc [html] promptPage() {
+  # TLang.Prompt
+
+  TLang.Prompt provides interactive prompts for CLI scaffolding tools. It is built on top of interactive terminal input and is ideal for generators that ask the user questions before producing output.
+
+  [code "tlang"
+    use TLang.Prompt
+  ]
+
+  [section "ask"
+    ## ask — Text Input
+
+    Prompt.ask displays a question and returns the user's input as a String.
+
+    [code "tlang"
+      let name = Prompt.ask("Project name:")
+      let pkg  = Prompt.ask("Base package (e.g. com.example):")
+    ]
+
+    Prompt.askWithDefault provides a fallback shown in brackets if the user presses Enter without typing.
+
+    [code "tlang"
+      let port = Prompt.askWithDefault("Port:", "8080")
+      let host = Prompt.askWithDefault("Host:", "localhost")
+    ]
+  ]
+
+  [section "confirm"
+    ## confirm — Yes/No
+
+    Prompt.confirm displays a yes/no question and returns a Bool.
+
+    [code "tlang"
+      let addTests = Prompt.confirm("Generate test scaffolding?")
+      if (addTests) {
+          // generate test files
+      }
+    ]
+  ]
+
+  [section "select"
+    ## select — Choice from List
+
+    Prompt.select displays a numbered menu and returns the chosen string.
+
+    [code "tlang"
+      let lang = Prompt.select("Target language:", List.of("kotlin", "java", "typescript"))
+      let db   = Prompt.select("Database:", List.of("postgres", "mysql", "sqlite"))
+    ]
+  ]
+
+  [section "password"
+    ## password — Hidden Input
+
+    Prompt.password reads a value without echoing characters to the terminal.
+
+    [code "tlang"
+      let secret = Prompt.password("API key:")
+    ]
+  ]
+
+  [section "example"
+    ## Example — Interactive Scaffolding
+
+    [code "tlang"
+      use TLang.Prompt
+      use TLang.File
+      use TLang.Terminal
+      use TLang.List
+
+      func main(): String {
+          let project = Prompt.ask("Project name:")
+          let pkg     = Prompt.askWithDefault("Base package:", "com.example")
+          let lang    = Prompt.select("Language:", List.of("kotlin", "java"))
+          let tests   = Prompt.confirm("Include test scaffolding?")
+
+          Terminal.println("Generating " + project + " (" + lang + ")...")
+
+          // use answers to drive generation
+          File.write("README.md", "# " + project, true)
+
+          if (tests) {
+              File.createDir("src/test")
+          }
+
+          Terminal.println("Done!")
+          return "done"
+      }
+    ]
+  ]
+}
+
+func stdlibPromptGen(): String {
+    let content = Generator.generate(promptPage("html"))
+    let html = PageLayout.page("TLang.Prompt", content)
+    File.write("docs/docs/stdlib/prompt.html", html, true)
+    Terminal.println("  -> stdlib/prompt.html")
+    return ""
+}

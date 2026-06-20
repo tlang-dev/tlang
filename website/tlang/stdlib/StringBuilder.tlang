@@ -1,0 +1,107 @@
+expose stdlibStringBuilderGen
+
+use TLang.File
+use TLang.Generator
+use TLang.Terminal
+use layout.PageLayout
+
+doc [html] stringBuilderPage() {
+  # TLang.StringBuilder
+
+  TLang.StringBuilder provides efficient string accumulation. Use it instead of repeated + concatenation in loops — plain concatenation is O(n²) when building large strings; StringBuilder is O(n).
+
+  [code "tlang"
+    use TLang.StringBuilder
+  ]
+
+  [section "api"
+    ## API
+
+    StringBuilder.create returns a new empty builder.
+
+    [code "tlang"
+      let sb = StringBuilder.create()
+    ]
+
+    StringBuilder.new is an alias for create.
+
+    [code "tlang"
+      let sb = StringBuilder.new()
+    ]
+
+    StringBuilder.append adds a string to the builder and returns the updated builder. Reassign to the same name — the builder is mutable by reference.
+
+    [code "tlang"
+      let sb = StringBuilder.append(sb, "Hello, ")
+      let sb = StringBuilder.append(sb, "World!")
+    ]
+
+    StringBuilder.build finalises and returns the accumulated string.
+
+    [code "tlang"
+      let result = StringBuilder.build(sb)    // "Hello, World!"
+    ]
+  ]
+
+  [section "example"
+    ## When to Use It
+
+    Replace this:
+
+    [code "tlang"
+      let result = ""
+      for (line in lines) {
+          let result = result + line + "\n"   // O(n²) — avoid for large lists
+      }
+    ]
+
+    With this:
+
+    [code "tlang"
+      let sb = StringBuilder.create()
+      for (line in lines) {
+          let sb = StringBuilder.append(sb, line + "\n")
+      }
+      let result = StringBuilder.build(sb)    // O(n)
+    ]
+  ]
+
+  [section "example2"
+    ## Example — Generate a SQL Script
+
+    [code "tlang"
+      use TLang.StringBuilder
+      use TLang.Generator
+      use TLang.File
+
+      cmd [sql] createTable(table: String, cols: String) {
+          CREATE-TABLE-IF(table: $${table}, cols: $${cols})
+      }
+
+      func main(): String {
+          let tables = List.of(
+              Map.of("table", "users",    "cols", "id BIGSERIAL PRIMARY KEY, name TEXT"),
+              Map.of("table", "products", "cols", "id BIGSERIAL PRIMARY KEY, name TEXT, price NUMERIC")
+          )
+
+          let sb = StringBuilder.create()
+          for (t in tables) {
+              let sql = Generator.generate(createTable(Map.get(t, "table"), Map.get(t, "cols")))
+              let sb  = StringBuilder.append(sb, sql)
+          }
+
+          let script = StringBuilder.build(sb)
+          File.write("db/schema.sql", script, true)
+          return "done"
+      }
+    ]
+  ]
+}
+
+func stdlibStringBuilderGen(): String {
+    let content = Generator.generate(stringBuilderPage("html"))
+    let html = PageLayout.page("TLang.StringBuilder", content)
+    File.write("docs/docs/stdlib/string-builder.html", html, true)
+    Terminal.println("  -> stdlib/string-builder.html")
+    return ""
+}

@@ -1,0 +1,180 @@
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <title>Package System — TLang</title>
+      <link rel="stylesheet" href="../assets/style.css">
+    </head>
+    <body>
+    <nav class="nav">
+      <div class="nav-inner">
+        <a class="nav-logo" href="../index.html">TLang</a>
+        <div class="nav-links">
+          <a class="nav-link" href="getting-started.html">Docs</a>
+          <a class="nav-link" href="language/index.html">Language</a>
+          <a class="nav-link" href="stdlib/index.html">Stdlib</a>
+          <a class="nav-link" href="generators.html">Generators</a>
+          <a class="nav-link" href="use-cases.html">Use Cases</a>
+          <a class="nav-link" href="packages.html">Packages</a>
+          <a class="nav-link" href="https://github.com/joel-f/tlang">GitHub</a>
+          <a class="btn btn-sm btn-primary" href="getting-started.html">Get Started</a>
+        </div>
+      </div>
+    </nav>
+    <div class="doc-page section-inner">
+    <h1>Package System</h1>
+<p>TLang has a built-in package market for sharing template libraries.
+Publish your generators once; install them anywhere with a single command.
+The market enables the full value loop: discover a template library,
+install it, generate your entire application stack, extend and publish your own.</p>
+<section id="install">
+<h2>Installing Packages</h2>
+<p>Search the market for available packages:</p>
+<pre><code class="language-bash">      tlang search quarkus
+      tlang search kotlin-crud
+    </code></pre>
+<p>Install a package by its slug:</p>
+<pre><code class="language-bash">      tlang install TLangGen/KotlinGen
+    </code></pre>
+<p>Packages are downloaded to ~/.tlang/tbox/ and made available for use in
+your project. Reference them in your manifest.yml:</p>
+<pre><code class="language-yaml">      dependencies:
+        - TLangGen/KotlinGen/Kotlin 1.0.0:alpha:1 KotlinGen
+    </code></pre>
+<p>Then import in your .tlang files:</p>
+<pre><code class="language-tlang">      use KotlinGen as kotlin
+
+      lang [kotlin] entity(pkg: String, name: String) {
+          pkg ${pkg}
+          impl[data class] ${name}(
+              val id: Long,
+              val name: String
+          )
+      }
+    </code></pre>
+</section>
+<section id="manifest-deps">
+<h2>Manifest Dependencies</h2>
+<p>The manifest.yml file declares project metadata and dependencies.
+TLang resolves dependencies automatically on the first compile or run.</p>
+<pre><code class="language-yaml">      name: MyProject
+      project: MyApp
+      organisation: MyOrg
+      version: 1.0.0
+      stability: stable
+      releaseNumber: 1
+      main: Main
+
+      author: Your Name
+      website: https://your-site.com
+      license: Apache-2.0
+
+      dependencies:
+        - TLangGen/KotlinGen/Kotlin 1.0.0:alpha:1 KotlinGen
+        - TLangGen/QuarkusImpl/QuarkusImpl 1.0.0:alpha:1 QuarkusImpl
+        - file://../../local-lib LocalLib
+    </code></pre>
+<p>Dependency formats:</p>
+<ul>
+<li>Org/Project/Name version:stability:release Alias — market package with a local alias</li>
+<li>file://relative/path Alias — local file or directory, resolved relative to manifest</li>
+</ul>
+<p>Run tlang both to compile, resolve dependencies, and execute in one step.</p>
+</section>
+<section id="publish">
+<h2>Publishing a Package</h2>
+<p>Log in to the market:</p>
+<pre><code class="language-bash">      tlang login
+    </code></pre>
+<p>This prompts for your username and password and saves a JWT to
+~/.tlang/market_token. For automated workflows, use an API key instead:</p>
+<pre><code class="language-bash">      tlang login --api-key YOUR_API_KEY
+    </code></pre>
+<p>Package your project:</p>
+<pre><code class="language-bash">      tlang package
+    </code></pre>
+<p>This compiles the project, bundles all source files and bytecode into a
+.tbag archive, and saves it locally. The archive includes the manifest,
+all .tlang source files, and the compiled bytecode.
+Publish to the market:</p>
+<pre><code class="language-bash">      tlang push
+    </code></pre>
+<p>The package is uploaded to the market and immediately available for
+installation by anyone who runs tlang install with your package slug.</p>
+</section>
+<section id="versioning">
+<h2>Versioning</h2>
+<p>Packages are versioned using four fields in the manifest:</p>
+<ul>
+<li>version — semantic version string (e.g. 1.0.0, 2.3.1)</li>
+<li>stability — alpha, beta, or stable</li>
+<li>releaseNumber — integer, incremented on each publish for the same version</li>
+</ul>
+<p>When installing, you can pin to a specific version and stability:</p>
+<pre><code class="language-bash">      tlang install TLangGen/KotlinGen 1.0.0:stable
+    </code></pre>
+<p>Or install the latest regardless of stability:</p>
+<pre><code class="language-bash">      tlang install TLangGen/KotlinGen
+    </code></pre>
+</section>
+<section id="pull">
+<h2>Pulling Without Installing</h2>
+<p>To download a package without installing it into your tbox:</p>
+<pre><code class="language-bash">      tlang pull TLangGen/KotlinGen
+    </code></pre>
+<p>This downloads the .tbag archive to the current directory.
+Useful for inspecting a package or vendoring it into your project.</p>
+</section>
+<section id="local-packages">
+<h2>Local Packages and CLI Tools</h2>
+<p>TLang packages can also be installed as CLI tools. If a package exposes
+a main function or named commands, it becomes available as:</p>
+<pre><code class="language-bash">      tlang install MyOrg/MyCLITool
+      tlang exec my-cli-tool
+    </code></pre>
+<p>CLI packages are stored in ~/.tlang/cli/ and can be listed with:</p>
+<pre><code class="language-bash">      tlang exec --list
+    </code></pre>
+<p>This enables distributing TLang-based code generation tools as self-contained
+packages that users install once and run anywhere.</p>
+</section>
+<section id="quickstart-loop">
+<h2>The Full Value Loop</h2>
+<p>Here is the complete flow from zero to a working code generator:</p>
+<ol>
+<li>tlang search kotlin — find relevant template libraries on the market</li>
+<li>tlang install TLangGen/KotlinGen — install the Kotlin generator</li>
+<li>Create manifest.yml and Main.tlang — reference the installed package</li>
+<li>Add set declarations for your domain entities</li>
+<li>tlang both — generate your entire application stack</li>
+<li>Extend the templates for your specific needs</li>
+<li>tlang package && tlang push — publish your extended templates</li>
+</ol>
+<p>The market creates a compound effect: each published package builds on others.
+A QuarkusImpl package imports KotlinGen and adds Panache/JAX-RS conventions.
+A MicroserviceStack imports QuarkusImpl and adds Kafka, OpenTelemetry, and
+observability boilerplate. Your team installs MicroserviceStack and gets the
+entire stack generated in one command.</p>
+</section>
+
+    </div>
+    <footer class="footer">
+      <div class="footer-inner">
+        <span class="footer-brand">TLang</span>
+        <div class="footer-links">
+          <a class="footer-link" href="getting-started.html">Getting Started</a>
+          <a class="footer-link" href="language-spec.html">Language</a>
+          <a class="footer-link" href="generators.html">Generators</a>
+          <a class="footer-link" href="use-cases.html">Use Cases</a>
+          <a class="footer-link" href="packages.html">Packages</a>
+          <a class="footer-link" href="editor-setup.html">Editor Setup</a>
+          <a class="footer-link" href="ai-assistant.html">AI Assistant</a>
+          <a class="footer-link" href="https://github.com/joel-f/tlang">GitHub</a>
+        </div>
+        <span class="footer-copy">&copy; 2026 TLang Contributors &middot; Apache 2.0</span>
+      </div>
+    </footer>
+    </body>
+    </html>
+  

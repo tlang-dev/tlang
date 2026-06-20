@@ -1,0 +1,200 @@
+expose packageSystem
+
+doc [md, html] packageSystem() {
+  # Package System
+
+  TLang has a built-in package market for sharing template libraries.
+  Publish your generators once; install them anywhere with a single command.
+  The market enables the full value loop: discover a template library,
+  install it, generate your entire application stack, extend and publish your own.
+
+  [section "install"
+    ## Installing Packages
+
+    Search the market for available packages:
+
+    [code "bash"
+      tlang search quarkus
+      tlang search kotlin-crud
+    ]
+
+    Install a package by its slug:
+
+    [code "bash"
+      tlang install TLangGen/KotlinGen
+    ]
+
+    Packages are downloaded to ~/.tlang/tbox/ and made available for use in
+    your project. Reference them in your manifest.yml:
+
+    [code "yaml"
+      dependencies:
+        - TLangGen/KotlinGen/Kotlin 1.0.0:alpha:1 KotlinGen
+    ]
+
+    Then import in your .tlang files:
+
+    [code "tlang"
+      use KotlinGen as kotlin
+
+      lang [kotlin] entity(pkg: String, name: String) {
+          pkg ${pkg}
+          impl[data class] ${name}(
+              val id: Long,
+              val name: String
+          )
+      }
+    ]
+  ]
+
+  [section "manifest-deps"
+    ## Manifest Dependencies
+
+    The manifest.yml file declares project metadata and dependencies.
+    TLang resolves dependencies automatically on the first compile or run.
+
+    [code "yaml"
+      name: MyProject
+      project: MyApp
+      organisation: MyOrg
+      version: 1.0.0
+      stability: stable
+      releaseNumber: 1
+      main: Main
+
+      author: Your Name
+      website: https://your-site.com
+      license: Apache-2.0
+
+      dependencies:
+        - TLangGen/KotlinGen/Kotlin 1.0.0:alpha:1 KotlinGen
+        - TLangGen/QuarkusImpl/QuarkusImpl 1.0.0:alpha:1 QuarkusImpl
+        - file://../../local-lib LocalLib
+    ]
+
+    Dependency formats:
+
+    [list "unordered"
+      - Org/Project/Name version:stability:release Alias — market package with a local alias
+      - file://relative/path Alias — local file or directory, resolved relative to manifest
+    ]
+
+    Run tlang both to compile, resolve dependencies, and execute in one step.
+  ]
+
+  [section "publish"
+    ## Publishing a Package
+
+    Log in to the market:
+
+    [code "bash"
+      tlang login
+    ]
+
+    This prompts for your username and password and saves a JWT to
+    ~/.tlang/market_token. For automated workflows, use an API key instead:
+
+    [code "bash"
+      tlang login --api-key YOUR_API_KEY
+    ]
+
+    Package your project:
+
+    [code "bash"
+      tlang package
+    ]
+
+    This compiles the project, bundles all source files and bytecode into a
+    .tbag archive, and saves it locally. The archive includes the manifest,
+    all .tlang source files, and the compiled bytecode.
+
+    Publish to the market:
+
+    [code "bash"
+      tlang push
+    ]
+
+    The package is uploaded to the market and immediately available for
+    installation by anyone who runs tlang install with your package slug.
+  ]
+
+  [section "versioning"
+    ## Versioning
+
+    Packages are versioned using four fields in the manifest:
+
+    [list "unordered"
+      - version — semantic version string (e.g. 1.0.0, 2.3.1)
+      - stability — alpha, beta, or stable
+      - releaseNumber — integer, incremented on each publish for the same version
+    ]
+
+    When installing, you can pin to a specific version and stability:
+
+    [code "bash"
+      tlang install TLangGen/KotlinGen 1.0.0:stable
+    ]
+
+    Or install the latest regardless of stability:
+
+    [code "bash"
+      tlang install TLangGen/KotlinGen
+    ]
+  ]
+
+  [section "pull"
+    ## Pulling Without Installing
+
+    To download a package without installing it into your tbox:
+
+    [code "bash"
+      tlang pull TLangGen/KotlinGen
+    ]
+
+    This downloads the .tbag archive to the current directory.
+    Useful for inspecting a package or vendoring it into your project.
+  ]
+
+  [section "local-packages"
+    ## Local Packages and CLI Tools
+
+    TLang packages can also be installed as CLI tools. If a package exposes
+    a main function or named commands, it becomes available as:
+
+    [code "bash"
+      tlang install MyOrg/MyCLITool
+      tlang exec my-cli-tool
+    ]
+
+    CLI packages are stored in ~/.tlang/cli/ and can be listed with:
+
+    [code "bash"
+      tlang exec --list
+    ]
+
+    This enables distributing TLang-based code generation tools as self-contained
+    packages that users install once and run anywhere.
+  ]
+
+  [section "quickstart-loop"
+    ## The Full Value Loop
+
+    Here is the complete flow from zero to a working code generator:
+
+    [list "ordered"
+      - tlang search kotlin — find relevant template libraries on the market
+      - tlang install TLangGen/KotlinGen — install the Kotlin generator
+      - Create manifest.yml and Main.tlang — reference the installed package
+      - Add set declarations for your domain entities
+      - tlang both — generate your entire application stack
+      - Extend the templates for your specific needs
+      - tlang package && tlang push — publish your extended templates
+    ]
+
+    The market creates a compound effect: each published package builds on others.
+    A QuarkusImpl package imports KotlinGen and adds Panache/JAX-RS conventions.
+    A MicroserviceStack imports QuarkusImpl and adds Kafka, OpenTelemetry, and
+    observability boilerplate. Your team installs MicroserviceStack and gets the
+    entire stack generated in one command.
+  ]
+}

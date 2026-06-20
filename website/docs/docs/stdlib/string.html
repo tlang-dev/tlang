@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>TLang.String &mdash; TLang</title>
+  <meta name="description" content="TLang documentation">
+  <link rel="stylesheet" href="../../assets/style.css">
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="../../index.html">TLang</a>
+    <div class="nav-links">
+      <a class="nav-link" href="../getting-started.html">Docs</a>
+      <a class="nav-link" href="../language/index.html">Language</a>
+      <a class="nav-link" href="../stdlib/index.html">Stdlib</a>
+      <a class="nav-link" href="../generators.html">Generators</a>
+      <a class="nav-link" href="https://github.com/joel-f/tlang">GitHub</a>
+      <a class="btn btn-sm btn-primary" href="../getting-started.html">Get Started</a>
+    </div>
+  </div>
+</nav>
+<div class="doc-layout">
+  <aside class="sidebar">
+    <nav>
+      <span class="sidebar-label">Getting Started</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../getting-started.html">Installation &amp; CLI</a>
+        <a class="sidebar-link" href="../editor-setup.html">Editor Setup</a>
+        <a class="sidebar-link" href="../ai-assistant.html">AI Assistant</a>
+      </div>
+      <div class="sidebar-sep"></div>
+      <span class="sidebar-label">Language Reference</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../language/index.html">Overview</a>
+        <a class="sidebar-link" href="../language/types.html">Types</a>
+        <a class="sidebar-link" href="../language/variables.html">Variables &amp; Scope</a>
+        <a class="sidebar-link" href="../language/functions.html">Functions</a>
+        <a class="sidebar-link" href="../language/control-flow.html">Control Flow</a>
+        <a class="sidebar-link" href="../language/templates.html">Template Blocks</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/lang-template.html">lang &mdash; Code</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/data-template.html">data &mdash; Data &amp; Config</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/doc-template.html">doc &mdash; Documents</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/style-template.html">style &mdash; Stylesheets</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/cmd-template.html">cmd &mdash; Commands &amp; SQL</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/raw-template.html">raw &mdash; Verbatim Text</a>
+        <a class="sidebar-link" href="../language/sets.html">Sets &amp; Models</a>
+        <a class="sidebar-link" href="../language/imports.html">Imports &amp; Expose</a>
+      </div>
+      <div class="sidebar-sep"></div>
+      <span class="sidebar-label">Standard Library</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../stdlib/index.html">Overview</a>
+        <a class="sidebar-link" href="../stdlib/string.html">TLang.String</a>
+        <a class="sidebar-link" href="../stdlib/list.html">TLang.List</a>
+        <a class="sidebar-link" href="../stdlib/map.html">TLang.Map</a>
+        <a class="sidebar-link" href="../stdlib/numbers.html">TLang.Int / Long</a>
+        <a class="sidebar-link" href="../stdlib/float.html">TLang.Float / Double</a>
+        <a class="sidebar-link" href="../stdlib/math.html">TLang.Math</a>
+        <a class="sidebar-link" href="../stdlib/file.html">TLang.File</a>
+        <a class="sidebar-link" href="../stdlib/terminal.html">TLang.Terminal</a>
+        <a class="sidebar-link" href="../stdlib/prompt.html">TLang.Prompt</a>
+        <a class="sidebar-link" href="../stdlib/shell.html">TLang.Shell</a>
+        <a class="sidebar-link" href="../stdlib/leaf.html">TLang.Leaf</a>
+        <a class="sidebar-link" href="../stdlib/generator.html">TLang.Generator</a>
+        <a class="sidebar-link" href="../stdlib/json.html">TLang.Json / Yaml</a>
+        <a class="sidebar-link" href="../stdlib/pdf.html">TLang.Pdf</a>
+        <a class="sidebar-link" href="../stdlib/string-builder.html">TLang.StringBuilder</a>
+        <a class="sidebar-link" href="../stdlib/naming.html">TLang.Naming</a>
+        <a class="sidebar-link" href="../stdlib/assert.html">TLang.Assert</a>
+        <a class="sidebar-link" href="../stdlib/formatting.html">TLang.Formatting</a>
+      </div>
+      <div class="sidebar-sep"></div>
+      <span class="sidebar-label">More</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../generators.html">Generators</a>
+        <a class="sidebar-link" href="../packages.html">Packages</a>
+        <a class="sidebar-link" href="../use-cases.html">Use Cases</a>
+      </div>
+    </nav>
+  </aside>
+  <main class="doc-content">
+    <h1>TLang.String</h1>
+<p>TLang.String provides string manipulation utilities. Import with use TLang.String. TLang.Str is an identical alias.</p>
+<pre><code class="language-tlang">    use TLang.String
+  </code></pre>
+<section id="basics">
+<h2>Length and Emptiness</h2>
+<pre><code class="language-tlang">      let n     = String.length(&quot;hello&quot;)        // 5
+      let empty = String.isEmpty(&quot;&quot;)            // true
+      let empty = String.isEmpty(&quot;hi&quot;)          // false
+    </code></pre>
+</section>
+<section id="case">
+<h2>Case Conversion</h2>
+<pre><code class="language-tlang">      let up   = String.toUpperCase(&quot;hello&quot;)    // &quot;HELLO&quot;
+      let down = String.toLowerCase(&quot;HELLO&quot;)    // &quot;hello&quot;
+    </code></pre>
+</section>
+<section id="trim">
+<h2>Trimming</h2>
+<pre><code class="language-tlang">      let t  = String.trim(&quot;  hello  &quot;)         // &quot;hello&quot;
+      let ts = String.trimStart(&quot;  hello  &quot;)    // &quot;hello  &quot;
+      let te = String.trimEnd(&quot;  hello  &quot;)      // &quot;  hello&quot;
+    </code></pre>
+</section>
+<section id="search">
+<h2>Search and Test</h2>
+<pre><code class="language-tlang">      let has   = String.contains(&quot;hello world&quot;, &quot;world&quot;)   // true
+      let sw    = String.startsWith(&quot;hello&quot;, &quot;he&quot;)          // true
+      let ew    = String.endsWith(&quot;hello&quot;, &quot;lo&quot;)            // true
+      let eq    = String.equals(&quot;abc&quot;, &quot;abc&quot;)               // true
+      let eqi   = String.equalsIgnoreCase(&quot;ABC&quot;, &quot;abc&quot;)     // true
+      let cmp   = String.compare(&quot;a&quot;, &quot;b&quot;)                  // -1 / 0 / 1
+    </code></pre>
+</section>
+<section id="index">
+<h2>Index Operations</h2>
+<pre><code class="language-tlang">      let i  = String.indexOf(&quot;hello world&quot;, &quot;world&quot;)      // 6
+      let li = String.lastIndexOf(&quot;abcabc&quot;, &quot;b&quot;)           // 4
+    </code></pre>
+</section>
+<section id="slice">
+<h2>Substrings and Slicing</h2>
+<pre><code class="language-tlang">      let sub  = String.substring(&quot;hello world&quot;, 6)        // &quot;world&quot;
+      let sub2 = String.substring(&quot;hello world&quot;, 0, 5)     // &quot;hello&quot;
+      let sl   = String.slice(&quot;hello&quot;, 1, 4)               // &quot;ell&quot;
+    </code></pre>
+</section>
+<section id="split">
+<h2>Split and Join</h2>
+<pre><code class="language-tlang">      let parts = String.split(&quot;a,b,c&quot;, &quot;,&quot;)    // [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]
+      let lines = String.lines(&quot;a\nb\nc&quot;)        // [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]
+      let words = String.words(&quot;hello world&quot;)    // [&quot;hello&quot;, &quot;world&quot;]
+    </code></pre>
+</section>
+<section id="replace">
+<h2>Replace</h2>
+<pre><code class="language-tlang">      let r1 = String.replace(&quot;hello world&quot;, &quot;world&quot;, &quot;there&quot;)   // &quot;hello there&quot;
+      let r2 = String.replaceAll(&quot;aabbcc&quot;, &quot;b&quot;, &quot;x&quot;)             // &quot;aaxxcc&quot;
+    </code></pre>
+</section>
+<section id="concat">
+<h2>Concat and Repeat</h2>
+<pre><code class="language-tlang">      let c  = String.concat(&quot;hello&quot;, &quot; world&quot;)    // &quot;hello world&quot;
+      let r  = String.repeat(&quot;ab&quot;, 3)              // &quot;ababab&quot;
+    </code></pre>
+</section>
+<section id="char">
+<h2>Character Operations</h2>
+<pre><code class="language-tlang">      let ch   = String.charAt(&quot;hello&quot;, 1)           // &quot;e&quot;
+      let code = String.charCodeAt(&quot;A&quot;, 0)           // 65
+      let str  = String.fromCharCode(65)             // &quot;A&quot;
+    </code></pre>
+</section>
+
+  </main>
+</div>
+<footer class="footer">
+  <div class="footer-inner">
+    <span class="footer-brand">TLang</span>
+    <div class="footer-links">
+      <a class="footer-link" href="../getting-started.html">Getting Started</a>
+      <a class="footer-link" href="../language/index.html">Language</a>
+      <a class="footer-link" href="../stdlib/index.html">Stdlib</a>
+      <a class="footer-link" href="../generators.html">Generators</a>
+      <a class="footer-link" href="https://github.com/joel-f/tlang">GitHub</a>
+    </div>
+    <span class="footer-copy">&copy; 2026 TLang Contributors &middot; Apache 2.0</span>
+  </div>
+</footer>
+<script>
+(function() {
+  var links = document.querySelectorAll('.sidebar-link');
+  var cur = window.location.href;
+  links.forEach(function(a) {
+    var href = a.getAttribute('href');
+    if (href && cur.indexOf(href.replace('../', '')) !== -1) {
+      a.classList.add('active');
+    }
+  });
+}());
+</script>
+</body>
+</html>

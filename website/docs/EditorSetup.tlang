@@ -1,0 +1,128 @@
+expose editorSetup
+
+doc [md, html] editorSetup() {
+  # Editor Setup
+
+  TLang ships a full Language Server Protocol implementation and a Zed editor extension.
+  The LSP provides completions, hover docs, go-to-definition, find references, rename,
+  semantic tokens, signature help, and document formatting — all powered by the TLang compiler.
+
+  [section "lsp-capabilities"
+    ## LSP Capabilities
+
+    The TLang language server implements the following LSP features:
+
+    [list "unordered"
+      - Completion — keywords, exposed functions, module names, template parameters
+      - Hover — doc comments and type information for symbols under the cursor
+      - Go to Definition — jump to the declaration of any function or template
+      - Find References — all usages of a symbol across the project
+      - Rename — safe rename of functions, templates, and parameters
+      - Semantic Tokens — syntax highlighting driven by the compiler, not regexes
+      - Signature Help — parameter hints while typing a function call
+      - Document Symbols — outline view of all functions, templates, and sets
+      - Formatting — whole-document formatting via the TLang formatter
+      - Diagnostics — compiler errors and warnings shown inline as you type
+    ]
+  ]
+
+  [section "zed"
+    ## Zed Editor
+
+    An official Zed extension is available in the zed-plugin/ directory of the TLang repository.
+
+    Install the extension:
+
+    [code "bash"
+      cd zed-plugin
+      zed --install-extension .
+    ]
+
+    The extension registers the tlang-lsp language server, syntax grammar, and file association
+    for .tlang files. After installation, open any .tlang file in Zed and the LSP starts
+    automatically.
+
+    To configure a custom binary path, add to ~/.config/zed/settings.json:
+
+    [code "json"
+      {
+        "lsp": {
+          "tlang-lsp": {
+            "binary": {
+              "path": "/path/to/tlang",
+              "args": ["lsp-server"]
+            }
+          }
+        }
+      }
+    ]
+  ]
+
+  [section "vscode"
+    ## VS Code
+
+    A VS Code extension is not yet published to the marketplace. You can configure VS Code
+    to use the TLang LSP manually via the vscode-languageclient extension.
+
+    Add to your workspace .vscode/settings.json:
+
+    [code "json"
+      {
+        "tlang.server.path": "/path/to/tlang"
+      }
+    ]
+
+    Or use the generic LSP client extension and point it at:
+
+    [code "bash"
+      tlang lsp-server
+    ]
+
+    The server communicates over stdin/stdout following the JSON-RPC 2.0 protocol.
+  ]
+
+  [section "jetbrains"
+    ## JetBrains IDEs
+
+    JetBrains IDEs support external language servers via the LSP4IJ plugin.
+
+    Install LSP4IJ from the JetBrains Marketplace, then configure it to run:
+
+    [code "bash"
+      tlang lsp-server
+    ]
+
+    for files matching the *.tlang pattern.
+  ]
+
+  [section "lsp-commands"
+    ## LSP Server Commands
+
+    [list "unordered"
+      - tlang lsp-server — start the LSP server over stdin/stdout
+      - tlang lsp-stop — stop the background LSP server daemon
+      - tlang lsp-restart — restart the LSP server daemon
+    ]
+
+    The server watches for file changes automatically. After rebuilding tlang,
+    run tlang lsp-restart to pick up the new binary.
+  ]
+
+  [section "tree-sitter"
+    ## Tree-sitter Grammar
+
+    TLang ships a Tree-sitter grammar for editors that use it for syntax highlighting
+    and structural selection. The grammar is at zed-plugin/tree-sitter-tlang/.
+
+    It provides accurate highlighting for:
+
+    [list "unordered"
+      - Keywords — expose, use, func, let, for, if, else, return
+      - Template keywords — lang, doc, style, data, cmd, raw, set
+      - Target format brackets — [kotlin], [md, html], [css]
+      - Interpolation placeholders — ${ ... }
+      - String literals, numbers, booleans
+      - Comments
+    ]
+  ]
+}

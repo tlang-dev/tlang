@@ -1,0 +1,119 @@
+expose stdlibNumbersGen
+
+use TLang.File
+use TLang.Generator
+use TLang.Terminal
+use layout.PageLayout
+
+doc [html] numbersPage() {
+  # TLang.Int / Long
+
+  TLang.Int provides utilities for 64-bit signed integers. TLang.Long is the same underlying type with a distinct name — use it when an API requires Long explicitly.
+
+  [code "tlang"
+    use TLang.Int
+    use TLang.Long
+  ]
+
+  [section "int"
+    ## TLang.Int
+
+    Parsing and stringification.
+
+    [code "tlang"
+      let n   = Int.parse("42")           // String → Int
+      let s   = Int.toString(42)          // Int → String
+      let hex = Int.toHex(255)            // "ff"
+      let bin = Int.toBinary(10)          // "1010"
+      let oct = Int.toOctal(8)            // "10"
+    ]
+
+    Parsing from alternate bases.
+
+    [code "tlang"
+      let n = Int.fromHex("ff")           // 255
+      let n = Int.fromBinary("1010")      // 10
+      let n = Int.fromOctal("10")         // 8
+    ]
+
+    Range generation.
+
+    [code "tlang"
+      let r1 = Int.range(0, 5)      // [0, 1, 2, 3, 4]  — exclusive end
+      let r2 = Int.rangeTo(1, 5)    // [1, 2, 3, 4, 5]  — inclusive end
+    ]
+
+    Numeric utilities.
+
+    [code "tlang"
+      let a  = Int.abs(-7)                // 7
+      let c  = Int.clamp(15, 0, 10)       // 10
+      let f  = Int.toFloat(42)            // 42.0
+      let d  = Int.toDouble(42)           // 42.0
+      let mx = Int.maxValue()             // 9223372036854775807
+      let mn = Int.minValue()             // -9223372036854775808
+    ]
+  ]
+
+  [section "long"
+    ## TLang.Long
+
+    TLang.Long mirrors TLang.Int with the same function set. Use it when a type annotation or API explicitly requires Long.
+
+    [code "tlang"
+      let max = Long.maxValue()
+      let min = Long.minValue()
+      let r   = Long.range(0, 100)          // List of Long 0..99
+      let rt  = Long.rangeTo(1, 5)          // [1, 2, 3, 4, 5]
+      let s   = Long.toString(1234567890)
+      let h   = Long.toHex(255)
+      let abs = Long.abs(-99)
+      let c   = Long.clamp(200, 0, 100)
+    ]
+  ]
+
+  [section "example"
+    ## Examples
+
+    Generate padded numeric file names.
+
+    [code "tlang"
+      use TLang.Int
+      use TLang.String
+
+      func padded(n: Int, width: Int): String {
+          let s = Int.toString(n)
+          let s = String.repeat("0", width - String.length(s)) + s
+          return s
+      }
+
+      func main(): String {
+          let range = Int.range(1, 11)
+          for (i in range) {
+              let name = "file_" + padded(i, 3) + ".txt"
+              Terminal.println(name)
+          }
+          return "done"
+      }
+    ]
+
+    Convert a list of numeric strings to integers and sum them.
+
+    [code "tlang"
+      use TLang.Int
+      use TLang.List
+
+      func sumStrings(parts: List): Int {
+          return List.reduce(parts, 0, (acc, s) => acc + Int.parse(s))
+      }
+    ]
+  ]
+}
+
+func stdlibNumbersGen(): String {
+    let content = Generator.generate(numbersPage("html"))
+    let html = PageLayout.page("TLang.Int / Long", content)
+    File.write("docs/docs/stdlib/numbers.html", html, true)
+    Terminal.println("  -> stdlib/numbers.html")
+    return ""
+}

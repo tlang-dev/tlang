@@ -1,0 +1,104 @@
+use TLang.Generator
+use KotlinGen as kotlin
+use TLang.Terminal
+
+lang [kotlin] serializerBase(pkg: String, className: String) {
+    pkg ${pkg}
+
+    impl[public class] ${className} {
+        fun serialize(value: String): String {
+            return value
+        }
+    }
+}
+
+lang [kotlin] serializerJson(pkg: String, className: String) {
+    pkg ${pkg}
+
+    impl[public class] ${className} {
+        fun toJson(value: String): String {
+            return JsonOutput.toJson(value)
+        }
+    }
+}
+
+lang [kotlin] serializerXml(pkg: String, className: String) {
+    pkg ${pkg}
+
+    impl[public class] ${className} {
+        fun toXml(value: String): String {
+            return "<value>" + value + "</value>"
+        }
+    }
+}
+
+set Serializer(pkg: String, className: String) {
+    label: "serializer",
+    generate: &generateBase
+}
+
+set JsonSerializer : Serializer {
+    generate: &generateJson
+}
+
+set XmlSerializer : Serializer {
+    label: "xml-serializer",
+    generate: &generateXml
+}
+
+func generateBase(pkg: String, className: String): String {
+    let inst = serializerBase(pkg, className)
+    return Generator.generate(inst)
+}
+
+func generateJson(pkg: String, className: String): String {
+    let inst = serializerJson(pkg, className)
+    return Generator.generate(inst)
+}
+
+func generateXml(pkg: String, className: String): String {
+    let inst = serializerXml(pkg, className)
+    return Generator.generate(inst)
+}
+
+func main(): String {
+    let pkg = "com.example"
+
+    // ── Base entity ───────────────────────────────────────────────────────
+    // Uses its own label and its own &ref for generate.
+
+    let base = Serializer(pkg: pkg, className: "DefaultSerializer")
+
+    let baseLabel = base.label
+    Terminal.println(baseLabel)             // serializer
+
+    let baseCode = base.generate()
+    Terminal.println(baseCode)              // serializerBase template
+
+    // ── JsonSerializer — inherits label, surcharges generate ──────────────
+    // label   → "serializer"   (inherited from Serializer, not redeclared)
+    // generate → &generateJson (surcharges Serializer.generate: &generateBase)
+    // impl params (pkg, className) flow through from the inherited param list.
+
+    let json = JsonSerializer(pkg: pkg, className: "JsonSerializer")
+
+    let jsonLabel = json.label
+    Terminal.println(jsonLabel)             // serializer  (inherited)
+
+    let jsonCode = json.generate()
+    Terminal.println(jsonCode)              // serializerJson template
+
+    // ── XmlSerializer — surcharges both label and generate ────────────────
+    // label   → "xml-serializer" (surcharges Serializer.label: "serializer")
+    // generate → &generateXml   (surcharges Serializer.generate: &generateBase)
+
+    let xml = XmlSerializer(pkg: pkg, className: "XmlSerializer")
+
+    let xmlLabel = xml.label
+    Terminal.println(xmlLabel)              // xml-serializer  (surcharges)
+
+    let xmlCode = xml.generate()
+    Terminal.println(xmlCode)               // serializerXml template
+
+    return baseCode + "\n---\n" + jsonCode + "\n---\n" + xmlCode
+}

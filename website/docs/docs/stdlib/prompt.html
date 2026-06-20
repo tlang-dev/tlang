@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>TLang.Prompt &mdash; TLang</title>
+  <meta name="description" content="TLang documentation">
+  <link rel="stylesheet" href="../../assets/style.css">
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="../../index.html">TLang</a>
+    <div class="nav-links">
+      <a class="nav-link" href="../getting-started.html">Docs</a>
+      <a class="nav-link" href="../language/index.html">Language</a>
+      <a class="nav-link" href="../stdlib/index.html">Stdlib</a>
+      <a class="nav-link" href="../generators.html">Generators</a>
+      <a class="nav-link" href="https://github.com/joel-f/tlang">GitHub</a>
+      <a class="btn btn-sm btn-primary" href="../getting-started.html">Get Started</a>
+    </div>
+  </div>
+</nav>
+<div class="doc-layout">
+  <aside class="sidebar">
+    <nav>
+      <span class="sidebar-label">Getting Started</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../getting-started.html">Installation &amp; CLI</a>
+        <a class="sidebar-link" href="../editor-setup.html">Editor Setup</a>
+        <a class="sidebar-link" href="../ai-assistant.html">AI Assistant</a>
+      </div>
+      <div class="sidebar-sep"></div>
+      <span class="sidebar-label">Language Reference</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../language/index.html">Overview</a>
+        <a class="sidebar-link" href="../language/types.html">Types</a>
+        <a class="sidebar-link" href="../language/variables.html">Variables &amp; Scope</a>
+        <a class="sidebar-link" href="../language/functions.html">Functions</a>
+        <a class="sidebar-link" href="../language/control-flow.html">Control Flow</a>
+        <a class="sidebar-link" href="../language/templates.html">Template Blocks</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/lang-template.html">lang &mdash; Code</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/data-template.html">data &mdash; Data &amp; Config</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/doc-template.html">doc &mdash; Documents</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/style-template.html">style &mdash; Stylesheets</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/cmd-template.html">cmd &mdash; Commands &amp; SQL</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/raw-template.html">raw &mdash; Verbatim Text</a>
+        <a class="sidebar-link" href="../language/sets.html">Sets &amp; Models</a>
+        <a class="sidebar-link" href="../language/imports.html">Imports &amp; Expose</a>
+      </div>
+      <div class="sidebar-sep"></div>
+      <span class="sidebar-label">Standard Library</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../stdlib/index.html">Overview</a>
+        <a class="sidebar-link" href="../stdlib/string.html">TLang.String</a>
+        <a class="sidebar-link" href="../stdlib/list.html">TLang.List</a>
+        <a class="sidebar-link" href="../stdlib/map.html">TLang.Map</a>
+        <a class="sidebar-link" href="../stdlib/numbers.html">TLang.Int / Long</a>
+        <a class="sidebar-link" href="../stdlib/float.html">TLang.Float / Double</a>
+        <a class="sidebar-link" href="../stdlib/math.html">TLang.Math</a>
+        <a class="sidebar-link" href="../stdlib/file.html">TLang.File</a>
+        <a class="sidebar-link" href="../stdlib/terminal.html">TLang.Terminal</a>
+        <a class="sidebar-link" href="../stdlib/prompt.html">TLang.Prompt</a>
+        <a class="sidebar-link" href="../stdlib/shell.html">TLang.Shell</a>
+        <a class="sidebar-link" href="../stdlib/leaf.html">TLang.Leaf</a>
+        <a class="sidebar-link" href="../stdlib/generator.html">TLang.Generator</a>
+        <a class="sidebar-link" href="../stdlib/json.html">TLang.Json / Yaml</a>
+        <a class="sidebar-link" href="../stdlib/pdf.html">TLang.Pdf</a>
+        <a class="sidebar-link" href="../stdlib/string-builder.html">TLang.StringBuilder</a>
+        <a class="sidebar-link" href="../stdlib/naming.html">TLang.Naming</a>
+        <a class="sidebar-link" href="../stdlib/assert.html">TLang.Assert</a>
+        <a class="sidebar-link" href="../stdlib/formatting.html">TLang.Formatting</a>
+      </div>
+      <div class="sidebar-sep"></div>
+      <span class="sidebar-label">More</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../generators.html">Generators</a>
+        <a class="sidebar-link" href="../packages.html">Packages</a>
+        <a class="sidebar-link" href="../use-cases.html">Use Cases</a>
+      </div>
+    </nav>
+  </aside>
+  <main class="doc-content">
+    <h1>TLang.Prompt</h1>
+<p>TLang.Prompt provides interactive prompts for CLI scaffolding tools. It is built on top of interactive terminal input and is ideal for generators that ask the user questions before producing output.</p>
+<pre><code class="language-tlang">    use TLang.Prompt
+  </code></pre>
+<section id="ask">
+<h2>ask — Text Input</h2>
+<p>Prompt.ask displays a question and returns the user's input as a String.</p>
+<pre><code class="language-tlang">      let name = Prompt.ask(&quot;Project name:&quot;)
+      let pkg  = Prompt.ask(&quot;Base package (e.g. com.example):&quot;)
+    </code></pre>
+<p>Prompt.askWithDefault provides a fallback shown in brackets if the user presses Enter without typing.</p>
+<pre><code class="language-tlang">      let port = Prompt.askWithDefault(&quot;Port:&quot;, &quot;8080&quot;)
+      let host = Prompt.askWithDefault(&quot;Host:&quot;, &quot;localhost&quot;)
+    </code></pre>
+</section>
+<section id="confirm">
+<h2>confirm — Yes/No</h2>
+<p>Prompt.confirm displays a yes/no question and returns a Bool.</p>
+<pre><code class="language-tlang">      let addTests = Prompt.confirm(&quot;Generate test scaffolding?&quot;)
+      if (addTests) {
+          // generate test files
+      }
+    </code></pre>
+</section>
+<section id="select">
+<h2>select — Choice from List</h2>
+<p>Prompt.select displays a numbered menu and returns the chosen string.</p>
+<pre><code class="language-tlang">      let lang = Prompt.select(&quot;Target language:&quot;, List.of(&quot;kotlin&quot;, &quot;java&quot;, &quot;typescript&quot;))
+      let db   = Prompt.select(&quot;Database:&quot;, List.of(&quot;postgres&quot;, &quot;mysql&quot;, &quot;sqlite&quot;))
+    </code></pre>
+</section>
+<section id="password">
+<h2>password — Hidden Input</h2>
+<p>Prompt.password reads a value without echoing characters to the terminal.</p>
+<pre><code class="language-tlang">      let secret = Prompt.password(&quot;API key:&quot;)
+    </code></pre>
+</section>
+<section id="example">
+<h2>Example — Interactive Scaffolding</h2>
+<pre><code class="language-tlang">      use TLang.Prompt
+      use TLang.File
+      use TLang.Terminal
+      use TLang.List
+
+      func main(): String {
+          let project = Prompt.ask(&quot;Project name:&quot;)
+          let pkg     = Prompt.askWithDefault(&quot;Base package:&quot;, &quot;com.example&quot;)
+          let lang    = Prompt.select(&quot;Language:&quot;, List.of(&quot;kotlin&quot;, &quot;java&quot;))
+          let tests   = Prompt.confirm(&quot;Include test scaffolding?&quot;)
+
+          Terminal.println(&quot;Generating &quot; + project + &quot; (&quot; + lang + &quot;)...&quot;)
+
+          // use answers to drive generation
+          File.write(&quot;README.md&quot;, &quot;# &quot; + project, true)
+
+          if (tests) {
+              File.createDir(&quot;src/test&quot;)
+          }
+
+          Terminal.println(&quot;Done!&quot;)
+          return &quot;done&quot;
+      }
+    </code></pre>
+</section>
+
+  </main>
+</div>
+<footer class="footer">
+  <div class="footer-inner">
+    <span class="footer-brand">TLang</span>
+    <div class="footer-links">
+      <a class="footer-link" href="../getting-started.html">Getting Started</a>
+      <a class="footer-link" href="../language/index.html">Language</a>
+      <a class="footer-link" href="../stdlib/index.html">Stdlib</a>
+      <a class="footer-link" href="../generators.html">Generators</a>
+      <a class="footer-link" href="https://github.com/joel-f/tlang">GitHub</a>
+    </div>
+    <span class="footer-copy">&copy; 2026 TLang Contributors &middot; Apache 2.0</span>
+  </div>
+</footer>
+<script>
+(function() {
+  var links = document.querySelectorAll('.sidebar-link');
+  var cur = window.location.href;
+  links.forEach(function(a) {
+    var href = a.getAttribute('href');
+    if (href && cur.indexOf(href.replace('../', '')) !== -1) {
+      a.classList.add('active');
+    }
+  });
+}());
+</script>
+</body>
+</html>

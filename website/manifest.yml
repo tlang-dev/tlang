@@ -1,0 +1,10 @@
+name: tlang-website
+project: TLangWebsite
+organisation: TLang
+version: 0.1.0
+stability: alpha
+releaseNumber: 1
+dependencies:
+  - file://tlang/layout layout
+  - file://tlang/lang lang
+  - file://tlang/stdlib stdlib

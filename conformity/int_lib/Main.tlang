@@ -1,0 +1,89 @@
+use TLang.Terminal
+use TLang.Int as I
+use TLang.Long as L
+
+func main(): String {
+    // --- Int.toString ---
+    Terminal.println(I.toString(0))
+    Terminal.println(I.toString(42))
+    Terminal.println(I.toString(-99))
+
+    // --- Int.parse ---
+    Terminal.println(I.parse("0"))
+    Terminal.println(I.parse("123"))
+    Terminal.println(I.parse("-7"))
+
+    // --- Int.toHex / fromHex ---
+    Terminal.println(I.toHex(255))
+    Terminal.println(I.toHex(0))
+    Terminal.println(I.toHex(16))
+    Terminal.println(I.fromHex("ff"))
+    Terminal.println(I.fromHex("0xFF"))
+    Terminal.println(I.fromHex("10"))
+
+    // --- Int.toBinary / fromBinary ---
+    Terminal.println(I.toBinary(10))
+    Terminal.println(I.toBinary(0))
+    Terminal.println(I.toBinary(255))
+    Terminal.println(I.fromBinary("1010"))
+    Terminal.println(I.fromBinary("0b11111111"))
+
+    // --- Int.toOctal / fromOctal ---
+    Terminal.println(I.toOctal(8))
+    Terminal.println(I.toOctal(255))
+    Terminal.println(I.fromOctal("10"))
+    Terminal.println(I.fromOctal("0o377"))
+
+    // --- Int.range (exclusive) ---
+    let r1 = I.range(0, 5)
+    Terminal.println(r1)
+    let r2 = I.range(3, 3)
+    Terminal.println(r2)
+    let r3 = I.range(5, 3)
+    Terminal.println(r3)
+
+    // --- Int.rangeTo (inclusive) ---
+    let rt1 = I.rangeTo(1, 4)
+    Terminal.println(rt1)
+    let rt2 = I.rangeTo(5, 5)
+    Terminal.println(rt2)
+
+    // --- Int.minValue / maxValue ---
+    Terminal.println(I.minValue())
+    Terminal.println(I.maxValue())
+
+    // --- Int.abs ---
+    Terminal.println(I.abs(-10))
+    Terminal.println(I.abs(10))
+    Terminal.println(I.abs(0))
+
+    // --- Int.clamp ---
+    Terminal.println(I.clamp(5, 0, 10))
+    Terminal.println(I.clamp(-3, 0, 10))
+    Terminal.println(I.clamp(20, 0, 10))
+
+    // --- Int.toFloat / toDouble ---
+    Terminal.println(I.toFloat(3))
+    Terminal.println(I.toDouble(7))
+
+    // --- Long.minValue / maxValue ---
+    Terminal.println(L.minValue())
+    Terminal.println(L.maxValue())
+
+    // --- Long.toHex / toBinary ---
+    Terminal.println(L.toHex(255))
+    Terminal.println(L.toBinary(8))
+
+    // --- Long.range ---
+    let lr = L.range(10, 13)
+    Terminal.println(lr)
+
+    // --- Long.abs / clamp ---
+    Terminal.println(L.abs(-999))
+    Terminal.println(L.clamp(50, 0, 100))
+
+    // --- Long.toDouble ---
+    Terminal.println(L.toDouble(42))
+
+    return "done"
+}

@@ -1,0 +1,54 @@
+use TLang.Generator
+use KotlinGen as kotlin
+use TLang.Terminal
+
+lang [kotlin] annotatedField(fieldName: String, fieldType: String) spec {
+    comment: Field: ${fieldName}
+    var ${fieldName}: ${fieldType}
+}
+
+lang [kotlin] userClass(pkg: String, className: String) {
+    pkg ${pkg}
+
+    comment: ${className} — generated data class
+    impl[data class] ${className} {
+        comment: Primary identifier
+        var id: Long
+
+        comment: Display name of the entity
+        var name: String
+
+        comment: Whether the record is active
+        var active: Boolean = true
+
+        comment: Returns the string representation
+        func toString(): String {
+            return name
+        }
+    }
+}
+
+
+func main(): String {
+    userClass("com.example", "User")
+    let model    = TLang.Leaf.model()
+    let instance = TLang.Leaf.get(model, "userClass_1")
+    let output   = Generator.generate(instance, "kotlin")
+    Terminal.println(output)
+
+    // Verify that every comment directive produced a // line in the output.
+    let ok1 = TLang.String.contains(output, "// Primary identifier")
+    let ok2 = TLang.String.contains(output, "// Display name of the entity")
+    let ok3 = TLang.String.contains(output, "// Whether the record is active")
+    let ok4 = TLang.String.contains(output, "// Returns the string representation")
+    let ok5 = TLang.String.contains(output, "// User — generated data class")
+
+    if (ok1 && ok2 && ok3 && ok4 && ok5) {
+        Terminal.println("all comment assertions passed")
+        return "ok"
+    }
+
+    Terminal.println("FAIL: one or more comment assertions failed")
+    return "fail"
+}
+

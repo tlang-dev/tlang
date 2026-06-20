@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>TLang.Pdf &mdash; TLang</title>
+  <meta name="description" content="TLang documentation">
+  <link rel="stylesheet" href="../../assets/style.css">
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="../../index.html">TLang</a>
+    <div class="nav-links">
+      <a class="nav-link" href="../getting-started.html">Docs</a>
+      <a class="nav-link" href="../language/index.html">Language</a>
+      <a class="nav-link" href="../stdlib/index.html">Stdlib</a>
+      <a class="nav-link" href="../generators.html">Generators</a>
+      <a class="nav-link" href="https://github.com/joel-f/tlang">GitHub</a>
+      <a class="btn btn-sm btn-primary" href="../getting-started.html">Get Started</a>
+    </div>
+  </div>
+</nav>
+<div class="doc-layout">
+  <aside class="sidebar">
+    <nav>
+      <span class="sidebar-label">Getting Started</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../getting-started.html">Installation &amp; CLI</a>
+        <a class="sidebar-link" href="../editor-setup.html">Editor Setup</a>
+        <a class="sidebar-link" href="../ai-assistant.html">AI Assistant</a>
+      </div>
+      <div class="sidebar-sep"></div>
+      <span class="sidebar-label">Language Reference</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../language/index.html">Overview</a>
+        <a class="sidebar-link" href="../language/types.html">Types</a>
+        <a class="sidebar-link" href="../language/variables.html">Variables &amp; Scope</a>
+        <a class="sidebar-link" href="../language/functions.html">Functions</a>
+        <a class="sidebar-link" href="../language/control-flow.html">Control Flow</a>
+        <a class="sidebar-link" href="../language/templates.html">Template Blocks</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/lang-template.html">lang &mdash; Code</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/data-template.html">data &mdash; Data &amp; Config</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/doc-template.html">doc &mdash; Documents</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/style-template.html">style &mdash; Stylesheets</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/cmd-template.html">cmd &mdash; Commands &amp; SQL</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/raw-template.html">raw &mdash; Verbatim Text</a>
+        <a class="sidebar-link" href="../language/sets.html">Sets &amp; Models</a>
+        <a class="sidebar-link" href="../language/imports.html">Imports &amp; Expose</a>
+      </div>
+      <div class="sidebar-sep"></div>
+      <span class="sidebar-label">Standard Library</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../stdlib/index.html">Overview</a>
+        <a class="sidebar-link" href="../stdlib/string.html">TLang.String</a>
+        <a class="sidebar-link" href="../stdlib/list.html">TLang.List</a>
+        <a class="sidebar-link" href="../stdlib/map.html">TLang.Map</a>
+        <a class="sidebar-link" href="../stdlib/numbers.html">TLang.Int / Long</a>
+        <a class="sidebar-link" href="../stdlib/float.html">TLang.Float / Double</a>
+        <a class="sidebar-link" href="../stdlib/math.html">TLang.Math</a>
+        <a class="sidebar-link" href="../stdlib/file.html">TLang.File</a>
+        <a class="sidebar-link" href="../stdlib/terminal.html">TLang.Terminal</a>
+        <a class="sidebar-link" href="../stdlib/prompt.html">TLang.Prompt</a>
+        <a class="sidebar-link" href="../stdlib/shell.html">TLang.Shell</a>
+        <a class="sidebar-link" href="../stdlib/leaf.html">TLang.Leaf</a>
+        <a class="sidebar-link" href="../stdlib/generator.html">TLang.Generator</a>
+        <a class="sidebar-link" href="../stdlib/json.html">TLang.Json / Yaml</a>
+        <a class="sidebar-link" href="../stdlib/pdf.html">TLang.Pdf</a>
+        <a class="sidebar-link" href="../stdlib/string-builder.html">TLang.StringBuilder</a>
+        <a class="sidebar-link" href="../stdlib/naming.html">TLang.Naming</a>
+        <a class="sidebar-link" href="../stdlib/assert.html">TLang.Assert</a>
+        <a class="sidebar-link" href="../stdlib/formatting.html">TLang.Formatting</a>
+      </div>
+      <div class="sidebar-sep"></div>
+      <span class="sidebar-label">More</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../generators.html">Generators</a>
+        <a class="sidebar-link" href="../packages.html">Packages</a>
+        <a class="sidebar-link" href="../use-cases.html">Use Cases</a>
+      </div>
+    </nav>
+  </aside>
+  <main class="doc-content">
+    <h1>TLang.Pdf</h1>
+<p>TLang.Pdf enables programmatic PDF creation. Create a document, add pages, draw text and shapes, control fonts and colours, and save to disk. It is backed by the printpdf library.</p>
+<pre><code class="language-tlang">    use TLang.Pdf
+  </code></pre>
+<section id="create">
+<h2>Creating a Document</h2>
+<p>Pdf.create creates a new document and returns a PdfDoc value.</p>
+<pre><code class="language-tlang">      let doc = Pdf.create(&quot;My Document&quot;, 595.276, 841.89)    // A4 in points
+    </code></pre>
+<p>Common page sizes in points (1 inch = 72 points).
+A4 — 595.276 x 841.89
+Letter — 612.0 x 792.0
+A3 — 841.89 x 1190.55</p>
+</section>
+<section id="pages">
+<h2>Pages</h2>
+<p>Pdf.addPage adds a new page to the document and resets the cursor to the top.</p>
+<pre><code class="language-tlang">      let doc = Pdf.addPage(doc)
+    </code></pre>
+</section>
+<section id="fonts">
+<h2>Fonts</h2>
+<p>Pdf.setFont sets the active font and size. Built-in fonts: Helvetica, HelveticaBold, Times, TimesBold, Courier, CourierBold, Symbol, ZapfDingbats.</p>
+<pre><code class="language-tlang">      let doc = Pdf.setFont(doc, &quot;Helvetica&quot;,     12.0)
+      let doc = Pdf.setFont(doc, &quot;HelveticaBold&quot;, 18.0)
+      let doc = Pdf.setFont(doc, &quot;Courier&quot;,       10.0)
+    </code></pre>
+</section>
+<section id="cursor">
+<h2>Cursor and Movement</h2>
+<p>Text is drawn at the current cursor position. The cursor is measured from the bottom of the page.</p>
+<pre><code class="language-tlang">      // Move to an absolute position (x, y from bottom-left)
+      let doc = Pdf.setCursor(doc, 50.0, 750.0)
+
+      // Move down by n points
+      let doc = Pdf.moveDown(doc, 20.0)
+
+      // Read current Y position
+      let y = Pdf.cursorY(doc)
+
+      // Page dimensions
+      let w = Pdf.pageWidth(doc)
+      let h = Pdf.pageHeight(doc)
+    </code></pre>
+</section>
+<section id="text">
+<h2>Drawing Text</h2>
+<p>Pdf.drawText draws text at the current cursor position.</p>
+<pre><code class="language-tlang">      let doc = Pdf.drawText(doc, &quot;Hello, World!&quot;, 50.0, 750.0)
+    </code></pre>
+<p>Pdf.drawTextLine draws text and moves the cursor down by the line height.</p>
+<pre><code class="language-tlang">      let doc = Pdf.drawTextLine(doc, &quot;First line&quot;)
+      let doc = Pdf.drawTextLine(doc, &quot;Second line&quot;)
+    </code></pre>
+<p>Pdf.wrapText draws a paragraph that word-wraps at the given width.</p>
+<pre><code class="language-tlang">      let doc = Pdf.wrapText(doc, longText, 495.0, 14.0)
+    </code></pre>
+<p>Pdf.textWidth measures the width of a string with the current font.</p>
+<pre><code class="language-tlang">      let w = Pdf.textWidth(doc, &quot;Hello&quot;)
+    </code></pre>
+</section>
+<section id="shapes">
+<h2>Shapes and Colours</h2>
+<p>Colours are set separately for fill and stroke.</p>
+<pre><code class="language-tlang">      let doc = Pdf.setFillColor(doc, 0.2, 0.4, 0.9)       // R G B (0.0–1.0)
+      let doc = Pdf.setStrokeColor(doc, 0.0, 0.0, 0.0)
+      let doc = Pdf.setLineWidth(doc, 1.0)
+    </code></pre>
+<p>Draw and fill rectangles.</p>
+<pre><code class="language-tlang">      let doc = Pdf.drawRect(doc, 50.0, 700.0, 200.0, 40.0)    // stroke only
+      let doc = Pdf.fillRect(doc, 50.0, 700.0, 200.0, 40.0)    // fill only
+    </code></pre>
+</section>
+<section id="save">
+<h2>Saving</h2>
+<p>Pdf.save writes the document to a file path (relative to the project root) and returns the path.</p>
+<pre><code class="language-tlang">      let path = Pdf.save(doc, &quot;output/report.pdf&quot;)
+      Terminal.println(&quot;Saved: &quot; + path)
+    </code></pre>
+</section>
+<section id="example">
+<h2>Example — Invoice PDF</h2>
+<pre><code class="language-tlang">      use TLang.Pdf
+      use TLang.File
+      use TLang.Terminal
+
+      func main(): String {
+          let doc = Pdf.create(&quot;Invoice&quot;, 595.276, 841.89)
+          let doc = Pdf.addPage(doc)
+
+          // Title
+          let doc = Pdf.setFont(doc, &quot;HelveticaBold&quot;, 22.0)
+          let doc = Pdf.setFillColor(doc, 0.48, 0.36, 0.99)
+          let doc = Pdf.drawTextLine(doc, &quot;INVOICE&quot;)
+
+          // Reset colour and draw body
+          let doc = Pdf.setFillColor(doc, 0.1, 0.1, 0.1)
+          let doc = Pdf.setFont(doc, &quot;Helvetica&quot;, 12.0)
+          let doc = Pdf.moveDown(doc, 20.0)
+          let doc = Pdf.drawTextLine(doc, &quot;Client: Acme Corp&quot;)
+          let doc = Pdf.drawTextLine(doc, &quot;Amount: $1,200.00&quot;)
+          let doc = Pdf.drawTextLine(doc, &quot;Due: 2026-07-01&quot;)
+
+          // Separator line
+          let doc = Pdf.moveDown(doc, 10.0)
+          let doc = Pdf.setStrokeColor(doc, 0.7, 0.7, 0.7)
+          let doc = Pdf.drawRect(doc, 50.0, Pdf.cursorY(doc), 495.0, 1.0)
+
+          let path = Pdf.save(doc, &quot;output/invoice.pdf&quot;)
+          Terminal.println(&quot;Saved: &quot; + path)
+          return path
+      }
+    </code></pre>
+</section>
+
+  </main>
+</div>
+<footer class="footer">
+  <div class="footer-inner">
+    <span class="footer-brand">TLang</span>
+    <div class="footer-links">
+      <a class="footer-link" href="../getting-started.html">Getting Started</a>
+      <a class="footer-link" href="../language/index.html">Language</a>
+      <a class="footer-link" href="../stdlib/index.html">Stdlib</a>
+      <a class="footer-link" href="../generators.html">Generators</a>
+      <a class="footer-link" href="https://github.com/joel-f/tlang">GitHub</a>
+    </div>
+    <span class="footer-copy">&copy; 2026 TLang Contributors &middot; Apache 2.0</span>
+  </div>
+</footer>
+<script>
+(function() {
+  var links = document.querySelectorAll('.sidebar-link');
+  var cur = window.location.href;
+  links.forEach(function(a) {
+    var href = a.getAttribute('href');
+    if (href && cur.indexOf(href.replace('../', '')) !== -1) {
+      a.classList.add('active');
+    }
+  });
+}());
+</script>
+</body>
+</html>

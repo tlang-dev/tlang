@@ -1,0 +1,248 @@
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <title>Getting Started — TLang</title>
+      <link rel="stylesheet" href="../assets/style.css">
+    </head>
+    <body>
+    <nav class="nav">
+      <div class="nav-inner">
+        <a class="nav-logo" href="../index.html">TLang</a>
+        <div class="nav-links">
+          <a class="nav-link" href="getting-started.html">Docs</a>
+          <a class="nav-link" href="language-spec.html">Language</a>
+          <a class="nav-link" href="generators.html">Generators</a>
+          <a class="nav-link" href="use-cases.html">Use Cases</a>
+          <a class="nav-link" href="https://github.com/joel-f/tlang">GitHub</a>
+          <a class="btn btn-sm btn-primary" href="getting-started.html">Get Started</a>
+        </div>
+      </div>
+    </nav>
+    <div class="doc-page section-inner">
+    <h1>Getting Started with TLang</h1>
+<p>TLang is a compiled template language for structural code generation.
+Write a template once — generate every file, across every entity, in milliseconds.
+Add a new entity: every template that touches your model picks it up automatically.</p>
+<section id="installation">
+<h2>Installation</h2>
+<p>TLang requires Rust 1.85 or later. Build from source:</p>
+<pre><code class="language-bash">      git clone https://github.com/joel-f/tlang
+      cd tlang
+      cargo build --release
+      cargo install --path .
+    </code></pre>
+<p>Verify:</p>
+<pre><code class="language-bash">      tlang --version
+    </code></pre>
+</section>
+<section id="first-program">
+<h2>Your First Program</h2>
+<p>Create Main.tlang:</p>
+<pre><code class="language-tlang">      use TLang.Terminal
+
+      func main(): String {
+          Terminal.println(&quot;Hello, TLang!&quot;)
+          return &quot;ok&quot;
+      }
+    </code></pre>
+<p>Run it:</p>
+<pre><code class="language-bash">      tlang compile-run Main.tlang
+    </code></pre>
+<p>TLang compiles to bytecode on the first run and caches it. Subsequent runs reuse the
+cache and skip compilation — only recompiling when source files change.</p>
+</section>
+<section id="first-template">
+<h2>Your First Template</h2>
+<p>A lang template generates code in a target language. Each call to the template
+produces one rendered instance:</p>
+<pre><code class="language-tlang">      use TLang.Terminal
+
+      lang [kotlin] entity(pkg: String, name: String) {
+          pkg ${pkg}
+          impl[data class] ${name}(
+              val id: Long,
+              val name: String
+          )
+      }
+
+      func main(): String {
+          entity(&quot;com.example.model&quot;, &quot;User&quot;)
+          entity(&quot;com.example.model&quot;, &quot;Product&quot;)
+          Terminal.println(&quot;Generated 2 entities.&quot;)
+          return &quot;ok&quot;
+      }
+    </code></pre>
+<p>The ${pkg} and ${name} placeholders are substituted with the argument values at call time.
+Call the template once per entity — TLang handles the rest.</p>
+</section>
+<section id="sets">
+<h2>Binding Templates to Models</h2>
+<p>Hard-coding calls to entity(...) does not scale. Use set declarations to define your
+model data, then iterate over all sets in a loop:</p>
+<pre><code class="language-tlang">      use TLang.File
+      use TLang.Generator
+
+      lang [kotlin] entity(pkg: String, name: String) {
+          pkg ${pkg}
+          impl[data class] ${name}(
+              val id: Long,
+              val name: String
+          )
+      }
+
+      set User {
+          pkg: &quot;com.example.model&quot;,
+          name: &quot;User&quot;
+      }
+
+      set Product {
+          pkg: &quot;com.example.model&quot;,
+          name: &quot;Product&quot;
+      }
+
+      set Order {
+          pkg: &quot;com.example.model&quot;,
+          name: &quot;Order&quot;
+      }
+
+      func main(): String {
+          for (model in Generator.models()) {
+              let code = entity(model.get(&quot;pkg&quot;), model.get(&quot;name&quot;))
+              File.write(&quot;src/&quot; + model.get(&quot;name&quot;) + &quot;.kt&quot;, code, true)
+          }
+          return &quot;ok&quot;
+      }
+    </code></pre>
+<p>Adding a new entity is one new set block. Every template that iterates Generator.models()
+automatically includes it — no other changes required.</p>
+</section>
+<section id="doc-templates">
+<h2>Generating Documents</h2>
+<p>The doc template generates structured documents in multiple output formats from a
+single definition. Format is selected at call time:</p>
+<pre><code class="language-tlang">      use TLang.File
+
+      doc [md, html] apiDoc(service: String) {
+        # ${service} API Reference
+
+        This document is generated from a single template.
+        Update the template — every output format updates together.
+
+        [section &quot;endpoints&quot;
+          ## Endpoints
+
+          [list &quot;unordered&quot;
+            - GET /health — liveness probe
+            - GET /api/v1/items — list all items
+            - POST /api/v1/items — create a new item
+            - DELETE /api/v1/items/:id — remove an item
+          ]
+        ]
+      }
+
+      func main(): String {
+          File.write(&quot;docs/api.md&quot;,   apiDoc(&quot;md&quot;,   &quot;Inventory&quot;), true)
+          File.write(&quot;docs/api.html&quot;, apiDoc(&quot;html&quot;, &quot;Inventory&quot;), true)
+          return &quot;ok&quot;
+      }
+    </code></pre>
+</section>
+<section id="style-templates">
+<h2>Generating Stylesheets</h2>
+<p>The style template generates CSS rules. Property values that contain spaces must be
+quoted. Pseudo-classes use the [hover], [focus], [active] modifier syntax:</p>
+<pre><code class="language-tlang">      use TLang.File
+
+      style [css] Theme(accent: String) {
+          :root {
+              --accent: ${accent},
+              --bg: &quot;#0d0d0d&quot;,
+              --text: &quot;#e8e8e8&quot;
+          }
+          body {
+              background: &quot;var(--bg)&quot;,
+              color: &quot;var(--text)&quot;,
+              font-family: &quot;system-ui, sans-serif&quot;,
+              margin: 0
+          }
+          .btn {
+              background: &quot;var(--accent)&quot;,
+              padding: &quot;0.65em 1.4em&quot;,
+              border-radius: 8px
+          }
+          .btn [hover] {
+              opacity: &quot;0.85&quot;
+          }
+      }
+
+      func main(): String {
+          File.write(&quot;assets/theme.css&quot;, Theme(&quot;css&quot;, &quot;#7c5cfc&quot;), true)
+          return &quot;ok&quot;
+      }
+    </code></pre>
+</section>
+<section id="multi-file">
+<h2>Multi-file Projects</h2>
+<p>Split your project into modules. Use expose to export a symbol; use to import it:</p>
+<pre><code class="language-tlang">      // models/User.tlang
+      expose userEntity
+
+      lang [kotlin] userEntity(pkg: String) {
+          pkg ${pkg}
+          impl[data class] User(
+              val id: Long,
+              val name: String,
+              val email: String
+          )
+      }
+    </code></pre>
+<pre><code class="language-tlang">      // Main.tlang
+      use TLang.File
+      use models.User
+
+      func main(): String {
+          File.write(&quot;src/User.kt&quot;, userEntity(&quot;com.example&quot;), true)
+          return &quot;ok&quot;
+      }
+    </code></pre>
+<p>For multi-file projects, add a manifest.yml at the project root:</p>
+<pre><code class="language-yaml">      name: MyProject
+      project: MyApp
+      organisation: MyOrg
+      version: 1.0.0
+      stability: stable
+      releaseNumber: 1
+      main: Main
+    </code></pre>
+<p>Run from the project directory:</p>
+<pre><code class="language-bash">      tlang compile-run Main.tlang
+    </code></pre>
+</section>
+<section id="next-steps">
+<h2>Next Steps</h2>
+<ul>
+<li>Language Specification — full syntax reference for all language constructs</li>
+<li>Generators — detailed guide to every template type with examples</li>
+<li>Use Cases — how teams use TLang to save AI tokens and enforce consistency</li>
+</ul>
+<a href="language-spec.html">Language Specification</a><a href="generators.html">Generators</a><a href="use-cases.html">Use Cases</a></section>
+
+    </div>
+    <footer class="footer">
+      <div class="footer-inner">
+        <span class="footer-brand">TLang</span>
+        <div class="footer-links">
+          <a class="footer-link" href="getting-started.html">Getting Started</a>
+          <a class="footer-link" href="language-spec.html">Language</a>
+          <a class="footer-link" href="generators.html">Generators</a>
+          <a class="footer-link" href="use-cases.html">Use Cases</a>
+          <a class="footer-link" href="https://github.com/joel-f/tlang">GitHub</a>
+        </div>
+        <span class="footer-copy">&copy; 2026 TLang Contributors &middot; Apache 2.0</span>
+      </div>
+    </footer>
+    </body>
+    </html>
+  

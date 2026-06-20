@@ -1,0 +1,198 @@
+use TLang.Generator
+use KotlinGen as kotlin
+use TLang.Terminal
+
+lang [kotlin] saveWithUser(pkg: String, className: String, recordType: String) {
+    pkg ${pkg}
+
+    impl[public class] ${className} {
+        fun save(record: ${recordType}, userId: String): ${recordType} {
+            record.ownerId = userId
+            record.ownerKind = "user"
+            return repository.save(record)
+        }
+    }
+}
+
+lang [kotlin] savePublic(pkg: String, className: String, recordType: String) {
+    pkg ${pkg}
+
+    impl[public class] ${className} {
+        fun save(record: ${recordType}): ${recordType} {
+            record.ownerId = null
+            record.ownerKind = "public"
+            return repository.save(record)
+        }
+    }
+}
+
+lang [kotlin] saveWithGroup(pkg: String, className: String, recordType: String) {
+    pkg ${pkg}
+
+    impl[public class] ${className} {
+        fun save(record: ${recordType}, groupId: String): ${recordType} {
+            record.ownerId = groupId
+            record.ownerKind = "group"
+            return repository.save(record)
+        }
+    }
+}
+
+lang [kotlin] saveWithGroupCached(pkg: String, className: String, recordType: String) {
+    pkg ${pkg}
+
+    impl[public class] ${className} {
+        fun save(record: ${recordType}, groupId: String): ${recordType} {
+            record.ownerId = groupId
+            record.ownerKind = "group"
+            cache.invalidate(groupId)
+            return repository.save(record)
+        }
+    }
+}
+
+lang [kotlin] updateWithUser(pkg: String, className: String, recordType: String) {
+    pkg ${pkg}
+
+    impl[public class] ${className} {
+        fun update(record: ${recordType}, userId: String): ${recordType} {
+            record.ownerId = userId
+            return repository.update(record)
+        }
+    }
+}
+
+lang [kotlin] updatePublic(pkg: String, className: String, recordType: String) {
+    pkg ${pkg}
+
+    impl[public class] ${className} {
+        fun update(record: ${recordType}): ${recordType} {
+            return repository.update(record)
+        }
+    }
+}
+
+lang [kotlin] updateWithGroup(pkg: String, className: String, recordType: String) {
+    pkg ${pkg}
+
+    impl[public class] ${className} {
+        fun update(record: ${recordType}, groupId: String): ${recordType} {
+            record.ownerId = groupId
+            return repository.update(record)
+        }
+    }
+}
+
+set CrudRepository(pkg: String, className: String, recordType: String) {
+    save: &saveWithUser,
+    update: &updateWithUser
+}
+
+set UserCrudRepository : CrudRepository {}
+
+set PublicCrudRepository : CrudRepository {
+    save: &savePublic,
+    update: &updatePublic
+}
+
+set GroupCrudRepository : CrudRepository {
+    save: &saveWithGroup,
+    update: &updateWithGroup
+}
+
+set CachedGroupCrudRepository : GroupCrudRepository {
+    save: &saveWithGroupCached
+}
+
+func main(): String {
+    let pkg        = "com.example"
+    let className  = "DocumentRepository"
+    let recordType = "Document"
+
+    // ── Instantiate concrete variants ─────────────────────────────────────
+
+    // UserCrudRepository: inherits defaults — user-scoped save + update.
+    // No surcharges; empty body set used as a named alias of CrudRepository.
+    let userRepo = UserCrudRepository(
+        pkg:        pkg,
+        className:  "UserDocumentRepo",
+        recordType: recordType
+    )
+
+    // PublicCrudRepository: surcharged to public save + update
+    let publicRepo = PublicCrudRepository(
+        pkg:        pkg,
+        className:  "PublicDocumentRepo",
+        recordType: recordType
+    )
+
+    // CachedGroupCrudRepository: surcharged save (cached), inherited update
+    let cachedGroupRepo = CachedGroupCrudRepository(
+        pkg:        pkg,
+        className:  "CachedGroupDocumentRepo",
+        recordType: recordType
+    )
+
+    // ── Direct template-ref calls — returns Leaf directly ─────────────────
+
+    // UserCrudRepository: default save (user-scoped)
+    let userSaveLeaf = userRepo.save()
+    let userSaveCode = Generator.generate(userSaveLeaf)
+    Terminal.println(userSaveCode)
+
+    // UserCrudRepository: default update (user-scoped)
+    let userUpdateLeaf = userRepo.update()
+    let userUpdateCode = Generator.generate(userUpdateLeaf)
+    Terminal.println(userUpdateCode)
+
+    // PublicCrudRepository: surcharged save (no ownership arg)
+    let publicSaveLeaf = publicRepo.save()
+    let publicSaveCode = Generator.generate(publicSaveLeaf)
+    Terminal.println(publicSaveCode)
+
+    // CachedGroupCrudRepository: surcharged save (cache.invalidate)
+    let cachedSaveLeaf = cachedGroupRepo.save()
+    let cachedSaveCode = Generator.generate(cachedSaveLeaf)
+    Terminal.println(cachedSaveCode)
+
+    // CachedGroupCrudRepository: inherited update (group-scoped)
+    let cachedUpdateLeaf = cachedGroupRepo.update()
+    let cachedUpdateCode = Generator.generate(cachedUpdateLeaf)
+    Terminal.println(cachedUpdateCode)
+
+    // ── Attribute iteration via inst.attrs() ──────────────────────────────
+    // attrs() returns List[BoundAttr] in canonical declaration order.
+    // Each element is callable as op() and exposes op.name.
+    // Order is determined by the declaration order in CrudRepository
+    // (the topmost ancestor where these attrs were first introduced).
+
+    Terminal.println("--- iterating attrs of CachedGroupCrudRepository ---")
+
+    for (op in cachedGroupRepo.attrs()) {
+        Terminal.println(op.name)
+        let leaf = op()
+        let code = Generator.generate(leaf)
+        Terminal.println(code)
+    }
+
+    // ── generateAll() shortcut ────────────────────────────────────────────
+    // Returns List[Map{name, code}] in canonical order — one entry per attr.
+
+    Terminal.println("--- generateAll on PublicCrudRepository ---")
+
+    let entries = publicRepo.generateAll()
+    for (entry in entries) {
+        Terminal.println(entry.name)
+        Terminal.println(entry.code)
+    }
+
+    // ── Verify canonical attr order via attrs().name ──────────────────────
+    // attrs() on UserCrudRepository should return [save, update] in that order.
+
+    Terminal.println("--- user repo attr names ---")
+    for (op in userRepo.attrs()) {
+        Terminal.println(op.name)
+    }
+
+    return userSaveCode
+}

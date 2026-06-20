@@ -1,0 +1,100 @@
+expose stdlibOverviewGen
+
+use TLang.File
+use TLang.Generator
+use TLang.Terminal
+use layout.PageLayout
+
+doc [html] stdlibOverviewPage() {
+  # Standard Library
+
+  TLang's standard library covers string manipulation, list and map operations, numeric types, file I/O, shell execution, model access, code generation dispatch, structured data serialisation, PDF generation, and more. All modules are imported with use TLang.ModuleName.
+
+  [section "modules"
+    ## Module Index
+
+    TLang.String — string operations: split, trim, replace, indexOf, substring, case conversion, and more.
+
+    TLang.List — ordered sequences: creation, access, push, map, filter, reduce, sort, group, and other higher-order operations. The same functions work with dot-method syntax.
+
+    TLang.Map — string-keyed dictionaries: creation, get, set, keys, values, merge, higher-order operations.
+
+    TLang.Int and TLang.Long — integer utilities: parsing, formatting (hex, binary, octal), range generation, clamping.
+
+    TLang.Float and TLang.Double — floating-point utilities: parsing, rounding, floor, ceil, trigonometry.
+
+    TLang.Math — generic numeric functions: abs, min, max, clamp, pow, sqrt, gcd, lcm.
+
+    TLang.File — file I/O: read, write (scaffold-once or overwrite), exists check, search-replace, directory creation and deletion.
+
+    TLang.Terminal — console output: println, print. Read line from stdin.
+
+    TLang.Prompt — interactive prompts: ask, confirm, select, password. Useful for scaffolding tools that ask the user questions.
+
+    TLang.Shell — process execution: run (capture output), stream (live output), capture (map with exitCode), env, which.
+
+    TLang.Leaf — model tree access: model root, get node by name, list keys, check presence. The primary API for dynamic model traversal.
+
+    TLang.Generator — template generation: generate(templateCall) dispatches to the appropriate built-in or user-supplied generator.
+
+    TLang.Json and TLang.Yaml — serialisation: convert Leaf trees to JSON/YAML strings and back.
+
+    TLang.Pdf — PDF document creation: create document, add pages, draw text and shapes, set fonts and colours, save to file.
+
+    TLang.StringBuilder — efficient string accumulation: create, append, build. Avoids O(n²) concatenation in large loops.
+
+    TLang.Naming — identifier case conversion: toCamelCase, toPascalCase, toSnakeCase, toKebabCase, toTitleCase, pluralize, singularize.
+
+    TLang.Assert — test assertions: isTrue, isFalse, equals, contains, isEmpty, isNull, and more. Used inside test blocks.
+
+    TLang.Formatting — code formatting: create a formatter, configure indent and spacing rules, render a token list.
+  ]
+
+  [section "import"
+    ## Importing
+
+    [code "tlang"
+      use TLang.File
+      use TLang.Generator
+      use TLang.List
+      use TLang.Map
+      use TLang.Naming
+      use TLang.Shell
+    ]
+
+    TLang.Str is an alias for TLang.String — both import the same module.
+
+    [code "tlang"
+      use TLang.Str       // same as use TLang.String
+      use TLang.String    // same
+    ]
+  ]
+
+  [section "dot"
+    ## Dot-Method Syntax
+
+    List and Map higher-order functions can be called with dot-method syntax on the collection value. Both forms are identical.
+
+    [code "tlang"
+      // Function form
+      let result = List.map(items, (x) => x + "!")
+
+      // Dot form — same result
+      let result = items.map((x) => x + "!")
+
+      // Chaining
+      let processed = items
+          .filter((x) => x != "")
+          .map((x) => Naming.toPascalCase(x))
+          .join(", ")
+    ]
+  ]
+}
+
+func stdlibOverviewGen(): String {
+    let content = Generator.generate(stdlibOverviewPage("html"))
+    let html = PageLayout.page("Standard Library", content)
+    File.write("docs/docs/stdlib/index.html", html, true)
+    Terminal.println("  -> stdlib/index.html")
+    return ""
+}

@@ -1,0 +1,147 @@
+expose stdlibGeneratorGen
+
+use TLang.File
+use TLang.Generator
+use TLang.Terminal
+use layout.PageLayout
+
+doc [html] generatorPage() {
+  # TLang.Generator
+
+  TLang.Generator is the dispatch layer that converts a template instance (a Leaf) into a generated string. It routes to the right built-in generator based on the template type and format.
+
+  [code "tlang"
+    use TLang.Generator
+  ]
+
+  [section "generate"
+    ## Generator.generate()
+
+    The primary API. Pass the result of a template call; receive the generated string.
+
+    [code "tlang"
+      let code = Generator.generate(myTemplate("kotlin", pkg, cls))
+    ]
+
+    For templates with an explicit lang argument you can also pass it separately.
+
+    [code "tlang"
+      let code = Generator.generate(myTemplate(pkg, cls), "kotlin")
+    ]
+  ]
+
+  [section "routing"
+    ## How Routing Works
+
+    doc templates with format html or md route to the built-in DocHtmlGen or DocMdGen.
+
+    style templates route to StyleCssGen, StyleJsGen, or other style generators based on format.
+
+    data templates route to the built-in JSON, YAML, HTML, XML, or TOML renderers.
+
+    cmd templates with lang sql route to SqlGen. With lang bash they route to BashGen.
+
+    lang templates route to the generator imported with use ... as alias. For example, use KotlinGen as kotlin makes Generator.generate(myTmpl("kotlin")) call KotlinCodegen.tlang.
+
+    [code "tlang"
+      use TLang.Generator
+      use KotlinGen as kotlin
+
+      lang [kotlin] entity(pkg: String, cls: String) {
+          pkg $${pkg}
+          impl[data class] $${cls} { }
+      }
+
+      doc [md, html] readme(project: String) {
+        # $${project}
+      }
+
+      func main(): String {
+          // lang → KotlinCodegen.tlang
+          let kt = Generator.generate(entity("com.example", "User"))
+
+          // doc → DocHtmlGen.tlang
+          let html = Generator.generate(readme("html", "MyLib"))
+
+          // doc → DocMdGen.tlang
+          let md = Generator.generate(readme("md", "MyLib"))
+
+          return kt
+      }
+    ]
+  ]
+
+  [section "builtin"
+    ## Built-in Generators
+
+    These generators ship with TLang and are invoked automatically.
+
+    generators/doc/html/DocHtmlGen.tlang — HTML document generation.
+
+    generators/doc/md/DocMdGen.tlang — Markdown document generation.
+
+    generators/doc/pdf/DocPdfGen.tlang — PDF document generation (uses TLang.Pdf).
+
+    generators/style/css/StyleCssGen.tlang — CSS stylesheet generation.
+
+    generators/json/StyleJsonGen.tlang — JSON design token generation.
+
+    generators/sql/SqlGen.tlang — SQL statement generation from cmd templates.
+
+    generators/csv/CsvGen.tlang — CSV row and header generation from data templates.
+
+    generators/json/JsonGen.tlang — JSON generation from data templates.
+
+    generators/yaml/YamlGen.tlang — YAML generation from data templates.
+
+    generators/xml/XmlGen.tlang — XML generation from data templates.
+
+    generators/toml/TomlGen.tlang — TOML generation from data templates.
+
+    generators/kotlin/KotlinCodegen.tlang — Kotlin source code generation.
+
+    generators/java/JavaGenerator.tlang — Java source code generation.
+
+    generators/typescript/TypescriptGenerator.tlang — TypeScript generation.
+
+    generators/html/HtmlGen.tlang — HTML tag generation for lang templates.
+  ]
+
+  [section "example"
+    ## Example — Multi-Format Output
+
+    [code "tlang"
+      use TLang.Generator
+      use TLang.File
+
+      doc [md, html] apiDoc(name: String, description: String) {
+        # $${name}
+
+        $${description}
+
+        ## Usage
+
+        [code "bash"
+          curl https://api.example.com/$${name}
+        ]
+      }
+
+      func main(): String {
+          let md   = Generator.generate(apiDoc("md",   "users", "User management API"))
+          let html = Generator.generate(apiDoc("html", "users", "User management API"))
+
+          File.write("docs/users.md",   md,   true)
+          File.write("docs/users.html", html, true)
+          return "done"
+      }
+    ]
+  ]
+}
+
+func stdlibGeneratorGen(): String {
+    let content = Generator.generate(generatorPage("html"))
+    let html = PageLayout.page("TLang.Generator", content)
+    File.write("docs/docs/stdlib/generator.html", html, true)
+    Terminal.println("  -> stdlib/generator.html")
+    return ""
+}

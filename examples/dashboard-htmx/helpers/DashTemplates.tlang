@@ -1,0 +1,225 @@
+expose deltaBadge
+expose sparklineBar
+expose kpiCard
+expose sidebarNavItem
+expose orderTableHeaderCell
+expose orderTableRow
+expose customerCell
+expose goalProgressItem
+expose productItem
+expose activityFeedItem
+expose customerMiniStat
+expose acquisitionBar
+expose chartBarGroup
+expose sectionHeader
+expose statusBadge
+expose formField
+expose filterSelect
+
+data [html] deltaBadge(text: String, dirCls: String, arrow: String) {
+    span(class: "delta ${dirCls}") {
+        "${arrow} ${text}"
+    }
+}
+
+data [html] sparklineBar(height: String, color: String, value: String) {
+    span(class: "sparkline__bar",
+         style: "height:${height}%;background:${color}",
+         data-value: "${value}")
+}
+
+data [html] kpiCard(id: String, icon: String, iconColor: String, title: String, value: String, delta: String, sub: String, spark: String, hxGet: String, hxTrigger: String) {
+    div(id: "${id}",
+        class: "kpi-card",
+        hx-get: "${hxGet}",
+        hx-trigger: "${hxTrigger}",
+        hx-swap: "outerHTML",
+        hx-target: "#${id}") {
+        div(class: "kpi-card__icon-wrap ${iconColor}") {
+            span(class: "kpi-card__icon", aria-hidden: "true") {
+                "${icon}"
+            }
+        },
+        div(class: "kpi-card__body") {
+            p(class: "kpi-card__title") { "${title}" },
+            div(class: "kpi-card__row") {
+                span(class: "kpi-card__value") { "${value}" },
+                "${delta}"
+            },
+            p(class: "kpi-card__sub") { "${sub}" },
+            div(class: "kpi-card__spark") { "${spark}" }
+        }
+    }
+}
+
+data [html] sidebarNavItem(key: String, label: String, icon: String, href: String, badge: String, activeCls: String, ariaCur: String) {
+    li(class: "ui-sidebar-item${activeCls}") {
+        a(id: "${key}-link",
+          href: "${href}",
+          class: "ui-sidebar-link",
+          aria-current: "${ariaCur}") {
+            span(class: "ui-sidebar-icon", aria-hidden: "true") { "${icon}" },
+            span(class: "ui-sidebar-label") { "${label}" },
+            span(class: "ui-sidebar-badge") { "${badge}" }
+        }
+    }
+}
+
+data [html] orderTableHeaderCell(label: String, sortCls: String, widthAttr: String) {
+    th(class: "ui-th${sortCls}", scope: "col", style: "${widthAttr}") {
+        span(class: "ui-th-label") { "${label}" },
+        span(class: "ui-th-sort-icon", aria-hidden: "true")
+    }
+}
+
+data [html] orderTableRow(rowId: String, orderId: String, customerHtml: String, product: String, amount: String, statusHtml: String, date: String) {
+    tr(class: "ui-tr", id: "${rowId}") {
+        td(class: "ui-td ui-td--nowrap") {
+            span(class: "td-order-id") { "${orderId}" }
+        },
+        td(class: "ui-td") { "${customerHtml}" },
+        td(class: "ui-td") { "${product}" },
+        td(class: "ui-td", style: "text-align:right") {
+            span(class: "td-amount") { "${amount}" }
+        },
+        td(class: "ui-td") { "${statusHtml}" },
+        td(class: "ui-td") {
+            span(class: "td-date") { "${date}" }
+        }
+    }
+}
+
+data [html] customerCell(initials: String, avatarCls: String, name: String, email: String) {
+    div(class: "td-customer") {
+        div(class: "${avatarCls}") { "${initials}" },
+        div {
+            div(class: "td-name") { "${name}" },
+            div(class: "td-email") { "${email}" }
+        }
+    }
+}
+
+data [html] goalProgressItem(label: String, sub: String, pct: String, barId: String, barValue: String, barMax: String, variant: String, size: String) {
+    div(class: "goal-item") {
+        div(class: "goal-item__header") {
+            span(class: "goal-item__label") { "${label}" },
+            span(class: "goal-item__pct") { "${pct}" }
+        },
+        div(class: "ui-progress ui-progress--${variant} ui-progress--${size}",
+            id: "${barId}",
+            role: "group",
+            aria-label: "${label}") {
+            progress(class: "ui-progress__bar",
+                     value: "${barValue}",
+                     max: "${barMax}",
+                     aria-valuenow: "${barValue}",
+                     aria-valuemin: "0",
+                     aria-valuemax: "${barMax}")
+        },
+        span(class: "goal-item__sub") { "${sub}" }
+    }
+}
+
+data [html] productItem(rank: String, name: String, category: String, revenue: String, units: String, trendCls: String, trendIcon: String) {
+    div(class: "product-row") {
+        span(class: "product-row__rank") { "${rank}" },
+        div(class: "product-row__info") {
+            span(class: "product-row__name") { "${name}" },
+            span(class: "product-row__category") { "${category}" }
+        },
+        span(class: "product-row__revenue") { "${revenue}" },
+        span(class: "product-row__units") { "${units} units" },
+        span(class: "trend ${trendCls}") { "${trendIcon}" }
+    }
+}
+
+data [html] activityFeedItem(icon: String, iconCls: String, message: String, time: String, meta: String) {
+    div(class: "activity-item") {
+        div(class: "activity-item__icon-wrap ${iconCls}") {
+            span(class: "activity-item__icon", aria-hidden: "true") { "${icon}" }
+        },
+        div(class: "activity-item__body") {
+            p(class: "activity-item__message") { "${message}" },
+            div(class: "activity-item__row") {
+                span(class: "activity-item__meta") { "${meta}" },
+                span(class: "activity-item__time") { "${time}" }
+            }
+        }
+    }
+}
+
+data [html] customerMiniStat(icon: String, label: String, value: String, deltaHtml: String, sub: String) {
+    div(class: "mini-stat") {
+        p(class: "mini-stat__label") { "${icon}&ensp;${label}" },
+        p(class: "mini-stat__value") { "${value}" },
+        div(class: "mini-stat__footer") {
+            "${deltaHtml}",
+            span { "${sub}" }
+        }
+    }
+}
+
+data [html] acquisitionBar(label: String, count: String, pct: String, fillCls: String) {
+    div(class: "segment-item") {
+        div(class: "segment-item__row") {
+            span(class: "segment-item__label") { "${label}" },
+            span {
+                span(class: "segment-item__count") { "${count}" },
+                span(class: "segment-item__pct") { " &mdash; ${pct}%" }
+            }
+        },
+        div(class: "segment-track") {
+            div(class: "segment-fill ${fillCls}", style: "width:${pct}%")
+        }
+    }
+}
+
+data [html] chartBarGroup(month: String, curHeight: String, prevHeight: String, curTitle: String, prevTitle: String) {
+    div(class: "chart-bar-group") {
+        div(class: "chart-bar chart-bar--current",
+            style: "height:${curHeight}%",
+            title: "${curTitle}"),
+        div(class: "chart-bar chart-bar--prev",
+            style: "height:${prevHeight}%",
+            title: "${prevTitle}"),
+        span(class: "chart-bar-label") { "${month}" }
+    }
+}
+
+data [html] sectionHeader(titleHtml: String, actionsHtml: String) {
+    div(class: "section-header") {
+        div(class: "section-header__title") { "${titleHtml}" },
+        div(class: "section-header__actions") { "${actionsHtml}" }
+    }
+}
+
+data [html] statusBadge(text: String, style: String, variant: String) {
+    span(class: "ui-badge ui-badge--${style} ui-badge--${variant}") {
+        "${text}"
+    }
+}
+
+data [html] formField(fieldId: String, labelText: String, requiredCls: String, inputHtml: String) {
+    div(class: "form-group") {
+        label(class: "form-label${requiredCls}", for: "${fieldId}") {
+            "${labelText}"
+        },
+        "${inputHtml}"
+    }
+}
+
+data [html] filterSelect(name: String, ariaLabel: String, optionsHtml: String, hxGet: String, hxTarget: String) {
+    select(class: "ui-select-sm",
+           name: "${name}",
+           aria-label: "${ariaLabel}",
+           hx-get: "${hxGet}",
+           hx-target: "${hxTarget}",
+           hx-trigger: "change",
+           hx-include: "closest .orders-toolbar") {
+        "${optionsHtml}"
+    }
+}
+
+func main(): String {
+    return "DashTemplates loaded."
+}

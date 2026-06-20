@@ -1,0 +1,16 @@
+use TLang.Terminal
+
+func describe(args: List): String {
+    let n = args.size()
+    if (n > 0) {
+        return "received args"
+    } else {
+        return "no args"
+    }
+}
+
+func main(args: String[]): String {
+    let summary = describe(args)
+    Terminal.println(summary)
+    return summary
+}

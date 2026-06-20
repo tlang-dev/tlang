@@ -1,0 +1,135 @@
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <title>Editor Setup — TLang</title>
+      <link rel="stylesheet" href="../assets/style.css">
+    </head>
+    <body>
+    <nav class="nav">
+      <div class="nav-inner">
+        <a class="nav-logo" href="../index.html">TLang</a>
+        <div class="nav-links">
+          <a class="nav-link" href="getting-started.html">Docs</a>
+          <a class="nav-link" href="language/index.html">Language</a>
+          <a class="nav-link" href="stdlib/index.html">Stdlib</a>
+          <a class="nav-link" href="generators.html">Generators</a>
+          <a class="nav-link" href="use-cases.html">Use Cases</a>
+          <a class="nav-link" href="packages.html">Packages</a>
+          <a class="nav-link" href="https://github.com/joel-f/tlang">GitHub</a>
+          <a class="btn btn-sm btn-primary" href="getting-started.html">Get Started</a>
+        </div>
+      </div>
+    </nav>
+    <div class="doc-page section-inner">
+    <h1>Editor Setup</h1>
+<p>TLang ships a full Language Server Protocol implementation and a Zed editor extension.
+The LSP provides completions, hover docs, go-to-definition, find references, rename,
+semantic tokens, signature help, and document formatting — all powered by the TLang compiler.</p>
+<section id="lsp-capabilities">
+<h2>LSP Capabilities</h2>
+<p>The TLang language server implements the following LSP features:</p>
+<ul>
+<li>Completion — keywords, exposed functions, module names, template parameters</li>
+<li>Hover — doc comments and type information for symbols under the cursor</li>
+<li>Go to Definition — jump to the declaration of any function or template</li>
+<li>Find References — all usages of a symbol across the project</li>
+<li>Rename — safe rename of functions, templates, and parameters</li>
+<li>Semantic Tokens — syntax highlighting driven by the compiler, not regexes</li>
+<li>Signature Help — parameter hints while typing a function call</li>
+<li>Document Symbols — outline view of all functions, templates, and sets</li>
+<li>Formatting — whole-document formatting via the TLang formatter</li>
+<li>Diagnostics — compiler errors and warnings shown inline as you type</li>
+</ul>
+</section>
+<section id="zed">
+<h2>Zed Editor</h2>
+<p>An official Zed extension is available in the zed-plugin/ directory of the TLang repository.
+Install the extension:</p>
+<pre><code class="language-bash">      cd zed-plugin
+      zed --install-extension .
+    </code></pre>
+<p>The extension registers the tlang-lsp language server, syntax grammar, and file association
+for .tlang files. After installation, open any .tlang file in Zed and the LSP starts
+automatically.
+To configure a custom binary path, add to ~/.config/zed/settings.json:</p>
+<pre><code class="language-json">      {
+        &quot;lsp&quot;: {
+          &quot;tlang-lsp&quot;: {
+            &quot;binary&quot;: {
+              &quot;path&quot;: &quot;/path/to/tlang&quot;,
+              &quot;args&quot;: [&quot;lsp-server&quot;]
+            }
+          }
+        }
+      }
+    </code></pre>
+</section>
+<section id="vscode">
+<h2>VS Code</h2>
+<p>A VS Code extension is not yet published to the marketplace. You can configure VS Code
+to use the TLang LSP manually via the vscode-languageclient extension.
+Add to your workspace .vscode/settings.json:</p>
+<pre><code class="language-json">      {
+        &quot;tlang.server.path&quot;: &quot;/path/to/tlang&quot;
+      }
+    </code></pre>
+<p>Or use the generic LSP client extension and point it at:</p>
+<pre><code class="language-bash">      tlang lsp-server
+    </code></pre>
+<p>The server communicates over stdin/stdout following the JSON-RPC 2.0 protocol.</p>
+</section>
+<section id="jetbrains">
+<h2>JetBrains IDEs</h2>
+<p>JetBrains IDEs support external language servers via the LSP4IJ plugin.
+Install LSP4IJ from the JetBrains Marketplace, then configure it to run:</p>
+<pre><code class="language-bash">      tlang lsp-server
+    </code></pre>
+<p>for files matching the *.tlang pattern.</p>
+</section>
+<section id="lsp-commands">
+<h2>LSP Server Commands</h2>
+<ul>
+<li>tlang lsp-server — start the LSP server over stdin/stdout</li>
+<li>tlang lsp-stop — stop the background LSP server daemon</li>
+<li>tlang lsp-restart — restart the LSP server daemon</li>
+</ul>
+<p>The server watches for file changes automatically. After rebuilding tlang,
+run tlang lsp-restart to pick up the new binary.</p>
+</section>
+<section id="tree-sitter">
+<h2>Tree-sitter Grammar</h2>
+<p>TLang ships a Tree-sitter grammar for editors that use it for syntax highlighting
+and structural selection. The grammar is at zed-plugin/tree-sitter-tlang/.
+It provides accurate highlighting for:</p>
+<ul>
+<li>Keywords — expose, use, func, let, for, if, else, return</li>
+<li>Template keywords — lang, doc, style, data, cmd, raw, set</li>
+<li>Target format brackets — [kotlin], [md, html], [css]</li>
+<li>Interpolation placeholders — ${ ... }</li>
+<li>String literals, numbers, booleans</li>
+<li>Comments</li>
+</ul>
+</section>
+
+    </div>
+    <footer class="footer">
+      <div class="footer-inner">
+        <span class="footer-brand">TLang</span>
+        <div class="footer-links">
+          <a class="footer-link" href="getting-started.html">Getting Started</a>
+          <a class="footer-link" href="language-spec.html">Language</a>
+          <a class="footer-link" href="generators.html">Generators</a>
+          <a class="footer-link" href="use-cases.html">Use Cases</a>
+          <a class="footer-link" href="packages.html">Packages</a>
+          <a class="footer-link" href="editor-setup.html">Editor Setup</a>
+          <a class="footer-link" href="ai-assistant.html">AI Assistant</a>
+          <a class="footer-link" href="https://github.com/joel-f/tlang">GitHub</a>
+        </div>
+        <span class="footer-copy">&copy; 2026 TLang Contributors &middot; Apache 2.0</span>
+      </div>
+    </footer>
+    </body>
+    </html>
+  

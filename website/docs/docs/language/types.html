@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Types &mdash; TLang</title>
+  <meta name="description" content="TLang documentation">
+  <link rel="stylesheet" href="../../assets/style.css">
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="../../index.html">TLang</a>
+    <div class="nav-links">
+      <a class="nav-link" href="../getting-started.html">Docs</a>
+      <a class="nav-link" href="../language/index.html">Language</a>
+      <a class="nav-link" href="../stdlib/index.html">Stdlib</a>
+      <a class="nav-link" href="../generators.html">Generators</a>
+      <a class="nav-link" href="https://github.com/joel-f/tlang">GitHub</a>
+      <a class="btn btn-sm btn-primary" href="../getting-started.html">Get Started</a>
+    </div>
+  </div>
+</nav>
+<div class="doc-layout">
+  <aside class="sidebar">
+    <nav>
+      <span class="sidebar-label">Getting Started</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../getting-started.html">Installation &amp; CLI</a>
+        <a class="sidebar-link" href="../editor-setup.html">Editor Setup</a>
+        <a class="sidebar-link" href="../ai-assistant.html">AI Assistant</a>
+      </div>
+      <div class="sidebar-sep"></div>
+      <span class="sidebar-label">Language Reference</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../language/index.html">Overview</a>
+        <a class="sidebar-link" href="../language/types.html">Types</a>
+        <a class="sidebar-link" href="../language/variables.html">Variables &amp; Scope</a>
+        <a class="sidebar-link" href="../language/functions.html">Functions</a>
+        <a class="sidebar-link" href="../language/control-flow.html">Control Flow</a>
+        <a class="sidebar-link" href="../language/templates.html">Template Blocks</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/lang-template.html">lang &mdash; Code</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/data-template.html">data &mdash; Data &amp; Config</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/doc-template.html">doc &mdash; Documents</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/style-template.html">style &mdash; Stylesheets</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/cmd-template.html">cmd &mdash; Commands &amp; SQL</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/raw-template.html">raw &mdash; Verbatim Text</a>
+        <a class="sidebar-link" href="../language/sets.html">Sets &amp; Models</a>
+        <a class="sidebar-link" href="../language/imports.html">Imports &amp; Expose</a>
+      </div>
+      <div class="sidebar-sep"></div>
+      <span class="sidebar-label">Standard Library</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../stdlib/index.html">Overview</a>
+        <a class="sidebar-link" href="../stdlib/string.html">TLang.String</a>
+        <a class="sidebar-link" href="../stdlib/list.html">TLang.List</a>
+        <a class="sidebar-link" href="../stdlib/map.html">TLang.Map</a>
+        <a class="sidebar-link" href="../stdlib/numbers.html">TLang.Int / Long</a>
+        <a class="sidebar-link" href="../stdlib/float.html">TLang.Float / Double</a>
+        <a class="sidebar-link" href="../stdlib/math.html">TLang.Math</a>
+        <a class="sidebar-link" href="../stdlib/file.html">TLang.File</a>
+        <a class="sidebar-link" href="../stdlib/terminal.html">TLang.Terminal</a>
+        <a class="sidebar-link" href="../stdlib/prompt.html">TLang.Prompt</a>
+        <a class="sidebar-link" href="../stdlib/shell.html">TLang.Shell</a>
+        <a class="sidebar-link" href="../stdlib/leaf.html">TLang.Leaf</a>
+        <a class="sidebar-link" href="../stdlib/generator.html">TLang.Generator</a>
+        <a class="sidebar-link" href="../stdlib/json.html">TLang.Json / Yaml</a>
+        <a class="sidebar-link" href="../stdlib/pdf.html">TLang.Pdf</a>
+        <a class="sidebar-link" href="../stdlib/string-builder.html">TLang.StringBuilder</a>
+        <a class="sidebar-link" href="../stdlib/naming.html">TLang.Naming</a>
+        <a class="sidebar-link" href="../stdlib/assert.html">TLang.Assert</a>
+        <a class="sidebar-link" href="../stdlib/formatting.html">TLang.Formatting</a>
+      </div>
+      <div class="sidebar-sep"></div>
+      <span class="sidebar-label">More</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../generators.html">Generators</a>
+        <a class="sidebar-link" href="../packages.html">Packages</a>
+        <a class="sidebar-link" href="../use-cases.html">Use Cases</a>
+      </div>
+    </nav>
+  </aside>
+  <main class="doc-content">
+    <h1>Types</h1>
+<p>TLang is statically typed. Every value has a type. Type annotations use a colon after the name. Many annotations are optional where the compiler can infer them, but they are required on function parameters.</p>
+<section id="string">
+<h2>String</h2>
+<p>A String is a sequence of UTF-8 characters. String literals use double quotes.</p>
+<pre><code class="language-tlang">      let greeting = &quot;Hello, world!&quot;
+      let empty    = &quot;&quot;
+    </code></pre>
+<p>Concatenation uses the + operator. Any value can be concatenated to a String.</p>
+<pre><code class="language-tlang">      let name  = &quot;Alice&quot;
+      let msg   = &quot;Hello, &quot; + name + &quot;!&quot;
+      let count = 3
+      let line  = &quot;Items: &quot; + count    // Int converts automatically
+    </code></pre>
+<p>The $$ escape produces a literal dollar sign in template and raw bodies.</p>
+<pre><code class="language-tlang">      // Inside a template body: $${name} renders as ${name} literally
+      let escaped = &quot;$$&quot;    // the string contains one $
+    </code></pre>
+</section>
+<section id="int">
+<h2>Int</h2>
+<p>Int is a 64-bit signed integer. Underscores are allowed as separators.</p>
+<pre><code class="language-tlang">      let x = 42
+      let y = -7
+      let big = 1_000_000
+    </code></pre>
+<p>Arithmetic: + - * / %. Division between two Ints produces an Int (truncated).</p>
+<pre><code class="language-tlang">      let sum  = 10 + 3    // 13
+      let diff = 10 - 3    // 7
+      let prod = 10 * 3    // 30
+      let quot = 10 / 3    // 3  (truncated)
+      let rem  = 10 % 3    // 1
+    </code></pre>
+<p>Comparison operators return Bool: == != < > <= >=</p>
+</section>
+<section id="long">
+<h2>Long</h2>
+<p>Long holds 64-bit values but is distinct from Int at the type level. Use Long when interfacing with APIs that expect it explicitly, or when working with very large numbers.</p>
+<pre><code class="language-tlang">      use TLang.Long
+
+      let max = Long.maxValue()
+      let min = Long.minValue()
+      let r   = Long.range(0, 100)    // List of Long 0..99
+    </code></pre>
+</section>
+<section id="float">
+<h2>Float and Double</h2>
+<p>Float and Double both represent IEEE 754 double-precision floating-point numbers. They are interchangeable in practice; Double is the preferred alias.</p>
+<pre><code class="language-tlang">      let pi    = 3.14159
+      let neg   = -0.5
+      let sci   = 1.0e6
+    </code></pre>
+<pre><code class="language-tlang">      use TLang.Float
+
+      let rounded = Float.round(3.7)    // 4.0
+      let floored = Float.floor(3.7)    // 3.0
+      let ceiled  = Float.ceil(3.2)     // 4.0
+      let root    = Float.sqrt(16.0)    // 4.0
+    </code></pre>
+</section>
+<section id="bool">
+<h2>Bool</h2>
+<p>Bool is either true or false.</p>
+<pre><code class="language-tlang">      let yes = true
+      let no  = false
+    </code></pre>
+<p>Logical operators: && (and), || (or), ! (not). Both && and || short-circuit.</p>
+<pre><code class="language-tlang">      let both   = true &amp;&amp; false    // false
+      let either = true || false    // true
+      let inv    = !true            // false
+    </code></pre>
+<p>Comparison expressions produce Bool values.</p>
+<pre><code class="language-tlang">      let isAdult = age &gt;= 18
+      let isValid = name != &quot;&quot; &amp;&amp; age &gt; 0
+    </code></pre>
+</section>
+<section id="list">
+<h2>List</h2>
+<p>A List is an ordered sequence of values. Create a fixed list with List.of, or an empty list with List.create.</p>
+<pre><code class="language-tlang">      use TLang.List
+
+      let names  = List.of(&quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot;)
+      let nums   = List.of(1, 2, 3)
+      let empty  = List.create()
+    </code></pre>
+<p>Access elements by index (zero-based). Iterate with for-in.</p>
+<pre><code class="language-tlang">      let first = List.get(names, 0)     // &quot;Alice&quot;
+      let count = List.size(names)        // 3
+
+      for (n in names) {
+          Terminal.println(n)
+      }
+    </code></pre>
+<p>Lists are persistent — operations return new lists.</p>
+<pre><code class="language-tlang">      let with4  = List.push(nums, 4)     // [1, 2, 3, 4]
+      let tail   = List.tail(nums)         // [2, 3]
+      let joined = List.join(names, &quot;, &quot;)  // &quot;Alice, Bob, Charlie&quot;
+    </code></pre>
+<p>Higher-order functions accept lambdas or function references.</p>
+<pre><code class="language-tlang">      let doubled = List.map(nums, (x) =&gt; x * 2)           // [2, 4, 6]
+      let evens   = List.filter(nums, (x) =&gt; x % 2 == 0)   // [2]
+      let sum     = List.reduce(nums, 0, (acc, x) =&gt; acc + x)  // 6
+    </code></pre>
+</section>
+<section id="map">
+<h2>Map</h2>
+<p>A Map is a string-keyed dictionary. Create with Map.of (key-value pairs) or Map.create.</p>
+<pre><code class="language-tlang">      use TLang.Map
+
+      let m  = Map.of(&quot;host&quot;, &quot;localhost&quot;, &quot;port&quot;, &quot;5432&quot;)
+      let m2 = Map.create()
+    </code></pre>
+<pre><code class="language-tlang">      let host = Map.get(m, &quot;host&quot;)                        // &quot;localhost&quot;
+      let port = Map.getOrDefault(m, &quot;port&quot;, &quot;3306&quot;)       // &quot;5432&quot;
+      let keys = Map.keys(m)                               // List of keys
+      let m3   = Map.set(m, &quot;host&quot;, &quot;prod.db.example.com&quot;)
+    </code></pre>
+</section>
+<section id="annotations">
+<h2>Type Annotations</h2>
+<p>Annotations follow the name with a colon. On function parameters they are required. On let bindings they are optional (inferred from the value).</p>
+<pre><code class="language-tlang">      func greet(name: String, times: Int): String {
+          let result: String = &quot;&quot;     // annotation optional here
+          let result = &quot;&quot;             // same — inferred
+          return result
+      }
+    </code></pre>
+<p>Collection annotations.</p>
+<pre><code class="language-tlang">      func process(items: List, config: Map): String {
+          // ...
+          return &quot;ok&quot;
+      }
+    </code></pre>
+</section>
+
+  </main>
+</div>
+<footer class="footer">
+  <div class="footer-inner">
+    <span class="footer-brand">TLang</span>
+    <div class="footer-links">
+      <a class="footer-link" href="../getting-started.html">Getting Started</a>
+      <a class="footer-link" href="../language/index.html">Language</a>
+      <a class="footer-link" href="../stdlib/index.html">Stdlib</a>
+      <a class="footer-link" href="../generators.html">Generators</a>
+      <a class="footer-link" href="https://github.com/joel-f/tlang">GitHub</a>
+    </div>
+    <span class="footer-copy">&copy; 2026 TLang Contributors &middot; Apache 2.0</span>
+  </div>
+</footer>
+<script>
+(function() {
+  var links = document.querySelectorAll('.sidebar-link');
+  var cur = window.location.href;
+  links.forEach(function(a) {
+    var href = a.getAttribute('href');
+    if (href && cur.indexOf(href.replace('../', '')) !== -1) {
+      a.classList.add('active');
+    }
+  });
+}());
+</script>
+</body>
+</html>

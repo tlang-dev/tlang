@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>raw — Verbatim Templates &mdash; TLang</title>
+  <meta name="description" content="TLang documentation">
+  <link rel="stylesheet" href="../../assets/style.css">
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="../../index.html">TLang</a>
+    <div class="nav-links">
+      <a class="nav-link" href="../getting-started.html">Docs</a>
+      <a class="nav-link" href="../language/index.html">Language</a>
+      <a class="nav-link" href="../stdlib/index.html">Stdlib</a>
+      <a class="nav-link" href="../generators.html">Generators</a>
+      <a class="nav-link" href="https://github.com/joel-f/tlang">GitHub</a>
+      <a class="btn btn-sm btn-primary" href="../getting-started.html">Get Started</a>
+    </div>
+  </div>
+</nav>
+<div class="doc-layout">
+  <aside class="sidebar">
+    <nav>
+      <span class="sidebar-label">Getting Started</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../getting-started.html">Installation &amp; CLI</a>
+        <a class="sidebar-link" href="../editor-setup.html">Editor Setup</a>
+        <a class="sidebar-link" href="../ai-assistant.html">AI Assistant</a>
+      </div>
+      <div class="sidebar-sep"></div>
+      <span class="sidebar-label">Language Reference</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../language/index.html">Overview</a>
+        <a class="sidebar-link" href="../language/types.html">Types</a>
+        <a class="sidebar-link" href="../language/variables.html">Variables &amp; Scope</a>
+        <a class="sidebar-link" href="../language/functions.html">Functions</a>
+        <a class="sidebar-link" href="../language/control-flow.html">Control Flow</a>
+        <a class="sidebar-link" href="../language/templates.html">Template Blocks</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/lang-template.html">lang &mdash; Code</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/data-template.html">data &mdash; Data &amp; Config</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/doc-template.html">doc &mdash; Documents</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/style-template.html">style &mdash; Stylesheets</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/cmd-template.html">cmd &mdash; Commands &amp; SQL</a>
+        <a class="sidebar-link sidebar-link-sub" href="../language/raw-template.html">raw &mdash; Verbatim Text</a>
+        <a class="sidebar-link" href="../language/sets.html">Sets &amp; Models</a>
+        <a class="sidebar-link" href="../language/imports.html">Imports &amp; Expose</a>
+      </div>
+      <div class="sidebar-sep"></div>
+      <span class="sidebar-label">Standard Library</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../stdlib/index.html">Overview</a>
+        <a class="sidebar-link" href="../stdlib/string.html">TLang.String</a>
+        <a class="sidebar-link" href="../stdlib/list.html">TLang.List</a>
+        <a class="sidebar-link" href="../stdlib/map.html">TLang.Map</a>
+        <a class="sidebar-link" href="../stdlib/numbers.html">TLang.Int / Long</a>
+        <a class="sidebar-link" href="../stdlib/float.html">TLang.Float / Double</a>
+        <a class="sidebar-link" href="../stdlib/math.html">TLang.Math</a>
+        <a class="sidebar-link" href="../stdlib/file.html">TLang.File</a>
+        <a class="sidebar-link" href="../stdlib/terminal.html">TLang.Terminal</a>
+        <a class="sidebar-link" href="../stdlib/prompt.html">TLang.Prompt</a>
+        <a class="sidebar-link" href="../stdlib/shell.html">TLang.Shell</a>
+        <a class="sidebar-link" href="../stdlib/leaf.html">TLang.Leaf</a>
+        <a class="sidebar-link" href="../stdlib/generator.html">TLang.Generator</a>
+        <a class="sidebar-link" href="../stdlib/json.html">TLang.Json / Yaml</a>
+        <a class="sidebar-link" href="../stdlib/pdf.html">TLang.Pdf</a>
+        <a class="sidebar-link" href="../stdlib/string-builder.html">TLang.StringBuilder</a>
+        <a class="sidebar-link" href="../stdlib/naming.html">TLang.Naming</a>
+        <a class="sidebar-link" href="../stdlib/assert.html">TLang.Assert</a>
+        <a class="sidebar-link" href="../stdlib/formatting.html">TLang.Formatting</a>
+      </div>
+      <div class="sidebar-sep"></div>
+      <span class="sidebar-label">More</span>
+      <div class="sidebar-links">
+        <a class="sidebar-link" href="../generators.html">Generators</a>
+        <a class="sidebar-link" href="../packages.html">Packages</a>
+        <a class="sidebar-link" href="../use-cases.html">Use Cases</a>
+      </div>
+    </nav>
+  </aside>
+  <main class="doc-content">
+    <h1>raw — Verbatim Templates</h1>
+<p>The raw template type embeds text exactly as written. There are two modes: AsIs writes the body completely unchanged, and Replaced substitutes $${ param } patterns while leaving everything else untouched.</p>
+<section id="asis">
+<h2>raw [AsIs] — No Substitution</h2>
+<p>The body is written to the output verbatim. No substitution, no keyword parsing, no LSP normalisation.</p>
+<pre><code class="language-tlang">      raw [AsIs] dockerfileHeader() {
+      # Auto-generated — DO NOT EDIT
+      # ${placeholder} appears literally in the output
+      FROM eclipse-temurin:21
+      }
+    </code></pre>
+<p>Use AsIs when the content contains TLang syntax that must appear literally in the output, or when you need complete fidelity to a template format.</p>
+</section>
+<section id="replaced">
+<h2>raw [Replaced] — Parameter Substitution</h2>
+<p>The body is written verbatim except that $${ param } sequences are replaced with the argument value at call time.</p>
+<pre><code class="language-tlang">      raw [Replaced] dockerfile(image: String, port: String) {
+      FROM $${image}
+      WORKDIR /app
+      COPY build/libs/app.jar app.jar
+      EXPOSE $${port}
+      ENTRYPOINT [&quot;java&quot;, &quot;-jar&quot;, &quot;app.jar&quot;]
+      }
+    </code></pre>
+<pre><code class="language-tlang">      raw [Replaced] gitignore(buildDir: String) {
+      # Build output
+      $${buildDir}/
+      *.class
+      *.jar
+      .env
+      .DS_Store
+      }
+    </code></pre>
+</section>
+<section id="calling">
+<h2>Calling raw Templates</h2>
+<p>raw template calls return a String directly — no Generator.generate() needed.</p>
+<pre><code class="language-tlang">      func main(): String {
+          let header = dockerfileHeader()
+          let body   = dockerfile(&quot;eclipse-temurin:21&quot;, &quot;8080&quot;)
+
+          File.write(&quot;Dockerfile&quot;,   header + &quot;\n&quot; + body, true)
+          File.write(&quot;.gitignore&quot;,   gitignore(&quot;build&quot;),    true)
+          return &quot;done&quot;
+      }
+    </code></pre>
+</section>
+<section id="usecases">
+<h2>When to Use raw</h2>
+<p>Use raw when the target format conflicts with TLang syntax. Common cases:
+Dockerfiles — FROM, RUN, CMD keywords would be parsed as TLang directives inside a lang template.
+Shell scripts — variable syntax $VAR, complex quoting, heredocs.
+.gitignore, .npmrc, .env files — no structure to model.
+GitHub Actions YAML with complex anchors or multi-line strings.
+Makefile targets — tab-significant syntax.</p>
+<pre><code class="language-tlang">      raw [Replaced] githubAction(name: String, branch: String) {
+      name: $${name}
+
+      on:
+        push:
+          branches: [$${branch}]
+
+      jobs:
+        build:
+          runs-on: ubuntu-latest
+          steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-java@v4
+              with:
+                java-version: '21'
+            - run: ./gradlew build
+      }
+    </code></pre>
+</section>
+<section id="escape">
+<h2>Escaping in raw [Replaced]</h2>
+<p>Sequences that look like ${ param } but should appear literally can be written as $${ param } — the double dollar prefix prevents substitution.</p>
+<pre><code class="language-tlang">      raw [Replaced] helmTemplate(app: String) {
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: $${app}
+        labels:
+          app: $${app}
+      spec:
+        template:
+          spec:
+            containers:
+              - name: $${app}
+                image: {{ .Values.image }}    # Helm syntax — not substituted
+      }
+    </code></pre>
+<p>Any double-dollar escape sequence not matching a declared parameter is left as-is.</p>
+</section>
+
+  </main>
+</div>
+<footer class="footer">
+  <div class="footer-inner">
+    <span class="footer-brand">TLang</span>
+    <div class="footer-links">
+      <a class="footer-link" href="../getting-started.html">Getting Started</a>
+      <a class="footer-link" href="../language/index.html">Language</a>
+      <a class="footer-link" href="../stdlib/index.html">Stdlib</a>
+      <a class="footer-link" href="../generators.html">Generators</a>
+      <a class="footer-link" href="https://github.com/joel-f/tlang">GitHub</a>
+    </div>
+    <span class="footer-copy">&copy; 2026 TLang Contributors &middot; Apache 2.0</span>
+  </div>
+</footer>
+<script>
+(function() {
+  var links = document.querySelectorAll('.sidebar-link');
+  var cur = window.location.href;
+  links.forEach(function(a) {
+    var href = a.getAttribute('href');
+    if (href && cur.indexOf(href.replace('../', '')) !== -1) {
+      a.classList.add('active');
+    }
+  });
+}());
+</script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+expose stdlibNamingGen
+
+use TLang.File
+use TLang.Generator
+use TLang.Terminal
+use layout.PageLayout
+
+doc [html] namingPage() {
+  # TLang.Naming
+
+  TLang.Naming converts identifiers between naming conventions and performs common word-level transformations. Essential for generating code in different languages from the same model.
+
+  [code "tlang"
+    use TLang.Naming
+  ]
+
+  [section "case"
+    ## Case Conversion
+
+    All functions accept any input convention (snake_case, kebab-case, camelCase, PascalCase, space-separated) and produce the target convention.
+
+    [code "tlang"
+      // camelCase — first word lowercase, rest title-cased
+      let c = Naming.toCamelCase("user_profile")    // "userProfile"
+      let c = Naming.toCamelCase("USER-PROFILE")    // "userProfile"
+
+      // PascalCase — every word title-cased
+      let p = Naming.toPascalCase("user_profile")   // "UserProfile"
+      let p = Naming.toPascalCase("userProfile")    // "UserProfile"
+
+      // snake_case — all lowercase, words joined with underscore
+      let s = Naming.toSnakeCase("UserProfile")     // "user_profile"
+      let s = Naming.toSnakeCase("userProfile")     // "user_profile"
+
+      // SCREAMING_SNAKE — snake_case but uppercase
+      let ss = Naming.toScreamingSnake("userProfile")   // "USER_PROFILE"
+
+      // kebab-case — all lowercase, words joined with hyphens
+      let k = Naming.toKebabCase("UserProfile")     // "user-profile"
+
+      // dot.case
+      let d = Naming.toDotCase("UserProfile")       // "user.profile"
+
+      // Title Case — every word capitalised with spaces
+      let t = Naming.toTitleCase("user_profile")    // "User Profile"
+    ]
+  ]
+
+  [section "word"
+    ## Word-Level Operations
+
+    [code "tlang"
+      let cap   = Naming.capitalize("hello")    // "Hello"
+      let decap = Naming.decapitalize("Hello")  // "hello"
+      let words = Naming.words("user_profile")  // ["user", "profile"]
+    ]
+  ]
+
+  [section "plural"
+    ## Pluralisation
+
+    [code "tlang"
+      let pl = Naming.pluralize("user")       // "users"
+      let pl = Naming.pluralize("entity")     // "entities"
+      let pl = Naming.pluralize("category")   // "categories"
+
+      let sg = Naming.singularize("users")    // "user"
+      let sg = Naming.singularize("entities") // "entity"
+    ]
+  ]
+
+  [section "example"
+    ## Example — Multi-Convention Names from Model
+
+    [code "tlang"
+      use TLang.Naming
+      use TLang.Leaf
+
+      func namesFor(cls: String): String {
+          let pascal = Naming.toPascalCase(cls)
+          let snake  = Naming.toSnakeCase(cls)
+          let kebab  = Naming.toKebabCase(cls)
+          let plural = Naming.pluralize(snake)
+
+          return "class=" + pascal
+               + " table=" + plural
+               + " route=/" + kebab + "s"
+      }
+
+      func main(): String {
+          let model = Leaf.model()
+          for (k in Leaf.keys(model)) {
+              let entry = Leaf.get(model, k)
+              Terminal.println(namesFor(entry.cls))
+          }
+          return "done"
+      }
+    ]
+  ]
+}
+
+func stdlibNamingGen(): String {
+    let content = Generator.generate(namingPage("html"))
+    let html = PageLayout.page("TLang.Naming", content)
+    File.write("docs/docs/stdlib/naming.html", html, true)
+    Terminal.println("  -> stdlib/naming.html")
+    return ""
+}

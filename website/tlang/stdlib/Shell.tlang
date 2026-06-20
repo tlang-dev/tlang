@@ -1,0 +1,121 @@
+expose stdlibShellGen
+
+use TLang.File
+use TLang.Generator
+use TLang.Terminal
+use layout.PageLayout
+
+doc [html] shellPage() {
+  # TLang.Shell
+
+  TLang.Shell executes shell commands from within a TLang program. Choose the right function for your use case: run for capturing output, stream for live output, capture for full inspection.
+
+  [code "tlang"
+    use TLang.Shell
+  ]
+
+  [section "run"
+    ## run — Capture Output
+
+    Shell.run executes a command, waits for it to complete, and returns stdout as a String. Raises an error if the exit code is non-zero.
+
+    [code "tlang"
+      let branch = Shell.run("git rev-parse --abbrev-ref HEAD")
+      let log    = Shell.run("git log --oneline -5")
+    ]
+
+    Shell.runIn executes in a specified directory.
+
+    [code "tlang"
+      let result = Shell.runIn("./gradlew build", "output/myapp")
+    ]
+  ]
+
+  [section "capture"
+    ## capture — Full Result Map
+
+    Shell.capture returns a Map with stdout, stderr, exitCode, and success fields. Does not raise on non-zero exit.
+
+    [code "tlang"
+      let result = Shell.capture("java -version")
+      let out    = Map.get(result, "stdout")
+      let err    = Map.get(result, "stderr")
+      let code   = Map.get(result, "exitCode")
+      let ok     = Map.get(result, "success")
+    ]
+
+    Shell.captureIn runs in a specified directory.
+
+    [code "tlang"
+      let result = Shell.captureIn("./gradlew test", "output/myapp")
+    ]
+  ]
+
+  [section "stream"
+    ## stream — Live Output
+
+    Shell.stream runs a command and pipes its output directly to the terminal as it runs. Returns the exit code as an Int. Use this for long-running processes where you want to see progress.
+
+    [code "tlang"
+      let code = Shell.stream("./gradlew quarkusDev")
+    ]
+
+    Shell.streamIn runs in a specified directory.
+
+    [code "tlang"
+      let code = Shell.streamIn("npm run dev", "output/frontend")
+    ]
+  ]
+
+  [section "env"
+    ## env and which
+
+    [code "tlang"
+      let home  = Shell.env("HOME")       // → String value of env var, or ""
+      let java  = Shell.which("java")     // → absolute path, or ""
+      let node  = Shell.which("node")
+    ]
+
+    Use which to check tool availability before running.
+
+    [code "tlang"
+      if (Shell.which("docker") == "") {
+          Terminal.println("Docker not found — skipping container build")
+      } else {
+          Shell.run("docker build -t myapp .")
+      }
+    ]
+  ]
+
+  [section "comparison"
+    ## Choosing the Right Function
+
+    Use Shell.run when you need the command output as a string for further processing.
+
+    Use Shell.capture when you need the exit code or stderr, or when failure should not abort the program.
+
+    Use Shell.stream for interactive or long-running processes that print progress (dev servers, build tools, test runners).
+
+    [code "tlang"
+      // Get git branch name for a banner
+      let branch = Shell.run("git rev-parse --abbrev-ref HEAD")
+
+      // Run tests — check exit code manually
+      let result = Shell.capture("./gradlew test")
+      if (Map.get(result, "success") == "false") {
+          Terminal.println("Tests failed:\n" + Map.get(result, "stdout"))
+      }
+
+      // Start dev server — stream output live
+      Shell.streamIn("npm run dev", "frontend")
+    ]
+  ]
+}
+
+func stdlibShellGen(): String {
+    let content = Generator.generate(shellPage("html"))
+    let html = PageLayout.page("TLang.Shell", content)
+    File.write("docs/docs/stdlib/shell.html", html, true)
+    Terminal.println("  -> stdlib/shell.html")
+    return ""
+}

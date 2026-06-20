@@ -1,0 +1,50 @@
+# Kotlin + Quarkus — Resource API Example
+#
+# Demonstrates the hybrid Prop-2 + Prop-3 Resource pattern:
+#
+#   api/
+#     Resource.tlang   defines Feature markers, the Resource stack descriptor,
+#                      internal layer sets, and the generate() helper.
+#
+#   Main.tlang         declares three entities using the Resource API:
+#                        Post      — plain CRUD stack (no features)
+#                        Bookmark  — Favourite feature mixed in
+#                        Comment   — body attribute override via subtype
+#
+# Key ideas:
+#   • Fields are declared once inside Entity(...) and shared by all four layers.
+#   • Features (Favourite, Timestamps, SoftDelete) are additive mix-ins passed
+#     as a List — adding or removing a feature touches exactly one line.
+#   • Per-layer overrides (e.g. changing the JPA base class) are expressed by
+#     subtyping Resource in the model block, with no template changes needed.
+#   • generate(res) creates all four files (Entity, Repository, Service,
+#     REST resource) from a single Resource descriptor.
+#
+# Generated files (under output/):
+#   src/main/kotlin/com/example/app/
+#     Post.kt, PostRepository.kt, PostService.kt, PostResource.kt
+#     Bookmark.kt, BookmarkRepository.kt, BookmarkService.kt, BookmarkResource.kt
+#     Comment.kt, CommentRepository.kt, CommentService.kt, CommentResource.kt
+#   build.gradle.kts
+#   settings.gradle.kts
+#   gradle.properties
+#   src/main/resources/application.yml
+#
+# Run with:
+#   tlang both examples/project-kotlin-quarkus
+
+name: ProjectKotlinQuarkus
+project: ProjectExamples
+organisation: TLang
+version: 1.0.0
+stability: alpha
+releaseNumber: 1
+
+author: TLang Contributors
+website: https://tlang.dev/examples/project-kotlin-quarkus
+license: Apache-2.0
+
+dependencies:
+  - TLangGen/KotlinGen/Kotlin 1.0.0:alpha:1 KotlinGen
+  - file://../../implementation/kotlin-quarkus KotlinQuarkusImpl
+  - file://../../api TLangAPI

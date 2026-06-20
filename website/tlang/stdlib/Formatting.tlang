@@ -1,0 +1,114 @@
+expose stdlibFormattingGen
+
+use TLang.File
+use TLang.Generator
+use TLang.Terminal
+use layout.PageLayout
+
+doc [html] formattingPage() {
+  # TLang.Formatting
+
+  TLang.Formatting produces indented, spaced, and structured text output from a token list. It is lower-level than template blocks and is useful for generators that emit code with configurable formatting rules.
+
+  [code "tlang"
+    use TLang.Formatting
+  ]
+
+  [section "create"
+    ## Creating a Formatter
+
+    Formatting.create returns a new formatter with default settings.
+
+    [code "tlang"
+      let fmt = Formatting.create()
+    ]
+  ]
+
+  [section "config"
+    ## Configuration
+
+    Set the indent string (default: four spaces).
+
+    [code "tlang"
+      let fmt = Formatting.with_indent_text(fmt, "  ")    // two spaces
+      let fmt = Formatting.with_indent_text(fmt, "\t")    // tabs
+    ]
+
+    Control spacing between token types.
+
+    [code "tlang"
+      let fmt = Formatting.space_between(fmt, "keyword", "name")
+      let fmt = Formatting.newline_after(fmt, "statement")
+      let fmt = Formatting.indent_after(fmt, "open_brace")
+      let fmt = Formatting.outdent_before(fmt, "close_brace")
+    ]
+  ]
+
+  [section "render"
+    ## Rendering
+
+    Formatting.render converts a token list to a formatted string.
+
+    [code "tlang"
+      let result = Formatting.render(fmt, tokens)
+    ]
+
+    Formatting.render_list renders a list of token lists with separators.
+
+    [code "tlang"
+      let result = Formatting.render_list(fmt, tokenLists, "\n")
+    ]
+  ]
+
+  [section "tokens"
+    ## Working with Tokens
+
+    TLang.Token creates the token values that TLang.Formatting consumes.
+
+    [code "tlang"
+      use TLang.Token
+
+      let kw   = Token.keyword("func")
+      let name = Token.name("myFunction")
+      let list = Token.list(List.of(kw, name))
+    ]
+  ]
+
+  [section "example"
+    ## Example — Simple Code Formatter
+
+    [code "tlang"
+      use TLang.Formatting
+      use TLang.Token
+
+      func formatFunc(name: String, body: String): String {
+          let fmt  = Formatting.create()
+          let fmt  = Formatting.with_indent_text(fmt, "    ")
+
+          let toks = List.of(
+              Token.keyword("func"),
+              Token.name(name),
+              Token.value("() {"),
+              Token.value(body),
+              Token.value("}")
+          )
+
+          return Formatting.render(fmt, toks)
+      }
+
+      func main(): String {
+          let code = formatFunc("hello", "return \"world\"")
+          Terminal.println(code)
+          return "done"
+      }
+    ]
+  ]
+}
+
+func stdlibFormattingGen(): String {
+    let content = Generator.generate(formattingPage("html"))
+    let html = PageLayout.page("TLang.Formatting", content)
+    File.write("docs/docs/stdlib/formatting.html", html, true)
+    Terminal.println("  -> stdlib/formatting.html")
+    return ""
+}

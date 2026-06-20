@@ -1,0 +1,79 @@
+expose stdlibTerminalGen
+
+use TLang.File
+use TLang.Generator
+use TLang.Terminal
+use layout.PageLayout
+
+doc [html] terminalPage() {
+  # TLang.Terminal
+
+  TLang.Terminal provides console output and input. Use it for progress messages, debug output, and reading values from stdin during interactive generation.
+
+  [code "tlang"
+    use TLang.Terminal
+  ]
+
+  [section "output"
+    ## Output
+
+    Terminal.println writes a line followed by a newline.
+
+    [code "tlang"
+      Terminal.println("Generating entities...")
+      Terminal.println("  → User.kt")
+      Terminal.println("Done. 3 files written.")
+    ]
+
+    Terminal.print writes without a trailing newline.
+
+    [code "tlang"
+      Terminal.print("Processing: ")
+      Terminal.println("User")
+    ]
+  ]
+
+  [section "input"
+    ## Input
+
+    Terminal.read reads one line from stdin (blocks until Enter is pressed).
+
+    [code "tlang"
+      Terminal.println("Enter your name: ")
+      let name = Terminal.read()
+      Terminal.println("Hello, " + name + "!")
+    ]
+  ]
+
+  [section "example"
+    ## Example — Progress Logger
+
+    [code "tlang"
+      use TLang.Terminal
+      use TLang.List
+
+      func logProgress(items: List, prefix: String): String {
+          let n = List.size(items)
+          Terminal.println(prefix + " — " + n + " items")
+          for (item in items) {
+              Terminal.println("  → " + item)
+          }
+          return ""
+      }
+
+      func main(): String {
+          let entities = List.of("User", "Product", "Order")
+          logProgress(entities, "Generating repositories")
+          return "done"
+      }
+    ]
+  ]
+}
+
+func stdlibTerminalGen(): String {
+    let content = Generator.generate(terminalPage("html"))
+    let html = PageLayout.page("TLang.Terminal", content)
+    File.write("docs/docs/stdlib/terminal.html", html, true)
+    Terminal.println("  -> stdlib/terminal.html")
+    return ""
+}

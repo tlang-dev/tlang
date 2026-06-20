@@ -1,0 +1,168 @@
+expose langImportsGen
+
+use TLang.File
+use TLang.Generator
+use TLang.Terminal
+use layout.PageLayout
+
+doc [html] importsPage() {
+  # Imports & Expose
+
+  TLang uses a simple path-based module system. expose makes a symbol callable by other files. use imports a module, making its exposed symbols available under an alias.
+
+  [section "expose"
+    ## expose
+
+    expose declares which functions and templates are visible to other files. Symbols not listed with expose are private to the file.
+
+    [code "tlang"
+      expose main
+      expose greet
+      expose entity
+
+      func main(): String { ... }
+      func greet(name: String): String { ... }
+      func internal(): String { ... }   // NOT exposed — private
+
+      lang [kotlin] entity(pkg: String, cls: String) { ... }
+    ]
+
+    Multiple symbols are each declared on their own expose line.
+  ]
+
+  [section "use"
+    ## use
+
+    use imports a file. The alias defaults to the last path segment (the filename without extension).
+
+    [code "tlang"
+      use TLang.File          // alias: File  — standard library
+      use TLang.Generator     // alias: Generator
+      use TLang.List          // alias: List (also works as bare List.of(...))
+      use helpers.Formatters  // alias: Formatters — from helpers/Formatters.tlang
+      use Utils               // alias: Utils — from Utils.tlang in same directory
+    ]
+
+    After importing, call exposed symbols via the alias.
+
+    [code "tlang"
+      use helpers.StringUtils
+
+      func main(): String {
+          let slug = StringUtils.toSlug("Hello World")
+          return slug
+      }
+    ]
+  ]
+
+  [section "alias"
+    ## Custom Aliases
+
+    Use as to give the import a different alias. Required when two imports have the same filename.
+
+    [code "tlang"
+      use KotlinGen       as kotlin
+      use JavaGen         as java
+      use TypescriptGenerator as ts
+      use lang.Overview   as LangOverview
+      use stdlib.Overview as StdlibOverview
+    ]
+
+    Generators need an alias that matches the lang template format name.
+
+    [code "tlang"
+      use KotlinGen as kotlin
+
+      lang [kotlin] entity(pkg: String, cls: String) {
+          // format "kotlin" matches the alias
+      }
+    ]
+  ]
+
+  [section "paths"
+    ## Import Paths
+
+    Paths map to the filesystem relative to the project root (where manifest.yml lives).
+
+    TLang.Module — standard library module. Always works regardless of project structure.
+
+    File — imports File.tlang in the same directory as the importing file.
+
+    folder.File — imports folder/File.tlang relative to the project root.
+
+    [code "tlang"
+      use TLang.File         // standard library
+      use TLang.Generator    // standard library
+      use Utils              // ./Utils.tlang (same dir)
+      use helpers.Math       // ./helpers/Math.tlang
+      use models.Entities    // ./models/Entities.tlang
+    ]
+
+    Maximum import depth is one subfolder level. Two-level paths like use a.b.File are rejected.
+  ]
+
+  [section "visibility"
+    ## Visibility Rules
+
+    A symbol must be expose'd in its source file to be imported. Unexposed symbols are private.
+
+    When you import a file, you access its exposed symbols via the alias.
+
+    [code "tlang"
+      // helpers/Formatters.tlang
+      expose toSlug
+      expose capitalize
+
+      func toSlug(s: String): String { ... }
+      func capitalize(s: String): String { ... }
+      func internalHelper(): String { ... }   // private
+    ]
+
+    [code "tlang"
+      // Main.tlang
+      use helpers.Formatters
+
+      func main(): String {
+          let slug = Formatters.toSlug("Hello World")
+          // Formatters.internalHelper()  ← would fail — not exposed
+          return slug
+      }
+    ]
+  ]
+
+  [section "stdlib"
+    ## Standard Library Modules
+
+    All standard library modules are imported with use TLang.ModuleName. They are always available regardless of project structure.
+
+    [code "tlang"
+      use TLang.File
+      use TLang.Terminal
+      use TLang.Generator
+      use TLang.Leaf
+      use TLang.List
+      use TLang.Map
+      use TLang.String
+      use TLang.Math
+      use TLang.Shell
+      use TLang.Json
+      use TLang.Yaml
+      use TLang.Pdf
+      use TLang.StringBuilder
+      use TLang.Naming
+      use TLang.Assert
+      use TLang.Prompt
+      use TLang.Formatting
+    ]
+
+    TLang.Str is an alias for TLang.String — both work identically.
+  ]
+}
+
+func langImportsGen(): String {
+    let content = Generator.generate(importsPage("html"))
+    let html = PageLayout.page("Imports & Expose", content)
+    File.write("docs/docs/language/imports.html", html, true)
+    Terminal.println("  -> language/imports.html")
+    return ""
+}

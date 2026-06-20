@@ -1,0 +1,171 @@
+expose langDocTemplateGen
+
+use TLang.File
+use TLang.Generator
+use TLang.Terminal
+use layout.PageLayout
+
+doc [html] docTemplatePage() {
+  # doc — Document Templates
+
+  The doc template type generates structured documents in Markdown or HTML. Body elements map directly to document concepts — headings, paragraphs, code blocks, lists, links, sections, and images. No generator import is needed.
+
+  [section "elements"
+    ## Body Elements
+
+    Headings use the Markdown # convention. Levels 1 through 6 are supported.
+
+    [code "tlang"
+      doc [md, html] guide(project: String) {
+        # $${project}
+
+        ## Getting Started
+
+        ### Installation
+      }
+    ]
+
+    Plain text lines become paragraphs.
+
+    [code "tlang"
+      doc [md, html] intro(name: String, version: String) {
+        # $${name}
+
+        Welcome to $${name} version $${version}.
+
+        This guide covers installation, configuration, and usage.
+      }
+    ]
+
+    Code blocks wrap content in a fenced block with a language hint.
+
+    [code "tlang"
+      doc [md, html] apiGuide() {
+        ## Installation
+
+        [code "bash"
+          npm install @example/sdk
+        ]
+
+        ## Usage
+
+        [code "javascript"
+          const sdk = require('@example/sdk')
+          sdk.connect()
+        ]
+      }
+    ]
+
+    Sections wrap content in a named container. In HTML this renders as a section element with an id. In Markdown it renders inline.
+
+    [code "tlang"
+      doc [html] page(title: String) {
+        [section "main"
+          ## $${title}
+
+          Content goes here.
+        ]
+      }
+    ]
+
+    Lists come in unordered and ordered variants. Each item starts with a dash.
+
+    [code "tlang"
+      doc [md, html] features() {
+        ## Features
+
+        [list "unordered"
+          - Compiled to bytecode
+          - Statically typed
+          - Multi-format output
+        ]
+
+        ## Steps
+
+        [list "ordered"
+          - Write your template
+          - Define your model
+          - Run the generator
+        ]
+      }
+    ]
+
+    Links and images.
+
+    [code "tlang"
+      doc [md, html] links() {
+        [link "https://github.com/joel-f/tlang" "View on GitHub"]
+
+        [img "https://example.com/logo.png" "TLang logo"]
+      }
+    ]
+
+    Spans render as emphasis (italic in Markdown, em in HTML).
+
+    [code "tlang"
+      doc [md, html] note() {
+        [span "This is emphasised text."]
+      }
+    ]
+
+    Asis embeds raw content verbatim. No element parsing, but $${ } substitution still applies.
+
+    [code "tlang"
+      doc [md, html] badge(repo: String) {
+        [asis
+          [![Build](https://ci.example.com/$${repo}/badge.svg)](https://ci.example.com/$${repo})
+        ]
+      }
+    ]
+  ]
+
+  [section "calling"
+    ## Calling and Format Selection
+
+    The first argument selects the output format when it matches a declared format name. All subsequent arguments fill the template parameters.
+
+    [code "tlang"
+      doc [md, html] readme(project: String, version: String) {
+        # $${project}
+
+        Version: $${version}
+      }
+
+      func main(): String {
+          let mdLeaf   = readme("md",   "MyLib", "2.0")
+          let htmlLeaf = readme("html", "MyLib", "2.0")
+
+          let md   = Generator.generate(mdLeaf)
+          let html = Generator.generate(htmlLeaf)
+
+          File.write("README.md",    md,   true)
+          File.write("docs/index.html", html, true)
+          return "done"
+      }
+    ]
+
+    If the first argument does not match any declared format, all arguments are treated as parameters and the first declared format is used.
+  ]
+
+  [section "escape"
+    ## Parameter Substitution
+
+    $${ param } substitutes the value of a declared parameter. Use $$ to produce a literal dollar sign.
+
+    [code "tlang"
+      doc [md] price(amount: String, currency: String) {
+        The price is $${currency}$${amount}.
+
+        Use $${ ... } for template substitution in your own code.
+      }
+    ]
+  ]
+}
+
+func langDocTemplateGen(): String {
+    let content = Generator.generate(docTemplatePage("html"))
+    let html = PageLayout.page("doc — Document Templates", content)
+    File.write("docs/docs/language/doc-template.html", html, true)
+    Terminal.println("  -> language/doc-template.html")
+    return ""
+}
