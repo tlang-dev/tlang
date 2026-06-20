@@ -24,3 +24,8 @@ target
 # Added by cargo
 
 /target
+
+# Local manifest overrides — never commit these.
+# Use manifest.local.yml to set file:// dependency paths for local dev
+# without affecting CI or other contributors.
+manifest.local.yml

@@ -589,14 +589,92 @@ pub fn load_manifest(path: &Path) -> Result<Manifest, ManifestError> {
 
 /// Load a `manifest.yml` from `project_root/manifest.yml`, if it exists.
 ///
+/// If `manifest.local.yml` is present alongside it, its `dependencies:` list
+/// is merged in as a local overlay: entries with an alias that matches an
+/// existing dependency replace it; entries with a new alias are appended.
+/// The local file is gitignored by convention and is never committed, so it
+/// is safe to put `file://` paths in it for local development without
+/// affecting CI or other contributors.
+///
 /// Returns `Ok(None)` when no manifest file is present so that callers can
 /// treat its absence as "use defaults".
 pub fn try_load_manifest(project_root: &Path) -> Result<Option<Manifest>, ManifestError> {
     let manifest_path = project_root.join("manifest.yml");
-    if manifest_path.exists() {
-        load_manifest(&manifest_path).map(Some)
-    } else {
-        Ok(None)
+    if !manifest_path.exists() {
+        return Ok(None);
+    }
+    let mut manifest = load_manifest(&manifest_path)?;
+    apply_local_overlay(&mut manifest, project_root);
+    Ok(Some(manifest))
+}
+
+/// Parse only the `dependencies:` list from a `manifest.local.yml` file.
+///
+/// All other fields are ignored — the file does not need `name:`, `project:`,
+/// etc.  Returns an empty list when the file contains no `dependencies:` key.
+fn parse_local_overlay(text: &str) -> Result<Vec<Dependency>, ManifestError> {
+    let map = parse_yaml_map(text)?;
+    match map.get("dependencies") {
+        Some(YamlValue::Sequence(items)) => items
+            .iter()
+            .map(|item| parse_dependency(item))
+            .collect::<Result<Vec<_>, _>>(),
+        Some(YamlValue::Scalar(_)) => Err(ManifestError::InvalidField {
+            field: "dependencies".to_string(),
+            message: "expected a sequence, found a scalar".to_string(),
+        }),
+        None => Ok(Vec::new()),
+    }
+}
+
+/// Apply a `manifest.local.yml` overlay to `manifest` if the file exists in
+/// `project_root`.
+///
+/// Overlay deps replace any existing dep with the same alias, then new aliases
+/// are appended.  Errors in the local file are printed to stderr and ignored
+/// so that a malformed local file never breaks the build for other team members.
+fn apply_local_overlay(manifest: &mut Manifest, project_root: &Path) {
+    let local_path = project_root.join("manifest.local.yml");
+    if !local_path.exists() {
+        return;
+    }
+    let text = match std::fs::read_to_string(&local_path) {
+        Ok(t) => t,
+        Err(e) => {
+            eprintln!(
+                "warning: could not read '{}': {e}",
+                local_path.display()
+            );
+            return;
+        }
+    };
+    let overrides = match parse_local_overlay(&text) {
+        Ok(deps) => deps,
+        Err(e) => {
+            eprintln!(
+                "warning: '{}' is invalid and will be ignored: {e}",
+                local_path.display()
+            );
+            return;
+        }
+    };
+    if overrides.is_empty() {
+        return;
+    }
+    eprintln!(
+        "info: applying {} local dep override(s) from manifest.local.yml",
+        overrides.len()
+    );
+    for local_dep in overrides {
+        if let Some(existing) = manifest
+            .dependencies
+            .iter_mut()
+            .find(|d| d.alias == local_dep.alias)
+        {
+            *existing = local_dep;
+        } else {
+            manifest.dependencies.push(local_dep);
+        }
     }
 }
 
